@@ -1,0 +1,114 @@
+/* globals.css - Tailwind v4 방식 */
+@import 'tailwindcss';
+@import './theme.css';
+
+/* Pretendard Font */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/PretendardVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Base Styles */
+@layer base {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'liga' off, 'clig' off;
+    letter-spacing: var(--tracking-tight);
+  }
+}
+
+/* Custom Utilities - Tailwind v4 @utility 디렉티브 사용 */
+@utility text-head-1-semibold {
+  font-size: var(--text-head-1);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-2-semibold {
+  font-size: var(--text-head-2);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-3-semibold {
+  font-size: var(--text-head-3);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-3-medium {
+  font-size: var(--text-head-3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-4-semibold {
+  font-size: var(--text-head-4);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-150);
+}
+
+@utility text-head-4-medium {
+  font-size: var(--text-head-4);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-1-semibold {
+  font-size: var(--text-body-1);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-1-medium {
+  font-size: var(--text-body-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-2-semibold {
+  font-size: var(--text-body-2);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-2-medium {
+  font-size: var(--text-body-2);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-2-regular {
+  font-size: var(--text-body-2);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--leading-150);
+}
+
+@utility text-caption-1-medium {
+  font-size: var(--text-caption-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-caption-2-regular {
+  font-size: var(--text-caption-2);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--leading-150);
+}
+
+/* Gradient Utilities */
+@utility gradient-radial {
+  background: radial-gradient(90.86% 110.91% at 23.75% -3.12%, #9BAAFF 0%, #C0CFFF 71.53%, #DEF4FF 100%);
+}
+
+@utility gradient-linear {
+  background: linear-gradient(180deg, #C9D4FF 0%, #797F99 100%);
+}
