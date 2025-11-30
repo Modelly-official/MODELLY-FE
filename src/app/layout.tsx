@@ -18,7 +18,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <link rel="icon" href="/images/icon.svg" type="image/svg+xml" />
       </head>
-      <body>
+      <body className="h-auto overflow-x-hidden overflow-y-hidden">
         {children}
       </body>
     </html>
