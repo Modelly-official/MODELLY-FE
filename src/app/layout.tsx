@@ -13,12 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-        <link rel="icon" href="/images/icon.svg" type="image/svg+xml" />
-      </head>
-      <body className="h-auto overflow-x-hidden overflow-y-hidden">
+      <body className="min-h-screen overflow-x-hidden bg-white">
         {children}
       </body>
     </html>
