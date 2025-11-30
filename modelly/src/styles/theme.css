@@ -1,0 +1,53 @@
+/* theme.css */
+@theme {
+  /* Colors - Tailwind 유틸리티로 사용 가능: bg-white, text-black text-error 등 */
+  --color-white: #FFFFFF;
+  --color-black: #222222;
+  --color-error: #FF533D;
+
+  /* Gray Scale */
+  --color-gray-100: #F9F9FB;
+  --color-gray-200: #F3F5F7;
+  --color-gray-300: #EFF1F3;
+  --color-gray-400: #E5E6E9;
+  --color-gray-500: #CED0D7;
+  --color-gray-600: #B3B4BD;
+  --color-gray-700: #81828D;
+  --color-gray-800: #54555E;
+  --color-gray-900: #2F2E32;
+  --color-gray-950: #1C1C1E;
+
+  /* Blue Scale */
+  --color-blue-100: #EEF7FF;
+  --color-blue-200: #E8F5FF;
+  --color-blue-300: #DBEEFF;
+  --color-blue-400: #BAE0FF;
+  --color-blue-500: #8BC9FE;
+  --color-blue-600: #6BBBFF;
+  --color-blue-700: #319EFF;
+
+  /* Font Family */
+  --font-sans: 'Pretendard', sans-serif;
+
+  /* Font Sizes */
+  --text-head-1: 24px;
+  --text-head-2: 22px;
+  --text-head-3: 20px;
+  --text-head-4: 18px;
+  --text-body-1: 16px;
+  --text-body-2: 14px;
+  --text-caption-1: 12px;
+  --text-caption-2: 11px;
+
+  /* Font Weights */
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+
+  /* Line Heights */
+  --leading-140: 1.4;
+  --leading-150: 1.5;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.02em;
+}
