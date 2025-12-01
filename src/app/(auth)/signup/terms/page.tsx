@@ -22,6 +22,7 @@ const SignUpTermsPage = () => {
   const totalSteps = isSocial ? 3 : 5;
   const [terms, setTerms] = useState(initialTerms);
   const allAgreed = terms.every((term) => term.checked);
+  const requiredAgreed = terms.filter(term => term.label.startsWith("[필수]")).every(term => term.checked);
 
   // 전체 동의 토글 함수
   const handleAllAgree = () => {
@@ -65,8 +66,8 @@ const SignUpTermsPage = () => {
       </div>
       {/* 다음 버튼 */}
       <button
-        className={`w-[343px] mx-4 mt-75 py-4 rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${allAgreed ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
-        disabled={!allAgreed}
+        className={`w-[343px] mx-4 mt-75 py-4 rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${requiredAgreed ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
+        disabled={!requiredAgreed}
         onClick={() => router.push("/signup/role" + (isSocial ? "?social=true" : ""))}
       >
         다음
