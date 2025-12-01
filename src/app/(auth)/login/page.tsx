@@ -52,7 +52,7 @@ const LoginPage = () => {
           <span>|</span>
           <span>비밀번호 찾기</span>
           <span>|</span>
-          <Link href="/signup/terms" className="cursor-pointer hover:underline">회원가입</Link>
+          <Link href="/signup" className="cursor-pointer hover:underline">회원가입</Link>
         </div>
 
         {/* SNS 로그인 안내 */}
@@ -65,15 +65,15 @@ const LoginPage = () => {
         {/* SNS 아이콘 */}
         <div className="flex gap-6 justify-center">
           {/* 카카오 로그인 예시 */}
-          <Link href="/signup/terms?social=true">
+          <Link href="/signup?social=true">
             <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
           </Link>
           {/* 네이버 로그인 예시 */}
-          <Link href="/signup/terms?social=true">
+          <Link href="/signup?social=true">
             <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
           </Link>
           {/* 구글 로그인 예시 */}
-          <Link href="/signup/terms?social=true">
+          <Link href="/signup?social=true">
             <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
           </Link>
         </div>
