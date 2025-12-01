@@ -6,10 +6,11 @@ import CheckIcon from "@/public/icons/signup/check.svg";
 import CheckedIcon from "@/public/icons/signup/checked.svg";
 import LeftArrowIcon from "@/public/icons/signup/leftarrow.svg";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import SignupProgressBar from "@/src/components/auth/SignupProgressBar";
 
-export default function TermsPage() {
+const SignUpTermsPage = () => {
   const initialTerms = [
     { label: "[필수] 이용약관 동의", checked: false },
     { label: "[선택] 개인정보 수집 및 이용 동의", checked: false },
@@ -33,6 +34,7 @@ export default function TermsPage() {
     setTerms(terms.map((term, i) => i === idx ? { ...term, checked: !term.checked } : term));
   };
 
+  const router = useRouter();
   return (
     <div className="w-[375px] mx-auto bg-white font-sans min-h-screen relative">
       {/* Progress Bar */}
@@ -42,7 +44,7 @@ export default function TermsPage() {
         </button>
         <SignupProgressBar totalSteps={totalSteps} currentStep={1} />
       </div>
-      {/* Title */}
+      {/* 제목 */}
       <div className="mt-12 ml-4">
         <p className="text-black text-head-3-semibold tracking-tight mb-0">반가워요! 가입하려면</p>
         <p className="text-black text-head-3-semibold tracking-tight">약관에 동의가 필요해요</p>
@@ -65,9 +67,12 @@ export default function TermsPage() {
       <button
         className={`w-[343px] mx-4 mt-75 py-4 rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${allAgreed ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
         disabled={!allAgreed}
+        onClick={() => router.push("/signup/role" + (isSocial ? "?social=true" : ""))}
       >
         다음
       </button>
     </div>
   );
 }
+
+export default SignUpTermsPage;
