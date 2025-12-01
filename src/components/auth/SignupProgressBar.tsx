@@ -1,5 +1,3 @@
-import React from "react";
-
 interface SignupProgressBarProps {
   totalSteps: number;
   currentStep?: number;
