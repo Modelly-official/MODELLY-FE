@@ -16,7 +16,7 @@ interface StepBasicInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInfoProps) {
+const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, isSocial }) => {
   const { name, phoneNumber, email, setField } = useSignupStore();
   const [authCode, setAuthCode] = useState("");
   const [authCodeError, setAuthCodeError] = useState("");
@@ -77,4 +77,6 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
       </form>
     </div>
   );
-}
+};
+
+export default StepBasicInfo;

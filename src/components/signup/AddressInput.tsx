@@ -9,12 +9,12 @@ interface AddressInputProps {
   onDetailAddressChange: (value: string) => void;
 }
 
-export default function AddressInput({
+const AddressInput: React.FC<AddressInputProps> = ({
   address,
   detailAddress,
   onAddressSearch,
   onDetailAddressChange,
-}: AddressInputProps) {
+}) => {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-gray-900 text-body-1-medium">매장 주소</label>
@@ -45,4 +45,6 @@ export default function AddressInput({
       />
     </div>
   );
-}
+};
+
+export default AddressInput;

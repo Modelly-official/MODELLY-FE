@@ -12,7 +12,7 @@ interface SignupFunnelProps {
   isSocial: boolean;
 }
 
-export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
+const SignupFunnel: React.FC<SignupFunnelProps> = ({ isSocial }) => {
   const [Funnel, setStep] = useFunnel(["terms", "role", "basicInfo", "loginInfo", "profileInfo", "complete"] as const, {
     initialStep: "terms",
   });
@@ -60,4 +60,6 @@ export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
       </Funnel>
     </div>
   );
-}
+};
+
+export default SignupFunnel;

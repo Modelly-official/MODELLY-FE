@@ -16,7 +16,7 @@ interface PasswordInputProps {
   maxLength?: number;
 }
 
-export default function PasswordInput({
+const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
   value,
   onChange,
@@ -26,7 +26,7 @@ export default function PasswordInput({
   errorMessage,
   hintMessage,
   maxLength = 20,
-}: PasswordInputProps) {
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -62,4 +62,6 @@ export default function PasswordInput({
       )}
     </div>
   );
-}
+};
+
+export default PasswordInput;

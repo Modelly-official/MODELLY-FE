@@ -11,14 +11,14 @@ interface TextInputProps {
   showClearButton?: boolean;
 }
 
-export default function TextInput({
+const TextInput: React.FC<TextInputProps> = ({
   label,
   value,
   onChange,
   placeholder,
   maxLength,
   showClearButton = false,
-}: TextInputProps) {
+}) => {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-gray-900 text-body-1-medium">{label}</label>
@@ -43,4 +43,6 @@ export default function TextInput({
       </div>
     </div>
   );
-}
+};
+
+export default TextInput;

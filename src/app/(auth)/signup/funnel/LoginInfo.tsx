@@ -14,7 +14,7 @@ interface StepLoginInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-export default function StepLoginInfo({ goPrev, goNext, isSocial }: StepLoginInfoProps) {
+const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, isSocial }) => {
   const { 
     username, 
     password, 
@@ -135,4 +135,6 @@ export default function StepLoginInfo({ goPrev, goNext, isSocial }: StepLoginInf
       </form>
     </div>
   );
-}
+};
+
+export default StepLoginInfo;

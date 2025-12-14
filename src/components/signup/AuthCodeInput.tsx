@@ -9,7 +9,7 @@ interface AuthCodeInputProps {
   requestSent: boolean;
 }
 
-export default function AuthCodeInput({ authCode, setAuthCode, handleVerifyAuthCode, authCodeError, authCodeValid, requestSent }: AuthCodeInputProps) {
+const AuthCodeInput: React.FC<AuthCodeInputProps> = ({ authCode, setAuthCode, handleVerifyAuthCode, authCodeError, authCodeValid, requestSent }) => {
   if (!requestSent) return null;
   return (
     <div className="flex flex-col gap-1">
@@ -40,4 +40,6 @@ export default function AuthCodeInput({ authCode, setAuthCode, handleVerifyAuthC
       )}
     </div>
   );
-}
+};
+
+export default AuthCodeInput;

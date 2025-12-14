@@ -12,13 +12,13 @@ interface CustomDropdownProps {
   label?: string;
 }
 
-export default function CustomDropdown({
+const CustomDropdown: React.FC<CustomDropdownProps> = ({
   value,
   onChange,
   options,
   placeholder,
   label,
-}: CustomDropdownProps) {
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const selectedLabel = options.find((opt) => opt.value === value)?.label || placeholder;
@@ -80,4 +80,6 @@ export default function CustomDropdown({
       </div>
     </div>
   );
-}
+};
+
+export default CustomDropdown;

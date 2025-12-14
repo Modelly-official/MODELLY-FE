@@ -17,7 +17,7 @@ interface StepProfileInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: StepProfileInfoProps) {
+const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext, isSocial = false }) => {
   const {
     role,
     nickname,
@@ -128,4 +128,6 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
       </form>
     </div>
   );
-}
+};
+
+export default StepProfileInfo;

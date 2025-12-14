@@ -12,7 +12,7 @@ interface StepRoleProps extends Omit<SignupStepProps, 'goPrev'> {
   goPrev: () => void;
 }
 
-export default function StepRole({ goNext, goPrev, isSocial }: StepRoleProps) {
+const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) => {
   const { role, setField } = useSignupStore();
   const [selectedRole, setSelectedRole] = useState<string | null>(role || null);
   const totalSteps = isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR;
@@ -49,4 +49,6 @@ export default function StepRole({ goNext, goPrev, isSocial }: StepRoleProps) {
       </div>
     </div>
   );
-}
+};
+
+export default StepRole;

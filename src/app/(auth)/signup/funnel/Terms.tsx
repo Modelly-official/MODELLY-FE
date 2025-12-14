@@ -14,8 +14,7 @@ import CheckedIcon from "@/public/icons/signup/checked.svg";
 
 type StepTermsProps = Omit<SignupStepProps, 'goPrev'>;
 
-export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
-
+const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
   const router = useRouter();
   const { terms, setTerms } = useSignupStore();
   const allAgreed = terms.every((term) => term.checked);
@@ -54,4 +53,6 @@ export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
       </div>
     </div>
   );
-}
+};
+
+export default StepTerms;

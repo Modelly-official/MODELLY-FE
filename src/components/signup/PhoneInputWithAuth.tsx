@@ -15,7 +15,7 @@ function formatPhone(value: string) {
   return `${digits.slice(0,3)}-${digits.slice(3,7)}-${digits.slice(7,11)}`;
 }
 
-export default function PhoneInputWithAuth({ phoneNumber, setField, handleRequestPhoneAuth, requestSent }: PhoneInputWithAuthProps) {
+const PhoneInputWithAuth: React.FC<PhoneInputWithAuthProps> = ({ phoneNumber, setField, handleRequestPhoneAuth, requestSent }) => {
   const isValidPhone = /^\d{3}-\d{4}-\d{4}$/.test(phoneNumber);
   
   let buttonText = "인증하기";
@@ -58,4 +58,6 @@ export default function PhoneInputWithAuth({ phoneNumber, setField, handleReques
       </div>
     </div>
   );
-}
+};
+
+export default PhoneInputWithAuth;

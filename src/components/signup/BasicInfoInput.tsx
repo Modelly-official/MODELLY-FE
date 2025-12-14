@@ -7,7 +7,7 @@ interface BasicInfoInputProps {
   setField: (field: SignupStoreField, value: string) => void;
 }
 
-export default function BasicInfoInput({ name, email, setField }: BasicInfoInputProps) {
+const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, setField }) => {
   // 이메일 유효성 검증
   const isValidEmail = (email: string) => {
     if (!email) return null;
@@ -50,4 +50,6 @@ export default function BasicInfoInput({ name, email, setField }: BasicInfoInput
       </div>
     </>
   );
-}
+};
+
+export default BasicInfoInput;
