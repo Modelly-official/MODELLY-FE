@@ -4,13 +4,16 @@ import { useFunnel } from "@/src/hooks/signup/useFunnel";
 import StepTerms from "./Terms";
 import StepRole from "./Role";
 import StepBasicInfo from "./BasicInfo";
+import StepLoginInfo from "./LoginInfo";
+import StepProfileInfo from "./ProfileInfo";
+import StepComplete from "./Complete";
 
 interface SignupFunnelProps {
   isSocial: boolean;
 }
 
 export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
-  const [Funnel, setStep] = useFunnel(["terms", "role", "basicInfo"] as const, {
+  const [Funnel, setStep] = useFunnel(["terms", "role", "basicInfo", "loginInfo", "profileInfo", "complete"] as const, {
     initialStep: "terms",
   });
 
@@ -32,10 +35,26 @@ export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
         </Funnel.Step>
         <Funnel.Step name="basicInfo">
           <StepBasicInfo
-            goNext={() => {/* 다음 단계로 이동 또는 회원가입 완료 처리 */}}
+            goNext={() => setStep("loginInfo")}
             goPrev={() => setStep("role")}
             isSocial={isSocial}
           />
+        </Funnel.Step>
+        <Funnel.Step name="loginInfo">
+          <StepLoginInfo
+            goNext={() => setStep("profileInfo")}
+            goPrev={() => setStep("basicInfo")}
+            isSocial={isSocial}
+          />
+        </Funnel.Step>
+        <Funnel.Step name="profileInfo">
+          <StepProfileInfo
+            goNext={() => setStep("complete")}
+            goPrev={() => setStep("loginInfo")}
+          />
+        </Funnel.Step>
+        <Funnel.Step name="complete">
+          <StepComplete />
         </Funnel.Step>
       </Funnel>
     </div>
