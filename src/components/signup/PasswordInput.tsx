@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import ShowIcon from "@/public/icons/signup/show.svg";
+import HideIcon from "@/public/icons/signup/hide.svg";
 
 interface PasswordInputProps {
   label: string;
@@ -46,12 +47,7 @@ export default function PasswordInput({
             className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
             onClick={() => setShowPassword(!showPassword)}
           >
-            <Image
-              src={showPassword ? "/icons/signup/show.svg" : "/icons/signup/hide.svg"}
-              alt={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-              width={20}
-              height={20}
-            />
+            {showPassword ? <ShowIcon /> : <HideIcon />}
           </button>
         )}
       </div>

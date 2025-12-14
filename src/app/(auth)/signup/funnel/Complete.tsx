@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import SignupCompletedIcon from "@/public/icons/signup/signup-completed.svg";
 
 export default function StepComplete() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function StepComplete() {
     <div className="flex items-center justify-center min-h-screen bg-white px-4">
       <div className="flex flex-col items-center gap-5 mb-[84px]">
         <div className="relative w-[50px] h-[50px]">
-          <Image src="/icons/signup/signup-completed.svg" alt="완료" width={50} height={50} />
+          <SignupCompletedIcon />
         </div>
         <p className="text-gray-900 text-head-3-semibold text-center whitespace-pre-wrap">
           회원가입이 완료되었어요!

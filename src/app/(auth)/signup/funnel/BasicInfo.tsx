@@ -41,10 +41,7 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
     }
   };
 
-  // 소셜 로그인일 때는 이메일 없이도 다음 단계로 진행 가능
-  const isFormValid = isSocial
-    ? name && phoneNumber && authCodeValid
-    : name && email && phoneNumber && authCodeValid;
+  if (isSocial) return null;
 
   return (
     <>
@@ -55,7 +52,7 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
       </div>
       <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px]" onSubmit={e => e.preventDefault()}>
         <div className="flex flex-col gap-2">
-          <BasicInfoInput name={name} email={email || ""} setField={setField} isSocial={isSocial} />
+          <BasicInfoInput name={name} email={email || ""} setField={setField} />
           <PhoneInputWithAuth
             phoneNumber={phoneNumber}
             setField={setField}

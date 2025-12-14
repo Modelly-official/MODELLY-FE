@@ -5,6 +5,9 @@ import Image from "next/image";
 import SignupHeader from "@/src/components/signup/SignupHeader";
 import CustomDropdown from "@/src/components/signup/CustomDropdown";
 import { useSignupStore } from "@/src/stores/useSignupStore";
+import CameraIcon from "@/public/icons/signup/camera.svg";
+import DeleteIcon from "@/public/icons/signup/delete.svg";
+import LocationIcon from "@/public/icons/signup/location.svg";
 
 interface StepProfileInfoProps {
   goPrev: () => void;
@@ -93,9 +96,9 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+              className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer"
             >
-              <Image src="/icons/signup/camera.svg" alt="카메라" width={36} height={36} />
+              <CameraIcon />
             </button>
             <input
               ref={fileInputRef}
@@ -128,7 +131,7 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
                   onClick={() => setField("nickname", "")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                 >
-                  <Image src="/icons/signup/delete.svg" alt="삭제" width={18} height={18} />
+                  <DeleteIcon />
                 </button>
               )}
             </div>
@@ -208,7 +211,7 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
                     onClick={handleAddressSearch}
                     className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
                   >
-                    <Image src="/icons/signup/location.svg" alt="주소 검색" width={22} height={22} />
+                    <LocationIcon />
                   </button>
                 </div>
                 <input

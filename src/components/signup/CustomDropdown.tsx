@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
+import DropdownArrowIcon from "@/public/icons/signup/dropdown-arrow.svg";
+import DropdownSelectedIcon from "@/public/icons/signup/dropdown-selected.svg";
 
 interface CustomDropdownProps {
   value: string;
@@ -54,13 +55,9 @@ export default function CustomDropdown({
           }`}
         >
           <span>{selectedLabel}</span>
-          <Image
-            src="/icons/signup/dropdown-arrow.svg"
-            alt="드롭다운"
-            width={24}
-            height={24}
-            className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-          />
+          <div className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+            <DropdownArrowIcon />
+          </div>
         </button>
 
         {/* 드롭다운 메뉴 */}
@@ -77,12 +74,7 @@ export default function CustomDropdown({
               >
                 <span>{option.label}</span>
                 {value === option.value && (
-                  <Image
-                    src="/icons/signup/dropdown-selected.svg"
-                    alt="선택됨"
-                    width={24}
-                    height={24}
-                  />
+                  <DropdownSelectedIcon />
                 )}
               </button>
             ))}
