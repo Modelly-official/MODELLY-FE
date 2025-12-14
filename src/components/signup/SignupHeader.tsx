@@ -1,5 +1,4 @@
 import LeftArrowIcon from "@/public/icons/signup/leftarrow.svg";
-import SignupProgressBar from "./SignupProgressBar";
 
 interface SignupHeaderProps {
   onBack: () => void;
@@ -13,7 +12,18 @@ export default function SignupHeader({ onBack, totalSteps, currentStep }: Signup
       <button type="button" onClick={onBack} className="w-6 h-6 flex items-center justify-center cursor-pointer">
         <LeftArrowIcon />
       </button>
-      <SignupProgressBar totalSteps={totalSteps} currentStep={currentStep} />
+      <div className="flex gap-3 mt-4">
+        {Array.from({ length: totalSteps }).map((_, idx) => (
+          <div
+            key={idx}
+            className={
+              idx < currentStep
+                ? "bg-blue-500 h-1 rounded w-[106px]"
+                : "bg-gray-300 h-1 rounded w-[106px]"
+            }
+          />
+        ))}
+      </div>
     </div>
   );
 }

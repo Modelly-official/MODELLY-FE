@@ -1,14 +1,17 @@
 "use client";
 
 import SignupHeader from "@/src/components/signup/SignupHeader";
+import SignupTitle from "@/src/components/signup/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
 import PasswordInput from "@/src/components/signup/PasswordInput";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
+import { validateField, filterAlphanumeric, validateMatch } from "@/src/utils/validation";
+import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
+import type { SignupStepProps } from "@/src/types/signup";
 
-interface StepLoginInfoProps {
+interface StepLoginInfoProps extends SignupStepProps {
   goPrev: () => void;
-  goNext: () => void;
-  isSocial: boolean;
 }
 
 export default function StepLoginInfo({ goPrev, goNext, isSocial }: StepLoginInfoProps) {
@@ -27,52 +30,30 @@ export default function StepLoginInfo({ goPrev, goNext, isSocial }: StepLoginInf
 
   // 아이디 중복 확인(API 연동 전)
   const checkUsername = () => {
-    // 아이디 유효성 검증
-    const result = usernameSchema.safeParse(username);
-    if (!result.success) {
-      setIsUsernameAvailable(false);
-      return;
-    }
-    setIsUsernameAvailable(true);
+    const isValid = validateField(usernameSchema, username) === "success";
+    setIsUsernameAvailable(isValid);
   };
 
-  // 영어, 숫자만 입력 가능하도록 필터링
+  // 아이디 입력 처리 (영어 소문자, 숫자만)
   const handleUsernameChange = (value: string) => {
-    const filteredValue = value.replace(/[^a-z0-9]/g, "");
-    setField("username", filteredValue);
+    setField("username", filterAlphanumeric(value));
     setIsUsernameAvailable(null);
   };
 
-  // 비밀번호 유효성 검증
-  const validatePassword = (pwd: string) => {
-    if (!pwd) return null;
-    const result = passwordSchema.safeParse(pwd);
-    if (result.success) {
-      return "success";
-    }
-    return "error";
-  };
-
-  // 비밀번호 확인 검증
-  const validatePasswordConfirm = (confirm: string) => {
-    if (!confirm) return null;
-    if (confirm !== password) {
-      return "error";
-    }
-    return "success";
-  };
-
+  // 비밀번호 입력 처리
   const handlePasswordChange = (value: string) => {
     setField("password", value);
-    setPasswordError(validatePassword(value));
+    setPasswordError(validateField(passwordSchema, value));
+    // 비밀번호 확인이 이미 입력되어 있으면 다시 검증
     if (passwordConfirm) {
-      setPasswordConfirmError(validatePasswordConfirm(passwordConfirm));
+      setPasswordConfirmError(validateMatch(value, passwordConfirm));
     }
   };
 
+  // 비밀번호 확인 입력 처리
   const handlePasswordConfirmChange = (value: string) => {
     setField("passwordConfirm", value);
-    setPasswordConfirmError(validatePasswordConfirm(value));
+    setPasswordConfirmError(validateMatch(password, value));
   };
 
   const isFormValid = 
@@ -86,13 +67,10 @@ export default function StepLoginInfo({ goPrev, goNext, isSocial }: StepLoginInf
   if (isSocial) return null;
 
   return (
-    <>
-      <SignupHeader onBack={goPrev} totalSteps={5} currentStep={4} />
-      <div className="mt-12 ml-4">
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">로그인에 사용할</p>
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">정보를 입력해주세요</p>
-      </div>
-      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px]" onSubmit={e => e.preventDefault()}>
+    <div className="min-h-screen flex flex-col">
+      <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={4} />
+      <SignupTitle line1={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_1} line2={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_2} />
+      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={e => e.preventDefault()}>
         <div className="flex flex-col gap-6">
           {/* 아이디 */}
           <div className="flex flex-col gap-2">
@@ -149,17 +127,12 @@ export default function StepLoginInfo({ goPrev, goNext, isSocial }: StepLoginInf
           />
         </div>
 
-        <button
-          type="button"
-          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${
-            isFormValid ? "bg-black text-white" : "bg-gray-200 text-gray-600"
-          }`}
-          disabled={!isFormValid}
-          onClick={goNext}
-        >
-          다음
-        </button>
+        <div className="mt-auto mb-[42px]">
+          <FixedBottomButton disabled={!isFormValid} onClick={goNext}>
+            {SIGNUP_MESSAGES.BUTTON.NEXT}
+          </FixedBottomButton>
+        </div>
       </form>
-    </>
+    </div>
   );
 }

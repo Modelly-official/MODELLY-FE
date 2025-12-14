@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { SIGNUP_MESSAGES } from "@/src/constants/signup";
 import SignupCompletedIcon from "@/public/icons/signup/signup-completed.svg";
 
 export default function StepComplete() {
@@ -17,14 +18,14 @@ export default function StepComplete() {
           <SignupCompletedIcon />
         </div>
         <p className="text-gray-900 text-head-3-semibold text-center whitespace-pre-wrap">
-          회원가입이 완료되었어요!
+          {SIGNUP_MESSAGES.COMPLETE.TITLE}
         </p>
       </div>
       <button
         onClick={handleStart}
         className="fixed bottom-[42px] left-1/2 -translate-x-1/2 w-[343px] py-4 bg-[#2f2e32] text-white rounded-full text-body-1-medium cursor-pointer"
       >
-        시작하기
+        {SIGNUP_MESSAGES.COMPLETE.BUTTON}
       </button>
     </div>
   );

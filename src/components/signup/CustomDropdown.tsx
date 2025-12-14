@@ -21,11 +21,8 @@ export default function CustomDropdown({
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // 선택된 옵션의 라벨 찾기
   const selectedLabel = options.find((opt) => opt.value === value)?.label || placeholder;
 
-  // 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

@@ -3,16 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import SignupHeader from "@/src/components/signup/SignupHeader";
+import SignupTitle from "@/src/components/signup/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
+import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
+import type { SignupStepProps } from "@/src/types/signup";
 import SelectIcon from "@/public/icons/signup/select.svg";
 import SelectedIcon from "@/public/icons/signup/selected.svg";
 import CheckIcon from "@/public/icons/signup/check.svg";
 import CheckedIcon from "@/public/icons/signup/checked.svg";
 
-
-interface StepTermsProps {
-  goNext: () => void;
-  isSocial: boolean;
-}
+type StepTermsProps = Omit<SignupStepProps, 'goPrev'>;
 
 export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
 
@@ -21,7 +21,7 @@ export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
   const allAgreed = terms.every((term) => term.checked);
   const requiredAgreed = terms.filter(term => term.label.startsWith("[필수]")).every(term => term.checked);
 
-  const totalSteps = isSocial ? 3 : 5;
+  const totalSteps = isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR;
 
   const handleAllAgree = () => {
     const next = !allAgreed;
@@ -32,15 +32,12 @@ export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
   };
 
   return (
-    <div className="w-[375px] mx-auto bg-white font-sans min-h-screen relative">
+    <div className="w-[375px] mx-auto bg-white font-sans min-h-screen relative flex flex-col">
       <SignupHeader onBack={() => router.push('/login')} totalSteps={totalSteps} currentStep={1} />
-      <div className="mt-12 ml-4">
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">반가워요! 가입하려면</p>
-        <p className="text-black text-head-3-semibold tracking-tight">약관에 동의가 필요해요</p>
-      </div>
+      <SignupTitle line1={SIGNUP_MESSAGES.TERMS.TITLE_1} line2={SIGNUP_MESSAGES.TERMS.TITLE_2} />
       <div className="flex items-center gap-4 bg-gray-100 rounded-xl p-4 mt-10 mx-4 w-[343px] cursor-pointer" onClick={handleAllAgree}>
         {allAgreed ? <SelectedIcon /> : <SelectIcon />}
-        <span className="text-gray-900 text-body-1-medium tracking-tight">약관 전체 동의</span>
+        <span className="text-gray-900 text-body-1-medium tracking-tight">{SIGNUP_MESSAGES.TERMS.ALL_AGREE}</span>
       </div>
       <div className="flex flex-col gap-2 mt-5 mx-4 w-[343px]">
         {terms.map((term, idx) => (
@@ -50,14 +47,11 @@ export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
           </div>
         ))}
       </div>
-      <button
-        type="button"
-        className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${requiredAgreed ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
-        disabled={!requiredAgreed}
-        onClick={goNext}
-      >
-        다음
-      </button>
+      <div className="mt-auto mb-[42px] mx-4">
+        <FixedBottomButton disabled={!requiredAgreed} onClick={goNext}>
+          {SIGNUP_MESSAGES.BUTTON.NEXT}
+        </FixedBottomButton>
+      </div>
     </div>
   );
 }

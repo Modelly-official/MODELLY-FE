@@ -5,12 +5,15 @@ import BasicInfoInput from "@/src/components/signup/BasicInfoInput";
 import PhoneInputWithAuth from "@/src/components/signup/PhoneInputWithAuth";
 import AuthCodeInput from "@/src/components/signup/AuthCodeInput";
 import SignupHeader from "@/src/components/signup/SignupHeader";
+import SignupTitle from "@/src/components/signup/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
 import { useSignupStore } from "@/src/stores/useSignupStore";
+import { validatePhoneNumber, verifyAuthCode } from "@/src/utils/validation";
+import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
+import type { SignupStepProps } from "@/src/types/signup";
 
-interface StepBasicInfoProps {
+interface StepBasicInfoProps extends SignupStepProps {
   goPrev: () => void;
-  goNext: () => void;
-  isSocial: boolean;
 }
 
 export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInfoProps) {
@@ -21,10 +24,11 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
   const [requestSent, setRequestSent] = useState(false);
 
   const handleRequestPhoneAuth = () => {
-    if (!phoneNumber || phoneNumber.length < 10) {
+    if (!validatePhoneNumber(phoneNumber)) {
       setAuthCodeError("올바른 전화번호를 입력해주세요.");
       return;
     }
+    // TODO: API 연동 시 실제 인증번호 발송 로직으로 교체
     setRequestSent(true);
     setAuthCode("");
     setAuthCodeValid(null);
@@ -32,25 +36,19 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
   };
 
   const handleVerifyAuthCode = () => {
-    if (authCode === "1234") {
-      setAuthCodeValid(true);
-      setAuthCodeError("");
-    } else {
-      setAuthCodeValid(false);
-      setAuthCodeError("인증번호가 일치하지 않습니다.");
-    }
+    // TODO: API 연동 시 실제 인증번호 검증 로직으로 교체
+    const isValid = verifyAuthCode(authCode);
+    setAuthCodeValid(isValid);
+    setAuthCodeError(isValid ? "" : "인증번호가 일치하지 않습니다.");
   };
 
   if (isSocial) return null;
 
   return (
-    <>
-      <SignupHeader onBack={goPrev} totalSteps={5} currentStep={3} />
-      <div className="mt-12 ml-4">
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">반가워요!</p>
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">기본 정보를 입력해주세요</p>
-      </div>
-      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px]" onSubmit={e => e.preventDefault()}>
+    <div className="min-h-screen flex flex-col">
+      <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={3} />
+      <SignupTitle line1={SIGNUP_MESSAGES.BASIC_INFO.TITLE_1} line2={SIGNUP_MESSAGES.BASIC_INFO.TITLE_2} />
+      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={e => e.preventDefault()}>
         <div className="flex flex-col gap-2">
           <BasicInfoInput name={name} email={email || ""} setField={setField} />
           <PhoneInputWithAuth
@@ -68,15 +66,15 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
             requestSent={requestSent}
           />
         </div>
-        <button
-          type="button"
-          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${name && email && phoneNumber && authCodeValid ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
-          disabled={!name || !email || !phoneNumber || !authCodeValid}
-          onClick={goNext}
-        >
-          다음
-        </button>
+        <div className="mt-auto mb-[42px]">
+          <FixedBottomButton
+            disabled={!name || !email || !phoneNumber || !authCodeValid}
+            onClick={goNext}
+          >
+            {SIGNUP_MESSAGES.BUTTON.NEXT}
+          </FixedBottomButton>
+        </div>
       </form>
-    </>
+    </div>
   );
 }

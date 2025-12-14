@@ -1,18 +1,20 @@
 "use client";
 
-import { useRef } from "react";
-import Image from "next/image";
 import SignupHeader from "@/src/components/signup/SignupHeader";
+import SignupTitle from "@/src/components/signup/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
 import CustomDropdown from "@/src/components/signup/CustomDropdown";
+import TextInput from "@/src/components/signup/TextInput";
+import GenderSelect from "@/src/components/signup/GenderSelect";
+import AddressInput from "@/src/components/signup/AddressInput";
+import ProfileImageUpload from "@/src/components/signup/ProfileImageUpload";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import CameraIcon from "@/public/icons/signup/camera.svg";
-import DeleteIcon from "@/public/icons/signup/delete.svg";
-import LocationIcon from "@/public/icons/signup/location.svg";
+import { formatBirthDate, convertImageToBase64 } from "@/src/utils/validation";
+import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
+import type { SignupStepProps } from "@/src/types/signup";
 
-interface StepProfileInfoProps {
+interface StepProfileInfoProps extends SignupStepProps {
   goPrev: () => void;
-  goNext: () => void;
-  isSocial?: boolean;
 }
 
 export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: StepProfileInfoProps) {
@@ -30,37 +32,20 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
     setProfileImage,
   } = useSignupStore();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   // 프로필 이미지 업로드
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageUpload = async (file: File) => {
+    const base64 = await convertImageToBase64(file);
+    setProfileImage(base64);
   };
 
-  // 주소 검색
+  // 주소 검색 (TODO: Daum Postcode API 연동)
   const handleAddressSearch = () => {
     alert("주소 검색 기능은 추후 구현됩니다");
   };
 
-  // 생년월일 입력 포맷팅 (YYYY.MM.DD)
+  // 생년월일 입력 처리
   const handleBirthDateChange = (value: string) => {
-    const numbers = value.replace(/[^\d]/g, "");
-    const limited = numbers.slice(0, 8);
-    let formatted = limited;
-    if (limited.length > 4) {
-      formatted = `${limited.slice(0, 4)}.${limited.slice(4)}`;
-    }
-    if (limited.length > 6) {
-      formatted = `${limited.slice(0, 4)}.${limited.slice(4, 6)}.${limited.slice(6)}`;
-    }
-    setField("birthDate", formatted);
+    setField("birthDate", formatBirthDate(value));
   };
 
   const isDesigner = role === "designer";
@@ -71,102 +56,26 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
     : profileImage && nickname && gender && birthDate;
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <SignupHeader 
         onBack={goPrev} 
-        totalSteps={isSocial ? 3 : 5} 
-        currentStep={isSocial ? 3 : 5} 
+        totalSteps={isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR} 
+        currentStep={isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR} 
       />
-      <div className="mt-12 ml-4">
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">Modelly에서 사용할</p>
-        <p className="text-black text-head-3-semibold tracking-tight mb-0">프로필 정보를 입력해주세요</p>
-      </div>
+      <SignupTitle line1={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_1} line2={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_2} />
       
-      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px]" onSubmit={(e) => e.preventDefault()}>
-        {/* 프로필 사진 */}
-        <div className="flex flex-col items-center gap-2">
-          <div className="relative w-[110px] h-[110px]">
-            <div className="w-[110px] h-[110px] rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
-              {profileImage ? (
-                <Image src={profileImage} alt="프로필" width={110} height={110} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-gray-500" />
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer"
-            >
-              <CameraIcon />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-          </div>
-        </div>
-
+      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={(e) => e.preventDefault()}>
+        <ProfileImageUpload profileImage={profileImage} onImageUpload={handleImageUpload} />
         <div className="flex flex-col gap-6">
-          {/* 디자이너 닉네임 / 닉네임 */}
-          <div className="flex flex-col gap-2">
-            <label className="text-gray-900 text-body-1-medium">
-              {isDesigner ? "디자이너 활동명" : "닉네임"}
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                className="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
-                placeholder="활동명을 입력해주세요"
-                value={nickname}
-                onChange={(e) => setField("nickname", e.target.value)}
-                maxLength={20}
-              />
-              {nickname && (
-                <button
-                  type="button"
-                  onClick={() => setField("nickname", "")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
-                >
-                  <DeleteIcon />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 성별 */}
-          <div className="flex flex-col gap-2">
-            <label className="text-gray-900 text-body-1-medium">성별</label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setField("gender", "남자")}
-                className={`flex-1 py-3 rounded-xl text-body-2-medium cursor-pointer ${
-                  gender === "남자"
-                    ? "bg-blue-600 text-white border-none"
-                    : "bg-white text-gray-600 border border-gray-400"
-                }`}
-              >
-                남자
-              </button>
-              <button
-                type="button"
-                onClick={() => setField("gender", "여자")}
-                className={`flex-1 py-3 rounded-xl text-body-2-medium cursor-pointer ${
-                  gender === "여자"
-                    ? "bg-blue-600 text-white border-none"
-                    : "bg-white text-gray-600 border border-gray-400"
-                }`}
-              >
-                여자
-              </button>
-            </div>
-          </div>
-
-          {/* 생년월일 */}
+          <TextInput
+            label={isDesigner ? "디자이너 활동명" : "닉네임"}
+            value={nickname}
+            onChange={(value) => setField("nickname", value)}
+            placeholder="활동명을 입력해주세요"
+            maxLength={20}
+            showClearButton
+          />
+          <GenderSelect value={gender} onChange={(value) => setField("gender", value)} />
           <div className="flex flex-col gap-2">
             <label className="text-gray-900 text-body-1-medium">생년월일</label>
             <input
@@ -182,49 +91,19 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
           {/* 디자이너 용 필드들 */}
           {isDesigner && (
             <>
-              {/* 매장 이름 */}
-              <div className="flex flex-col gap-2">
-                <label className="text-gray-900 text-body-1-medium">매장 이름</label>
-                <input
-                  type="text"
-                  className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
-                  placeholder="매장 이름을 입력해주세요"
-                  value={storeName}
-                  onChange={(e) => setField("storeName", e.target.value)}
-                  maxLength={20}
-                />
-              </div>
-              {/* 매장 주소 */}
-              <div className="flex flex-col gap-2">
-                <label className="text-gray-900 text-body-1-medium">매장 주소</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    className="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none cursor-pointer"
-                    placeholder="매장 주소를 입력해주세요"
-                    value={address}
-                    readOnly
-                    onClick={handleAddressSearch}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddressSearch}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
-                  >
-                    <LocationIcon />
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
-                  placeholder="상세주소"
-                  value={detailAddress}
-                  onChange={(e) => setField("detailAddress", e.target.value)}
-                  maxLength={50}
-                />
-              </div>
-
-              {/* 카테고리 */}
+              <TextInput
+                label="매장 이름"
+                value={storeName}
+                onChange={(value) => setField("storeName", value)}
+                placeholder="매장 이름을 입력해주세요"
+                maxLength={20}
+              />
+              <AddressInput
+                address={address}
+                detailAddress={detailAddress}
+                onAddressSearch={handleAddressSearch}
+                onDetailAddressChange={(value) => setField("detailAddress", value)}
+              />
               <CustomDropdown
                 label="카테고리"
                 value={category}
@@ -241,17 +120,12 @@ export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: St
           )}
         </div>
 
-        <button
-          type="button"
-          className={`w-full mt-[45px] mb-[42px] py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${
-            isFormValid ? "bg-black text-white" : "bg-gray-200 text-gray-600"
-          }`}
-          disabled={!isFormValid}
-          onClick={goNext}
-        >
-          다음
-        </button>
+        <div className={`mb-[42px] ${isDesigner ? "mt-[45px]" : "mt-auto"}`}>
+          <FixedBottomButton disabled={!isFormValid} onClick={goNext}>
+            {SIGNUP_MESSAGES.BUTTON.NEXT}
+          </FixedBottomButton>
+        </div>
       </form>
-    </>
+    </div>
   );
 }

@@ -13,6 +13,12 @@ export const passwordSchema = z
   .regex(/\d/, "영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다.")
   .regex(/[~!@#^*]/, "영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다.");
 
+// 비밀번호 확인 스키마 (비밀번호와 일치 여부 검증)
+export const createPasswordConfirmSchema = (password: string) =>
+  z.string().refine((val) => val === password, {
+    message: "비밀번호가 일치하지 않습니다.",
+  });
+
 // 이메일
 export const emailSchema = z
   .string()
