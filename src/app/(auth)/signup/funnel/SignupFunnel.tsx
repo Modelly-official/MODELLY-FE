@@ -1,50 +1,43 @@
 "use client";
 
-import { useFunnel } from "@use-funnel/browser";
-// ...existing code...
+import { useFunnel } from "@/src/hooks/signup/useFunnel";
 import StepTerms from "./Terms";
 import StepRole from "./Role";
 import StepBasicInfo from "./BasicInfo";
 
+interface SignupFunnelProps {
+  isSocial: boolean;
+}
 
-import { useSearchParams } from "next/navigation";
-
-export default function SignupFunnel() {
-  const searchParams = useSearchParams();
-  const isSocial = searchParams.get("social") === "true";
-
-  const funnel = useFunnel<{
-  terms: object;
-    role: { role?: string };
-    basicInfo: { name?: string; email?: string; phoneNumber?: string; emailValid?: boolean | null; authCodeValid?: boolean | null };
-  }>({
-    id: "signup-funnel",
-    initial: { step: "terms", context: { isSocial } },
+export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
+  const [Funnel, setStep] = useFunnel(["terms", "role", "basicInfo"] as const, {
+    initialStep: "terms",
   });
 
-
   return (
-    <div className="w-[375px] mx-auto bg-white font-sans min-h-screen relative">
-      {funnel.step === "terms" && (
-        <StepTerms
-          goNext={() => funnel.history.push("role")}
-          isSocial={isSocial}
-        />
-      )}
-      {funnel.step === "role" && (
-        <StepRole
-          goNext={() => funnel.history.push("basicInfo")}
-          goPrev={() => funnel.history.push("terms")}
-          isSocial={isSocial}
-        />
-      )}
-      {funnel.step === "basicInfo" && (
-        <StepBasicInfo
-          goNext={() => {/* 다음 단계로 이동 또는 회원가입 완료 처리 */}}
-          goPrev={() => funnel.history.push("role")}
-          isSocial={isSocial}
-        />
-      )}
+    <div className="w-[375px] mx-auto bg-white min-h-screen relative">
+      <Funnel>
+        <Funnel.Step name="terms">
+          <StepTerms
+            goNext={() => setStep("role")}
+            isSocial={isSocial}
+          />
+        </Funnel.Step>
+        <Funnel.Step name="role">
+          <StepRole
+            goNext={() => setStep("basicInfo")}
+            goPrev={() => setStep("terms")}
+            isSocial={isSocial}
+          />
+        </Funnel.Step>
+        <Funnel.Step name="basicInfo">
+          <StepBasicInfo
+            goNext={() => {/* 다음 단계로 이동 또는 회원가입 완료 처리 */}}
+            goPrev={() => setStep("role")}
+            isSocial={isSocial}
+          />
+        </Funnel.Step>
+      </Funnel>
     </div>
   );
 }

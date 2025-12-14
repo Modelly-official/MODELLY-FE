@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import LeftArrowIcon from "@/public/icons/signup/leftarrow.svg";
 import BasicInfoInput from "@/src/components/signup/BasicInfoInput";
 import PhoneInputWithAuth from "@/src/components/signup/PhoneInputWithAuth";
 import AuthCodeInput from "@/src/components/signup/AuthCodeInput";
-import SignupProgressBar from "@/src/components/signup/SignupProgressBar";
+import SignupHeader from "@/src/components/signup/SignupHeader";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 
 interface StepBasicInfoProps {
@@ -20,7 +19,6 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
   const [authCodeError, setAuthCodeError] = useState("");
   const [authCodeValid, setAuthCodeValid] = useState<boolean | null>(null);
   const [requestSent, setRequestSent] = useState(false);
-  const [showResend, setShowResend] = useState(false);
 
   const handleRequestPhoneAuth = () => {
     if (!phoneNumber || phoneNumber.length < 10) {
@@ -31,7 +29,6 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
     setAuthCode("");
     setAuthCodeValid(null);
     setAuthCodeError("");
-    setShowResend(false);
   };
 
   const handleVerifyAuthCode = () => {
@@ -48,12 +45,7 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
 
   return (
     <>
-      <div className="mt-15 mx-4">
-        <button type="button" onClick={goPrev} className="w-6 h-6 flex items-center justify-center">
-          <LeftArrowIcon />
-        </button>
-        <SignupProgressBar totalSteps={5} currentStep={3} />
-      </div>
+      <SignupHeader onBack={goPrev} totalSteps={5} currentStep={3} />
       <div className="mt-12 ml-4">
         <p className="text-black text-head-3-semibold tracking-tight mb-0">반가워요!</p>
         <p className="text-black text-head-3-semibold tracking-tight mb-0">기본 정보를 입력해주세요</p>
@@ -66,7 +58,6 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
             setField={setField}
             handleRequestPhoneAuth={handleRequestPhoneAuth}
             requestSent={requestSent}
-            showResend={showResend}
           />
           <AuthCodeInput
             authCode={authCode}
@@ -79,7 +70,7 @@ export default function StepBasicInfo({ goPrev, goNext, isSocial }: StepBasicInf
         </div>
         <button
           type="button"
-          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${name && email && phoneNumber && authCodeValid ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
+          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${name && email && phoneNumber && authCodeValid ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
           disabled={!name || !email || !phoneNumber || !authCodeValid}
           onClick={goNext}
         >

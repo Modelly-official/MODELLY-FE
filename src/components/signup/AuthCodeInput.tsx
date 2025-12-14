@@ -16,7 +16,7 @@ export default function AuthCodeInput({ authCode, setAuthCode, handleVerifyAuthC
       <div className="flex gap-2 items-center min-w-0">
         <input
           type="text"
-          className={`flex-1 border ${authCodeValid === false ? "border-error" : "border-gray-400"} rounded-xl px-3 py-3 text-body-2-medium ${authCodeValid === false ? "text-error" : "text-gray-900"} placeholder:text-gray-600 focus:outline-none`}
+          className={`flex-1 border ${authCodeValid === false ? "border-error" : "border-gray-400"} rounded-xl px-3 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
           placeholder="인증번호 입력"
           value={authCode}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAuthCode(e.target.value)}
@@ -25,7 +25,7 @@ export default function AuthCodeInput({ authCode, setAuthCode, handleVerifyAuthC
         />
         <button
           type="button"
-          className="w-20 rounded-xl px-4 py-3 text-body-2-medium bg-blue-200 text-blue-700"
+          className="w-20 rounded-xl px-4 py-3 text-body-2-medium bg-blue-200 text-blue-700 cursor-pointer"
           onClick={handleVerifyAuthCode}
           disabled={!authCode}
         >

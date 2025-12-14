@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import SignupProgressBar from "@/src/components/signup/SignupProgressBar";
-import LeftArrowIcon from "@/public/icons/signup/leftarrow.svg";
+import { useSignupStore } from "@/src/stores/useSignupStore";
+import SignupHeader from "@/src/components/signup/SignupHeader";
 import SelectIcon from "@/public/icons/signup/select.svg";
 import SelectedIcon from "@/public/icons/signup/selected.svg";
 import CheckIcon from "@/public/icons/signup/check.svg";
@@ -18,12 +17,7 @@ interface StepTermsProps {
 export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
 
   const router = useRouter();
-  const initialTerms = [
-    { label: "[필수] 이용약관 동의", checked: false },
-    { label: "[선택] 개인정보 수집 및 이용 동의", checked: false },
-    { label: "[선택] 광고성 정보 수신 동의", checked: false },
-  ];
-  const [terms, setTerms] = useState(initialTerms);
+  const { terms, setTerms } = useSignupStore();
   const allAgreed = terms.every((term) => term.checked);
   const requiredAgreed = terms.filter(term => term.label.startsWith("[필수]")).every(term => term.checked);
 
@@ -39,12 +33,7 @@ export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
 
   return (
     <div className="w-[375px] mx-auto bg-white font-sans min-h-screen relative">
-      <div className="mt-15 mx-4">
-        <button type="button" onClick={() => router.push('/login')} className="w-6 h-6 flex items-center justify-center">
-          <LeftArrowIcon />
-        </button>
-        <SignupProgressBar totalSteps={totalSteps} currentStep={1} />
-      </div>
+      <SignupHeader onBack={() => router.push('/login')} totalSteps={totalSteps} currentStep={1} />
       <div className="mt-12 ml-4">
         <p className="text-black text-head-3-semibold tracking-tight mb-0">반가워요! 가입하려면</p>
         <p className="text-black text-head-3-semibold tracking-tight">약관에 동의가 필요해요</p>
@@ -63,7 +52,7 @@ export default function StepTerms({ goNext, isSocial }: StepTermsProps) {
       </div>
       <button
         type="button"
-        className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${requiredAgreed ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
+        className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-[343px] mb-13 py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${requiredAgreed ? "bg-black text-white" : "bg-gray-200 text-gray-600"}`}
         disabled={!requiredAgreed}
         onClick={goNext}
       >

@@ -2,11 +2,17 @@ import { create } from "zustand";
 
 export type SignupStoreField = "name" | "email" | "phoneNumber" | "role";
 
+interface TermsAgreement {
+	label: string;
+	checked: boolean;
+}
+
 interface SignupStore {
 	name: string;
 	email: string;
 	phoneNumber: string;
 	role: string;
+	terms: TermsAgreement[];
 	emailValid: boolean | null;
 	emailError: string;
 	emailAuthRequested: boolean;
@@ -17,6 +23,7 @@ interface SignupStore {
 	authTimer: number;
 
 	setField: (key: SignupStoreField, value: string) => void;
+	setTerms: (terms: TermsAgreement[]) => void;
 	setEmailValid: (valid: boolean | null) => void;
 	setEmailError: (error: string) => void;
 	setEmailAuthRequested: (requested: boolean) => void;
@@ -33,6 +40,11 @@ export const useSignupStore = create<SignupStore>((set) => ({
 	email: "",
 	phoneNumber: "",
 	role: "",
+	terms: [
+		{ label: "[필수] 이용약관 동의", checked: false },
+		{ label: "[선택] 개인정보 수집 및 이용 동의", checked: false },
+		{ label: "[선택] 광고성 정보 수신 동의", checked: false },
+	],
 	emailValid: null,
 	emailError: "",
 	emailAuthRequested: false,
@@ -43,6 +55,7 @@ export const useSignupStore = create<SignupStore>((set) => ({
 	authTimer: 90,
 
 	setField: (key, value) => set((state) => ({ ...state, [key]: value })),
+	setTerms: (terms) => set({ terms }),
 	setEmailValid: (valid) => set({ emailValid: valid }),
 	setEmailError: (error) => set({ emailError: error }),
 	setEmailAuthRequested: (requested) => set({ emailAuthRequested: requested }),
@@ -57,6 +70,11 @@ export const useSignupStore = create<SignupStore>((set) => ({
 			email: "",
 			phoneNumber: "",
 			role: "",
+			terms: [
+				{ label: "[필수] 이용약관 동의", checked: false },
+				{ label: "[선택] 개인정보 수집 및 이용 동의", checked: false },
+				{ label: "[선택] 광고성 정보 수신 동의", checked: false },
+			],
 			emailValid: null,
 			emailError: "",
 			emailAuthRequested: false,

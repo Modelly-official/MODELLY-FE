@@ -64,15 +64,15 @@ const LoginPage = () => {
 
         {/* SNS 아이콘 */}
         <div className="flex gap-6 justify-center">
-          {/* 카카오 로그인 예시 */}
+          {/* 카카오 로그인 */}
           <Link href="/signup?social=true">
             <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
           </Link>
-          {/* 네이버 로그인 예시 */}
+          {/* 네이버 로그인 */}
           <Link href="/signup?social=true">
             <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
           </Link>
-          {/* 구글 로그인 예시 */}
+          {/* 구글 로그인 */}
           <Link href="/signup?social=true">
             <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
           </Link>
