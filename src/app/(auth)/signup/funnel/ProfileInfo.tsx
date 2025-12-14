@@ -38,9 +38,9 @@ const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext, isSoc
     setProfileImage(base64);
   };
 
-  // 주소 검색 (TODO: Daum Postcode API 연동)
-  const handleAddressSearch = () => {
-    alert("주소 검색 기능은 추후 구현됩니다");
+  // 주소 검색 결과 처리
+  const handleAddressSearch = (fullAddress: string) => {
+    setField("address", fullAddress);
   };
 
   // 생년월일 입력 처리
