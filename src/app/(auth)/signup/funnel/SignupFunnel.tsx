@@ -28,7 +28,7 @@ export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
         </Funnel.Step>
         <Funnel.Step name="role">
           <StepRole
-            goNext={() => setStep("basicInfo")}
+            goNext={() => setStep(isSocial ? "profileInfo" : "basicInfo")}
             goPrev={() => setStep("terms")}
             isSocial={isSocial}
           />
@@ -50,7 +50,8 @@ export default function SignupFunnel({ isSocial }: SignupFunnelProps) {
         <Funnel.Step name="profileInfo">
           <StepProfileInfo
             goNext={() => setStep("complete")}
-            goPrev={() => setStep("loginInfo")}
+            goPrev={() => setStep(isSocial ? "role" : "loginInfo")}
+            isSocial={isSocial}
           />
         </Funnel.Step>
         <Funnel.Step name="complete">

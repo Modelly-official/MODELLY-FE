@@ -9,9 +9,10 @@ import { useSignupStore } from "@/src/stores/useSignupStore";
 interface StepProfileInfoProps {
   goPrev: () => void;
   goNext: () => void;
+  isSocial?: boolean;
 }
 
-export default function StepProfileInfo({ goPrev, goNext }: StepProfileInfoProps) {
+export default function StepProfileInfo({ goPrev, goNext, isSocial = false }: StepProfileInfoProps) {
   const {
     role,
     nickname,
@@ -40,21 +41,15 @@ export default function StepProfileInfo({ goPrev, goNext }: StepProfileInfoProps
     }
   };
 
-  // 주소 검색 (TODO: 실제 주소 API 연동)
+  // 주소 검색
   const handleAddressSearch = () => {
-    // 다음 주소 API 등을 사용할 수 있습니다
     alert("주소 검색 기능은 추후 구현됩니다");
   };
 
   // 생년월일 입력 포맷팅 (YYYY.MM.DD)
   const handleBirthDateChange = (value: string) => {
-    // 숫자만 추출
     const numbers = value.replace(/[^\d]/g, "");
-    
-    // 최대 8자리까지만 입력
     const limited = numbers.slice(0, 8);
-    
-    // 포맷팅: YYYY.MM.DD
     let formatted = limited;
     if (limited.length > 4) {
       formatted = `${limited.slice(0, 4)}.${limited.slice(4)}`;
@@ -62,7 +57,6 @@ export default function StepProfileInfo({ goPrev, goNext }: StepProfileInfoProps
     if (limited.length > 6) {
       formatted = `${limited.slice(0, 4)}.${limited.slice(4, 6)}.${limited.slice(6)}`;
     }
-    
     setField("birthDate", formatted);
   };
 
@@ -75,7 +69,11 @@ export default function StepProfileInfo({ goPrev, goNext }: StepProfileInfoProps
 
   return (
     <>
-      <SignupHeader onBack={goPrev} totalSteps={5} currentStep={5} />
+      <SignupHeader 
+        onBack={goPrev} 
+        totalSteps={isSocial ? 3 : 5} 
+        currentStep={isSocial ? 3 : 5} 
+      />
       <div className="mt-12 ml-4">
         <p className="text-black text-head-3-semibold tracking-tight mb-0">Modelly에서 사용할</p>
         <p className="text-black text-head-3-semibold tracking-tight mb-0">프로필 정보를 입력해주세요</p>
