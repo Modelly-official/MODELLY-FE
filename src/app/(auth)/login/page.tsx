@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const LoginPage = () => {
   return (
-  <div className="w-[375px] mx-auto relative bg-white font-sans">
+  <div className="relative bg-white font-sans">
       {/* Modelly 로고 */}
       <div className="mt-[164px] mx-auto mb-0 w-[212px] h-[58px]">
         <Image

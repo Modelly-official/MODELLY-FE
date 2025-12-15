@@ -18,7 +18,7 @@ const SignupFunnel: React.FC<SignupFunnelProps> = ({ isSocial }) => {
   });
 
   return (
-    <div className="w-[375px] mx-auto bg-white min-h-screen relative">
+    <div className="bg-white min-h-screen relative">
       <Funnel>
         <Funnel.Step name="terms">
           <StepTerms

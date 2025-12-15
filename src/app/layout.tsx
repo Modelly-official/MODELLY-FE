@@ -13,8 +13,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className="min-h-screen overflow-x-hidden bg-white">
-        {children}
+      <body className="bg-white">
+        <div className="w-[375px] mx-auto min-h-screen overflow-x-hidden shadow-2xl">
+          {children}
+        </div>
       </body>
     </html>
   );

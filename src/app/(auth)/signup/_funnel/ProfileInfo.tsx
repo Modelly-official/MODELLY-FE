@@ -52,8 +52,8 @@ const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext, isSoc
 
   // 폼 유효성 검사
   const isFormValid = isDesigner
-    ? profileImage && nickname && gender && birthDate && storeName && address && category
-    : profileImage && nickname && gender && birthDate;
+    ?  nickname && gender && birthDate && storeName && address && category
+    :  nickname && gender && birthDate;
 
   return (
     <div className="min-h-screen flex flex-col">
