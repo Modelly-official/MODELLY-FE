@@ -2,9 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import SignupHeader from "@/src/components/signup/common/SignupHeader";
-import SignupTitle from "@/src/components/signup/common/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
+import { SignupHeader, SignupTitle, FixedBottomButton } from "@/src/components/signup";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types/signup";
 import SelectIcon from "@/public/icons/signup/select.svg";
@@ -14,7 +12,7 @@ import CheckedIcon from "@/public/icons/signup/checked.svg";
 
 type StepTermsProps = Omit<SignupStepProps, 'goPrev'>;
 
-const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
+export const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
   const router = useRouter();
   const { terms, setTerms } = useSignupStore();
   const allAgreed = terms.every((term) => term.checked);
@@ -54,5 +52,3 @@ const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
     </div>
   );
 };
-
-export default StepTerms;

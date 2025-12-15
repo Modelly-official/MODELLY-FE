@@ -6,7 +6,7 @@ interface SignupHeaderProps {
   currentStep: number;
 }
 
-const SignupHeader: React.FC<SignupHeaderProps> = ({ onBack, totalSteps, currentStep }) => {
+export const SignupHeader: React.FC<SignupHeaderProps> = ({ onBack, totalSteps, currentStep }) => {
   return (
     <div className="mt-15 mx-4">
       <button type="button" onClick={onBack} className="w-6 h-6 flex items-center justify-center cursor-pointer">
@@ -27,5 +27,3 @@ const SignupHeader: React.FC<SignupHeaderProps> = ({ onBack, totalSteps, current
     </div>
   );
 };
-
-export default SignupHeader;

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { SIGNUP_MESSAGES } from "@/src/constants/signup";
 import SignupCompletedIcon from "@/public/icons/signup/signup-completed.svg";
 
-const StepComplete: React.FC = () => {
+export const StepComplete: React.FC = () => {
   const router = useRouter();
 
   const handleStart = () => {
@@ -30,5 +30,3 @@ const StepComplete: React.FC = () => {
     </div>
   );
 };
-
-export default StepComplete;

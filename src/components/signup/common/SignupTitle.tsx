@@ -3,7 +3,7 @@ interface SignupTitleProps {
   line2?: string;
 }
 
-const SignupTitle: React.FC<SignupTitleProps> = ({ line1, line2 }) => {
+export const SignupTitle: React.FC<SignupTitleProps> = ({ line1, line2 }) => {
   return (
     <div className="mt-12 ml-4">
       <p className="text-black text-head-3-semibold tracking-tight mb-0">{line1}</p>
@@ -11,5 +11,3 @@ const SignupTitle: React.FC<SignupTitleProps> = ({ line1, line2 }) => {
     </div>
   );
 };
-
-export default SignupTitle;

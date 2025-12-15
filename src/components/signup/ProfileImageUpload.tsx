@@ -9,7 +9,7 @@ interface ProfileImageUploadProps {
   onImageUpload: (file: File) => void;
 }
 
-const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profileImage, onImageUpload }) => {
+export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profileImage, onImageUpload }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,5 +47,3 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profileImage, o
     </div>
   );
 };
-
-export default ProfileImageUpload;

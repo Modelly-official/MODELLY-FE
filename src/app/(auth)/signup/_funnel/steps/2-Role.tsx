@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import SignupHeader from "@/src/components/signup/common/SignupHeader";
-import SignupTitle from "@/src/components/signup/common/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
+import { SignupHeader, SignupTitle, FixedBottomButton } from "@/src/components/signup";
 import { SIGNUP_ROLES, SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types/signup";
 
@@ -12,7 +10,7 @@ interface StepRoleProps extends Omit<SignupStepProps, 'goPrev'> {
   goPrev: () => void;
 }
 
-const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) => {
+export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) => {
   const { role, setField } = useSignupStore();
   const [selectedRole, setSelectedRole] = useState<string | null>(role || null);
   const totalSteps = isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR;
@@ -50,5 +48,3 @@ const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) => {
     </div>
   );
 };
-
-export default StepRole;

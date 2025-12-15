@@ -11,7 +11,7 @@ interface TextInputProps {
   showClearButton?: boolean;
 }
 
-const TextInput: React.FC<TextInputProps> = ({
+export const TextInput: React.FC<TextInputProps> = ({
   label,
   value,
   onChange,
@@ -44,5 +44,3 @@ const TextInput: React.FC<TextInputProps> = ({
     </div>
   );
 };
-
-export default TextInput;

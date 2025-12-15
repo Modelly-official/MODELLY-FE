@@ -16,7 +16,7 @@ interface PasswordInputProps {
   maxLength?: number;
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = ({
+export const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
   value,
   onChange,
@@ -63,5 +63,3 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
     </div>
   );
 };
-
-export default PasswordInput;

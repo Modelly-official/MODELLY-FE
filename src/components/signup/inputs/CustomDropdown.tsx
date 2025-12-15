@@ -12,7 +12,7 @@ interface CustomDropdownProps {
   label?: string;
 }
 
-const CustomDropdown: React.FC<CustomDropdownProps> = ({
+export const CustomDropdown: React.FC<CustomDropdownProps> = ({
   value,
   onChange,
   options,
@@ -81,5 +81,3 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     </div>
   );
 };
-
-export default CustomDropdown;

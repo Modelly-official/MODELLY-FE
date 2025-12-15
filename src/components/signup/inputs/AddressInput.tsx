@@ -18,7 +18,7 @@ interface AddressInputProps {
   onDetailAddressChange: (value: string) => void;
 }
 
-const AddressInput: React.FC<AddressInputProps> = ({
+export const AddressInput: React.FC<AddressInputProps> = ({
   address,
   detailAddress,
   onAddressSearch,
@@ -91,5 +91,3 @@ const AddressInput: React.FC<AddressInputProps> = ({
     </div>
   );
 };
-
-export default AddressInput;

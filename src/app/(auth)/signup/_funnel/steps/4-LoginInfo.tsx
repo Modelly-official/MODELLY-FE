@@ -1,9 +1,11 @@
 "use client";
 
-import SignupHeader from "@/src/components/signup/common/SignupHeader";
-import SignupTitle from "@/src/components/signup/common/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
-import PasswordInput from "@/src/components/signup/inputs/PasswordInput";
+import { 
+  SignupHeader, 
+  SignupTitle, 
+  FixedBottomButton,
+  PasswordInput 
+} from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
 import { validateField, filterAlphanumeric, validateMatch } from "@/src/utils/validation";
@@ -14,7 +16,7 @@ interface StepLoginInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, isSocial }) => {
+export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, isSocial }) => {
   const { 
     username, 
     password, 
@@ -136,5 +138,3 @@ const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, isSocial 
     </div>
   );
 };
-
-export default StepLoginInfo;

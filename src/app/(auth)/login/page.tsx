@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const LoginPage = () => {
+export const LoginPage = () => {
   return (
   <div className="relative bg-white font-sans">
       {/* Modelly 로고 */}
@@ -81,5 +81,3 @@ const LoginPage = () => {
     </div>
   );
 };
-
-export default LoginPage;

@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import BasicInfoInput from "@/src/components/signup/inputs/BasicInfoInput";
-import PhoneInputWithAuth from "@/src/components/signup/inputs/PhoneInputWithAuth";
-import AuthCodeInput from "@/src/components/signup/inputs/AuthCodeInput";
-import SignupHeader from "@/src/components/signup/common/SignupHeader";
-import SignupTitle from "@/src/components/signup/common/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
+import { 
+  BasicInfoInput, 
+  PhoneInputWithAuth, 
+  AuthCodeInput,
+  SignupHeader, 
+  SignupTitle, 
+  FixedBottomButton 
+} from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { validatePhoneNumber, verifyAuthCode } from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
@@ -16,7 +18,7 @@ interface StepBasicInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, isSocial }) => {
+export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, isSocial }) => {
   const { name, phoneNumber, email, setField } = useSignupStore();
   const [authCode, setAuthCode] = useState("");
   const [authCodeError, setAuthCodeError] = useState("");
@@ -78,5 +80,3 @@ const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, isSocial 
     </div>
   );
 };
-
-export default StepBasicInfo;

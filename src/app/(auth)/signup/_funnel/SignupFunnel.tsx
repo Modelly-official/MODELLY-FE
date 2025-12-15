@@ -1,18 +1,20 @@
 "use client";
 
 import { useFunnel } from "@/src/hooks/signup/useFunnel";
-import StepTerms from "./steps/1-Terms";
-import StepRole from "./steps/2-Role";
-import StepBasicInfo from "./steps/3-BasicInfo";
-import StepLoginInfo from "./steps/4-LoginInfo";
-import StepProfileInfo from "./steps/5-ProfileInfo";
-import StepComplete from "./steps/6-Complete";
+import { 
+  StepTerms, 
+  StepRole, 
+  StepBasicInfo, 
+  StepLoginInfo, 
+  StepProfileInfo, 
+  StepComplete 
+} from ".";
 
 interface SignupFunnelProps {
   isSocial: boolean;
 }
 
-const SignupFunnel: React.FC<SignupFunnelProps> = ({ isSocial }) => {
+export const SignupFunnel: React.FC<SignupFunnelProps> = ({ isSocial }) => {
   const [Funnel, setStep] = useFunnel(["terms", "role", "basicInfo", "loginInfo", "profileInfo", "complete"] as const, {
     initialStep: "terms",
   });
@@ -61,5 +63,3 @@ const SignupFunnel: React.FC<SignupFunnelProps> = ({ isSocial }) => {
     </div>
   );
 };
-
-export default SignupFunnel;

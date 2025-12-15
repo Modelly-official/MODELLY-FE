@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "모델과 디자이너 매칭 플랫폼",
 };
 
-const RootLayout = ({
+export const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -21,5 +21,3 @@ const RootLayout = ({
     </html>
   );
 };
-
-export default RootLayout;

@@ -4,7 +4,7 @@ interface FixedBottomButtonProps {
   children: React.ReactNode;
 }
 
-const FixedBottomButton: React.FC<FixedBottomButtonProps> = ({ onClick, disabled, children }) => {
+export const FixedBottomButton: React.FC<FixedBottomButtonProps> = ({ onClick, disabled, children }) => {
   return (
     <button
       type="button"
@@ -18,5 +18,3 @@ const FixedBottomButton: React.FC<FixedBottomButtonProps> = ({ onClick, disabled
     </button>
   );
 };
-
-export default FixedBottomButton;
