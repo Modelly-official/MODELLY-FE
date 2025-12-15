@@ -12,12 +12,9 @@ import {
   ProfileImageUpload 
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import { 
-  formatBirthDate, 
-  convertImageToBase64,
-  convertGenderToApi,
-  convertCategoryToApi 
-} from "@/src/utils/validation";
+import { formatBirthDate, formatAddress } from "@/src/utils/format";
+import { convertImageToBase64 } from "@/src/utils/image";
+import { convertGenderToApi, convertCategoryToApi } from "@/src/utils/converter";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import { signup } from "@/src/apis";
 import type { SignupStepProps } from "@/src/types/signup";
@@ -77,6 +74,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
 
     setIsSubmitting(true);
     try {
+      const { addressLine1, addressLine2 } = formatAddress(address, detailAddress);
       const signupData: SignupRequest = {
         base: {
           loginId: username,
@@ -92,8 +90,8 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         ...(isDesigner ? {
           designer: {
             shop: storeName,
-            addressLine1: address,
-            addressLine2: detailAddress || "",
+            addressLine1: addressLine1,
+            addressLine2: addressLine2 || "",
             category: convertCategoryToApi(category),
             nickname: nickname,
           }

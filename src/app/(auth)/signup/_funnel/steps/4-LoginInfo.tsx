@@ -10,7 +10,8 @@ import {
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { checkLoginId } from "@/src/apis";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
-import { validateField, filterAlphanumeric, validateMatch } from "@/src/utils/validation";
+import { validateField, validateMatch } from "@/src/utils/validation";
+import { formatLoginId } from "@/src/utils/format";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types/signup";
 
@@ -33,7 +34,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
   } = useSignupStore();
   const [isChecking, setIsChecking] = useState(false);
 
-  // 아이디 중복 확인 (API 연동)
+  // 아이디 중복 확인
   const checkUsername = async () => {
     const fieldValidation = validateField(usernameSchema, username);
     if (fieldValidation !== "success") {
@@ -59,7 +60,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
 
   // 아이디 입력 처리 (영어 소문자, 숫자만)
   const handleUsernameChange = (value: string) => {
-    setField("username", filterAlphanumeric(value));
+    setField("username", formatLoginId(value));
     setIsUsernameAvailable(null);
   };
 
