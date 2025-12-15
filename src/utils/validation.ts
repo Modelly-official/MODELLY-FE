@@ -48,12 +48,24 @@ export function convertImageToBase64(file: File): Promise<string> {
   });
 }
 
-// 전화번호 유효성 검증 (최소 10자리)
-export function validatePhoneNumber(phoneNumber: string): boolean {
-  return phoneNumber.length >= 10;
+// 성별을 API 형식으로 변환
+export function convertGenderToApi(gender: string): "MALE" | "FEMALE" {
+  return gender === "남성" ? "MALE" : "FEMALE";
 }
 
-// 인증번호 검증 (API 연동 전 임시 로직)
-export function verifyAuthCode(authCode: string, expectedCode: string = "1234"): boolean {
-  return authCode === expectedCode;
+// 카테고리를 API 형식으로 변환
+export function convertCategoryToApi(category: string): "HAIR" | "NAIL" | "TATTOO" | "EYELASH" {
+  const categoryMap: Record<string, "HAIR" | "NAIL" | "TATTOO" | "EYELASH"> = {
+    "헤어": "HAIR",
+    "네일": "NAIL",
+    "타투": "TATTOO",
+    "속눈썹": "EYELASH",
+  };
+  return categoryMap[category] || "HAIR";
+}
+
+// 전화번호 유효성 검증
+export function validatePhoneNumber(phoneNumber: string): boolean {
+  const numbers = phoneNumber.replace(/-/g, '');
+  return numbers.length >= 10;
 }

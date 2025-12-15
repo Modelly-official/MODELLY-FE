@@ -12,7 +12,12 @@ import {
   ProfileImageUpload 
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import { formatBirthDate, convertImageToBase64 } from "@/src/utils/validation";
+import { 
+  formatBirthDate, 
+  convertImageToBase64,
+  convertGenderToApi,
+  convertCategoryToApi 
+} from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import { signup } from "@/src/apis";
 import type { SignupStepProps } from "@/src/types/signup";
@@ -79,7 +84,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           email: email,
           name: name,
           phoneNum: phoneNumber.replace(/-/g, ''),
-          gender: gender === "남성" ? "MALE" : "FEMALE",
+          gender: convertGenderToApi(gender),
           birth: birthDate.replace(/\./g, '-'),
           userRole: isDesigner ? "DESIGNER" : "MODEL",
           imageUrl: profileImage || "",
@@ -89,7 +94,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
             shop: storeName,
             addressLine1: address,
             addressLine2: detailAddress || "",
-            category: category === "헤어" ? "HAIR" : category === "네일" ? "NAIL" : category === "타투" ? "TATTOO" : "EYELASH",
+            category: convertCategoryToApi(category),
             nickname: nickname,
           }
         } : {
