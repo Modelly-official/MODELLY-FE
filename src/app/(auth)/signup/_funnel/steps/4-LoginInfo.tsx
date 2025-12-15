@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { 
   SignupHeader, 
   SignupTitle, 
@@ -7,6 +8,7 @@ import {
   PasswordInput 
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
+import { checkLoginId } from "@/src/apis";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
 import { validateField, filterAlphanumeric, validateMatch } from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
@@ -29,11 +31,30 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
     setPasswordError,
     setPasswordConfirmError,
   } = useSignupStore();
+  const [isChecking, setIsChecking] = useState(false);
 
-  // 아이디 중복 확인(API 연동 전)
-  const checkUsername = () => {
-    const isValid = validateField(usernameSchema, username) === "success";
-    setIsUsernameAvailable(isValid);
+  // 아이디 중복 확인 (API 연동)
+  const checkUsername = async () => {
+    const fieldValidation = validateField(usernameSchema, username);
+    if (fieldValidation !== "success") {
+      setIsUsernameAvailable(false);
+      return;
+    }
+
+    setIsChecking(true);
+    try {
+      const response = await checkLoginId(username);
+      if (response.isSuccess) {
+        setIsUsernameAvailable(true);
+      } else {
+        setIsUsernameAvailable(false);
+      }
+    } catch (error) {
+      setIsUsernameAvailable(false);
+      console.error("아이디 중복 체크 에러:", error);
+    } finally {
+      setIsChecking(false);
+    }
   };
 
   // 아이디 입력 처리 (영어 소문자, 숫자만)
@@ -94,9 +115,9 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
                     : "bg-gray-200 text-gray-600"
                 }`}
                 onClick={checkUsername}
-                disabled={!username || username.length < 1}
+                disabled={!username || username.length < 1 || isChecking}
               >
-                중복확인
+                {isChecking ? "확인중" : "중복확인"}
               </button>
             </div>
             {isUsernameAvailable === true && (

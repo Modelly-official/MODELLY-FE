@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { 
   SignupHeader, 
   SignupTitle, 
@@ -13,13 +14,17 @@ import {
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { formatBirthDate, convertImageToBase64 } from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
+import { signup } from "@/src/apis";
 import type { SignupStepProps } from "@/src/types/signup";
+import type { SignupRequest } from "@/src/types/auth";
 
 interface StepProfileInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
 export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext, isSocial = false }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const {
     role,
     nickname,
@@ -30,6 +35,11 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
     detailAddress,
     category,
     profileImage,
+    username,
+    password,
+    email,
+    name,
+    phoneNumber,
     setField,
     setProfileImage,
   } = useSignupStore();
@@ -56,6 +66,54 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
   const isFormValid = isDesigner
     ?  nickname && gender && birthDate && storeName && address && category
     :  nickname && gender && birthDate;
+
+  const handleSubmit = async () => {
+    if (!isFormValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const signupData: SignupRequest = {
+        base: {
+          loginId: username,
+          password: password,
+          email: email,
+          name: name,
+          phoneNum: phoneNumber.replace(/-/g, ''),
+          gender: gender === "남성" ? "MALE" : "FEMALE",
+          birth: birthDate.replace(/\./g, '-'),
+          userRole: isDesigner ? "DESIGNER" : "MODEL",
+          imageUrl: profileImage || "",
+        },
+        ...(isDesigner ? {
+          designer: {
+            shop: storeName,
+            addressLine1: address,
+            addressLine2: detailAddress || "",
+            category: category === "헤어" ? "HAIR" : category === "네일" ? "NAIL" : category === "타투" ? "TATTOO" : "EYELASH",
+            nickname: nickname,
+          }
+        } : {
+          model: {
+            nickname: nickname,
+          }
+        })
+      };
+      
+      const response = await signup(signupData);
+      
+      if (response.isSuccess) {
+        goNext();
+      } else {
+        alert(response.message || "회원가입에 실패했습니다.");
+      }
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      const errorMessage = axiosError.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -123,8 +181,11 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         </div>
 
         <div className={`mb-[42px] ${isDesigner ? "mt-[45px]" : "mt-auto"}`}>
-          <FixedBottomButton disabled={!isFormValid} onClick={goNext}>
-            {SIGNUP_MESSAGES.BUTTON.NEXT}
+          <FixedBottomButton 
+            disabled={!isFormValid || isSubmitting} 
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? "처리 중..." : SIGNUP_MESSAGES.BUTTON.NEXT}
           </FixedBottomButton>
         </div>
       </form>
