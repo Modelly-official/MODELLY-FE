@@ -6,21 +6,20 @@ export const metadata: Metadata = {
   description: "모델과 디자이너 매칭 플랫폼",
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
-    <html lang="ko">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-        <link rel="icon" href="/images/icon.svg" type="image/svg+xml" />
-      </head>
-      <body>
-        {children}
+    <html lang="ko" suppressHydrationWarning>
+      <body className="bg-white">
+        <div className="w-[375px] mx-auto min-h-screen overflow-x-hidden shadow-2xl">
+          {children}
+        </div>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
