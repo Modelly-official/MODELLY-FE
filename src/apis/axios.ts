@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/src/stores/useAuthStore';
 import axios from 'axios';
 
-// 인증 없이 접근 가능한 API
+// 인증 없이 접근 가능한 API (과제에서 썼던 방식 이용)
 const NON_AUTH_URLS = [
   '/auth/login',
   '/auth/signup',

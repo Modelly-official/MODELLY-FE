@@ -21,15 +21,15 @@ export function formatLoginId(value: string): string {
 
 // 주소 포맷팅 (시군구와 상세주소로 분리)
 export function formatAddress(fullAddress: string, detailAddress: string = ""): { addressLine1: string; addressLine2: string } {
-  // "서울 마포구 와우산로 94" 형태
+  // "서울 마포구 와우산로 94 (상수동, 홍익대학교)" 형태
   const parts = fullAddress.trim().split(' ');
   
   // 시도 + 시군구 (처음 2개)
   const cityPart = parts.slice(0, 2).join(' '); // "서울 마포구"
-  const streetPart = parts.slice(2).join(' '); // "와우산로 94"
+  const streetPart = parts.slice(2).join(' '); // "와우산로 94 (상수동, 홍익대학교)"
   
   // addressLine2 = 나머지 주소 + 상세주소
-  const line2Parts = [streetPart, detailAddress].filter(Boolean);
+  const line2Parts = [streetPart, detailAddress].filter(Boolean); //"와우산로 94 (상수동, 홍익대학교) 503호"
   
   return {
     addressLine1: cityPart,
