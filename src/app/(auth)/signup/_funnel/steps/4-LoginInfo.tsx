@@ -1,9 +1,9 @@
 "use client";
 
-import SignupHeader from "@/src/components/signup/SignupHeader";
-import SignupTitle from "@/src/components/signup/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
-import PasswordInput from "@/src/components/signup/PasswordInput";
+import SignupHeader from "@/src/components/signup/common/SignupHeader";
+import SignupTitle from "@/src/components/signup/common/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
+import PasswordInput from "@/src/components/signup/inputs/PasswordInput";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
 import { validateField, filterAlphanumeric, validateMatch } from "@/src/utils/validation";

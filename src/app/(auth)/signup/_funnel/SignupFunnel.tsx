@@ -1,12 +1,12 @@
 "use client";
 
 import { useFunnel } from "@/src/hooks/signup/useFunnel";
-import StepTerms from "./Terms";
-import StepRole from "./Role";
-import StepBasicInfo from "./BasicInfo";
-import StepLoginInfo from "./LoginInfo";
-import StepProfileInfo from "./ProfileInfo";
-import StepComplete from "./Complete";
+import StepTerms from "./steps/1-Terms";
+import StepRole from "./steps/2-Role";
+import StepBasicInfo from "./steps/3-BasicInfo";
+import StepLoginInfo from "./steps/4-LoginInfo";
+import StepProfileInfo from "./steps/5-ProfileInfo";
+import StepComplete from "./steps/6-Complete";
 
 interface SignupFunnelProps {
   isSocial: boolean;

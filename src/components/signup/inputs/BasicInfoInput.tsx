@@ -1,6 +1,7 @@
 import React from "react";
 
-import { SignupStoreField } from "../../stores/useSignupStore";
+import { SignupStoreField } from "@/src/stores/useSignupStore";
+
 interface BasicInfoInputProps {
   name: string;
   email: string;

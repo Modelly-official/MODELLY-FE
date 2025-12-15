@@ -1,12 +1,12 @@
 "use client";
 
-import SignupHeader from "@/src/components/signup/SignupHeader";
-import SignupTitle from "@/src/components/signup/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
-import CustomDropdown from "@/src/components/signup/CustomDropdown";
-import TextInput from "@/src/components/signup/TextInput";
-import GenderSelect from "@/src/components/signup/GenderSelect";
-import AddressInput from "@/src/components/signup/AddressInput";
+import SignupHeader from "@/src/components/signup/common/SignupHeader";
+import SignupTitle from "@/src/components/signup/common/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
+import CustomDropdown from "@/src/components/signup/inputs/CustomDropdown";
+import TextInput from "@/src/components/signup/inputs/TextInput";
+import GenderSelect from "@/src/components/signup/inputs/GenderSelect";
+import AddressInput from "@/src/components/signup/inputs/AddressInput";
 import ProfileImageUpload from "@/src/components/signup/ProfileImageUpload";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { formatBirthDate, convertImageToBase64 } from "@/src/utils/validation";

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import BasicInfoInput from "@/src/components/signup/BasicInfoInput";
-import PhoneInputWithAuth from "@/src/components/signup/PhoneInputWithAuth";
-import AuthCodeInput from "@/src/components/signup/AuthCodeInput";
-import SignupHeader from "@/src/components/signup/SignupHeader";
-import SignupTitle from "@/src/components/signup/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
+import BasicInfoInput from "@/src/components/signup/inputs/BasicInfoInput";
+import PhoneInputWithAuth from "@/src/components/signup/inputs/PhoneInputWithAuth";
+import AuthCodeInput from "@/src/components/signup/inputs/AuthCodeInput";
+import SignupHeader from "@/src/components/signup/common/SignupHeader";
+import SignupTitle from "@/src/components/signup/common/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
 import { useSignupStore } from "@/src/stores/useSignupStore";
 import { validatePhoneNumber, verifyAuthCode } from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";

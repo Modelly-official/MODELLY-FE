@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import SignupHeader from "@/src/components/signup/SignupHeader";
-import SignupTitle from "@/src/components/signup/SignupTitle";
-import FixedBottomButton from "@/src/components/signup/FixedBottomButton";
+import SignupHeader from "@/src/components/signup/common/SignupHeader";
+import SignupTitle from "@/src/components/signup/common/SignupTitle";
+import FixedBottomButton from "@/src/components/signup/common/FixedBottomButton";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types/signup";
 import SelectIcon from "@/public/icons/signup/select.svg";
