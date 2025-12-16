@@ -1,7 +1,7 @@
-import { useAuthStore } from '@/src/stores/useAuthStore';
+import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores/useAuthStore';
 import axios from 'axios';
 
-// 인증 없이 접근 가능한 API (과제에서 썼던 방식 이용)
+// 인증 없이 접근 가능한 API
 const NON_AUTH_URLS = [
   '/auth/login',
   '/auth/signup',
@@ -15,10 +15,10 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: true, // refreshToken 쿠키 자동 전송
 });
 
-// Request Interceptor: accessToken 자동 주입
+// Request Interceptor: 쿠키에서 accessToken 읽어서 헤더에 추가
 axiosInstance.interceptors.request.use(
   (config) => {
     const isNonAuthRequest = NON_AUTH_URLS.some((path) =>
@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use(
     );
 
     if (!isNonAuthRequest) {
-      const token = useAuthStore.getState().accessToken;
+      const token = getAccessToken(); // 쿠키에서 읽기
       if (token) {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
@@ -38,13 +38,13 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response Interceptor: 새 accessToken 자동 저장
+// Response Interceptor: 새 accessToken이 오면 쿠키에 저장
 axiosInstance.interceptors.response.use(
   (response) => {
     const authHeader = response.headers['authorization'];
     if (authHeader?.startsWith('Bearer ')) {
       const newToken = authHeader.split(' ')[1];
-      useAuthStore.getState().setAccessToken(newToken);
+      setAccessToken(newToken); // 쿠키에 저장
     }
     return response;
   },
@@ -54,15 +54,17 @@ axiosInstance.interceptors.response.use(
     const code = res?.data?.serviceCode || res?.data?.data?.codeName || '';
 
     const shouldLogout =
-      res?.status === 400 &&
-      (code === 'INVALID_REFRESH_TOKEN' ||
-        code === 'INVALID_TOKEN' ||
-        code === 'ACCESS_TOKEN_EXPIRED');
+      res?.status === 401 ||
+      (res?.status === 400 &&
+        (code === 'INVALID_REFRESH_TOKEN' ||
+          code === 'INVALID_TOKEN' ||
+          code === 'ACCESS_TOKEN_EXPIRED'));
 
     if (shouldLogout) {
-      clearAuth();
+      clearAuth(); // 쿠키도 함께 삭제됨
     }
 
     return Promise.reject(error);
   },
 );
+

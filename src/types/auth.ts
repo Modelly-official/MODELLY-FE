@@ -54,6 +54,31 @@ export interface DuplicateCheckResponse {
   available: boolean;
 }
 
+// 로그인 관련 타입
+
+export interface LoginRequest {
+  loginId: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  userId: number;
+  accessToken: string;
+}
+
+export interface LogoutResponse {
+  message: string;
+}
+
+export interface RefreshResponse {
+  accessToken: string;
+}
+
+export interface ValidateResponse {
+  message: string;
+  isValid: 'VALID' | 'INVALID';
+}
+
 // 공통 API 응답 타입
 
 export interface ApiResponse<T> {
