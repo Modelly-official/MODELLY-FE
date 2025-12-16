@@ -45,7 +45,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
     setIsChecking(true);
     try {
       const response = await checkLoginId(username);
-      if (response.isSuccess) {
+      if (response.isSuccess && response.result.available) {
         setIsUsernameAvailable(true);
       } else {
         setIsUsernameAvailable(false);

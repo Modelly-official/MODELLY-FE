@@ -29,7 +29,7 @@ const LoginPage = () => {
         // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
         setUser({
           userId: response.result.userId,
-          role: "model", // TODO: API 응답에 role 추가 필요
+          role: response.result.role?.toLowerCase() as "model" | "designer" || "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
           username: loginId,
           loginId,
         });

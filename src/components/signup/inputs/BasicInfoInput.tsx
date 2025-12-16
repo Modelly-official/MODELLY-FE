@@ -31,12 +31,12 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
     setEmailStatus("checking");
     try {
       const response = await checkEmail(email);
-      if (response.isSuccess) {
+      if (response.isSuccess && response.result.available) {
         setEmailStatus("valid");
         setEmailMessage("사용 가능한 이메일입니다.");
       } else {
         setEmailStatus("invalid");
-        setEmailMessage(response.message || "이미 사용 중인 이메일입니다.");
+        setEmailMessage("이미 사용 중인 이메일입니다.");
       }
     } catch (error) {
       setEmailStatus("invalid");
