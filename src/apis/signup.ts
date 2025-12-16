@@ -2,15 +2,22 @@ import { axiosInstance } from './axios';
 import type {
   ApiResponse,
   SignupRequest,
+  SocialSignupRequest,
   SignupResponse,
   SmsResponse,
   DuplicateCheckResponse,
 } from '@/src/types/auth';
 
 
-// 회원가입
+// 일반 회원가입
 export const signup = async (data: SignupRequest): Promise<ApiResponse<SignupResponse>> => {
   const response = await axiosInstance.post<ApiResponse<SignupResponse>>('/auth/signup', data);
+  return response.data;
+};
+
+// 소셜 회원가입
+export const socialSignup = async (data: SocialSignupRequest): Promise<ApiResponse<SignupResponse>> => {
+  const response = await axiosInstance.post<ApiResponse<SignupResponse>>('/auth/social/signup', data);
   return response.data;
 };
 

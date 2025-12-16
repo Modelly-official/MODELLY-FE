@@ -24,6 +24,27 @@ export interface SignupRequest {
   };
 }
 
+// 소셜 회원가입 요청 타입
+export interface SocialSignupRequest {
+  base: {
+    phoneNum: string;
+    gender: 'MALE' | 'FEMALE';
+    birth: string; // YYYY-MM-DD
+    userRole: 'DESIGNER' | 'MODEL';
+    imageUrl?: string;
+  };
+  designer?: {
+    shop: string;
+    addressLine1: string;
+    addressLine2: string;
+    category: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
+    nickname: string;
+  };
+  model?: {
+    nickname: string;
+  };
+}
+
 export interface SignupResponse {
   message: string;
   loginId: string;

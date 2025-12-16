@@ -16,9 +16,9 @@ import { formatBirthDate, formatAddress } from "@/src/utils/format";
 import { convertImageToBase64 } from "@/src/utils/image";
 import { convertGenderToApi, convertCategoryToApi } from "@/src/utils/converter";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
-import { signup } from "@/src/apis";
+import { signup, socialSignup } from "@/src/apis";
 import type { SignupStepProps } from "@/src/types/signup";
-import type { SignupRequest } from "@/src/types/auth";
+import type { SignupRequest, SocialSignupRequest } from "@/src/types/auth";
 
 interface StepProfileInfoProps extends SignupStepProps {
   goPrev: () => void;
@@ -75,39 +75,76 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
     setIsSubmitting(true);
     try {
       const { addressLine1, addressLine2 } = formatAddress(address, detailAddress);
-      const signupData: SignupRequest = {
-        base: {
-          loginId: username,
-          password: password,
-          email: email,
-          name: name,
-          phoneNum: phoneNumber.replace(/-/g, ''),
-          gender: convertGenderToApi(gender),
-          birth: birthDate.replace(/\./g, '-'),
-          userRole: isDesigner ? "DESIGNER" : "MODEL",
-          imageUrl: profileImage || "",
-        },
-        ...(isDesigner ? {
-          designer: {
-            shop: storeName,
-            addressLine1: addressLine1,
-            addressLine2: addressLine2 || "",
-            category: convertCategoryToApi(category),
-            nickname: nickname,
-          }
-        } : {
-          model: {
-            nickname: nickname,
-          }
-        })
-      };
       
-      const response = await signup(signupData);
-      
-      if (response.isSuccess) {
-        goNext();
-      } else {
-        alert(response.message || "회원가입에 실패했습니다.");
+      // 소셜 회원가입
+      if (isSocial) {
+        const socialSignupData: SocialSignupRequest = {
+          base: {
+            phoneNum: phoneNumber.replace(/-/g, ''),
+            gender: convertGenderToApi(gender),
+            birth: birthDate.replace(/\./g, '-'),
+            userRole: isDesigner ? "DESIGNER" : "MODEL",
+            imageUrl: profileImage || "",
+          },
+          ...(isDesigner ? {
+            designer: {
+              shop: storeName,
+              addressLine1: addressLine1,
+              addressLine2: addressLine2 || "",
+              category: convertCategoryToApi(category),
+              nickname: nickname,
+            }
+          } : {
+            model: {
+              nickname: nickname,
+            }
+          })
+        };
+        
+        const response = await socialSignup(socialSignupData);
+        
+        if (response.isSuccess) {
+          goNext();
+        } else {
+          alert(response.message || "회원가입에 실패했습니다.");
+        }
+      } 
+      // 일반 회원가입
+      else {
+        const signupData: SignupRequest = {
+          base: {
+            loginId: username,
+            password: password,
+            email: email,
+            name: name,
+            phoneNum: phoneNumber.replace(/-/g, ''),
+            gender: convertGenderToApi(gender),
+            birth: birthDate.replace(/\./g, '-'),
+            userRole: isDesigner ? "DESIGNER" : "MODEL",
+            imageUrl: profileImage || "",
+          },
+          ...(isDesigner ? {
+            designer: {
+              shop: storeName,
+              addressLine1: addressLine1,
+              addressLine2: addressLine2 || "",
+              category: convertCategoryToApi(category),
+              nickname: nickname,
+            }
+          } : {
+            model: {
+              nickname: nickname,
+            }
+          })
+        };
+        
+        const response = await signup(signupData);
+        
+        if (response.isSuccess) {
+          goNext();
+        } else {
+          alert(response.message || "회원가입에 실패했습니다.");
+        }
       }
     } catch (error: unknown) {
       const axiosError = error as { response?: { data?: { message?: string } } };
