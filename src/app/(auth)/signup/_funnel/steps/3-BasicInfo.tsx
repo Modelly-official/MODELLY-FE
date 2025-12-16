@@ -10,7 +10,8 @@ import {
   FixedBottomButton 
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import { validatePhoneNumber, verifyAuthCode } from "@/src/utils/validation";
+import { sendSmsCode, verifySmsCode } from "@/src/apis";
+import { validatePhoneNumber } from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types/signup";
 
@@ -25,23 +26,48 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
   const [authCodeValid, setAuthCodeValid] = useState<boolean | null>(null);
   const [requestSent, setRequestSent] = useState(false);
 
-  const handleRequestPhoneAuth = () => {
+  const handleRequestPhoneAuth = async () => {
     if (!validatePhoneNumber(phoneNumber)) {
       setAuthCodeError("올바른 전화번호를 입력해주세요.");
       return;
     }
-    // TODO: API 연동 시 실제 인증번호 발송 로직으로 교체
-    setRequestSent(true);
-    setAuthCode("");
-    setAuthCodeValid(null);
-    setAuthCodeError("");
+    
+    try {
+      const response = await sendSmsCode(phoneNumber);
+      if (response.isSuccess) {
+        setRequestSent(true);
+        setAuthCode("");
+        setAuthCodeValid(null);
+        setAuthCodeError("");
+      } else {
+        setAuthCodeError(response.message || "인증번호 발송에 실패했습니다.");
+      }
+    } catch (error) {
+      setAuthCodeError("인증번호 발송 중 오류가 발생했습니다.");
+      console.error("SMS 발송 에러:", error);
+    }
   };
 
-  const handleVerifyAuthCode = () => {
-    // TODO: API 연동 시 실제 인증번호 검증 로직으로 교체
-    const isValid = verifyAuthCode(authCode);
-    setAuthCodeValid(isValid);
-    setAuthCodeError(isValid ? "" : "인증번호가 일치하지 않습니다.");
+  const handleVerifyAuthCode = async () => {
+    if (!authCode) {
+      setAuthCodeError("인증번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await verifySmsCode(phoneNumber, authCode);
+      if (response.isSuccess) {
+        setAuthCodeValid(true);
+        setAuthCodeError("");
+      } else {
+        setAuthCodeValid(false);
+        setAuthCodeError(response.message || "인증번호가 일치하지 않습니다.");
+      }
+    } catch (error) {
+      setAuthCodeValid(false);
+      setAuthCodeError("인증번호 검증 중 오류가 발생했습니다.");
+      console.error("SMS 검증 에러:", error);
+    }
   };
 
   if (isSocial) return null;

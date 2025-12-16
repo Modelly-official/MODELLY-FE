@@ -1,7 +1,51 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { login } from "@/src/apis";
+import { useAuthStore } from "@/src/stores/useAuthStore";
 
 const LoginPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const { setUser } = useAuthStore();
+  
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    if (!loginId || !password) {
+      alert("아이디와 비밀번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await login({ loginId, password });
+      
+      if (response.isSuccess && response.result) {
+        // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
+        setUser({
+          userId: response.result.userId,
+          role: response.result.role?.toLowerCase() as "model" | "designer" || "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
+          username: loginId,
+          loginId,
+        });
+        
+        // 원래 페이지로 리다이렉트
+        router.push(callbackUrl);
+      } else {
+        alert(response.message || "로그인에 실패했습니다.");
+      }
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      const errorMessage = axiosError.response?.data?.message || "로그인 중 오류가 발생했습니다.";
+      alert(errorMessage);
+    }
+  };
+
   return (
   <div className="relative bg-white font-sans">
       {/* Modelly 로고 */}
@@ -25,6 +69,8 @@ const LoginPage = () => {
           <input
             type="text"
             placeholder="아이디를 입력하세요"
+            value={loginId}
+            onChange={(e) => setLoginId(e.target.value)}
             className="w-full border border-gray-400 rounded-xl p-4 text-black placeholder:text-gray-600 text-body-2-medium tracking-tight bg-white outline-none"
           />
         </div>
@@ -35,13 +81,17 @@ const LoginPage = () => {
           <input
             type="password"
             placeholder="비밀번호를 입력하세요"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
             className="w-full border border-gray-400 rounded-xl p-4 text-black placeholder:text-gray-600 text-body-2-medium tracking-tight bg-white outline-none"
           />
         </div>
 
         {/* 로그인 버튼 */}
         <button
-          className="w-full bg-gray-900 text-blue-100 rounded-full py-4 px-2 text-body-1-semibold tracking-tight mb-6"
+          onClick={handleLogin}
+          className="w-full bg-gray-900 text-blue-100 rounded-full py-4 px-2 text-body-1-semibold tracking-tight mb-6 cursor-pointer"
         >
           로그인
         </button>

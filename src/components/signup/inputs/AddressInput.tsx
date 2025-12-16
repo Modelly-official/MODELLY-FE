@@ -30,6 +30,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
     let fullAddress = data.address;
     let extraAddress = "";
 
+    // 도로명 주소인 경우 추가 정보 포함하도록 (법정동, 건물명), 예: "서울 마포구 와우산로 94 (상수동, 홍익대학교)"
     if (data.addressType === "R") {
       if (data.bname !== "") {
         extraAddress += data.bname;
