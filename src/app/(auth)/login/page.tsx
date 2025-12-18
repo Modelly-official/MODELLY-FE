@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { login } from "@/src/apis";
 import { useAuthStore } from "@/src/stores/useAuthStore";
+import { SOCIAL_LOGIN_URLS } from "@/src/utils/socialLogin";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -124,38 +125,41 @@ const LoginPage = () => {
         {/* SNS 아이콘 */}
         <div className="flex gap-6 justify-center">
           {/* 카카오 로그인 */}
-          <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full cursor-pointer bg-[#FFE812] flex justify-center pt-[14px] pb-[10px]">
-              <Image
-                src="/icons/login/kakao.svg"
-                alt="카카오 로그인"
-                width={36}
-                height={36}
-              />
-            </div>
-          </Link>
+          <button
+            onClick={() => (window.location.href = SOCIAL_LOGIN_URLS.kakao)}
+            className="w-[60px] h-[60px] rounded-full cursor-pointer bg-[#FFE812] flex justify-center pt-[14px] pb-[10px]"
+          >
+            <Image
+              src="/icons/login/kakao.svg"
+              alt="카카오 로그인"
+              width={36}
+              height={36}
+            />
+          </button>
           {/* 네이버 로그인 */}
-          <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full cursor-pointer bg-[#00C737] flex justify-center items-center">
-              <Image
-                src="/icons/login/naver.svg"
-                alt="네이버 로그인"
-                width={24}
-                height={24}
-              />
-            </div>
-          </Link>
+          <button
+            onClick={() => (window.location.href = SOCIAL_LOGIN_URLS.naver)}
+            className="w-[60px] h-[60px] rounded-full cursor-pointer bg-[#00C737] flex justify-center items-center"
+          >
+            <Image
+              src="/icons/login/naver.svg"
+              alt="네이버 로그인"
+              width={24}
+              height={24}
+            />
+          </button>
           {/* 구글 로그인 */}
-          <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full cursor-pointer bg-gray-300 flex items-center justify-center">
-              <Image
-                src="/icons/login/google.svg"
-                alt="구글 로그인"
-                width={30}
-                height={31}
-              />
-            </div>
-          </Link>
+          <button
+            onClick={() => (window.location.href = SOCIAL_LOGIN_URLS.google)}
+            className="w-[60px] h-[60px] rounded-full cursor-pointer bg-gray-300 flex items-center justify-center"
+          >
+            <Image
+              src="/icons/login/google.svg"
+              alt="구글 로그인"
+              width={30}
+              height={31}
+            />
+          </button>
         </div>
       </div>
     </div>
