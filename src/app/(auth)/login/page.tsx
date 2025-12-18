@@ -12,7 +12,7 @@ const LoginPage = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const { setUser } = useAuthStore();
-  
+
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
 
@@ -24,7 +24,7 @@ const LoginPage = () => {
 
     try {
       const response = await login({ loginId, password });
-      
+
       if (response.isSuccess && response.result) {
         // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
         setUser({
@@ -33,7 +33,7 @@ const LoginPage = () => {
           username: loginId,
           loginId,
         });
-        
+
         // 원래 페이지로 리다이렉트
         router.push(callbackUrl);
       } else {
@@ -47,7 +47,7 @@ const LoginPage = () => {
   };
 
   return (
-  <div className="relative bg-white font-sans">
+    <div className="relative bg-white font-sans">
       {/* Modelly 로고 */}
       <div className="mt-[164px] mx-auto mb-0 w-[212px] h-[58px]">
         <Image
@@ -116,15 +116,37 @@ const LoginPage = () => {
         <div className="flex gap-6 justify-center">
           {/* 카카오 로그인 */}
           <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
+            <div className="w-[60px] h-[60px] rounded-full cursor-pointer bg-[#FFE812] flex justify-center pt-[14px] pb-[10px]">
+              <Image
+                src="/icons/login/kakao.svg"
+                alt="카카오 로그인"
+                width={36}
+                height={36}
+              />
+            </div>
           </Link>
           {/* 네이버 로그인 */}
           <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
+            <div className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer">
+              <Image
+                src="/icons/login/naver.svg"
+                alt="네이버 로그인"
+                width={60}
+                height={60}
+                className="w-full h-full"
+              />
+            </div>
           </Link>
           {/* 구글 로그인 */}
           <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full bg-gray-200 cursor-pointer" />
+            <div className="w-[60px] h-[60px] rounded-full cursor-pointer bg-gray-300 flex items-center justify-center">
+              <Image
+                src="/icons/login/google.svg"
+                alt="구글 로그인"
+                width={30}
+                height={31}
+              />
+            </div>
           </Link>
         </div>
       </div>
