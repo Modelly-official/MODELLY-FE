@@ -6,6 +6,7 @@ export const PUBLIC_ROUTES = [
   '/login',
   '/signup',
   '/auth/callback', // 소셜 로그인 콜백
+  '/chat',
 ];
 
 // 로그인 후 모델만 접속 가능 경로 (임시로 넣어둠)
