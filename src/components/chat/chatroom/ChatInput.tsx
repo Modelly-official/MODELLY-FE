@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import SendIcon from "@/public/icons/chat/send.svg";
 import CameraIcon from "@/public/icons/chat/camera.svg";
 
@@ -15,6 +15,7 @@ export default function ChatInput({
   onSend: () => void;
   placeholder?: string;
 }) {
+  const [isComposing, setIsComposing] = useState(false);
   return (
     <div className="px-4 py-3 mb-6 bg-transparent">
       <div className="flex items-center gap-3">
@@ -25,16 +26,17 @@ export default function ChatInput({
         >
           <CameraIcon />
         </button>
-
         <div className="flex-1 relative">
           <div className="bg-white rounded-xl h-12 flex items-center px-4 pr-12 border border-gray-300">
             <input
-              className="flex-1 bg-transparent outline-none text-body-2-medium text-gray-700 placeholder-gray-600"
+              className="flex-1 bg-transparent outline-none text-body-2-medium text-black placeholder-gray-600"
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") onSend();
+                if (e.key === "Enter" && !isComposing) onSend();
               }}
             />
           </div>

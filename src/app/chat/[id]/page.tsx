@@ -32,12 +32,17 @@ export default function ChatRoom() {
   const [input, setInput] = useState('');
 
   const sendMessage = () => {
-    if (!input.trim()) return;
+    const text = input.trim();
+    if (!text) return;
+
+  const now = new Date();
+  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+
     const next: Message = {
       id: Date.now(),
       fromMe: true,
-      text: input.trim(),
-      time: '지금',
+      text,
+      time,
     };
     setMessages((m) => [...m, next]);
     setInput('');
@@ -48,12 +53,13 @@ export default function ChatRoom() {
       <ChatHeader title={chat.name} />
       <main className="flex-1 overflow-auto px-4 py-3">
         <ul className="space-y-3">
-          {messages.map((m) => (
-            <MessageItem
-              key={m.id}
-              message={m}
-            />
-          ))}
+          {messages.map((m, idx) => {
+            const next = messages[idx + 1];
+            const showTime = !next || next.time !== m.time;
+            return (
+              <MessageItem key={m.id} message={m} showTime={showTime} />
+            );
+          })}
         </ul>
       </main>
       <ChatInput value={input} onChange={setInput} onSend={sendMessage} />
