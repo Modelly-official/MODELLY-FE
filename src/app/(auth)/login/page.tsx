@@ -29,7 +29,9 @@ const LoginPage = () => {
         // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
         setUser({
           userId: response.result.userId,
-          role: response.result.role?.toLowerCase() as "model" | "designer" || "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
+          role:
+            (response.result.role?.toLowerCase() as "model" | "designer") ||
+            "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
           username: loginId,
           loginId,
         });
@@ -40,8 +42,11 @@ const LoginPage = () => {
         alert(response.message || "로그인에 실패했습니다.");
       }
     } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } };
-      const errorMessage = axiosError.response?.data?.message || "로그인 중 오류가 발생했습니다.";
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
+      const errorMessage =
+        axiosError.response?.data?.message || "로그인 중 오류가 발생했습니다.";
       alert(errorMessage);
     }
   };
@@ -102,13 +107,17 @@ const LoginPage = () => {
           <span>|</span>
           <span>비밀번호 찾기</span>
           <span>|</span>
-          <Link href="/signup" className="cursor-pointer hover:underline">회원가입</Link>
+          <Link href="/signup" className="cursor-pointer hover:underline">
+            회원가입
+          </Link>
         </div>
 
         {/* SNS 로그인 안내 */}
         <div className="flex items-center gap-4 justify-center mb-6">
           <div className="w-[98px] h-px bg-gray-500" />
-          <span className="text-gray-700 text-body-2-regular">SNS 계정으로 로그인</span>
+          <span className="text-gray-700 text-body-2-regular">
+            SNS 계정으로 로그인
+          </span>
           <div className="w-[98px] h-px bg-gray-500" />
         </div>
 
@@ -127,13 +136,12 @@ const LoginPage = () => {
           </Link>
           {/* 네이버 로그인 */}
           <Link href="/signup?social=true">
-            <div className="w-[60px] h-[60px] rounded-full overflow-hidden cursor-pointer">
+            <div className="w-[60px] h-[60px] rounded-full cursor-pointer bg-[#00C737] flex justify-center items-center">
               <Image
                 src="/icons/login/naver.svg"
                 alt="네이버 로그인"
-                width={60}
-                height={60}
-                className="w-full h-full"
+                width={24}
+                height={24}
               />
             </div>
           </Link>
