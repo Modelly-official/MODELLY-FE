@@ -1,14 +1,19 @@
+// common
 export * from "./common/SignupHeader";
 export * from "./common/SignupTitle";
 export * from "./common/FixedBottomButton";
 
-export * from "./inputs/TextInput";
-export * from "./inputs/PasswordInput";
-export * from "./inputs/PhoneInputWithAuth";
-export * from "./inputs/AuthCodeInput";
-export * from "./inputs/BasicInfoInput";
-export * from "./inputs/AddressInput";
-export * from "./inputs/GenderSelect";
-export * from "./inputs/CustomDropdown";
+// 3-BasicInfo
+export * from "./3-BasicInfo/BasicInfoInput";
+export * from "./3-BasicInfo/PhoneInputWithAuth";
+export * from "./3-BasicInfo/AuthCodeInput";
 
-export * from "./ProfileImageUpload";
+// 4-LoginInfo
+export * from "./4-LoginInfo/PasswordInput";
+
+// 5-ProfileInfo
+export * from "./5-ProfileInfo/TextInput";
+export * from "./5-ProfileInfo/GenderSelect";
+export * from "./5-ProfileInfo/AddressInput";
+export * from "./5-ProfileInfo/CustomDropdown";
+export * from "./5-ProfileInfo/ProfileImageUpload";
