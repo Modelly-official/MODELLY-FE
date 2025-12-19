@@ -8,17 +8,32 @@ import { setAccessToken, setUserRole } from "@/src/stores";
  * 소셜 로그인 콜백 페이지
  * 백엔드가 OAuth 처리 후 이 페이지로 리다이렉트합니다.
  *
- * 쿼리 파라미터:
+ * 성공 시 쿼리 파라미터:
  * - accessToken: 액세스 토큰
  * - registered: 회원가입 여부 (true/false)
  * - userId: 사용자 ID
  * - userRole: 사용자 역할 (MODEL/DESIGNER)
+ *
+ * 에러 시 쿼리 파라미터:
+ * - errorCode: 에러 코드 (예: AUTH409)
+ * - errorMessage: 에러 메시지
  */
 const SocialLoginCallbackContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    // 에러 체크 (먼저 확인)
+    const errorCode = searchParams.get("errorCode");
+    const errorMessage = searchParams.get("errorMessage");
+
+    if (errorCode && errorMessage) {
+      // 에러 발생 - 로그인 페이지로 리다이렉트 (에러 메시지 표시)
+      alert(decodeURIComponent(errorMessage));
+      router.push("/login");
+      return;
+    }
+
     const accessToken = searchParams.get("accessToken");
     const registered = searchParams.get("registered");
     const userRole = searchParams.get("userRole");
