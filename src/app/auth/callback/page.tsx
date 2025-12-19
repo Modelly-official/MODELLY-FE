@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setAccessToken, setUserRole } from "@/src/stores/useAuthStore";
+import { setAccessToken, setUserRole } from "@/src/stores";
 
 /**
  * 소셜 로그인 콜백 페이지
@@ -14,14 +14,13 @@ import { setAccessToken, setUserRole } from "@/src/stores/useAuthStore";
  * - userId: 사용자 ID
  * - userRole: 사용자 역할 (MODEL/DESIGNER)
  */
-const SocialLoginCallbackPage = () => {
+const SocialLoginCallbackContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const accessToken = searchParams.get("accessToken");
     const registered = searchParams.get("registered");
-    const userId = searchParams.get("userId");
     const userRole = searchParams.get("userRole");
 
     // 필수 파라미터 확인
@@ -58,6 +57,25 @@ const SocialLoginCallbackPage = () => {
         <p className="text-gray-700 text-body-1-medium">로그인 처리 중...</p>
       </div>
     </div>
+  );
+};
+
+const SocialLoginCallbackPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-white">
+          <div className="text-center">
+            <div className="mb-4">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+            </div>
+            <p className="text-gray-700 text-body-1-medium">로딩 중...</p>
+          </div>
+        </div>
+      }
+    >
+      <SocialLoginCallbackContent />
+    </Suspense>
   );
 };
 

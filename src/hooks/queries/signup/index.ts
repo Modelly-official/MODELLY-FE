@@ -12,7 +12,7 @@ import type {
   SmsResponse,
   DuplicateCheckResponse,
   ApiResponse,
-} from "@/src/types/auth";
+} from "@/src/types";
 
 /**
  * 일반 회원가입 mutation hook

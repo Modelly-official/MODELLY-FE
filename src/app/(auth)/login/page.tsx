@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useLogin } from "@/src/hooks/queries";
-import { useAuthStore } from "@/src/stores/useAuthStore";
+import { useAuthStore } from "@/src/stores";
 import { SOCIAL_LOGIN_URLS } from "@/src/utils/socialLogin";
 
-const LoginPage = () => {
+const LoginContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -171,6 +171,20 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const LoginPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          로딩 중...
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 };
 

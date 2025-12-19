@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { SignupStoreField } from "@/src/stores/useSignupStore";
+import { SignupStoreField } from "@/src/stores";
 import { checkEmail } from "@/src/apis";
 
 interface BasicInfoInputProps {
@@ -9,8 +9,14 @@ interface BasicInfoInputProps {
   setField: (field: SignupStoreField, value: string) => void;
 }
 
-export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, setField }) => {
-  const [emailStatus, setEmailStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
+export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({
+  name,
+  email,
+  setField,
+}) => {
+  const [emailStatus, setEmailStatus] = useState<
+    "idle" | "checking" | "valid" | "invalid"
+  >("idle");
   const [emailMessage, setEmailMessage] = useState("");
 
   // 이메일 유효성 검증
@@ -60,7 +66,9 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
           placeholder="이름을 입력해주세요"
           value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("name", e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setField("name", e.target.value)
+          }
           maxLength={20}
         />
       </div>
@@ -74,7 +82,9 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
             } rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="이메일을 입력해주세요"
             value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleEmailChange(e.target.value)
+            }
             maxLength={50}
             autoComplete="off"
           />
@@ -86,7 +96,9 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
                 : "bg-gray-200 text-gray-600"
             }`}
             onClick={handleCheckEmail}
-            disabled={!email || !isValidEmailFormat(email) || emailStatus === "checking"}
+            disabled={
+              !email || !isValidEmailFormat(email) || emailStatus === "checking"
+            }
           >
             {emailStatus === "checking" ? "확인중" : "중복확인"}
           </button>

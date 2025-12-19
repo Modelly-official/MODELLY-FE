@@ -6,13 +6,13 @@ import {
   FixedBottomButton,
   PasswordInput,
 } from "@/src/components/signup";
-import { useSignupStore } from "@/src/stores/useSignupStore";
+import { useSignupStore } from "@/src/stores";
 import { useCheckLoginId } from "@/src/hooks/queries";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
 import { validateField, validateMatch } from "@/src/utils/validation";
 import { formatLoginId } from "@/src/utils/format";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
-import type { SignupStepProps } from "@/src/types/signup";
+import type { SignupStepProps } from "@/src/types";
 
 interface StepLoginInfoProps extends SignupStepProps {
   goPrev: () => void;

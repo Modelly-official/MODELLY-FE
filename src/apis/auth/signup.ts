@@ -2,11 +2,10 @@ import { axiosInstance } from "@/src/apis/axios";
 import type {
   ApiResponse,
   SignupRequest,
-  SocialSignupRequest,
   SignupResponse,
   SmsResponse,
   DuplicateCheckResponse,
-} from "@/src/types/auth";
+} from "@/src/types";
 
 // 일반 회원가입
 export const signup = async (
@@ -14,17 +13,6 @@ export const signup = async (
 ): Promise<ApiResponse<SignupResponse>> => {
   const response = await axiosInstance.post<ApiResponse<SignupResponse>>(
     "/auth/signup",
-    data
-  );
-  return response.data;
-};
-
-// 소셜 회원가입
-export const socialSignup = async (
-  data: SocialSignupRequest
-): Promise<ApiResponse<SignupResponse>> => {
-  const response = await axiosInstance.post<ApiResponse<SignupResponse>>(
-    "/auth/social/signup",
     data
   );
   return response.data;

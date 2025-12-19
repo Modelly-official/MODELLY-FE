@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SignupStoreField } from "@/src/stores/useSignupStore";
+import { SignupStoreField } from "@/src/stores";
 
 interface PhoneInputWithAuthProps {
   phoneNumber: string;

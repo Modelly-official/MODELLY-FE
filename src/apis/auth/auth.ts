@@ -1,9 +1,5 @@
 import { axiosInstance } from "@/src/apis/axios";
-import {
-  useAuthStore,
-  setAccessToken,
-  setUserRole,
-} from "@/src/stores/useAuthStore";
+import { useAuthStore, setAccessToken, setUserRole } from "@/src/stores";
 import type {
   LoginRequest,
   LoginResponse,
@@ -13,7 +9,7 @@ import type {
   ApiResponse,
   SocialSignupRequest,
   SocialSignupResponse,
-} from "@/src/types/auth";
+} from "@/src/types";
 
 /**
  * 로그인

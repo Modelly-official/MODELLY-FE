@@ -8,7 +8,7 @@ import type {
   SocialSignupRequest,
   SocialSignupResponse,
   ApiResponse,
-} from "@/src/types/auth";
+} from "@/src/types";
 
 /**
  * 로그인 mutation hook

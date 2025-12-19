@@ -9,11 +9,11 @@ import {
   SignupTitle,
   FixedBottomButton,
 } from "@/src/components/signup";
-import { useSignupStore } from "@/src/stores/useSignupStore";
+import { useSignupStore } from "@/src/stores";
 import { useSendSmsCode, useVerifySmsCode } from "@/src/hooks/queries";
 import { validatePhoneNumber } from "@/src/utils/validation";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
-import type { SignupStepProps } from "@/src/types/signup";
+import type { SignupStepProps } from "@/src/types";
 
 interface StepBasicInfoProps extends SignupStepProps {
   goPrev: () => void;
