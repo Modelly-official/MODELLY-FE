@@ -110,6 +110,7 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({
             setField={setField}
             handleRequestPhoneAuth={handleRequestPhoneAuth}
             requestSent={requestSent}
+            isLoading={sendSmsMutation.isPending}
           />
           <AuthCodeInput
             authCode={authCode}
