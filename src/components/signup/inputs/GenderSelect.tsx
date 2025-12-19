@@ -5,7 +5,10 @@ interface GenderSelectProps {
   onChange: (value: string) => void;
 }
 
-export const GenderSelect: React.FC<GenderSelectProps> = ({ value, onChange }) => {
+export const GenderSelect: React.FC<GenderSelectProps> = ({
+  value,
+  onChange,
+}) => {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-gray-900 text-body-1-medium">성별</label>
