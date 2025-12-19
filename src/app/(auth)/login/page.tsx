@@ -172,7 +172,7 @@ const LoginContent = () => {
       </div>
     </div>
   );
-};
+}
 
 const LoginPage = () => {
   return (
