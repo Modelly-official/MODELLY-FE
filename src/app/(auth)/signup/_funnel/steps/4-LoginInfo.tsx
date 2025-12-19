@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { 
-  SignupHeader, 
-  SignupTitle, 
+import {
+  SignupHeader,
+  SignupTitle,
   FixedBottomButton,
-  PasswordInput 
+  PasswordInput,
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores/useSignupStore";
-import { checkLoginId } from "@/src/apis";
+import { useCheckLoginId } from "@/src/hooks/queries";
 import { usernameSchema, passwordSchema } from "@/src/schemas/signupSchema";
 import { validateField, validateMatch } from "@/src/utils/validation";
 import { formatLoginId } from "@/src/utils/format";
@@ -19,10 +18,14 @@ interface StepLoginInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, isSocial }) => {
-  const { 
-    username, 
-    password, 
+export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({
+  goPrev,
+  goNext,
+  isSocial,
+}) => {
+  const {
+    username,
+    password,
     passwordConfirm,
     isUsernameAvailable,
     passwordError,
@@ -32,30 +35,30 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
     setPasswordError,
     setPasswordConfirmError,
   } = useSignupStore();
-  const [isChecking, setIsChecking] = useState(false);
+
+  const checkLoginIdMutation = useCheckLoginId();
 
   // 아이디 중복 확인
-  const checkUsername = async () => {
+  const checkUsername = () => {
     const fieldValidation = validateField(usernameSchema, username);
     if (fieldValidation !== "success") {
       setIsUsernameAvailable(false);
       return;
     }
 
-    setIsChecking(true);
-    try {
-      const response = await checkLoginId(username);
-      if (response.isSuccess && response.result.available) {
-        setIsUsernameAvailable(true);
-      } else {
+    checkLoginIdMutation.mutate(username, {
+      onSuccess: (response) => {
+        if (response.isSuccess && response.result.available) {
+          setIsUsernameAvailable(true);
+        } else {
+          setIsUsernameAvailable(false);
+        }
+      },
+      onError: (error) => {
         setIsUsernameAvailable(false);
-      }
-    } catch (error) {
-      setIsUsernameAvailable(false);
-      console.error("아이디 중복 체크 에러:", error);
-    } finally {
-      setIsChecking(false);
-    }
+        console.error("아이디 중복 체크 에러:", error);
+      },
+    });
   };
 
   // 아이디 입력 처리 (영어 소문자, 숫자만)
@@ -80,21 +83,31 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
     setPasswordConfirmError(validateMatch(password, value));
   };
 
-  const isFormValid = 
-    username && 
-    isUsernameAvailable && 
-    password && 
-    passwordError === "success" && 
-    passwordConfirm && 
+  const isFormValid =
+    username &&
+    isUsernameAvailable &&
+    password &&
+    passwordError === "success" &&
+    passwordConfirm &&
     passwordConfirmError === "success";
 
   if (isSocial) return null;
 
   return (
     <div className="min-h-screen flex flex-col">
-      <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={4} />
-      <SignupTitle line1={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_1} line2={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_2} />
-      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={e => e.preventDefault()}>
+      <SignupHeader
+        onBack={goPrev}
+        totalSteps={SIGNUP_STEPS.REGULAR}
+        currentStep={4}
+      />
+      <SignupTitle
+        line1={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_1}
+        line2={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_2}
+      />
+      <form
+        className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <div className="flex flex-col gap-6">
           {/* 아이디 */}
           <div className="flex flex-col gap-2">
@@ -110,22 +123,34 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
               />
               <button
                 type="button"
-                className={`w-20 rounded-xl px-4 py-3.5 cursor-pointer text-body-2-medium ${
+                className={`w-20 rounded-xl px-4 py-3.5 text-body-2-medium ${
                   username && username.length >= 1
                     ? "bg-blue-200 text-blue-700"
                     : "bg-gray-200 text-gray-600"
+                } ${
+                  checkLoginIdMutation.isPending
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
                 }`}
                 onClick={checkUsername}
-                disabled={!username || username.length < 1 || isChecking}
+                disabled={
+                  !username ||
+                  username.length < 1 ||
+                  checkLoginIdMutation.isPending
+                }
               >
-                {isChecking ? "확인중" : "중복확인"}
+                {checkLoginIdMutation.isPending ? "확인중..." : "중복확인"}
               </button>
             </div>
             {isUsernameAvailable === true && (
-              <p className="text-caption-1 text-blue-700">사용 가능한 아이디입니다.</p>
+              <p className="text-caption-1 text-blue-700">
+                사용 가능한 아이디입니다.
+              </p>
             )}
             {isUsernameAvailable === false && (
-              <p className="text-caption-1 text-error">이미 사용 중인 아이디입니다.</p>
+              <p className="text-caption-1 text-error">
+                이미 사용 중인 아이디입니다.
+              </p>
             )}
           </div>
 
