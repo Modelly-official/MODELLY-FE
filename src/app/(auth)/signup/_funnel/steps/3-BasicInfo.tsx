@@ -11,7 +11,7 @@ import {
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores";
 import { useSendSmsCode, useVerifySmsCode } from "@/src/hooks/queries";
-import { validatePhoneNumber } from "@/src/utils/validation";
+import { validatePhoneNumber } from "@/src/utils";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types";
 

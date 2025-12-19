@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLogin } from "@/src/hooks/queries";
 import { useAuthStore } from "@/src/stores";
-import { SOCIAL_LOGIN_URLS } from "@/src/utils/socialLogin";
+import { SOCIAL_LOGIN_URLS } from "@/src/utils";
 
 const LoginContent = () => {
   const router = useRouter();

@@ -12,12 +12,13 @@ import {
 } from "@/src/components/signup";
 import { useSignupStore } from "@/src/stores";
 import { useSignup, useSocialSignup } from "@/src/hooks/queries";
-import { formatBirthDate, formatAddress } from "@/src/utils/format";
-import { convertImageToBase64 } from "@/src/utils/image";
 import {
+  formatBirthDate,
+  formatAddress,
+  convertImageToBase64,
   convertGenderToApi,
   convertCategoryToApi,
-} from "@/src/utils/converter";
+} from "@/src/utils";
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
 import type { SignupStepProps } from "@/src/types";
 import type { SignupRequest, SocialSignupRequest } from "@/src/types";
