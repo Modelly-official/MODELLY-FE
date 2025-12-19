@@ -126,11 +126,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({
                   username && username.length >= 1
                     ? "bg-blue-200 text-blue-700"
                     : "bg-gray-200 text-gray-600"
-                } ${
-                  checkLoginIdMutation.isPending
-                    ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
-                }`}
+                } cursor-pointer`}
                 onClick={checkUsername}
                 disabled={
                   !username ||
@@ -138,7 +134,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({
                   checkLoginIdMutation.isPending
                 }
               >
-                {checkLoginIdMutation.isPending ? "확인중..." : "중복확인"}
+                중복확인
               </button>
             </div>
             {isUsernameAvailable === true && (

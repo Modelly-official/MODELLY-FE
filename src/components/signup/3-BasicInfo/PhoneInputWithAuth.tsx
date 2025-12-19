@@ -27,9 +27,7 @@ export const PhoneInputWithAuth: React.FC<PhoneInputWithAuthProps> = ({
   const isValidPhone = /^\d{3}-\d{4}-\d{4}$/.test(phoneNumber);
 
   let buttonText = "인증하기";
-  if (isLoading) {
-    buttonText = "전송 중...";
-  } else if (isValidPhone && !requestSent) {
+  if (isValidPhone && !requestSent) {
     buttonText = "인증요청";
   } else if (requestSent) {
     buttonText = "재발송";
@@ -61,7 +59,7 @@ export const PhoneInputWithAuth: React.FC<PhoneInputWithAuthProps> = ({
               : isValidPhone
               ? "bg-blue-200 text-blue-700"
               : "bg-gray-200 text-gray-600"
-          } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          } cursor-pointer`}
           onClick={handleRequestPhoneAuth}
           disabled={(!isValidPhone && !requestSent) || isLoading}
         >
