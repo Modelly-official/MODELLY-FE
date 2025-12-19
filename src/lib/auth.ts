@@ -9,19 +9,14 @@ interface ValidateResponse {
   isSuccess: boolean;
   code: string;
   message: string;
-  result?: {
-    userId: number;
-    role: "MODEL" | "DESIGNER";
-    username: string;
-  };
 }
 
 /**
- * 백엔드 API로 accessToken 검증
+ * 백엔드 API로 accessToken 유효성 검증
  * @param accessToken - 검증할 액세스 토큰
- * @returns 사용자 정보 또는 null
+ * @returns 토큰 유효 여부 (true: 유효, false: 무효)
  */
-export async function verifyAccessToken(accessToken: string) {
+export async function verifyAccessToken(accessToken: string): Promise<boolean> {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/validate`,
@@ -34,23 +29,15 @@ export async function verifyAccessToken(accessToken: string) {
     );
 
     if (!response.ok) {
-      return null;
+      return false;
     }
 
     const data: ValidateResponse = await response.json();
 
-    if (data.isSuccess && data.result) {
-      return {
-        userId: data.result.userId,
-        role: data.result.role.toLowerCase() as "model" | "designer",
-        username: data.result.username,
-      };
-    }
-
-    return null;
+    return data.isSuccess;
   } catch (error) {
     console.error("Token validation error:", error);
-    return null;
+    return false;
   }
 }
 

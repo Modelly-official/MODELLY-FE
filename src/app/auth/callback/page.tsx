@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setAccessToken } from "@/src/stores/useAuthStore";
+import { setAccessToken, setUserRole } from "@/src/stores/useAuthStore";
 
 /**
  * 소셜 로그인 콜백 페이지
@@ -12,6 +12,7 @@ import { setAccessToken } from "@/src/stores/useAuthStore";
  * - accessToken: 액세스 토큰
  * - registered: 회원가입 여부 (true/false)
  * - userId: 사용자 ID
+ * - userRole: 사용자 역할 (MODEL/DESIGNER)
  */
 const SocialLoginCallbackPage = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ const SocialLoginCallbackPage = () => {
     const accessToken = searchParams.get("accessToken");
     const registered = searchParams.get("registered");
     const userId = searchParams.get("userId");
+    const userRole = searchParams.get("userRole");
 
     // 필수 파라미터 확인
     if (!accessToken || !registered) {
@@ -31,6 +33,11 @@ const SocialLoginCallbackPage = () => {
 
     // accessToken을 쿠키에 저장
     setAccessToken(accessToken);
+
+    // userRole을 쿠키에 저장 (백엔드는 대문자로 보내주므로 소문자로 변환)
+    if (userRole) {
+      setUserRole(userRole.toLowerCase() as "model" | "designer");
+    }
 
     // registered 값에 따라 분기
     if (registered === "true") {

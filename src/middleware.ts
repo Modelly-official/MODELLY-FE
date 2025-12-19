@@ -25,8 +25,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 쿠키에서 accessToken 읽기
+  // 쿠키에서 accessToken과 userRole 읽기
   let accessToken = request.cookies.get("access_token")?.value;
+  const userRole = request.cookies.get("user_role")?.value as
+    | "model"
+    | "designer"
+    | undefined;
 
   // accessToken이 없으면 로그인 페이지로
   if (!accessToken) {
@@ -35,37 +39,48 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 백엔드 API로 토큰 검증
-  let user = await verifyAccessToken(accessToken);
+  // 백엔드 API로 토큰 유효성 검증
+  let isValid = await verifyAccessToken(accessToken);
 
   // 토큰이 만료된 경우 refreshToken으로 재발급 시도
-  if (!user) {
+  if (!isValid) {
     const newAccessToken = await refreshAccessToken(request);
 
     if (newAccessToken) {
       // 재발급 성공 - 새 토큰으로 다시 검증
-      user = await verifyAccessToken(newAccessToken);
+      isValid = await verifyAccessToken(newAccessToken);
       accessToken = newAccessToken;
     }
   }
 
   // 재발급도 실패한 경우 로그인 페이지로
-  if (!user) {
+  if (!isValid) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     const response = NextResponse.redirect(loginUrl);
     // 만료된 쿠키 삭제
     response.cookies.delete("access_token");
+    response.cookies.delete("user_role");
+    return response;
+  }
+
+  // role 쿠키가 없으면 로그인 페이지로 (role 정보 필요)
+  if (!userRole) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete("access_token");
+    response.cookies.delete("user_role");
     return response;
   }
 
   // 역할 기반 접근 제어
-  if (!checkRoleAccess(pathname, user.role)) {
+  if (!checkRoleAccess(pathname, userRole)) {
     // 권한 없음 - 역할에 맞는 홈으로 리다이렉트
     const homeUrl =
-      user.role === "model"
-        ? new URL("/model/portfolio", request.url)
-        : new URL("/designer/projects", request.url);
+      userRole === "model"
+        ? new URL("/model", request.url)
+        : new URL("/designer", request.url);
     return NextResponse.redirect(homeUrl);
   }
 
@@ -83,8 +98,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 요청 헤더에 사용자 정보 추가 (서버 컴포넌트에서 활용 가능)
-  response.headers.set("x-user-id", user.userId.toString());
-  response.headers.set("x-user-role", user.role);
+  response.headers.set("x-user-role", userRole);
 
   return response;
 }

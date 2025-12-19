@@ -1,5 +1,9 @@
 import { axiosInstance } from "./axios";
-import { useAuthStore, setAccessToken } from "@/src/stores/useAuthStore";
+import {
+  useAuthStore,
+  setAccessToken,
+  setUserRole,
+} from "@/src/stores/useAuthStore";
 import type {
   LoginRequest,
   LoginResponse,
@@ -15,6 +19,7 @@ import type {
  * 로그인
  * - accessToken: body로 받아서 쿠키에 저장
  * - refreshToken: Set-Cookie 헤더로 자동 저장 (HttpOnly)
+ * - role: body로 받아서 쿠키에 저장
  */
 export const login = async (
   payload: LoginRequest
@@ -24,9 +29,18 @@ export const login = async (
     payload
   );
 
-  // accessToken을 쿠키에 저장
-  if (response.data.isSuccess && response.data.result?.accessToken) {
-    setAccessToken(response.data.result.accessToken);
+  // accessToken과 role을 쿠키에 저장
+  if (response.data.isSuccess && response.data.result) {
+    const { accessToken, role } = response.data.result;
+
+    if (accessToken) {
+      setAccessToken(accessToken);
+    }
+
+    if (role) {
+      // 백엔드는 대문자 "MODEL" | "DESIGNER"로 보내주므로 소문자로 변환
+      setUserRole(role.toLowerCase() as "model" | "designer");
+    }
   }
 
   return response.data;
