@@ -7,16 +7,16 @@ export interface SignupRequest {
     email: string;
     name: string;
     phoneNum: string;
-    gender: 'MALE' | 'FEMALE';
+    gender: "MALE" | "FEMALE";
     birth: string; // YYYY-MM-DD
-    userRole: 'DESIGNER' | 'MODEL';
+    userRole: "DESIGNER" | "MODEL";
     imageUrl?: string;
   };
   designer?: {
     shop: string;
     addressLine1: string;
     addressLine2: string;
-    category: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
+    category: "HAIR" | "NAIL" | "TATTOO" | "EYELASH";
     nickname: string;
   };
   model?: {
@@ -28,16 +28,16 @@ export interface SignupRequest {
 export interface SocialSignupRequest {
   base: {
     phoneNum: string;
-    gender: 'MALE' | 'FEMALE';
+    gender: "MALE" | "FEMALE";
     birth: string; // YYYY-MM-DD
-    userRole: 'DESIGNER' | 'MODEL';
+    userRole: "DESIGNER" | "MODEL";
     imageUrl?: string;
   };
   designer?: {
     shop: string;
     addressLine1: string;
     addressLine2: string;
-    category: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
+    category: "HAIR" | "NAIL" | "TATTOO" | "EYELASH";
     nickname: string;
   };
   model?: {
@@ -46,6 +46,13 @@ export interface SocialSignupRequest {
 }
 
 export interface SignupResponse {
+  message: string;
+  loginId: string;
+  name: string;
+  nickname: string;
+}
+
+export interface SocialSignupResponse {
   message: string;
   loginId: string;
   name: string;
@@ -85,7 +92,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   userId: number;
   accessToken: string;
-  role?: 'MODEL' | 'DESIGNER'; // 백엔드 응답에서 받아올 role (TODO: 백엔드 추가 필요)
+  role?: "MODEL" | "DESIGNER"; // 백엔드 응답에서 받아올 role (TODO: 백엔드 추가 필요)
 }
 
 export interface LogoutResponse {
@@ -98,7 +105,7 @@ export interface RefreshResponse {
 
 export interface ValidateResponse {
   message: string;
-  isValid: 'VALID' | 'INVALID';
+  isValid: "VALID" | "INVALID";
 }
 
 // 공통 API 응답 타입
