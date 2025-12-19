@@ -1,0 +1,57 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { setAccessToken } from "@/src/stores/useAuthStore";
+
+/**
+ * 소셜 로그인 콜백 페이지
+ * 백엔드가 OAuth 처리 후 이 페이지로 리다이렉트합니다.
+ *
+ * 쿼리 파라미터:
+ * - accessToken: 액세스 토큰
+ * - registered: 회원가입 여부 (true/false)
+ * - userId: 사용자 ID
+ */
+const SocialLoginCallbackPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const accessToken = searchParams.get("accessToken");
+    const registered = searchParams.get("registered");
+    const userId = searchParams.get("userId");
+
+    // 필수 파라미터 확인
+    if (!accessToken || !registered) {
+      alert("잘못된 접근입니다. 다시 로그인해주세요.");
+      router.push("/login");
+      return;
+    }
+
+    // accessToken을 쿠키에 저장
+    setAccessToken(accessToken);
+
+    // registered 값에 따라 분기
+    if (registered === "true") {
+      // 이미 회원가입된 사용자 → 홈으로 이동
+      router.push("/");
+    } else {
+      // 회원가입이 필요한 사용자 → 회원가입 페이지로 이동
+      router.push("/signup?social=true");
+    }
+  }, [searchParams, router]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="text-center">
+        <div className="mb-4">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+        </div>
+        <p className="text-gray-700 text-body-1-medium">로그인 처리 중...</p>
+      </div>
+    </div>
+  );
+};
+
+export default SocialLoginCallbackPage;
