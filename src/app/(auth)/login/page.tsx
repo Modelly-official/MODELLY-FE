@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { login } from "@/src/apis";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 
-const LoginPage = () => {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const { setUser } = useAuthStore();
-  
+
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
 
@@ -24,30 +24,35 @@ const LoginPage = () => {
 
     try {
       const response = await login({ loginId, password });
-      
+
       if (response.isSuccess && response.result) {
         // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
         setUser({
           userId: response.result.userId,
-          role: response.result.role?.toLowerCase() as "model" | "designer" || "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
+          role:
+            (response.result.role?.toLowerCase() as "model" | "designer") ||
+            "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
           username: loginId,
           loginId,
         });
-        
+
         // 원래 페이지로 리다이렉트
         router.push(callbackUrl);
       } else {
         alert(response.message || "로그인에 실패했습니다.");
       }
     } catch (error: unknown) {
-      const axiosError = error as { response?: { data?: { message?: string } } };
-      const errorMessage = axiosError.response?.data?.message || "로그인 중 오류가 발생했습니다.";
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
+      const errorMessage =
+        axiosError.response?.data?.message || "로그인 중 오류가 발생했습니다.";
       alert(errorMessage);
     }
   };
 
   return (
-  <div className="relative bg-white font-sans">
+    <div className="relative bg-white font-sans">
       {/* Modelly 로고 */}
       <div className="mt-[164px] mx-auto mb-0 w-[212px] h-[58px]">
         <Image
@@ -102,13 +107,17 @@ const LoginPage = () => {
           <span>|</span>
           <span>비밀번호 찾기</span>
           <span>|</span>
-          <Link href="/signup" className="cursor-pointer hover:underline">회원가입</Link>
+          <Link href="/signup" className="cursor-pointer hover:underline">
+            회원가입
+          </Link>
         </div>
 
         {/* SNS 로그인 안내 */}
         <div className="flex items-center gap-4 justify-center mb-6">
           <div className="w-[98px] h-px bg-gray-500" />
-          <span className="text-gray-700 text-body-2-regular">SNS 계정으로 로그인</span>
+          <span className="text-gray-700 text-body-2-regular">
+            SNS 계정으로 로그인
+          </span>
           <div className="w-[98px] h-px bg-gray-500" />
         </div>
 
@@ -130,6 +139,12 @@ const LoginPage = () => {
       </div>
     </div>
   );
-};
+}
 
-export default LoginPage;
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
+  );
+}
