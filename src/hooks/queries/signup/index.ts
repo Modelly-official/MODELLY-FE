@@ -5,7 +5,7 @@ import {
   verifySmsCode,
   checkLoginId,
   checkEmail,
-} from "@/src/apis/signup";
+} from "@/src/apis";
 import type {
   SignupRequest,
   SignupResponse,
