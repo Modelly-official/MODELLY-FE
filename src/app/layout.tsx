@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "../styles/globals.css";
+import "@/src/styles/globals.css";
+import { QueryProvider } from "@/src/providers/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Monde",
@@ -14,9 +15,11 @@ const RootLayout = ({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className="bg-white">
-        <div className="w-[375px] mx-auto min-h-screen overflow-x-hidden shadow-2xl">
-          {children}
-        </div>
+        <QueryProvider>
+          <div className="w-[375px] mx-auto min-h-screen overflow-x-hidden shadow-2xl">
+            {children}
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );
