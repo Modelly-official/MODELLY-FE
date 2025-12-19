@@ -1,4 +1,4 @@
-import { axiosInstance } from "./axios";
+import { axiosInstance } from "@/src/apis/axios";
 import {
   useAuthStore,
   setAccessToken,
