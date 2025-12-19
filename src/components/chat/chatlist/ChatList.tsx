@@ -3,38 +3,11 @@
 import { useState } from 'react';
 import ChatListItem from "./ChatListItem";
 import ChatSearch from "./ChatSearch";
-
-// 목업 데이터 (추후 삭제 예정)
-const mockChats = [
-  {
-    id: 1,
-    name: "유민지",
-    profileImage: "",
-    lastMessage: "안녕하세요! 예약 가능할까요? 블라블라 어쩌구 저쩌구",
-    lastTime: "18:30",
-    unread: 2,
-  },
-  {
-    id: 2,
-    name: "박예린",
-    profileImage: "",
-    lastMessage: "네! 가능합니다 :)",
-    lastTime: "18:10",
-    unread: 0,
-  },
-  {
-    id: 3,
-    name: "윤서진",
-    profileImage: "",
-    lastMessage: "내일 뵐게요~",
-    lastTime: "어제",
-    unread: 1,
-  },
-];
+import { mockChats as initialChats } from '@/src/constants/chat';
 
 export default function ChatList() {
   // 클라이언트 상태로 관리해서 새 메시지 수신 시 UI를 즉시 업데이트할 수 있도록
-  const [chats, setChats] = useState(mockChats);
+  const [chats, setChats] = useState(initialChats);
 
   // 테스트용: 특정 채팅에 새 메시지가 왔을 때 동작 시뮬레이션
   const simulateIncomingMessage = (chatId: number) => {
@@ -44,7 +17,7 @@ export default function ChatList() {
       const target = prev[idx];
       const updated = {
         ...target,
-        unread: target.unread + 1,
+        unread: (target.unread ?? 0) + 1,
         lastMessage: '새로운 메시지가 도착했습니다',
         lastTime: '지금',
       };

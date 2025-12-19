@@ -2,8 +2,7 @@
 
 import React from 'react';
 import ProfileIcon from '@/public/icons/chat/profile.svg';
-
-type Message = { id: number; fromMe: boolean; text: string; time?: string };
+import { Message } from '@/src/types/chat';
 
 export default function MessageItem({
   message,
@@ -13,7 +12,7 @@ export default function MessageItem({
 }: {
   message: Message;
   showTime?: boolean;
-  onClick?: (id: number) => void;
+  onClick?: (id: number | string) => void;
   sharpCorner?: 'left' | 'right';
 }) {
   if (!message || !message.text) return null;
