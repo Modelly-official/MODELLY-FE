@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { login } from "@/src/apis";
+import { useLogin } from "@/src/hooks/queries";
 import { useAuthStore } from "@/src/stores/useAuthStore";
 import { SOCIAL_LOGIN_URLS } from "@/src/utils/socialLogin";
 
@@ -17,39 +17,46 @@ const LoginPage = () => {
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  const loginMutation = useLogin();
+
+  const handleLogin = () => {
     if (!loginId || !password) {
       alert("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
-    try {
-      const response = await login({ loginId, password });
+    loginMutation.mutate(
+      { loginId, password },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess && response.result) {
+            // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
+            setUser({
+              userId: response.result.userId,
+              role: response.result.userRole.toLowerCase() as
+                | "model"
+                | "designer",
+              username: loginId,
+              loginId,
+            });
 
-      if (response.isSuccess && response.result) {
-        // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
-        setUser({
-          userId: response.result.userId,
-          role:
-            (response.result.role?.toLowerCase() as "model" | "designer") ||
-            "model", // TODO: 백엔드가 role 추가하면 || "model" 제거
-          username: loginId,
-          loginId,
-        });
-
-        // 원래 페이지로 리다이렉트
-        router.push(callbackUrl);
-      } else {
-        alert(response.message || "로그인에 실패했습니다.");
+            // 원래 페이지로 리다이렉트
+            router.push(callbackUrl);
+          } else {
+            alert(response.message || "로그인에 실패했습니다.");
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage =
+            axiosError.response?.data?.message ||
+            "로그인 중 오류가 발생했습니다.";
+          alert(errorMessage);
+        },
       }
-    } catch (error: unknown) {
-      const axiosError = error as {
-        response?: { data?: { message?: string } };
-      };
-      const errorMessage =
-        axiosError.response?.data?.message || "로그인 중 오류가 발생했습니다.";
-      alert(errorMessage);
-    }
+    );
   };
 
   return (
@@ -97,9 +104,10 @@ const LoginPage = () => {
         {/* 로그인 버튼 */}
         <button
           onClick={handleLogin}
-          className="w-full bg-gray-900 text-blue-100 rounded-full py-4 px-2 text-body-1-semibold tracking-tight mb-6 cursor-pointer"
+          disabled={loginMutation.isPending}
+          className="w-full bg-gray-900 text-blue-100 rounded-full py-4 px-2 text-body-1-semibold tracking-tight mb-6 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          로그인
+          {loginMutation.isPending ? "로그인 중..." : "로그인"}
         </button>
 
         {/* 하단 링크 */}

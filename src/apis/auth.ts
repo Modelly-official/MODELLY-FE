@@ -29,17 +29,17 @@ export const login = async (
     payload
   );
 
-  // accessToken과 role을 쿠키에 저장
+  // accessToken과 userRole을 쿠키에 저장
   if (response.data.isSuccess && response.data.result) {
-    const { accessToken, role } = response.data.result;
+    const { accessToken, userRole } = response.data.result;
 
     if (accessToken) {
       setAccessToken(accessToken);
     }
 
-    if (role) {
+    if (userRole) {
       // 백엔드는 대문자 "MODEL" | "DESIGNER"로 보내주므로 소문자로 변환
-      setUserRole(role.toLowerCase() as "model" | "designer");
+      setUserRole(userRole.toLowerCase() as "model" | "designer");
     }
   }
 

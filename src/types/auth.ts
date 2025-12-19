@@ -92,7 +92,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   userId: number;
   accessToken: string;
-  role?: "MODEL" | "DESIGNER"; // 백엔드 응답에서 받아올 role (TODO: 백엔드 추가 필요)
+  userRole: "MODEL" | "DESIGNER";
 }
 
 export interface LogoutResponse {
