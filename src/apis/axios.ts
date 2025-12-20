@@ -1,14 +1,8 @@
-import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores/useAuthStore';
+import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores';
 import axios from 'axios';
 
 // 인증 없이 접근 가능한 API
-const NON_AUTH_URLS = [
-  '/auth/login',
-  '/auth/signup',
-  '/auth/refresh',
-  '/auth/sms',
-  '/auth/check',
-];
+const NON_AUTH_URLS = ['/auth/login', '/auth/signup', '/auth/refresh', '/auth/sms', '/auth/check'];
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api`,
@@ -21,9 +15,7 @@ export const axiosInstance = axios.create({
 // Request Interceptor: 쿠키에서 accessToken 읽어서 헤더에 추가
 axiosInstance.interceptors.request.use(
   (config) => {
-    const isNonAuthRequest = NON_AUTH_URLS.some((path) =>
-      config.url?.includes(path),
-    );
+    const isNonAuthRequest = NON_AUTH_URLS.some((path) => config.url?.includes(path));
 
     if (!isNonAuthRequest) {
       const token = getAccessToken(); // 쿠키에서 읽기
@@ -56,9 +48,7 @@ axiosInstance.interceptors.response.use(
     const shouldLogout =
       res?.status === 401 ||
       (res?.status === 400 &&
-        (code === 'INVALID_REFRESH_TOKEN' ||
-          code === 'INVALID_TOKEN' ||
-          code === 'ACCESS_TOKEN_EXPIRED'));
+        (code === 'INVALID_REFRESH_TOKEN' || code === 'INVALID_TOKEN' || code === 'ACCESS_TOKEN_EXPIRED'));
 
     if (shouldLogout) {
       clearAuth(); // 쿠키도 함께 삭제됨
@@ -67,4 +57,3 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-

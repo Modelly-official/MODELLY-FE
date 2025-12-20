@@ -1,4 +1,4 @@
-import LeftArrowIcon from "@/public/icons/signup/leftarrow.svg";
+import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 
 interface SignupHeaderProps {
   onBack: () => void;
@@ -16,11 +16,7 @@ export const SignupHeader: React.FC<SignupHeaderProps> = ({ onBack, totalSteps, 
         {Array.from({ length: totalSteps }).map((_, idx) => (
           <div
             key={idx}
-            className={
-              idx < currentStep
-                ? "bg-blue-500 h-1 rounded w-[106px]"
-                : "bg-gray-300 h-1 rounded w-[106px]"
-            }
+            className={idx < currentStep ? 'bg-blue-500 h-1 rounded w-[106px]' : 'bg-gray-300 h-1 rounded w-[106px]'}
           />
         ))}
       </div>

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useSignupStore } from "@/src/stores/useSignupStore";
-import { SignupHeader, SignupTitle, FixedBottomButton } from "@/src/components/signup";
-import { SIGNUP_ROLES, SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
-import type { SignupStepProps } from "@/src/types/signup";
+import { useState } from 'react';
+import { useSignupStore } from '@/src/stores';
+import { SignupHeader, SignupTitle, FixedBottomButton } from '@/src/components/signup';
+import { SIGNUP_ROLES, SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
+import type { SignupStepProps } from '@/src/types';
 
 interface StepRoleProps extends Omit<SignupStepProps, 'goPrev'> {
   goPrev: () => void;
@@ -25,7 +25,11 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
             key={role.key}
             type="button"
             className={`w-[166px] h-[166px] py-5 rounded-xl border text-body-1-semibold tracking-tight flex items-center justify-center transition-all cursor-pointer
-              ${selectedRole === role.key ? "bg-blue-600 text-white border-none" : "bg-gray-100 text-gray-600 border-none"}`}
+              ${
+                selectedRole === role.key
+                  ? 'bg-blue-600 text-white border-none'
+                  : 'bg-gray-100 text-gray-600 border-none'
+              }`}
             onClick={() => setSelectedRole(role.key)}
           >
             {role.label}
@@ -37,7 +41,7 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
           disabled={!selectedRole}
           onClick={() => {
             if (selectedRole) {
-              setField("role", selectedRole);
+              setField('role', selectedRole);
               goNext();
             }
           }}
