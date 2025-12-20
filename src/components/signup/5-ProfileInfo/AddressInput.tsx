@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import DaumPostcode from "react-daum-postcode";
-import LocationIcon from "@/public/icons/signup/location.svg";
+import { useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
+import LocationIcon from '@/public/icons/signup/location.svg';
 
 interface DaumPostcodeData {
   address: string;
@@ -28,17 +28,17 @@ export const AddressInput: React.FC<AddressInputProps> = ({
 
   const handleComplete = (data: DaumPostcodeData) => {
     let fullAddress = data.address;
-    let extraAddress = "";
+    let extraAddress = '';
 
     // 도로명 주소인 경우 추가 정보 포함하도록 (법정동, 건물명), 예: "서울 마포구 와우산로 94 (상수동, 홍익대학교)"
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
         extraAddress += data.bname;
       }
-      if (data.buildingName !== "") {
-        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
       }
-      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
 
     onAddressSearch(fullAddress);

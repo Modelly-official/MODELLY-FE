@@ -3,8 +3,7 @@
  * 환경에 따라 자동으로 적절한 URL 사용
  */
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
 
 export const SOCIAL_LOGIN_URLS = {
   kakao: `https://kauth.kakao.com/oauth/authorize?client_id=e12e503a20ad8ad42c90dfb6d28f0b89&redirect_uri=${BASE_URL}/api/auth/kakao/login&response_type=code`,

@@ -1,6 +1,6 @@
 // 회원가입 관련 타입 정의
 
-export type RoleType = "designer" | "model";
+export type RoleType = 'designer' | 'model';
 
 export interface Role {
   key: RoleType;

@@ -5,10 +5,10 @@ export function convertImageToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      if (typeof reader.result === "string") {
+      if (typeof reader.result === 'string') {
         resolve(reader.result);
       } else {
-        reject(new Error("이미지 변환 실패"));
+        reject(new Error('이미지 변환 실패'));
       }
     };
     reader.onerror = reject;

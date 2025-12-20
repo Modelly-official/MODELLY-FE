@@ -1,5 +1,5 @@
-import { axiosInstance } from "@/src/apis/axios";
-import { useAuthStore, setAccessToken, setUserRole } from "@/src/stores";
+import { axiosInstance } from '@/src/apis/axios';
+import { useAuthStore, setAccessToken, setUserRole } from '@/src/stores';
 import type {
   LoginRequest,
   LoginResponse,
@@ -9,7 +9,7 @@ import type {
   ApiResponse,
   SocialSignupRequest,
   SocialSignupResponse,
-} from "@/src/types";
+} from '@/src/types';
 
 /**
  * 로그인
@@ -17,13 +17,8 @@ import type {
  * - refreshToken: Set-Cookie 헤더로 자동 저장 (HttpOnly)
  * - role: body로 받아서 쿠키에 저장
  */
-export const login = async (
-  payload: LoginRequest
-): Promise<ApiResponse<LoginResponse>> => {
-  const response = await axiosInstance.post<ApiResponse<LoginResponse>>(
-    "/auth/login",
-    payload
-  );
+export const login = async (payload: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
+  const response = await axiosInstance.post<ApiResponse<LoginResponse>>('/auth/login', payload);
 
   // accessToken과 userRole을 쿠키에 저장
   if (response.data.isSuccess && response.data.result) {
@@ -35,7 +30,7 @@ export const login = async (
 
     if (userRole) {
       // 백엔드는 대문자 "MODEL" | "DESIGNER"로 보내주므로 소문자로 변환
-      setUserRole(userRole.toLowerCase() as "model" | "designer");
+      setUserRole(userRole.toLowerCase() as 'model' | 'designer');
     }
   }
 
@@ -49,9 +44,7 @@ export const login = async (
  */
 export const logout = async (): Promise<ApiResponse<LogoutResponse>> => {
   try {
-    const response = await axiosInstance.post<ApiResponse<LogoutResponse>>(
-      "/auth/logout"
-    );
+    const response = await axiosInstance.post<ApiResponse<LogoutResponse>>('/auth/logout');
     return response.data;
   } finally {
     // 에러가 나도 쿠키는 삭제
@@ -63,12 +56,8 @@ export const logout = async (): Promise<ApiResponse<LogoutResponse>> => {
  * Access Token 재발급
  * - refreshToken 쿠키로 새로운 accessToken 발급
  */
-export const refreshAccessToken = async (): Promise<
-  ApiResponse<RefreshResponse>
-> => {
-  const response = await axiosInstance.post<ApiResponse<RefreshResponse>>(
-    "/auth/refresh"
-  );
+export const refreshAccessToken = async (): Promise<ApiResponse<RefreshResponse>> => {
+  const response = await axiosInstance.post<ApiResponse<RefreshResponse>>('/auth/refresh');
 
   // 새로운 accessToken을 쿠키에 저장
   if (response.data.isSuccess && response.data.result?.accessToken) {
@@ -81,12 +70,8 @@ export const refreshAccessToken = async (): Promise<
 /**
  * Access Token 유효성 검증
  */
-export const validateToken = async (): Promise<
-  ApiResponse<ValidateResponse>
-> => {
-  const response = await axiosInstance.get<ApiResponse<ValidateResponse>>(
-    "/auth/validate"
-  );
+export const validateToken = async (): Promise<ApiResponse<ValidateResponse>> => {
+  const response = await axiosInstance.get<ApiResponse<ValidateResponse>>('/auth/validate');
   return response.data;
 };
 
@@ -95,12 +80,7 @@ export const validateToken = async (): Promise<
  * - Authorization 헤더에 accessToken 필요 (axios interceptor에서 자동 추가)
  * - 소셜 로그인 후 추가 정보를 입력받아 회원가입 완료
  */
-export const socialSignup = async (
-  payload: SocialSignupRequest
-): Promise<ApiResponse<SocialSignupResponse>> => {
-  const response = await axiosInstance.post<ApiResponse<SocialSignupResponse>>(
-    "/auth/social/signup",
-    payload
-  );
+export const socialSignup = async (payload: SocialSignupRequest): Promise<ApiResponse<SocialSignupResponse>> => {
+  const response = await axiosInstance.post<ApiResponse<SocialSignupResponse>>('/auth/social/signup', payload);
   return response.data;
 };

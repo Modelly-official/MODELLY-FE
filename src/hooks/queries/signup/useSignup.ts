@@ -1,18 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import {
-  signup,
-  sendSmsCode,
-  verifySmsCode,
-  checkLoginId,
-  checkEmail,
-} from "@/src/apis";
-import type {
-  SignupRequest,
-  SignupResponse,
-  SmsResponse,
-  DuplicateCheckResponse,
-  ApiResponse,
-} from "@/src/types";
+import { useMutation } from '@tanstack/react-query';
+import { signup, sendSmsCode, verifySmsCode, checkLoginId, checkEmail } from '@/src/apis';
+import type { SignupRequest, SignupResponse, SmsResponse, DuplicateCheckResponse, ApiResponse } from '@/src/types';
 
 /**
  * 일반 회원가입 mutation hook
@@ -36,13 +24,8 @@ export function useSendSmsCode() {
  * SMS 인증번호 검증 mutation hook
  */
 export function useVerifySmsCode() {
-  return useMutation<
-    ApiResponse<SmsResponse>,
-    Error,
-    { phoneNumber: string; authCode: string }
-  >({
-    mutationFn: ({ phoneNumber, authCode }) =>
-      verifySmsCode(phoneNumber, authCode),
+  return useMutation<ApiResponse<SmsResponse>, Error, { phoneNumber: string; authCode: string }>({
+    mutationFn: ({ phoneNumber, authCode }) => verifySmsCode(phoneNumber, authCode),
   });
 }
 

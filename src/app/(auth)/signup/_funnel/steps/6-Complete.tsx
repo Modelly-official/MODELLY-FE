@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { SIGNUP_MESSAGES } from "@/src/constants/signup";
-import SignupCompletedIcon from "@/public/icons/signup/signup-completed.svg";
+import { useRouter } from 'next/navigation';
+import { SIGNUP_MESSAGES } from '@/src/constants/signup';
+import SignupCompletedIcon from '@/public/icons/signup/signup-completed.svg';
 
 export const StepComplete: React.FC = () => {
   const router = useRouter();
 
   const handleStart = () => {
-    router.push("/login");
+    router.push('/login');
   };
 
   return (

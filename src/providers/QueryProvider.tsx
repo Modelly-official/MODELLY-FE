@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
-import { makeQueryClient } from "@/src/lib/queryClient";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useState } from 'react';
+import { makeQueryClient } from '@/src/lib/queryClient';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   // queryClient가 컴포넌트 생명주기 동안 유지

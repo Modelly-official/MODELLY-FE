@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { login, logout, validateToken, socialSignup } from "@/src/apis";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { login, logout, validateToken, socialSignup } from '@/src/apis';
 import type {
   LoginRequest,
   LoginResponse,
@@ -8,7 +8,7 @@ import type {
   SocialSignupRequest,
   SocialSignupResponse,
   ApiResponse,
-} from "@/src/types";
+} from '@/src/types';
 
 /**
  * 로그인 mutation hook
@@ -32,11 +32,7 @@ export function useLogout() {
  * 소셜 회원가입 mutation hook
  */
 export function useSocialSignup() {
-  return useMutation<
-    ApiResponse<SocialSignupResponse>,
-    Error,
-    SocialSignupRequest
-  >({
+  return useMutation<ApiResponse<SocialSignupResponse>, Error, SocialSignupRequest>({
     mutationFn: socialSignup,
   });
 }
@@ -47,7 +43,7 @@ export function useSocialSignup() {
  */
 export function useValidateToken(options?: { enabled?: boolean }) {
   return useQuery<ApiResponse<ValidateResponse>, Error>({
-    queryKey: ["auth", "validate"],
+    queryKey: ['auth', 'validate'],
     queryFn: validateToken,
     staleTime: 5 * 60 * 1000, // 5분 (토큰 유효성은 자주 체크할 필요 X)
     retry: 0, // 토큰 검증 실패 시 재시도 X

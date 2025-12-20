@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import DropdownArrowIcon from "@/public/icons/signup/dropdown-arrow.svg";
-import DropdownSelectedIcon from "@/public/icons/signup/dropdown-selected.svg";
+import { useState, useRef, useEffect } from 'react';
+import DropdownArrowIcon from '@/public/icons/signup/dropdown-arrow.svg';
+import DropdownSelectedIcon from '@/public/icons/signup/dropdown-selected.svg';
 
 interface CustomDropdownProps {
   value: string;
@@ -12,13 +12,7 @@ interface CustomDropdownProps {
   label?: string;
 }
 
-export const CustomDropdown: React.FC<CustomDropdownProps> = ({
-  value,
-  onChange,
-  options,
-  placeholder,
-  label,
-}) => {
+export const CustomDropdown: React.FC<CustomDropdownProps> = ({ value, onChange, options, placeholder, label }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const selectedLabel = options.find((opt) => opt.value === value)?.label || placeholder;
@@ -30,8 +24,8 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleSelect = (optionValue: string) => {
@@ -48,11 +42,11 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`w-full border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-left focus:outline-none appearance-none bg-white cursor-pointer flex items-center justify-between ${
-            value ? "text-gray-900" : "text-gray-600"
+            value ? 'text-gray-900' : 'text-gray-600'
           }`}
         >
           <span>{selectedLabel}</span>
-          <div className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+          <div className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
             <DropdownArrowIcon />
           </div>
         </button>
@@ -66,13 +60,11 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 type="button"
                 onClick={() => handleSelect(option.value)}
                 className={`w-full px-4 py-0 text-left text-body-2-medium cursor-pointer flex items-center justify-between ${
-                  value === "" ? "text-gray-900" : value === option.value ? "text-gray-900" : "text-gray-600"
-                } ${index > 0 ? "mt-3" : ""}`}
+                  value === '' ? 'text-gray-900' : value === option.value ? 'text-gray-900' : 'text-gray-600'
+                } ${index > 0 ? 'mt-3' : ''}`}
               >
                 <span>{option.label}</span>
-                {value === option.value && (
-                  <DropdownSelectedIcon />
-                )}
+                {value === option.value && <DropdownSelectedIcon />}
               </button>
             ))}
           </div>

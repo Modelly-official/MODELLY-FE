@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import Image from "next/image";
-import CameraIcon from "@/public/icons/signup/camera.svg";
+import { useRef } from 'react';
+import Image from 'next/image';
+import CameraIcon from '@/public/icons/signup/camera.svg';
 
 interface ProfileImageUploadProps {
   profileImage: string | null;
@@ -36,13 +36,7 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profileI
         >
           <CameraIcon />
         </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="hidden"
-        />
+        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
       </div>
     </div>
   );

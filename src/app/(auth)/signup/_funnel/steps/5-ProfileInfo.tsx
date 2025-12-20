@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   SignupHeader,
@@ -9,29 +9,25 @@ import {
   GenderSelect,
   AddressInput,
   ProfileImageUpload,
-} from "@/src/components/signup";
-import { useSignupStore } from "@/src/stores";
-import { useSignup, useSocialSignup } from "@/src/hooks/queries";
+} from '@/src/components/signup';
+import { useSignupStore } from '@/src/stores';
+import { useSignup, useSocialSignup } from '@/src/hooks/queries';
 import {
   formatBirthDate,
   formatAddress,
   convertImageToBase64,
   convertGenderToApi,
   convertCategoryToApi,
-} from "@/src/utils";
-import { SIGNUP_STEPS, SIGNUP_MESSAGES } from "@/src/constants/signup";
-import type { SignupStepProps } from "@/src/types";
-import type { SignupRequest, SocialSignupRequest } from "@/src/types";
+} from '@/src/utils';
+import { SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
+import type { SignupStepProps } from '@/src/types';
+import type { SignupRequest, SocialSignupRequest } from '@/src/types';
 
 interface StepProfileInfoProps extends SignupStepProps {
   goPrev: () => void;
 }
 
-export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
-  goPrev,
-  goNext,
-  isSocial = false,
-}) => {
+export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext, isSocial = false }) => {
   const {
     role,
     nickname,
@@ -62,49 +58,44 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
 
   // 주소 검색 결과 처리
   const handleAddressSearch = (fullAddress: string) => {
-    setField("address", fullAddress);
+    setField('address', fullAddress);
   };
 
   // 생년월일 입력 처리
   const handleBirthDateChange = (value: string) => {
-    setField("birthDate", formatBirthDate(value));
+    setField('birthDate', formatBirthDate(value));
   };
 
-  const isDesigner = role === "designer";
+  const isDesigner = role === 'designer';
 
   // 폼 유효성 검사
   const isFormValid = isDesigner
     ? nickname && gender && birthDate && storeName && address && category
     : nickname && gender && birthDate;
 
-  const isSubmitting = isSocial
-    ? socialSignupMutation.isPending
-    : signupMutation.isPending;
+  const isSubmitting = isSocial ? socialSignupMutation.isPending : signupMutation.isPending;
 
   const handleSubmit = () => {
     if (!isFormValid || isSubmitting) return;
 
-    const { addressLine1, addressLine2 } = formatAddress(
-      address,
-      detailAddress
-    );
+    const { addressLine1, addressLine2 } = formatAddress(address, detailAddress);
 
     // 소셜 회원가입
     if (isSocial) {
       const socialSignupData: SocialSignupRequest = {
         base: {
-          phoneNum: phoneNumber.replace(/-/g, ""),
+          phoneNum: phoneNumber.replace(/-/g, ''),
           gender: convertGenderToApi(gender),
-          birth: birthDate.replace(/\./g, "-"),
-          userRole: isDesigner ? "DESIGNER" : "MODEL",
-          imageUrl: profileImage || "",
+          birth: birthDate.replace(/\./g, '-'),
+          userRole: isDesigner ? 'DESIGNER' : 'MODEL',
+          imageUrl: profileImage || '',
         },
         ...(isDesigner
           ? {
               designer: {
                 shop: storeName,
                 addressLine1: addressLine1,
-                addressLine2: addressLine2 || "",
+                addressLine2: addressLine2 || '',
                 category: convertCategoryToApi(category),
                 nickname: nickname,
               },
@@ -121,16 +112,14 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
           if (response.isSuccess) {
             goNext();
           } else {
-            alert(response.message || "회원가입에 실패했습니다.");
+            alert(response.message || '회원가입에 실패했습니다.');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage =
-            axiosError.response?.data?.message ||
-            "회원가입 중 오류가 발생했습니다.";
+          const errorMessage = axiosError.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
           alert(errorMessage);
         },
       });
@@ -143,18 +132,18 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
           password: password,
           email: email,
           name: name,
-          phoneNum: phoneNumber.replace(/-/g, ""),
+          phoneNum: phoneNumber.replace(/-/g, ''),
           gender: convertGenderToApi(gender),
-          birth: birthDate.replace(/\./g, "-"),
-          userRole: isDesigner ? "DESIGNER" : "MODEL",
-          imageUrl: profileImage || "",
+          birth: birthDate.replace(/\./g, '-'),
+          userRole: isDesigner ? 'DESIGNER' : 'MODEL',
+          imageUrl: profileImage || '',
         },
         ...(isDesigner
           ? {
               designer: {
                 shop: storeName,
                 addressLine1: addressLine1,
-                addressLine2: addressLine2 || "",
+                addressLine2: addressLine2 || '',
                 category: convertCategoryToApi(category),
                 nickname: nickname,
               },
@@ -171,16 +160,14 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
           if (response.isSuccess) {
             goNext();
           } else {
-            alert(response.message || "회원가입에 실패했습니다.");
+            alert(response.message || '회원가입에 실패했습니다.');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage =
-            axiosError.response?.data?.message ||
-            "회원가입 중 오류가 발생했습니다.";
+          const errorMessage = axiosError.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
           alert(errorMessage);
         },
       });
@@ -194,32 +181,20 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
         totalSteps={isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR}
         currentStep={isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR}
       />
-      <SignupTitle
-        line1={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_1}
-        line2={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_2}
-      />
+      <SignupTitle line1={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_1} line2={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_2} />
 
-      <form
-        className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1"
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <ProfileImageUpload
-          profileImage={profileImage}
-          onImageUpload={handleImageUpload}
-        />
+      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={(e) => e.preventDefault()}>
+        <ProfileImageUpload profileImage={profileImage} onImageUpload={handleImageUpload} />
         <div className="flex flex-col gap-6">
           <TextInput
-            label={isDesigner ? "디자이너 활동명" : "닉네임"}
+            label={isDesigner ? '디자이너 활동명' : '닉네임'}
             value={nickname}
-            onChange={(value) => setField("nickname", value)}
+            onChange={(value) => setField('nickname', value)}
             placeholder="활동명을 입력해주세요"
             maxLength={20}
             showClearButton
           />
-          <GenderSelect
-            value={gender}
-            onChange={(value) => setField("gender", value)}
-          />
+          <GenderSelect value={gender} onChange={(value) => setField('gender', value)} />
           <div className="flex flex-col gap-2">
             <label className="text-gray-900 text-body-1-medium">생년월일</label>
             <input
@@ -238,7 +213,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
               <TextInput
                 label="매장 이름"
                 value={storeName}
-                onChange={(value) => setField("storeName", value)}
+                onChange={(value) => setField('storeName', value)}
                 placeholder="매장 이름을 입력해주세요"
                 maxLength={20}
               />
@@ -246,32 +221,27 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({
                 address={address}
                 detailAddress={detailAddress}
                 onAddressSearch={handleAddressSearch}
-                onDetailAddressChange={(value) =>
-                  setField("detailAddress", value)
-                }
+                onDetailAddressChange={(value) => setField('detailAddress', value)}
               />
               <CustomDropdown
                 label="카테고리"
                 value={category}
-                onChange={(value) => setField("category", value)}
+                onChange={(value) => setField('category', value)}
                 placeholder="헤어/네일/타투/속눈썹"
                 options={[
-                  { value: "헤어", label: "헤어" },
-                  { value: "네일", label: "네일" },
-                  { value: "타투", label: "타투" },
-                  { value: "속눈썹", label: "속눈썹" },
+                  { value: '헤어', label: '헤어' },
+                  { value: '네일', label: '네일' },
+                  { value: '타투', label: '타투' },
+                  { value: '속눈썹', label: '속눈썹' },
                 ]}
               />
             </>
           )}
         </div>
 
-        <div className={`mb-[42px] ${isDesigner ? "mt-[45px]" : "mt-auto"}`}>
-          <FixedBottomButton
-            disabled={!isFormValid || isSubmitting}
-            onClick={handleSubmit}
-          >
-            {isSubmitting ? "처리 중..." : SIGNUP_MESSAGES.BUTTON.NEXT}
+        <div className={`mb-[42px] ${isDesigner ? 'mt-[45px]' : 'mt-auto'}`}>
+          <FixedBottomButton disabled={!isFormValid || isSubmitting} onClick={handleSubmit}>
+            {isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
           </FixedBottomButton>
         </div>
       </form>

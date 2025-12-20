@@ -1,1 +1,1 @@
-export * from "./socialLogin";
+export * from './socialLogin';

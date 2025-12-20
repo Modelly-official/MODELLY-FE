@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { SignupStoreField } from "@/src/stores";
-import { checkEmail } from "@/src/apis";
+import { SignupStoreField } from '@/src/stores';
+import { checkEmail } from '@/src/apis';
 
 interface BasicInfoInputProps {
   name: string;
@@ -9,15 +9,9 @@ interface BasicInfoInputProps {
   setField: (field: SignupStoreField, value: string) => void;
 }
 
-export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({
-  name,
-  email,
-  setField,
-}) => {
-  const [emailStatus, setEmailStatus] = useState<
-    "idle" | "checking" | "valid" | "invalid"
-  >("idle");
-  const [emailMessage, setEmailMessage] = useState("");
+export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, setField }) => {
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [emailMessage, setEmailMessage] = useState('');
 
   // 이메일 유효성 검증
   const isValidEmailFormat = (email: string) => {
@@ -29,32 +23,32 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({
   // 이메일 중복 체크
   const handleCheckEmail = async () => {
     if (!isValidEmailFormat(email)) {
-      setEmailStatus("invalid");
-      setEmailMessage("올바른 이메일 형식이 아닙니다.");
+      setEmailStatus('invalid');
+      setEmailMessage('올바른 이메일 형식이 아닙니다.');
       return;
     }
 
-    setEmailStatus("checking");
+    setEmailStatus('checking');
     try {
       const response = await checkEmail(email);
       if (response.isSuccess && response.result.available) {
-        setEmailStatus("valid");
-        setEmailMessage("사용 가능한 이메일입니다.");
+        setEmailStatus('valid');
+        setEmailMessage('사용 가능한 이메일입니다.');
       } else {
-        setEmailStatus("invalid");
-        setEmailMessage("이미 사용 중인 이메일입니다.");
+        setEmailStatus('invalid');
+        setEmailMessage('이미 사용 중인 이메일입니다.');
       }
     } catch (error) {
-      setEmailStatus("invalid");
-      setEmailMessage("이메일 확인 중 오류가 발생했습니다.");
-      console.error("이메일 중복 체크 에러:", error);
+      setEmailStatus('invalid');
+      setEmailMessage('이메일 확인 중 오류가 발생했습니다.');
+      console.error('이메일 중복 체크 에러:', error);
     }
   };
 
   const handleEmailChange = (value: string) => {
-    setField("email", value);
-    setEmailStatus("idle");
-    setEmailMessage("");
+    setField('email', value);
+    setEmailStatus('idle');
+    setEmailMessage('');
   };
 
   return (
@@ -66,9 +60,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({
           className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
           placeholder="이름을 입력해주세요"
           value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setField("name", e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField('name', e.target.value)}
           maxLength={20}
         />
       </div>
@@ -78,37 +70,27 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({
           <input
             type="email"
             className={`flex-1 border ${
-              emailStatus === "invalid" ? "border-error" : "border-gray-400"
+              emailStatus === 'invalid' ? 'border-error' : 'border-gray-400'
             } rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="이메일을 입력해주세요"
             value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleEmailChange(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
             maxLength={50}
             autoComplete="off"
           />
           <button
             type="button"
             className={`w-20 rounded-xl px-4 py-3.5 cursor-pointer text-body-2-medium ${
-              email && isValidEmailFormat(email)
-                ? "bg-blue-200 text-blue-700"
-                : "bg-gray-200 text-gray-600"
+              email && isValidEmailFormat(email) ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'
             }`}
             onClick={handleCheckEmail}
-            disabled={
-              !email || !isValidEmailFormat(email) || emailStatus === "checking"
-            }
+            disabled={!email || !isValidEmailFormat(email) || emailStatus === 'checking'}
           >
-            {emailStatus === "checking" ? "확인중" : "중복확인"}
+            {emailStatus === 'checking' ? '확인중' : '중복확인'}
           </button>
         </div>
-        {emailStatus === "valid" && (
-          <p className="text-caption-1 text-blue-700">{emailMessage}</p>
-        )}
-        {emailStatus === "invalid" && (
-          <p className="text-caption-1 text-error">{emailMessage}</p>
-        )}
+        {emailStatus === 'valid' && <p className="text-caption-1 text-blue-700">{emailMessage}</p>}
+        {emailStatus === 'invalid' && <p className="text-caption-1 text-error">{emailMessage}</p>}
       </div>
     </>
   );

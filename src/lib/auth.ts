@@ -1,9 +1,5 @@
-import { NextRequest } from "next/server";
-import {
-  PUBLIC_ROUTES,
-  MODEL_ONLY_ROUTES,
-  DESIGNER_ONLY_ROUTES,
-} from "@/src/constants/routes";
+import { NextRequest } from 'next/server';
+import { PUBLIC_ROUTES, MODEL_ONLY_ROUTES, DESIGNER_ONLY_ROUTES } from '@/src/constants/routes';
 
 interface ValidateResponse {
   isSuccess: boolean;
@@ -18,15 +14,12 @@ interface ValidateResponse {
  */
 export async function verifyAccessToken(accessToken: string): Promise<boolean> {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/validate`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/validate`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     if (!response.ok) {
       return false;
@@ -36,7 +29,7 @@ export async function verifyAccessToken(accessToken: string): Promise<boolean> {
 
     return data.isSuccess;
   } catch (error) {
-    console.error("Token validation error:", error);
+    console.error('Token validation error:', error);
     return false;
   }
 }
@@ -46,25 +39,20 @@ export async function verifyAccessToken(accessToken: string): Promise<boolean> {
  * @param request - NextRequest 객체 (refreshToken 쿠키 포함)
  * @returns 새로운 accessToken 또는 null
  */
-export async function refreshAccessToken(
-  request: NextRequest
-): Promise<string | null> {
+export async function refreshAccessToken(request: NextRequest): Promise<string | null> {
   try {
-    const refreshToken = request.cookies.get("refresh_token")?.value;
+    const refreshToken = request.cookies.get('refresh_token')?.value;
 
     if (!refreshToken) {
       return null;
     }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/refresh`,
-      {
-        method: "POST",
-        headers: {
-          Cookie: `refresh_token=${refreshToken}`,
-        },
-      }
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        Cookie: `refresh_token=${refreshToken}`,
+      },
+    });
 
     if (!response.ok) {
       return null;
@@ -78,7 +66,7 @@ export async function refreshAccessToken(
 
     return null;
   } catch (error) {
-    console.error("Token refresh error:", error);
+    console.error('Token refresh error:', error);
     return null;
   }
 }
@@ -88,7 +76,7 @@ export async function refreshAccessToken(
  */
 export function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => {
-    if (route === "/") return pathname === "/";
+    if (route === '/') return pathname === '/';
     return pathname.startsWith(route);
   });
 }
@@ -98,10 +86,10 @@ export function isPublicRoute(pathname: string): boolean {
  */
 export function checkRoleAccess(pathname: string, role: string): boolean {
   if (MODEL_ONLY_ROUTES.some((route) => pathname.startsWith(route))) {
-    return role === "model";
+    return role === 'model';
   }
   if (DESIGNER_ONLY_ROUTES.some((route) => pathname.startsWith(route))) {
-    return role === "designer";
+    return role === 'designer';
   }
   return true;
 }

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { setAccessToken, setUserRole } from "@/src/stores";
+import { Suspense, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { setAccessToken, setUserRole } from '@/src/stores';
 
 /**
  * 소셜 로그인 콜백 페이지
@@ -24,24 +24,24 @@ const SocialLoginCallbackContent = () => {
 
   useEffect(() => {
     // 에러 체크 (먼저 확인)
-    const errorCode = searchParams.get("errorCode");
-    const errorMessage = searchParams.get("errorMessage");
+    const errorCode = searchParams.get('errorCode');
+    const errorMessage = searchParams.get('errorMessage');
 
     if (errorCode && errorMessage) {
       // 에러 발생 - 로그인 페이지로 리다이렉트 (에러 메시지 표시)
       alert(decodeURIComponent(errorMessage));
-      router.push("/login");
+      router.push('/login');
       return;
     }
 
-    const accessToken = searchParams.get("accessToken");
-    const registered = searchParams.get("registered");
-    const userRole = searchParams.get("userRole");
+    const accessToken = searchParams.get('accessToken');
+    const registered = searchParams.get('registered');
+    const userRole = searchParams.get('userRole');
 
     // 필수 파라미터 확인
     if (!accessToken || !registered) {
-      alert("잘못된 접근입니다. 다시 로그인해주세요.");
-      router.push("/login");
+      alert('잘못된 접근입니다. 다시 로그인해주세요.');
+      router.push('/login');
       return;
     }
 
@@ -50,16 +50,16 @@ const SocialLoginCallbackContent = () => {
 
     // userRole을 쿠키에 저장 (백엔드는 대문자로 보내주므로 소문자로 변환)
     if (userRole) {
-      setUserRole(userRole.toLowerCase() as "model" | "designer");
+      setUserRole(userRole.toLowerCase() as 'model' | 'designer');
     }
 
     // registered 값에 따라 분기
-    if (registered === "true") {
+    if (registered === 'true') {
       // 이미 회원가입된 사용자 → 홈으로 이동
-      router.push("/");
+      router.push('/');
     } else {
       // 회원가입이 필요한 사용자 → 회원가입 페이지로 이동
-      router.push("/signup?social=true");
+      router.push('/signup?social=true');
     }
   }, [searchParams, router]);
 

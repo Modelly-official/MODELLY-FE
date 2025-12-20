@@ -20,7 +20,9 @@
     padding: 0;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: 'liga' off, 'clig' off;
+    font-feature-settings:
+      'liga' off,
+      'clig' off;
     letter-spacing: var(--tracking-tight);
   }
 }
@@ -106,9 +108,9 @@
 
 /* Gradient Utilities */
 @utility gradient-radial {
-  background: radial-gradient(90.86% 110.91% at 23.75% -3.12%, #9BAAFF 0%, #C0CFFF 71.53%, #DEF4FF 100%);
+  background: radial-gradient(90.86% 110.91% at 23.75% -3.12%, #9baaff 0%, #c0cfff 71.53%, #def4ff 100%);
 }
 
 @utility gradient-linear {
-  background: linear-gradient(180deg, #C9D4FF 0%, #797F99 100%);
+  background: linear-gradient(180deg, #c9d4ff 0%, #797f99 100%);
 }

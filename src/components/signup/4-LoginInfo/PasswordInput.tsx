@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import ShowIcon from "@/public/icons/signup/show.svg";
-import HideIcon from "@/public/icons/signup/hide.svg";
+import { useState } from 'react';
+import ShowIcon from '@/public/icons/signup/show.svg';
+import HideIcon from '@/public/icons/signup/hide.svg';
 
 interface PasswordInputProps {
   label: string;
@@ -20,7 +20,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
   value,
   onChange,
-  placeholder = "비밀번호를 입력해주세요",
+  placeholder = '비밀번호를 입력해주세요',
   error,
   successMessage,
   errorMessage,
@@ -34,8 +34,8 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       <label className="text-gray-900 text-body-1-medium">{label}</label>
       <div className="relative">
         <input
-          type={showPassword ? "text" : "password"}
-          className={`w-full border ${error === "error" ? "border-error" : "border-gray-400"} rounded-xl px-4 py-3 pr-12 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+          type={showPassword ? 'text' : 'password'}
+          className={`w-full border ${error === 'error' ? 'border-error' : 'border-gray-400'} rounded-xl px-4 py-3 pr-12 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -51,15 +51,9 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           </button>
         )}
       </div>
-      {error === null && hintMessage && (
-        <p className="pl-1.5 text-caption-1 text-gray-600">{hintMessage}</p>
-      )}
-      {error === "error" && errorMessage && (
-        <p className="pl-1.5 text-caption-1 text-error">{errorMessage}</p>
-      )}
-      {error === "success" && successMessage && (
-        <p className="pl-1.5 text-caption-1 text-blue-700">{successMessage}</p>
-      )}
+      {error === null && hintMessage && <p className="pl-1.5 text-caption-1 text-gray-600">{hintMessage}</p>}
+      {error === 'error' && errorMessage && <p className="pl-1.5 text-caption-1 text-error">{errorMessage}</p>}
+      {error === 'success' && successMessage && <p className="pl-1.5 text-caption-1 text-blue-700">{successMessage}</p>}
     </div>
   );
 };

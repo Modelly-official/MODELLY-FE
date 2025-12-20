@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import DeleteIcon from "@/public/icons/signup/delete.svg";
+import DeleteIcon from '@/public/icons/signup/delete.svg';
 
 interface TextInputProps {
   label: string;
@@ -34,7 +34,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         {showClearButton && value && (
           <button
             type="button"
-            onClick={() => onChange("")}
+            onClick={() => onChange('')}
             className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
           >
             <DeleteIcon />

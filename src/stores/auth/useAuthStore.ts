@@ -1,8 +1,8 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface User {
   userId: number;
-  role: "model" | "designer";
+  role: 'model' | 'designer';
   username: string;
   loginId: string;
 }
@@ -26,9 +26,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearAuth: () => {
     // 쿠키 삭제 (accessToken + userRole)
-    if (typeof document !== "undefined") {
-      document.cookie = "access_token=; path=/; max-age=0";
-      document.cookie = "user_role=; path=/; max-age=0";
+    if (typeof document !== 'undefined') {
+      document.cookie = 'access_token=; path=/; max-age=0';
+      document.cookie = 'user_role=; path=/; max-age=0';
     }
     set({ user: null, isAuthenticated: false });
   },
@@ -36,42 +36,42 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 // 쿠키에서 accessToken 읽는 헬퍼 함수
 export const getAccessToken = (): string | null => {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
 
   const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("access_token="))
-    ?.split("=")[1];
+    .split('; ')
+    .find((row) => row.startsWith('access_token='))
+    ?.split('=')[1];
 
   return token || null;
 };
 
 // 쿠키에 accessToken 저장하는 헬퍼 함수
 export const setAccessToken = (token: string) => {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
 
   document.cookie = `access_token=${token}; path=/; max-age=3600; SameSite=Lax${
-    process.env.NODE_ENV === "production" ? "; Secure" : ""
+    process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };
 
 // 쿠키에서 userRole 읽는 헬퍼 함수
-export const getUserRole = (): "model" | "designer" | null => {
-  if (typeof document === "undefined") return null;
+export const getUserRole = (): 'model' | 'designer' | null => {
+  if (typeof document === 'undefined') return null;
 
   const role = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("user_role="))
-    ?.split("=")[1];
+    .split('; ')
+    .find((row) => row.startsWith('user_role='))
+    ?.split('=')[1];
 
-  return role as "model" | "designer" | null;
+  return role as 'model' | 'designer' | null;
 };
 
 // 쿠키에 userRole 저장하는 헬퍼 함수
-export const setUserRole = (role: "model" | "designer") => {
-  if (typeof document === "undefined") return;
+export const setUserRole = (role: 'model' | 'designer') => {
+  if (typeof document === 'undefined') return;
 
   document.cookie = `user_role=${role}; path=/; max-age=3600; SameSite=Lax${
-    process.env.NODE_ENV === "production" ? "; Secure" : ""
+    process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };

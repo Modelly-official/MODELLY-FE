@@ -1,30 +1,30 @@
 /* theme.css */
 @theme {
   /* Colors - Tailwind 유틸리티로 사용 가능: bg-white, text-black text-error 등 */
-  --color-white: #FFFFFF;
+  --color-white: #ffffff;
   --color-black: #222222;
-  --color-error: #FF533D;
+  --color-error: #ff533d;
 
   /* Gray Scale */
-  --color-gray-100: #F9F9FB;
-  --color-gray-200: #F3F5F7;
-  --color-gray-300: #EFF1F3;
-  --color-gray-400: #E5E6E9;
-  --color-gray-500: #CED0D7;
-  --color-gray-600: #B3B4BD;
-  --color-gray-700: #81828D;
-  --color-gray-800: #54555E;
-  --color-gray-900: #2F2E32;
-  --color-gray-950: #1C1C1E;
+  --color-gray-100: #f9f9fb;
+  --color-gray-200: #f3f5f7;
+  --color-gray-300: #eff1f3;
+  --color-gray-400: #e5e6e9;
+  --color-gray-500: #ced0d7;
+  --color-gray-600: #b3b4bd;
+  --color-gray-700: #81828d;
+  --color-gray-800: #54555e;
+  --color-gray-900: #2f2e32;
+  --color-gray-950: #1c1c1e;
 
   /* Blue Scale */
-  --color-blue-100: #EEF7FF;
-  --color-blue-200: #E8F5FF;
-  --color-blue-300: #DBEEFF;
-  --color-blue-400: #BAE0FF;
-  --color-blue-500: #8BC9FE;
-  --color-blue-600: #6BBBFF;
-  --color-blue-700: #319EFF;
+  --color-blue-100: #eef7ff;
+  --color-blue-200: #e8f5ff;
+  --color-blue-300: #dbeeff;
+  --color-blue-400: #bae0ff;
+  --color-blue-500: #8bc9fe;
+  --color-blue-600: #6bbbff;
+  --color-blue-700: #319eff;
 
   /* Font Family */
   --font-sans: 'Pretendard', sans-serif;
