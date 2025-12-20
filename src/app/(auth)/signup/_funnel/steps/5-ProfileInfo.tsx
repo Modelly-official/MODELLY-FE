@@ -183,7 +183,10 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
       />
       <SignupTitle line1={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_1} line2={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_2} />
 
-      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={(e) => e.preventDefault()}>
+      <form
+        className="flex flex-col gap-6 mt-10 mx-4 w-[calc(100%-2rem)] sm:w-[343px] flex-1"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <ProfileImageUpload profileImage={profileImage} onImageUpload={handleImageUpload} />
         <div className="flex flex-col gap-6">
           <TextInput
