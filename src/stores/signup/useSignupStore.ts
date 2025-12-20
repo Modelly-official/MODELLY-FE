@@ -1,5 +1,11 @@
 import { create } from 'zustand';
 
+const DEFAULT_TERMS = [
+  { label: '[필수] 이용약관 동의', checked: false },
+  { label: '[선택] 개인정보 수집 및 이용 동의', checked: false },
+  { label: '[선택] 광고성 정보 수신 동의', checked: false },
+] as const;
+
 export type SignupStoreField =
   | 'name'
   | 'email'
@@ -83,11 +89,7 @@ export const useSignupStore = create<SignupStore>((set) => ({
   detailAddress: '',
   category: '',
   profileImage: null,
-  terms: [
-    { label: '[필수] 이용약관 동의', checked: false },
-    { label: '[선택] 개인정보 수집 및 이용 동의', checked: false },
-    { label: '[선택] 광고성 정보 수신 동의', checked: false },
-  ],
+  terms: [...DEFAULT_TERMS],
   emailValid: null,
   emailError: '',
   emailAuthRequested: false,
@@ -131,11 +133,7 @@ export const useSignupStore = create<SignupStore>((set) => ({
       detailAddress: '',
       category: '',
       profileImage: null,
-      terms: [
-        { label: '[필수] 이용약관 동의', checked: false },
-        { label: '[선택] 개인정보 수집 및 이용 동의', checked: false },
-        { label: '[선택] 광고성 정보 수신 동의', checked: false },
-      ],
+      terms: [...DEFAULT_TERMS],
       emailValid: null,
       emailError: '',
       emailAuthRequested: false,
