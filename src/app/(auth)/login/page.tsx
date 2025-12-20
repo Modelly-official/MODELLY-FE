@@ -70,7 +70,7 @@ const LoginContent = () => {
       </div>
 
       {/* 입력 폼 */}
-      <div className="mt-6 mx-4 w-[343px]">
+      <div className="mt-6 mx-4 w-[calc(100%-2rem)] sm:w-[343px]">
         <div className="mb-4">
           <label className="block text-black text-body-1-medium mb-2 tracking-tight">아이디</label>
           <input
