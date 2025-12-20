@@ -1,11 +1,6 @@
 import { NextRequest } from 'next/server';
 import { PUBLIC_ROUTES, MODEL_ONLY_ROUTES, DESIGNER_ONLY_ROUTES } from '@/src/constants/routes';
-
-interface ValidateResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-}
+import { ValidateResponse, ApiResponse } from '@/src/types/auth/auth';
 
 /**
  * 백엔드 API로 accessToken 유효성 검증
@@ -25,9 +20,9 @@ export async function verifyAccessToken(accessToken: string): Promise<boolean> {
       return false;
     }
 
-    const data: ValidateResponse = await response.json();
+    const data: ApiResponse<ValidateResponse> = await response.json();
 
-    return data.isSuccess;
+    return data.isSuccess && data.result.isValid === 'VALID';
   } catch (error) {
     console.error('Token validation error:', error);
     return false;
