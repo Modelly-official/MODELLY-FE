@@ -13,6 +13,7 @@ export type Message = {
   text: string;
   time?: string;
   imageUrls?: string[];
+  failed?: boolean; // 전송 실패 표시용(optimistic UI)
 };
 
 export type ChatRole = 'DESIGNER' | 'MODEL';

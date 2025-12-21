@@ -184,12 +184,26 @@ export default function useChatRoom(roomId?: string | number) {
       imageUrls: null,
     };
 
+    // 타임아웃 기반 실패 표시 로직 추가
+    const timeout = setTimeout(() => {
+      setMessages((prev) => {
+        const idx = prev.findIndex((m) => m.id === optimistic.id);
+        if (idx >= 0) {
+          const updated = [...prev];
+          updated[idx] = { ...updated[idx], failed: true };
+          return updated;
+        }
+        return prev;
+      });
+    }, 5000); // 5초 내 서버 응답 없으면 실패 표시
+
     try {
       publishMessage(client, roomId, payload);
     } catch (err) {
-      // 실패 시 낙관적 메시지 롤백
+      // 동기적 에러(연결 해제 등)만 잡힘
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
       setInput(text);
+      clearTimeout(timeout);
       console.error('send message error', err);
       setError('메시지 전송에 실패했습니다.');
     }
