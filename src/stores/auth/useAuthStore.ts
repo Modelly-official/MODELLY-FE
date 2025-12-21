@@ -58,27 +58,12 @@ export const setAccessToken = (token: string) => {
 // 쿠키에서 userRole 읽는 헬퍼 함수
 export const getUserRole = (): 'model' | 'designer' | null => {
   if (typeof document === 'undefined') return null;
-
-  const findCookie = (name: string) =>
-    document.cookie
-      .split('; ')
-      .find((row) => row.startsWith(`${name}=`))
-      ?.split('=')[1];
-
-  const raw =
-    findCookie('user_role') ??
-    findCookie('userRole') ?? // 백엔드/프론트 명칭 혼합 대비
-    undefined;
-
-  if (!raw) return null;
-
-  const decoded = decodeURIComponent(raw);
-  const normalized = decoded.toLowerCase();
-
-  // 다국어 표기 대응
-  if (normalized === 'designer' || normalized === '디자이너') return 'designer';
-  if (normalized === 'model' || normalized === '모델') return 'model';
-
+  const role = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('user_role='))
+    ?.split('=')[1];
+  if (role === '디자이너') return 'designer';
+  if (role === '모델') return 'model';
   return null;
 };
 
