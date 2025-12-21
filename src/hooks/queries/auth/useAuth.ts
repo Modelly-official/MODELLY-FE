@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { login, logout, validateToken, socialSignup } from '@/src/apis';
+import { login, logout, validateToken, socialSignup, processSocialLoginCallback } from '@/src/apis';
 import type {
   LoginRequest,
   LoginResponse,
@@ -7,6 +7,8 @@ import type {
   ValidateResponse,
   SocialSignupRequest,
   SocialSignupResponse,
+  SocialLoginCallbackRequest,
+  SocialLoginCallbackResponse,
   ApiResponse,
 } from '@/src/types';
 
@@ -48,5 +50,19 @@ export function useValidateToken(options?: { enabled?: boolean }) {
     staleTime: 5 * 60 * 1000, // 5분 (토큰 유효성은 자주 체크할 필요 X)
     retry: 0, // 토큰 검증 실패 시 재시도 X
     ...options,
+  });
+}
+
+/**
+ * 소셜 로그인 콜백 처리 mutation hook
+ */
+export function useSocialLoginCallback() {
+  return useMutation<
+    ApiResponse<SocialLoginCallbackResponse>,
+    Error,
+    { provider: string; payload: SocialLoginCallbackRequest }
+  >({
+    mutationFn: ({ provider, payload }) => processSocialLoginCallback(provider, payload),
+    retry: 0, // 소셜 로그인 콜백은 재시도하지 않음
   });
 }
