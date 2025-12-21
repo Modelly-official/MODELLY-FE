@@ -50,7 +50,7 @@ export default function MessageItem({
         {message.text && (
           <div
             className={`inline-block px-4 py-3 text-body-2-medium rounded-2xl ${cornerClass} ${
-              message.fromMe ? 'bg-blue-300 text-blue-700' : 'bg-white text-gray-800 border border-gray-300'
+              message.fromMe ? 'bg-blue-300 text-blue-800' : 'bg-white text-gray-800 border border-gray-300'
             }`}
           >
             {message.text}
