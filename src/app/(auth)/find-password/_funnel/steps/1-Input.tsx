@@ -24,6 +24,8 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
   const [isVerified, setIsVerified] = useState(false);
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState('');
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
 
   // 이메일 유효성 검증
   const isValidEmail = (email: string) => {
@@ -52,21 +54,29 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
   const handleSendCode = () => {
     if (!name || !loginId || !isValidEmail(email)) return;
 
+    setIsSendingCode(true);
     // TODO: API 연동 시 구현
-    setCodeSent(true);
-    setTimer(180); // 3분
-    setError('');
-    setAuthCode('');
-    setIsVerified(false);
+    setTimeout(() => {
+      setCodeSent(true);
+      setTimer(180); // 3분
+      setError('');
+      setAuthCode('');
+      setIsVerified(false);
+      setIsSendingCode(false);
+    }, 500);
   };
 
   // 인증번호 확인 (임시 구현 - API 연동 전)
   const handleVerifyCode = () => {
     if (!authCode) return;
 
+    setIsVerifyingCode(true);
     // TODO: API 연동 시 구현
-    setIsVerified(true);
-    setError('');
+    setTimeout(() => {
+      setIsVerified(true);
+      setError('');
+      setIsVerifyingCode(false);
+    }, 500);
   };
 
   // 비밀번호 재설정 진행
@@ -137,14 +147,11 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <div className="flex gap-2 items-center">
             <input
               type="email"
-              className={`flex-1 border border-gray-400 rounded-xl px-4 h-[49px] text-body-2-medium placeholder:text-gray-600 focus:outline-none tracking-tight ${
-                codeSent ? 'bg-gray-100 text-gray-700' : 'bg-white text-gray-900'
-              }`}
+              className="flex-1 border border-gray-400 rounded-xl px-4 h-[49px] text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none tracking-tight bg-white"
               placeholder="이메일을 입력해주세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               maxLength={50}
-              disabled={codeSent && !isVerified}
             />
             <button
               type="button"
@@ -156,9 +163,17 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
                     : 'bg-gray-200 text-gray-600 cursor-not-allowed'
               }`}
               onClick={handleSendCode}
-              disabled={(!name || !loginId || !isValidEmail(email)) && !codeSent}
+              disabled={((!name || !loginId || !isValidEmail(email)) && !codeSent) || isSendingCode}
             >
-              {codeSent ? '다시받기' : '인증하기'}
+              {isSendingCode ? (
+                <div className="flex justify-center">
+                  <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : codeSent ? (
+                '다시받기'
+              ) : (
+                '인증하기'
+              )}
             </button>
           </div>
         </div>
@@ -198,9 +213,17 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
                       : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                 }`}
                 onClick={handleVerifyCode}
-                disabled={authCode.length < 4 || isVerified}
+                disabled={authCode.length < 4 || isVerified || isVerifyingCode}
               >
-                {isVerified ? '인증완료' : '확인하기'}
+                {isVerifyingCode ? (
+                  <div className="flex justify-center">
+                    <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : isVerified ? (
+                  '인증완료'
+                ) : (
+                  '확인하기'
+                )}
               </button>
             </div>
             {error && <p className="text-caption-1-medium text-error tracking-tight">{error}</p>}
@@ -220,4 +243,3 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
     </div>
   );
 };
-
