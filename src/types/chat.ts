@@ -12,6 +12,7 @@ export type Message = {
   fromMe: boolean;
   text: string;
   time?: string;
+  imageUrls?: string[];
 };
 
 export type ChatRole = 'DESIGNER' | 'MODEL';
@@ -21,6 +22,7 @@ export interface ChatRoomSummary {
   roomId: number;
   otherUserId: number;
   name: string;
+  nickname?: string;
   profileImageUrl: string;
   messageType: ChatMessageType;
   lastMessage: string;

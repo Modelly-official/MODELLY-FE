@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createChatRoom } from '@/src/apis';
+import { createChatRoom } from '@/src/apis/chat/chat';
 import ChatList from '@/src/components/chat/chatlist/ChatList';
 import { getUserRole, useAuthStore } from '@/src/stores';
 import type { Chat } from '@/src/types/chat';
@@ -19,11 +19,6 @@ export default function ChatPage() {
   useEffect(() => {
     const resolved = storeRole ?? getUserRole();
     setRole(resolved);
-    if (!resolved) {
-      setError('로그인이 필요합니다.');
-    } else {
-      setError(null);
-    }
   }, [storeRole]);
 
   const targetUserId = useMemo(() => {
@@ -51,12 +46,13 @@ export default function ChatPage() {
     ];
   }, [role, targetUserId, counterpartLabel]);
 
-  const handleEnter = async () => {
+  const handleEnter = async (_chat?: Chat) => {
     if (!targetUserId) {
       setError('대상 유저가 설정되지 않았습니다.');
       return;
     }
     setError(null);
+    void _chat;
     try {
       const res = await createChatRoom(targetUserId);
       if (res.isSuccess && res.result?.chatRoomId) {
@@ -74,10 +70,7 @@ export default function ChatPage() {
   return (
     <div className="bg-white min-h-screen py-10">
       <h1 className="text-head-3-semibold px-4 mb-4">채팅</h1>
-
-      {error && <p className="text-body-1-medium text-red-500 mb-3">{error}</p>}
-      {!role && <p className="text-body-1-medium text-gray-700">로그인 정보를 불러오는 중...</p>}
-
+      {error && <p className="text-red-500 px-4 mb-4">{error}</p>}
       {role && chats && <ChatList chats={chats} onSelect={handleEnter} />}
     </div>
   );

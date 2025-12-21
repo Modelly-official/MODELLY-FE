@@ -1,67 +1,42 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Client, StompSubscription } from '@stomp/stompjs';
-import { getChatMessages } from '@/src/apis';
-import { createChatStompClient, publishMessage, publishRead, subscribeRoom } from '@/src/lib/chat/stompClient';
+import type { StompSubscription } from '@stomp/stompjs';
+import { getChatMessages } from '@/src/apis/chat/chat';
+import { publishMessage, publishRead, subscribeRoom } from '@/src/lib/chat';
+import useStompClient from '@/src/hooks/chat/useStompClient';
+import useChatImage from '@/src/hooks/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';
-import type { ChatMessageResponse, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
+import { mapApiMessage, mapStompMessage, formatTime } from '@/src/utils/chat/convert';
+import { parseUserIdFromToken } from '@/src/utils/auth/token';
+import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
 
-const formatTime = (value?: string) => {
-  if (!value) return '';
-  const d = new Date(value);
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-};
-
-const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number | null): Message => ({
-  id: msg.messageId,
-  fromMe: currentUserId ? msg.senderUserId === currentUserId : false,
-  text: msg.messageType === 'IMAGE' ? '이미지' : (msg.message ?? ''),
-  time: msg.createdAt ? formatTime(msg.createdAt) : undefined,
-});
-
-const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId?: number | null): Message | null => {
-  if (payload.messageType === 'READ') return null;
-
-  const senderId = payload.senderUserId ?? payload.senderId;
-  return {
-    id: payload.messageId,
-    fromMe: currentUserId ? senderId === currentUserId : false,
-    text: payload.messageType === 'IMAGE' ? '이미지' : (payload.message ?? ''),
-    time: payload.createdAt ? formatTime(payload.createdAt) : undefined,
-  };
-};
-
-// JWT payload에서 userId를 추출 (스토어에 없을 때 fallback)
-const parseUserIdFromToken = (token: string | null): number | null => {
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    const id = payload.userId ?? payload.sub ?? payload.id;
-    const num = typeof id === 'string' ? Number(id) : id;
-    return Number.isFinite(num) ? num : null;
-  } catch (err) {
-    console.warn('token parse failed', err);
-    return null;
-  }
-};
-
+// 채팅방 관련 훅
+// 서버에서 초기 메시지 로드, STOMP를 통해 실시간 메시지 구독/수신
+// 텍스트/이미지 전송(낙관적 UI 포함) 및 읽음(READ) 처리
 export default function useChatRoom(roomId?: string | number) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [connected, setConnected] = useState(false);
+  const [opponent, setOpponent] = useState<ChatOpponent | null>(null);
 
   const currentUserId = useAuthStore((state) => state.user?.userId);
   const token = getAccessToken();
   const fallbackUserId = useMemo(() => parseUserIdFromToken(token), [token]);
   const effectiveUserId = currentUserId ?? fallbackUserId;
-  const clientRef = useRef<Client | null>(null);
+  const { clientRef, connected: stompConnected } = useStompClient();
   const subscriptionRef = useRef<StompSubscription | null>(null);
   const lastMessageIdRef = useRef<string | number | null>(null);
 
+  const { sendImage: sendImageInternal, sendingImage } = useChatImage({
+    roomId,
+    clientRef,
+    stompConnected,
+  });
+
   // 초기 메시지 로드
+  // 컴포넌트(또는 방 변경) 시 서버에서 최근 메시지를 가져와 messages를 초기화
   useEffect(() => {
     if (!roomId) return undefined;
     let active = true;
@@ -79,6 +54,7 @@ export default function useChatRoom(roomId?: string | number) {
 
         const mapped = res.result.messages?.map((m) => mapApiMessage(m, effectiveUserId)) ?? [];
         setMessages(mapped);
+        setOpponent(res.result.opponent ?? null);
 
         // 최초 진입 시 서버가 unread 읽음 처리
       } catch (err) {
@@ -96,26 +72,22 @@ export default function useChatRoom(roomId?: string | number) {
   }, [roomId, effectiveUserId]);
 
   // 마지막 메시지 id 추적 (READ 처리용)
+  // 마지막 메시지 id는 방 입장/재연결 시 서버에 읽음 위치를 알리기 위해 사용
   useEffect(() => {
     const last = messages[messages.length - 1];
     lastMessageIdRef.current = last ? last.id : null;
   }, [messages]);
 
   // STOMP 연결 및 구독
+  // STOMP 클라이언트의 onConnect에서 방을 구독하고, 수신되는 메시지를 messages에 반영
   useEffect(() => {
     if (!roomId) return undefined;
-    const token = getAccessToken();
-    if (!token) return undefined;
-
-    const client = createChatStompClient(token);
+    const client = clientRef?.current;
     if (!client) return undefined;
-
-    clientRef.current = client;
 
     const baseOnConnect = client.onConnect;
     client.onConnect = (frame) => {
       baseOnConnect?.(frame);
-      setConnected(true);
       subscriptionRef.current?.unsubscribe();
       subscriptionRef.current = subscribeRoom<StompIncomingChatPayload>(client, roomId, (payload) => {
         const mapped = mapStompMessage(payload, effectiveUserId);
@@ -126,11 +98,25 @@ export default function useChatRoom(roomId?: string | number) {
 
           const next = [...prev];
           // 내가 보낸 메시지면 낙관적 temp 메시지를 치환
+          // 텍스트 메시지는 텍스트로 매칭, 이미지 메시지는 임시 blob URL을 가진 temp 항목과 매칭하여 자리 교체
           if (mapped.fromMe) {
-            const tempIdx = next.findIndex(
-              (m) => String(m.id).startsWith('temp-') && m.fromMe && m.text === mapped.text,
-            );
+            const tempIdx = next.findIndex((m) => {
+              if (!String(m.id).startsWith('temp-') || !m.fromMe) return false;
+              const mHasImages = (m.imageUrls?.length ?? 0) > 0;
+              const mappedHasImages = (mapped.imageUrls?.length ?? 0) > 0;
+              if (mHasImages && mappedHasImages) return true;
+              if (!mHasImages && !mappedHasImages) return m.text === mapped.text;
+              return false;
+            });
             if (tempIdx >= 0) {
+              const temp = next[tempIdx];
+              const url = temp.imageUrls?.[0];
+              // blob URL이면 해제하여 리소스 해제
+              if (url && url.startsWith('blob:')) {
+                try {
+                  URL.revokeObjectURL(url);
+                } catch {}
+              }
               next.splice(tempIdx, 1);
             }
           }
@@ -145,24 +131,15 @@ export default function useChatRoom(roomId?: string | number) {
       }
     };
 
-    client.onDisconnect = () => {
-      setConnected(false);
-    };
+    client.onDisconnect = () => {};
 
-    client.onStompError = () => {
-      setConnected(false);
-    };
-
-    client.activate();
+    client.onStompError = () => {};
 
     return () => {
       subscriptionRef.current?.unsubscribe();
       subscriptionRef.current = null;
-      client.deactivate();
-      clientRef.current = null;
-      setConnected(false);
     };
-  }, [roomId, effectiveUserId]);
+  }, [roomId, effectiveUserId, stompConnected, clientRef]);
 
   const sendMessage = useCallback(() => {
     if (!roomId) return;
@@ -170,7 +147,7 @@ export default function useChatRoom(roomId?: string | number) {
     if (!text) return;
 
     const client = clientRef.current;
-    if (!client || !connected) {
+    if (!client || !stompConnected) {
       setError('채팅 서버에 연결되지 않았습니다. 잠시 후 다시 시도해 주세요.');
       return;
     }
@@ -200,14 +177,46 @@ export default function useChatRoom(roomId?: string | number) {
       console.error('send message error', err);
       setError('메시지 전송에 실패했습니다.');
     }
-  }, [input, roomId, connected]);
+  }, [input, roomId, stompConnected, clientRef]);
+
+  const sendImage = useCallback(
+    async (file: File) => {
+      if (!roomId) return;
+      const now = new Date().toISOString();
+      const tempId = `temp-${Date.now()}`;
+      const objectUrl = URL.createObjectURL(file);
+      const optimistic: Message = {
+        id: tempId,
+        fromMe: true,
+        text: '',
+        time: formatTime(now),
+        imageUrls: [objectUrl],
+      };
+      setMessages((prev) => [...prev, optimistic]);
+
+      try {
+        await sendImageInternal(file);
+      } catch (err) {
+        setMessages((prev) => prev.filter((m) => m.id !== tempId));
+        try {
+          URL.revokeObjectURL(objectUrl);
+        } catch {}
+        console.error('send image error', err);
+        setError('이미지 전송에 실패했습니다.');
+      }
+    },
+    [roomId, sendImageInternal],
+  );
 
   return {
     messages,
+    opponent,
     input,
     setInput,
     sendMessage,
+    sendImage,
     loading,
     error,
+    sendingImage,
   } as const;
 }

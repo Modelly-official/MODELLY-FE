@@ -1,12 +1,8 @@
 import { axiosInstance } from '@/src/apis/axios';
-import type {
-  ApiResponse,
-  ChatRoomDetailResponse,
-  ChatRoomListResponse,
-  PresignedUploadResponse,
-  CreateChatRoomResponse,
-} from '@/src/types';
+import type { ApiResponse, ChatRoomDetailResponse, ChatRoomListResponse, CreateChatRoomResponse } from '@/src/types';
 
+// 채팅 관련 API
+//내 채팅방 목록 조회
 export const getChatRooms = async (params?: {
   page?: number;
   size?: number;
@@ -17,6 +13,7 @@ export const getChatRooms = async (params?: {
   return response.data;
 };
 
+//채팅방 생성 또는 기존 채팅방 조회
 export const createChatRoom = async (targetUserId: number): Promise<ApiResponse<CreateChatRoomResponse>> => {
   const response = await axiosInstance.post<ApiResponse<CreateChatRoomResponse>>('/chat/rooms', {
     targetUserId,
@@ -24,6 +21,7 @@ export const createChatRoom = async (targetUserId: number): Promise<ApiResponse<
   return response.data;
 };
 
+// 채팅 내역 조회 (특정 채팅방의 상대 정보 + 메시지 히스토리 조회)
 export const getChatMessages = async (
   roomId: number | string,
   params?: { cursorMessageId?: number; size?: number },
@@ -31,13 +29,5 @@ export const getChatMessages = async (
   const response = await axiosInstance.get<ApiResponse<ChatRoomDetailResponse>>(`/chat/rooms/${roomId}/messages`, {
     params,
   });
-  return response.data;
-};
-
-export const getChatImagePresigned = async (roomId: number | string): Promise<ApiResponse<PresignedUploadResponse>> => {
-  // Presigned URL 발급: POST /chat/rooms/{roomId}/images/presigned
-  const response = await axiosInstance.post<ApiResponse<PresignedUploadResponse>>(
-    `/chat/rooms/${roomId}/images/presigned`,
-  );
   return response.data;
 };

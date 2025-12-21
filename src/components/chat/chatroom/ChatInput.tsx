@@ -1,31 +1,53 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import SendIcon from "@/public/icons/chat/send.svg";
-import CameraIcon from "@/public/icons/chat/camera.svg";
+import React, { useState } from 'react';
+import SendIcon from '@/public/icons/chat/send.svg';
+import CameraIcon from '@/public/icons/chat/camera.svg';
+import { useRef } from 'react';
 
 export default function ChatInput({
   value,
   onChange,
   onSend,
-  placeholder = "채팅을 입력하세요",
+  onImageSelect,
+  placeholder = '채팅을 입력하세요',
 }: {
   value: string;
   onChange: (v: string) => void;
   onSend: () => void;
+  onImageSelect?: (file: File) => void;
   placeholder?: string;
 }) {
   const [isComposing, setIsComposing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onImageSelect) {
+      onImageSelect(file);
+    }
+    // 동일 파일 선택 시 change 이벤트가 안 뜰 수 있어 초기화
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <div className="px-4 py-3 mb-6 bg-transparent">
       <div className="flex items-center gap-3">
         <button
           type="button"
           aria-label="사진 첨부"
-          className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-gray-300"
+          onClick={handleImageClick}
+          className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-gray-300 cursor-pointer"
         >
           <CameraIcon />
         </button>
+        <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         <div className="flex-1 relative">
           <div className="bg-white rounded-xl h-12 flex items-center px-4 pr-12 border border-gray-300">
             <input
@@ -36,7 +58,7 @@ export default function ChatInput({
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !isComposing) onSend();
+                if (e.key === 'Enter' && !isComposing) onSend();
               }}
             />
           </div>

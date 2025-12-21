@@ -1,4 +1,4 @@
-import { Client, IMessage, type IStompSocket } from '@stomp/stompjs';
+import { Client, type IStompSocket } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 // SockJS WebSocket 엔드포인트: wss://{host}/api/ws/chat
@@ -41,33 +41,4 @@ export function createChatStompClient(token: string) {
   };
 
   return client;
-}
-
-export function subscribeRoom<TPayload = unknown>(
-  client: Client,
-  roomId: string | number,
-  onMessage: (payload: TPayload, frame: IMessage) => void,
-) {
-  return client.subscribe(`/sub/chat/rooms/${roomId}`, (frame: IMessage) => {
-    const payload = JSON.parse(frame.body) as TPayload;
-    onMessage(payload, frame);
-  });
-}
-
-export function publishMessage(
-  client: Client,
-  roomId: string | number,
-  body: { messageType: string; message?: string | null; imageUrls?: string[] | null },
-) {
-  client.publish({
-    destination: `/pub/chat/rooms/${roomId}`,
-    body: JSON.stringify(body),
-  });
-}
-
-export function publishRead(client: Client, roomId: string | number, lastMessageId: number) {
-  client.publish({
-    destination: `/pub/chat/rooms/${roomId}/read`,
-    body: JSON.stringify({ lastMessageId }),
-  });
 }
