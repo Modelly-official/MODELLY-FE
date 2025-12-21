@@ -119,7 +119,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
 
       {/* 제목 */}
       <div className="mt-4 mx-4">
-        <h1 className="text-head-3-semibold text-gray-900 tracking-tight">새로운 비밀번호</h1>
+        <h1 className="text-body-1-medium tracking-tight">새로운 비밀번호</h1>
       </div>
 
       {/* 입력 폼 */}
@@ -131,9 +131,9 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           onChange={setNewPassword}
           placeholder="비밀번호를 입력해주세요"
           error={newPasswordError}
-          errorMessage="영문 대소문자, 숫자, 특수문자(~!@#$%) 중 3종 이상 8자 이상이어야 합니다."
-          hintMessage="영문 대소문자, 숫자, 특수문자(~!@#$%) 중 3종 이상 8자 이상이어야 합니다."
-          successMessage="비밀번호가 일치합니다."
+          errorMessage="영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다."
+          hintMessage="영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다."
+          successMessage="사용 가능한 비밀번호입니다."
         />
 
         {/* 비밀번호 확인 */}
@@ -157,4 +157,3 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
     </div>
   );
 };
-
