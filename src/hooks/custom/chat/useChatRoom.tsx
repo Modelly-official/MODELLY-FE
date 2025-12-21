@@ -103,62 +103,53 @@ export default function useChatRoom(roomId?: string | number) {
     lastMessageIdRef.current = last ? last.id : null;
   }, [messages]);
 
-  // STOMP 연결 및 구독
-  // STOMP 클라이언트의 onConnect에서 방을 구독하고, 수신되는 메시지를 messages에 반영
+  // STOMP 연결 및 구독: 핸들러 직접 덮어쓰기 없이 stompConnected 상태 기반으로 구독/해제만 담당
   useEffect(() => {
     if (!roomId) return undefined;
     const client = clientRef?.current;
-    if (!client) return undefined;
+    if (!client || !stompConnected) return undefined;
 
-    const baseOnConnect = client.onConnect;
-    client.onConnect = (frame) => {
-      baseOnConnect?.(frame);
-      subscriptionRef.current?.unsubscribe();
-      subscriptionRef.current = subscribeRoom<StompIncomingChatPayload>(client, roomId, (payload) => {
-        const mapped = mapStompMessage(payload, effectiveUserId);
-        if (!mapped) return;
-        setMessages((prev) => {
-          // 서버 에코로 동일 id가 올 때 중복 추가 방지
-          if (prev.some((m) => m.id === mapped.id)) return prev;
-
-          const next = [...prev];
-          // 내가 보낸 메시지면 낙관적 temp 메시지를 치환
-          // 텍스트 메시지는 텍스트로 매칭, 이미지 메시지는 임시 blob URL을 가진 temp 항목과 매칭하여 자리 교체
-          if (mapped.fromMe) {
-            const tempIdx = next.findIndex((m) => {
-              if (!String(m.id).startsWith('temp-') || !m.fromMe) return false;
-              const mHasImages = (m.imageUrls?.length ?? 0) > 0;
-              const mappedHasImages = (mapped.imageUrls?.length ?? 0) > 0;
-              if (mHasImages && mappedHasImages) return true;
-              if (!mHasImages && !mappedHasImages) return m.text === mapped.text;
-              return false;
-            });
-            if (tempIdx >= 0) {
-              const temp = next[tempIdx];
-              const url = temp.imageUrls?.[0];
-              // blob URL이면 해제하여 리소스 해제
-              if (url && url.startsWith('blob:')) {
-                try {
-                  URL.revokeObjectURL(url);
-                } catch {}
-              }
-              next.splice(tempIdx, 1);
+    // 연결되어 있으면 바로 구독
+    subscriptionRef.current?.unsubscribe();
+    subscriptionRef.current = subscribeRoom<StompIncomingChatPayload>(client, roomId, (payload) => {
+      const mapped = mapStompMessage(payload, effectiveUserId);
+      if (!mapped) return;
+      setMessages((prev) => {
+        // 서버 에코로 동일 id가 올 때 중복 추가 방지
+        if (prev.some((m) => m.id === mapped.id)) return prev;
+        const next = [...prev];
+        // 내가 보낸 메시지면 낙관적 temp 메시지를 치환
+        // 텍스트 메시지는 텍스트로 매칭, 이미지 메시지는 임시 blob URL을 가진 temp 항목과 매칭하여 자리 교체
+        if (mapped.fromMe) {
+          const tempIdx = next.findIndex((m) => {
+            if (!String(m.id).startsWith('temp-') || !m.fromMe) return false;
+            const mHasImages = (m.imageUrls?.length ?? 0) > 0;
+            const mappedHasImages = (mapped.imageUrls?.length ?? 0) > 0;
+            if (mHasImages && mappedHasImages) return true;
+            if (!mHasImages && !mappedHasImages) return m.text === mapped.text;
+            return false;
+          });
+          if (tempIdx >= 0) {
+            const temp = next[tempIdx];
+            const url = temp.imageUrls?.[0];
+            // blob URL이면 해제하여 리소스 해제
+            if (url && url.startsWith('blob:')) {
+              try {
+                URL.revokeObjectURL(url);
+              } catch {}
             }
+            next.splice(tempIdx, 1);
           }
-          return [...next, mapped];
-        });
+        }
+        return [...next, mapped];
       });
+    });
 
-      // 방에 입장/재연결 시 현재 마지막 메시지까지 읽음 처리
-      const lastMessageId = lastMessageIdRef.current;
-      if (typeof lastMessageId === 'number') {
-        publishRead(client, roomId, lastMessageId);
-      }
-    };
-
-    client.onDisconnect = () => {};
-
-    client.onStompError = () => {};
+    // 방에 입장/재연결 시 현재 마지막 메시지까지 읽음 처리
+    const lastMessageId = lastMessageIdRef.current;
+    if (typeof lastMessageId === 'number') {
+      publishRead(client, roomId, lastMessageId);
+    }
 
     return () => {
       subscriptionRef.current?.unsubscribe();
