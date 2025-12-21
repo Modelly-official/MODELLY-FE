@@ -8,7 +8,7 @@ export const formatTime = (value?: string) => {
 
 export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number | null): Message => ({
   id: msg.messageId,
-  fromMe: currentUserId ? msg.senderUserId === currentUserId : false,
+  fromMe: currentUserId != null ? msg.senderUserId === currentUserId : false,
   text: msg.messageType === 'IMAGE' ? '' : (msg.message ?? ''),
   time: msg.createdAt ? formatTime(msg.createdAt) : undefined,
   imageUrls: msg.imageUrls,
@@ -20,7 +20,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
   const senderId = payload.senderUserId ?? payload.senderId;
   return {
     id: payload.messageId,
-    fromMe: currentUserId ? senderId === currentUserId : false,
+    fromMe: currentUserId != null ? senderId === currentUserId : false,
     text: payload.messageType === 'IMAGE' ? '' : (payload.message ?? ''),
     time: payload.createdAt ? formatTime(payload.createdAt) : undefined,
     imageUrls: payload.imageUrls,
