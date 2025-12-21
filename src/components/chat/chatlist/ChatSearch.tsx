@@ -1,5 +1,6 @@
-import SearchIcon from "@/public/icons/chat/search.svg";
+import SearchIcon from '@/public/icons/chat/search.svg';
 
+// 아직 구현은 안함 - UI만
 export default function ChatSearch() {
   return (
     <div className="flex items-center bg-gray-200 rounded-xl px-4 py-3.5 mt-2 mb-[5px] mx-4">
