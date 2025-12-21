@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
 import { PasswordInput } from '@/src/components/signup/4-LoginInfo/PasswordInput';
+import { useResetPassword } from '@/src/hooks/queries';
 
 interface StepNewPasswordProps {
   email: string;
@@ -13,6 +14,9 @@ interface StepNewPasswordProps {
 
 export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext }) => {
   const router = useRouter();
+
+  // React Query Hook
+  const resetPasswordMutation = useResetPassword();
 
   // 비밀번호 상태
   const [newPassword, setNewPassword] = useState('');
@@ -75,12 +79,29 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
   const isFormValid = newPasswordError === 'success' && confirmPasswordError === 'success';
 
   // 비밀번호 변경 완료
-  const handleComplete = () => {
+  const handleComplete = useCallback(() => {
     if (!isFormValid) return;
 
-    // TODO: API 연동 시 구현
-    goNext();
-  };
+    resetPasswordMutation.mutate(
+      { email, newPassword },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            goNext();
+          } else {
+            alert(response.message || '비밀번호 변경에 실패했습니다.');
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.';
+          alert(errorMessage);
+        },
+      },
+    );
+  }, [isFormValid, email, newPassword, resetPasswordMutation, goNext]);
 
   // 뒤로가기
   const handleBack = () => {
@@ -128,8 +149,8 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
 
         {/* 하단 버튼 */}
         <div className="mt-auto mb-[42px]">
-          <FixedBottomButton disabled={!isFormValid} onClick={handleComplete}>
-            완료
+          <FixedBottomButton disabled={!isFormValid || resetPasswordMutation.isPending} onClick={handleComplete}>
+            {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
           </FixedBottomButton>
         </div>
       </form>
