@@ -108,6 +108,20 @@ export interface ValidateResponse {
   isValid: 'VALID' | 'INVALID';
 }
 
+// 소셜 로그인 콜백 응답 타입
+
+export interface SocialLoginCallbackRequest {
+  code: string;
+  state?: string; // 네이버용
+}
+
+export interface SocialLoginCallbackResponse {
+  userId: number;
+  accessToken: string;
+  registered: boolean;
+  userRole: 'MODEL' | 'DESIGNER';
+}
+
 // 공통 API 응답 타입
 
 export interface ApiResponse<T> {
