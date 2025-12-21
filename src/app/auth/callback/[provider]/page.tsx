@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { use, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setAccessToken, setUserRole } from '@/src/stores';
 import { useSocialLoginCallback } from '@/src/hooks/queries';
@@ -9,8 +9,6 @@ import type { AxiosError } from 'axios';
 /**
  * 소셜 로그인 콜백 페이지 (동적 라우팅)
  * 카카오, 네이버, 구글 등 모든 소셜 로그인 프로바이더를 처리합니다.
- *
- * @param provider - 소셜 로그인 프로바이더 (kakao, naver, google)
  */
 
 type SocialProvider = 'kakao' | 'naver' | 'google';
@@ -21,7 +19,12 @@ const PROVIDER_NAMES: Record<SocialProvider, string> = {
   google: '구글',
 };
 
-const SocialCallbackContent = ({ provider }: { provider: string }) => {
+interface PageProps {
+  params: Promise<{ provider: string }>;
+}
+
+const SocialCallbackPage = ({ params }: PageProps) => {
+  const { provider } = use(params); // Promise unwrap
   const router = useRouter();
   const searchParams = useSearchParams();
   const socialLoginMutation = useSocialLoginCallback();
@@ -131,35 +134,6 @@ const SocialCallbackContent = ({ provider }: { provider: string }) => {
         <p className="text-gray-700 text-body-1-medium">{providerName} 로그인 처리 중...</p>
       </div>
     </div>
-  );
-};
-
-interface PageProps {
-  params: Promise<{ provider: string }>;
-}
-
-const SocialCallbackPage = ({ params }: PageProps) => {
-  return <SocialCallbackWrapper params={params} />;
-};
-
-const SocialCallbackWrapper = async ({ params }: PageProps) => {
-  const { provider } = await params;
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center min-h-screen bg-white">
-          <div className="text-center">
-            <div className="mb-4">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-            </div>
-            <p className="text-gray-700 text-body-1-medium">로딩 중...</p>
-          </div>
-        </div>
-      }
-    >
-      <SocialCallbackContent provider={provider} />
-    </Suspense>
   );
 };
 
