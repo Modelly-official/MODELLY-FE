@@ -180,7 +180,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
                     setAuthCode(e.target.value.replace(/[^0-9]/g, ''));
                     setError('');
                   }}
-                  maxLength={6}
+                  maxLength={4}
                   disabled={isVerified}
                 />
                 {timer > 0 && !isVerified && (
