@@ -12,10 +12,12 @@ export const FindIdFunnel: React.FC = () => {
   // 결과 상태
   const [resultName, setResultName] = useState('');
   const [resultLoginId, setResultLoginId] = useState('');
+  const [resultLoginType, setResultLoginType] = useState('');
 
-  const handleComplete = (name: string, loginId: string) => {
+  const handleComplete = (name: string, loginId: string, loginType: string) => {
     setResultName(name);
     setResultLoginId(loginId);
+    setResultLoginType(loginType);
     setStep('complete');
   };
 
@@ -26,10 +28,9 @@ export const FindIdFunnel: React.FC = () => {
           <StepInput goNext={handleComplete} />
         </Funnel.Step>
         <Funnel.Step name="complete">
-          <StepComplete name={resultName} loginId={resultLoginId} />
+          <StepComplete name={resultName} loginId={resultLoginId} loginType={resultLoginType} />
         </Funnel.Step>
       </Funnel>
     </div>
   );
 };
-

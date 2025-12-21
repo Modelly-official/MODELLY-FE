@@ -7,7 +7,7 @@ import { FixedBottomButton } from '@/src/components/signup';
 import { useSendFindIdCode, useVerifyEmailCode, useFindId } from '@/src/hooks/queries';
 
 interface StepInputProps {
-  goNext: (name: string, loginId: string) => void;
+  goNext: (name: string, loginId: string, loginType: string) => void;
 }
 
 export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
@@ -69,7 +69,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
             setError('');
             setAuthCode('');
             setIsVerified(false);
-            alert(response.result.message || '인증번호가 발송되었습니다.');
           } else {
             alert(response.message || '인증번호 발송에 실패했습니다.');
           }
@@ -126,7 +125,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
       {
         onSuccess: (response) => {
           if (response.isSuccess && response.result) {
-            goNext(response.result.name, response.result.loginId);
+            goNext(response.result.name, response.result.loginId, response.result.loginType);
           } else {
             alert(response.message || '아이디 찾기에 실패했습니다.');
           }
