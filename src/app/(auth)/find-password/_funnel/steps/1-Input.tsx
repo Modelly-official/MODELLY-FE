@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
-import { useSendResetPasswordCode, useVerifyEmailCode, useVerifyResetPassword } from '@/src/hooks/queries';
+import { useSendResetPasswordCode, useVerifyResetPassword } from '@/src/hooks/queries';
 
 interface StepInputProps {
   goNext: (name: string, loginId: string, email: string) => void;
@@ -16,7 +16,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
 
   // React Query Hooks
   const sendCodeMutation = useSendResetPasswordCode();
-  const verifyCodeMutation = useVerifyEmailCode();
   const verifyResetMutation = useVerifyResetPassword();
 
   // 입력 상태
@@ -90,12 +89,12 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
     );
   }, [name, loginId, email, sendCodeMutation, goSocialUser]);
 
-  // 인증번호 확인
+  // 인증번호 확인 및 사용자 정보 검증
   const handleVerifyCode = useCallback(() => {
-    if (!authCode) return;
+    if (!authCode || authCode.length < 4) return;
 
-    verifyCodeMutation.mutate(
-      { email, authCode, type: 'FIND_PASSWORD' },
+    verifyResetMutation.mutate(
+      { name, loginId, email },
       {
         onSuccess: (response) => {
           if (response.isSuccess) {
@@ -103,32 +102,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
             setError('');
           } else {
             setIsVerified(false);
-            setError(response.message || '인증번호가 일치하지 않습니다.');
-          }
-        },
-        onError: (error: unknown) => {
-          const axiosError = error as {
-            response?: { data?: { message?: string } };
-          };
-          const errorMessage = axiosError.response?.data?.message || '인증번호 검증 중 오류가 발생했습니다.';
-          setError(errorMessage);
-        },
-      },
-    );
-  }, [email, authCode, verifyCodeMutation]);
-
-  // 비밀번호 재설정 진행
-  const handleNextStep = useCallback(() => {
-    if (!isVerified) return;
-
-    verifyResetMutation.mutate(
-      { name, loginId, email },
-      {
-        onSuccess: (response) => {
-          if (response.isSuccess) {
-            goNext(name, loginId, email);
-          } else {
-            alert(response.message || '사용자 정보 검증에 실패했습니다.');
+            setError(response.message || '사용자 정보 검증에 실패했습니다.');
           }
         },
         onError: (error: unknown) => {
@@ -136,11 +110,17 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
             response?: { data?: { message?: string } };
           };
           const errorMessage = axiosError.response?.data?.message || '사용자 정보 검증 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          setError(errorMessage);
         },
       },
     );
-  }, [isVerified, name, loginId, email, verifyResetMutation, goNext]);
+  }, [name, loginId, email, authCode, verifyResetMutation]);
+
+  // 비밀번호 재설정 진행
+  const handleNextStep = useCallback(() => {
+    if (!isVerified) return;
+    goNext(name, loginId, email);
+  }, [isVerified, name, loginId, email, goNext]);
 
   // 뒤로가기
   const handleBack = () => {
@@ -268,9 +248,9 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
                       : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                 }`}
                 onClick={handleVerifyCode}
-                disabled={authCode.length < 4 || isVerified || verifyCodeMutation.isPending}
+                disabled={authCode.length < 4 || isVerified || verifyResetMutation.isPending}
               >
-                {verifyCodeMutation.isPending ? (
+                {verifyResetMutation.isPending ? (
                   <div className="flex justify-center">
                     <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
                   </div>
@@ -290,8 +270,8 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
 
         {/* 하단 버튼 */}
         <div className="mt-auto mb-[42px]">
-          <FixedBottomButton disabled={!isVerified || verifyResetMutation.isPending} onClick={handleNextStep}>
-            {verifyResetMutation.isPending ? '검증 중...' : '비밀번호 재설정'}
+          <FixedBottomButton disabled={!isVerified} onClick={handleNextStep}>
+            비밀번호 재설정
           </FixedBottomButton>
         </div>
       </form>
