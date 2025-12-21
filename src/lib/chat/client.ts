@@ -7,7 +7,11 @@ const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 const HTTP_URL = BASE + WS_PATH;
 
 // STOMP 클라이언트 생성 (브라우저 전용). 토큰은 Authorization 헤더로 전달
-export function createChatStompClient(token: string) {
+
+export function createChatStompClient(
+  token: string,
+  options?: { onConnect?: () => void; onDisconnect?: () => void; onError?: () => void }
+) {
   if (typeof window === 'undefined') return null;
 
   let attempt = 0;
@@ -30,6 +34,15 @@ export function createChatStompClient(token: string) {
   client.onConnect = () => {
     attempt = 0;
     client.reconnectDelay = baseDelay;
+    options?.onConnect?.();
+  };
+
+  client.onDisconnect = () => {
+    options?.onDisconnect?.();
+  };
+
+  client.onStompError = () => {
+    options?.onError?.();
   };
 
   client.onWebSocketClose = (evt) => {
