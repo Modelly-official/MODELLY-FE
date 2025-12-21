@@ -4,14 +4,13 @@ import { use, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setAccessToken, setUserRole } from '@/src/stores';
 import { useSocialLoginCallback } from '@/src/hooks/queries';
+import type { SocialProvider } from '@/src/utils/auth/socialLogin';
 import type { AxiosError } from 'axios';
 
 /**
  * 소셜 로그인 콜백 페이지 (동적 라우팅)
  * 카카오, 네이버, 구글 등 모든 소셜 로그인 프로바이더를 처리합니다.
  */
-
-type SocialProvider = 'kakao' | 'naver' | 'google';
 
 const PROVIDER_NAMES: Record<SocialProvider, string> = {
   kakao: '카카오',
@@ -32,7 +31,7 @@ const SocialCallbackPage = ({ params }: PageProps) => {
   useEffect(() => {
     const handleSocialLogin = () => {
       // 프로바이더 검증
-      if (!['kakao', 'naver', 'google'].includes(provider)) {
+      if (!(provider in PROVIDER_NAMES)) {
         alert('지원하지 않는 로그인 방식입니다.');
         router.push('/login');
         return;
@@ -82,7 +81,10 @@ const SocialCallbackPage = ({ params }: PageProps) => {
 
             // userRole을 쿠키에 저장 (백엔드는 대문자로 보내주므로 소문자로 변환)
             if (userRole) {
-              setUserRole(userRole.toLowerCase() as 'model' | 'designer');
+              const normalizedRole = userRole.toLowerCase();
+              if (normalizedRole === 'model' || normalizedRole === 'designer') {
+                setUserRole(normalizedRole);
+              }
             }
 
             // registered 값에 따라 분기
