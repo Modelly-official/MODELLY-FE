@@ -9,10 +9,14 @@ import { mockChats } from '@/src/constants/chat';
 
 export default function ChatRoom() {
   const routeParams = useParams();
-  const id = routeParams?.id;
-  const chat = mockChats.find((c) => String(c.id) === String(id)) ?? { id: id ?? '', name: '대화' };
+  const roomIdParam = routeParams?.roomId;
+  const roomId = Array.isArray(roomIdParam) ? roomIdParam[0] : roomIdParam;
+  const chat = mockChats.find((c) => String(c.id) === String(roomId)) ?? {
+    id: roomId ?? '',
+    name: '대화',
+  };
 
-  const { messages, input, setInput, sendMessage } = useChatRoom();
+  const { messages, input, setInput, sendMessage } = useChatRoom(roomId);
 
   return (
     <div className="flex flex-col h-screen bg-gray-200">
