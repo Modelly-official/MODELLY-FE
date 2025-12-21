@@ -29,7 +29,7 @@ export const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
   };
 
   return (
-    <div className="w-[375px] mx-auto bg-white font-sans min-h-screen relative flex flex-col">
+    <div className="bg-white font-sans min-h-screen relative flex flex-col">
       <SignupHeader onBack={() => router.push('/login')} totalSteps={totalSteps} currentStep={1} />
       <SignupTitle line1={SIGNUP_MESSAGES.TERMS.TITLE_1} line2={SIGNUP_MESSAGES.TERMS.TITLE_2} />
       <div
