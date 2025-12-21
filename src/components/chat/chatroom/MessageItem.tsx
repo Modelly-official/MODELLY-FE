@@ -8,12 +8,10 @@ import { Message } from '@/src/types/chat';
 export default function MessageItem({
   message,
   showTime = true,
-  onClick,
   sharpCorner,
 }: {
   message: Message;
   showTime?: boolean;
-  onClick?: (id: number | string) => void;
   sharpCorner?: 'left' | 'right';
 }) {
   if (!message || (!message.text && !message.imageUrls?.length)) return null;
