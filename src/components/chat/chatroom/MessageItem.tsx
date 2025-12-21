@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import Image from 'next/image';
@@ -16,21 +16,18 @@ export default function MessageItem({
   onClick?: (id: number | string) => void;
   sharpCorner?: 'left' | 'right';
 }) {
-  if (!message || (!message.text && !(message.imageUrls?.length))) return null;
+  if (!message || (!message.text && !message.imageUrls?.length)) return null;
   const defaultSharp = message.fromMe ? 'right' : 'left';
   const effectiveSharp = sharpCorner ?? defaultSharp;
   const cornerClass = effectiveSharp === 'right' ? 'rounded-br-none' : 'rounded-bl-none';
   const hasImages = (message.imageUrls?.length ?? 0) > 0;
 
   return (
-    <li
-      onClick={() => onClick?.(message.id)}
-      className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}
-    >
+    <li className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}>
       {!message.fromMe && (
         <div className="mr-2">
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-300">
-              <ProfileIcon className="w-[26.15px] h-[26.15px] text-gray-400" />
+            <ProfileIcon className="w-[26.15px] h-[26.15px] text-gray-400" />
           </div>
         </div>
       )}
@@ -45,14 +42,7 @@ export default function MessageItem({
                   message.fromMe ? 'border-blue-200' : 'border-gray-200'
                 }`}
               >
-                <Image
-                  src={url}
-                  alt="보낸 이미지"
-                  fill
-                  sizes="180px"
-                  className="object-cover"
-                  unoptimized
-                />
+                <Image src={url} alt="보낸 이미지" fill sizes="180px" className="object-cover" unoptimized />
               </div>
             ))}
           </div>
@@ -66,11 +56,7 @@ export default function MessageItem({
             {message.text}
           </div>
         )}
-        {showTime && (
-          <div className="text-caption-1-medium text-gray-600 mt-0.5">
-            {message.time}
-          </div>
-        )}
+        {showTime && <div className="text-caption-1-medium text-gray-600 mt-0.5">{message.time}</div>}
       </div>
     </li>
   );
