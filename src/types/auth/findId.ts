@@ -14,7 +14,7 @@ export interface SendFindIdCodeResponse {
 export interface VerifyEmailCodeRequest {
   email: string;
   authCode: string;
-  type: 'FIND_ID' | 'FIND_PASSWORD' | 'SIGNUP';
+  type: 'FIND_ID' | 'RESET_PASSWORD' | 'SIGNUP';
 }
 
 export interface VerifyEmailCodeResponse {
