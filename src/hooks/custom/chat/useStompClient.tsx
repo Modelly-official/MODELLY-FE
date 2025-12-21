@@ -8,7 +8,7 @@ import { getAccessToken } from '@/src/stores';
 /**
  *
  * - 앱에서 STOMP 클라이언트를 생성하고 수명주기를 관리
- * - 내부적으로 createChatStompClient(token)를 호출하여 클라이언트를 만들고,
+ *  내부적으로 createChatStompClient(token)를 호출하여 클라이언트를 만들고,
  *   컴포넌트 마운트 시 activate()를 호출, 언마운트 시 deactivate()를 호출
  *
  */

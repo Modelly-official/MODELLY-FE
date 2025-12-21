@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { StompSubscription } from '@stomp/stompjs';
 import { getChatMessages } from '@/src/apis/chat/chat';
 import { publishMessage, publishRead, subscribeRoom } from '@/src/lib/chat';
-import useStompClient from '@/src/hooks/chat/useStompClient';
-import useChatImage from '@/src/hooks/chat/useChatImage';
+import useStompClient from '@/src/hooks/custom/chat/useStompClient';
+import useChatImage from '@/src/hooks/custom/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';
 import { mapApiMessage, mapStompMessage, formatTime } from '@/src/utils/chat/convert';
 import { parseUserIdFromToken } from '@/src/utils/auth/token';
@@ -20,6 +20,9 @@ export default function useChatRoom(roomId?: string | number) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [opponent, setOpponent] = useState<ChatOpponent | null>(null);
+  // 무한 스크롤용 상태
+  const [hasNext, setHasNext] = useState(true);
+  const [nextCursorMessageId, setNextCursorMessageId] = useState<number | null>(null);
 
   const currentUserId = useAuthStore((state) => state.user?.userId);
   const token = getAccessToken();
@@ -37,6 +40,28 @@ export default function useChatRoom(roomId?: string | number) {
 
   // 초기 메시지 로드
   // 컴포넌트(또는 방 변경) 시 서버에서 최근 메시지를 가져와 messages를 초기화
+  // 과거 메시지 불러오기 (무한 스크롤)
+  const fetchPrevMessages = useCallback(async () => {
+    if (!roomId || !hasNext || !nextCursorMessageId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getChatMessages(roomId, { cursorMessageId: nextCursorMessageId, size: 20 });
+      if (!res.isSuccess || !res.result) {
+        throw new Error(res.message || '이전 메시지를 불러오지 못했습니다.');
+      }
+      const mapped = res.result.messages?.map((m) => mapApiMessage(m, effectiveUserId)) ?? [];
+      setMessages((prev) => [...mapped, ...prev]);
+      setHasNext(res.result.hasNext ?? false);
+      setNextCursorMessageId(res.result.nextCursorMessageId ?? null);
+    } catch (err) {
+      setError('이전 메시지를 불러오지 못했습니다.');
+      console.error('fetchPrevMessages error', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [roomId, hasNext, nextCursorMessageId, effectiveUserId]);
+
   useEffect(() => {
     if (!roomId) return undefined;
     let active = true;
@@ -45,7 +70,7 @@ export default function useChatRoom(roomId?: string | number) {
 
     (async () => {
       try {
-        const res = await getChatMessages(roomId, { size: 30 });
+        const res = await getChatMessages(roomId, { size: 20 });
         if (!active) return;
 
         if (!res.isSuccess || !res.result) {
@@ -55,7 +80,8 @@ export default function useChatRoom(roomId?: string | number) {
         const mapped = res.result.messages?.map((m) => mapApiMessage(m, effectiveUserId)) ?? [];
         setMessages(mapped);
         setOpponent(res.result.opponent ?? null);
-
+        setHasNext(res.result.hasNext ?? false);
+        setNextCursorMessageId(res.result.nextCursorMessageId ?? null);
         // 최초 진입 시 서버가 unread 읽음 처리
       } catch (err) {
         if (!active) return;
@@ -65,7 +91,6 @@ export default function useChatRoom(roomId?: string | number) {
         if (active) setLoading(false);
       }
     })();
-
     return () => {
       active = false;
     };
@@ -218,5 +243,8 @@ export default function useChatRoom(roomId?: string | number) {
     loading,
     error,
     sendingImage,
+    fetchPrevMessages,
+    hasNext,
+    nextCursorMessageId,
   } as const;
 }
