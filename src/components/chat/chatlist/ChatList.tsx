@@ -2,7 +2,6 @@
 
 import ChatListItem from './ChatListItem';
 import ChatSearch from './ChatSearch';
-import { mockChats as initialChats } from '@/src/constants/chat';
 import type { Chat } from '@/src/types/chat';
 
 type Props = {
@@ -11,7 +10,7 @@ type Props = {
 };
 
 export default function ChatList({ chats, onSelect }: Props) {
-  const items = chats ?? initialChats;
+  const items = chats ?? [];
 
   return (
     <>

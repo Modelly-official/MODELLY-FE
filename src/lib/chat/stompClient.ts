@@ -1,7 +1,7 @@
-import { Client, IMessage } from '@stomp/stompjs';
+import { Client, IMessage, type IStompSocket } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-// 문서 기준 WebSocket 엔드포인트: wss://{host}/api/ws/chat (SockJS 필요)
+// SockJS WebSocket 엔드포인트: wss://{host}/api/ws/chat
 const WS_PATH = '/api/ws/chat';
 const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 const HTTP_URL = BASE + WS_PATH;
@@ -14,11 +14,11 @@ export function createChatStompClient(token: string) {
   const baseDelay = 3000; // 3초 기본 재연결 간격
 
   const client = new Client({
-    // SockJS 사용: brokerURL 대신 webSocketFactory 지정
+    // SockJS 사용
     webSocketFactory: () =>
       new SockJS(HTTP_URL, undefined, {
         transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
-      }),
+      }) as unknown as IStompSocket,
     connectHeaders: { Authorization: `Bearer ${token}` },
     heartbeatIncoming: 15000,
     heartbeatOutgoing: 15000,
@@ -34,7 +34,6 @@ export function createChatStompClient(token: string) {
 
   client.onWebSocketClose = (evt) => {
     attempt += 1;
-    // 지수 백오프, 최대 30초
     client.reconnectDelay = Math.min(30000, baseDelay * 2 ** attempt);
     if (process.env.NODE_ENV === 'development') {
       console.warn('[stomp] socket closed', evt?.code, evt?.reason);
