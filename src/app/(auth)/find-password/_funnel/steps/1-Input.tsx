@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
+import { useSendResetPasswordCode, useVerifyEmailCode, useVerifyResetPassword } from '@/src/hooks/queries';
 
 interface StepInputProps {
   goNext: (name: string, loginId: string, email: string) => void;
@@ -12,6 +13,11 @@ interface StepInputProps {
 
 export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) => {
   const router = useRouter();
+
+  // React Query Hooks
+  const sendCodeMutation = useSendResetPasswordCode();
+  const verifyCodeMutation = useVerifyEmailCode();
+  const verifyResetMutation = useVerifyResetPassword();
 
   // 입력 상태
   const [name, setName] = useState('');
@@ -24,8 +30,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
   const [isVerified, setIsVerified] = useState(false);
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState('');
-  const [isSendingCode, setIsSendingCode] = useState(false);
-  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
 
   // 이메일 유효성 검증
   const isValidEmail = (email: string) => {
@@ -50,42 +54,93 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
     }
   }, [timer]);
 
-  // 인증번호 발송 (임시 구현 - API 연동 전)
-  const handleSendCode = () => {
+  // 인증번호 발송
+  const handleSendCode = useCallback(() => {
     if (!name || !loginId || !isValidEmail(email)) return;
 
-    setIsSendingCode(true);
-    // TODO: API 연동 시 구현
-    setTimeout(() => {
-      setCodeSent(true);
-      setTimer(180); // 3분
-      setError('');
-      setAuthCode('');
-      setIsVerified(false);
-      setIsSendingCode(false);
-    }, 500);
-  };
+    sendCodeMutation.mutate(
+      { name, loginId, email },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            setCodeSent(true);
+            setTimer(180); // 3분
+            setError('');
+            setAuthCode('');
+            setIsVerified(false);
+          } else {
+            alert(response.message || '인증번호 발송에 실패했습니다.');
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string; code?: string; result?: { loginType?: string } } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '인증번호 발송 중 오류가 발생했습니다.';
+          const loginType = axiosError.response?.data?.result?.loginType;
 
-  // 인증번호 확인 (임시 구현 - API 연동 전)
-  const handleVerifyCode = () => {
+          // 소셜 로그인 사용자인 경우
+          if (loginType && loginType !== 'JWT') {
+            goSocialUser(name, loginType);
+          } else {
+            alert(errorMessage);
+          }
+        },
+      },
+    );
+  }, [name, loginId, email, sendCodeMutation, goSocialUser]);
+
+  // 인증번호 확인
+  const handleVerifyCode = useCallback(() => {
     if (!authCode) return;
 
-    setIsVerifyingCode(true);
-    // TODO: API 연동 시 구현
-    setTimeout(() => {
-      setIsVerified(true);
-      setError('');
-      setIsVerifyingCode(false);
-    }, 500);
-  };
+    verifyCodeMutation.mutate(
+      { email, authCode, type: 'FIND_PASSWORD' },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            setIsVerified(true);
+            setError('');
+          } else {
+            setIsVerified(false);
+            setError(response.message || '인증번호가 일치하지 않습니다.');
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '인증번호 검증 중 오류가 발생했습니다.';
+          setError(errorMessage);
+        },
+      },
+    );
+  }, [email, authCode, verifyCodeMutation]);
 
   // 비밀번호 재설정 진행
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
     if (!isVerified) return;
 
-    // TODO: API 연동 시 구현
-    goNext(name, loginId, email);
-  };
+    verifyResetMutation.mutate(
+      { name, loginId, email },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            goNext(name, loginId, email);
+          } else {
+            alert(response.message || '사용자 정보 검증에 실패했습니다.');
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '사용자 정보 검증 중 오류가 발생했습니다.';
+          alert(errorMessage);
+        },
+      },
+    );
+  }, [isVerified, name, loginId, email, verifyResetMutation, goNext]);
 
   // 뒤로가기
   const handleBack = () => {
@@ -163,9 +218,9 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
                     : 'bg-gray-200 text-gray-600 cursor-not-allowed'
               }`}
               onClick={handleSendCode}
-              disabled={((!name || !loginId || !isValidEmail(email)) && !codeSent) || isSendingCode}
+              disabled={((!name || !loginId || !isValidEmail(email)) && !codeSent) || sendCodeMutation.isPending}
             >
-              {isSendingCode ? (
+              {sendCodeMutation.isPending ? (
                 <div className="flex justify-center">
                   <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
                 </div>
@@ -213,9 +268,9 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
                       : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                 }`}
                 onClick={handleVerifyCode}
-                disabled={authCode.length < 4 || isVerified || isVerifyingCode}
+                disabled={authCode.length < 4 || isVerified || verifyCodeMutation.isPending}
               >
-                {isVerifyingCode ? (
+                {verifyCodeMutation.isPending ? (
                   <div className="flex justify-center">
                     <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
                   </div>
@@ -235,8 +290,8 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
 
         {/* 하단 버튼 */}
         <div className="mt-auto mb-[42px]">
-          <FixedBottomButton disabled={!isVerified} onClick={handleNextStep}>
-            비밀번호 재설정
+          <FixedBottomButton disabled={!isVerified || verifyResetMutation.isPending} onClick={handleNextStep}>
+            {verifyResetMutation.isPending ? '검증 중...' : '비밀번호 재설정'}
           </FixedBottomButton>
         </div>
       </form>
