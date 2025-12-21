@@ -22,7 +22,8 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   const [isVerified, setIsVerified] = useState(false);
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
 
   // 이메일 유효성 검증
   const isValidEmail = (email: string) => {
@@ -51,7 +52,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   const handleSendCode = useCallback(() => {
     if (!name || !isValidEmail(email)) return;
 
-    setIsLoading(true);
+    setIsSendingCode(true);
     // TODO: API 연동 시 실제 요청으로 교체
     setTimeout(() => {
       setCodeSent(true);
@@ -59,7 +60,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
       setError('');
       setAuthCode('');
       setIsVerified(false);
-      setIsLoading(false);
+      setIsSendingCode(false);
     }, 500);
   }, [name, email]);
 
@@ -67,7 +68,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   const handleVerifyCode = useCallback(() => {
     if (!authCode) return;
 
-    setIsLoading(true);
+    setIsVerifyingCode(true);
     // TODO: API 연동 시 실제 요청으로 교체
     setTimeout(() => {
       // Mock: 인증번호가 "1234"이면 성공
@@ -78,7 +79,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
         setIsVerified(false);
         setError('인증번호가 일치하지 않습니다.');
       }
-      setIsLoading(false);
+      setIsVerifyingCode(false);
     }, 300);
   }, [authCode]);
 
@@ -100,21 +101,15 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
     <div className="min-h-screen flex flex-col bg-white">
       {/* 헤더 */}
       <div className="mt-15 mx-4">
-        <button
-          type="button"
-          onClick={handleBack}
-          className="w-6 h-6 flex items-center justify-center cursor-pointer"
-        >
+        <button type="button" onClick={handleBack} className="w-6 h-6 flex items-center justify-center cursor-pointer">
           <LeftArrowIcon />
         </button>
       </div>
 
       {/* 제목 */}
       <div className="mt-4 mx-4">
-        <h1 className="text-head-1-semibold text-gray-900 tracking-tight">아이디 찾기</h1>
-        <p className="text-body-1-medium text-gray-700 tracking-tight mt-2">
-          이메일 인증을 통해 아이디를 확인합니다.
-        </p>
+        <h1 className="text-head-3-semibold text-gray-900 tracking-tight">아이디 찾기</h1>
+        <p className="text-body-1-medium text-gray-700 tracking-tight mt-2">이메일 인증을 통해 아이디를 확인합니다.</p>
       </div>
 
       {/* 입력 폼 */}
@@ -129,7 +124,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
-            disabled={codeSent}
           />
         </div>
 
@@ -139,28 +133,33 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
           <div className="flex gap-2 items-center">
             <input
               type="email"
-              className={`flex-1 border border-gray-400 rounded-xl px-4 h-[49px] text-body-2-medium placeholder:text-gray-600 focus:outline-none tracking-tight ${
-                codeSent ? 'bg-gray-100 text-gray-700' : 'bg-white text-gray-900'
-              }`}
+              className="flex-1 border border-gray-400 rounded-xl px-4 h-[49px] text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none tracking-tight bg-white"
               placeholder="이메일을 입력해주세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               maxLength={50}
-              disabled={codeSent}
             />
             <button
               type="button"
-              className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight cursor-pointer ${
+              className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight ${
                 codeSent
-                  ? 'bg-white text-blue-700 border border-blue-400'
+                  ? 'bg-white text-blue-700 border border-blue-400 cursor-pointer'
                   : name && isValidEmail(email)
-                    ? 'bg-blue-200 text-blue-700'
-                    : 'bg-gray-200 text-gray-600'
+                    ? 'bg-blue-200 text-blue-700 cursor-pointer'
+                    : 'bg-gray-200 text-gray-600 cursor-not-allowed'
               }`}
               onClick={handleSendCode}
-              disabled={(!name || !isValidEmail(email)) && !codeSent}
+              disabled={!name || !isValidEmail(email) || isSendingCode}
             >
-              {isLoading ? '전송중' : codeSent ? '다시받기' : '인증하기'}
+              {isSendingCode ? (
+                <div className="flex justify-center">
+                  <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : codeSent ? (
+                '다시받기'
+              ) : (
+                '인증하기'
+              )}
             </button>
           </div>
         </div>
@@ -185,31 +184,29 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
                   disabled={isVerified}
                 />
                 {timer > 0 && !isVerified && (
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-caption-1-medium text-blue-700">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-caption-1-medium text-gray-700">
                     {formatTime(timer)}
                   </span>
                 )}
               </div>
               <button
                 type="button"
-                className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight cursor-pointer ${
+                className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight ${
                   isVerified
-                    ? 'bg-gray-200 text-gray-600'
-                    : authCode
-                      ? 'bg-blue-200 text-blue-700'
-                      : 'bg-gray-200 text-gray-600'
+                    ? 'bg-gray-200 text-gray-600 cursor-not-allowed'
+                    : authCode.length >= 4
+                      ? 'bg-blue-200 text-blue-700 cursor-pointer'
+                      : 'bg-gray-200 text-gray-600 cursor-not-allowed'
                 }`}
                 onClick={handleVerifyCode}
-                disabled={!authCode || isVerified || isLoading}
+                disabled={authCode.length < 4 || isVerified || isVerifyingCode}
               >
                 {isVerified ? '인증완료' : '인증완료'}
               </button>
             </div>
             {error && <p className="text-caption-1-medium text-error tracking-tight">{error}</p>}
             {isVerified && (
-              <p className="text-caption-1-medium text-blue-700 tracking-tight">
-                인증번호가 확인되었습니다.
-              </p>
+              <p className="text-caption-1-medium text-blue-700 tracking-tight">인증번호가 확인되었습니다.</p>
             )}
           </div>
         )}
@@ -224,4 +221,3 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
     </div>
   );
 };
-
