@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
+import { useSendFindIdCode, useVerifyEmailCode, useFindId } from '@/src/hooks/queries';
 
 interface StepInputProps {
   goNext: (name: string, loginId: string) => void;
@@ -11,6 +12,11 @@ interface StepInputProps {
 
 export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   const router = useRouter();
+
+  // React Query Hooks
+  const sendCodeMutation = useSendFindIdCode();
+  const verifyCodeMutation = useVerifyEmailCode();
+  const findIdMutation = useFindId();
 
   // 입력 상태
   const [name, setName] = useState('');
@@ -48,49 +54,93 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
     }
   }, [timer]);
 
-  // 인증번호 발송 (Mock)
+  // 인증번호 발송
   const handleSendCode = useCallback(() => {
     if (!name || !isValidEmail(email)) return;
 
     setIsSendingCode(true);
-    // TODO: API 연동 시 실제 요청으로 교체
-    setTimeout(() => {
-      setCodeSent(true);
-      setTimer(180); // 3분
-      setError('');
-      setAuthCode('');
-      setIsVerified(false);
-      setIsSendingCode(false);
-    }, 500);
-  }, [name, email]);
+    sendCodeMutation.mutate(
+      { name, email },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            setCodeSent(true);
+            setTimer(180); // 3분
+            setError('');
+            setAuthCode('');
+            setIsVerified(false);
+            alert(response.result.message || '인증번호가 발송되었습니다.');
+          } else {
+            alert(response.message || '인증번호 발송에 실패했습니다.');
+          }
+          setIsSendingCode(false);
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '인증번호 발송 중 오류가 발생했습니다.';
+          alert(errorMessage);
+          setIsSendingCode(false);
+        },
+      },
+    );
+  }, [name, email, sendCodeMutation]);
 
-  // 인증번호 확인 (Mock)
+  // 인증번호 확인
   const handleVerifyCode = useCallback(() => {
     if (!authCode) return;
 
     setIsVerifyingCode(true);
-    // TODO: API 연동 시 실제 요청으로 교체
-    setTimeout(() => {
-      // Mock: 인증번호가 "1234"이면 성공
-      if (authCode === '1234') {
-        setIsVerified(true);
-        setError('');
-      } else {
-        setIsVerified(false);
-        setError('인증번호가 일치하지 않습니다.');
-      }
-      setIsVerifyingCode(false);
-    }, 300);
-  }, [authCode]);
+    verifyCodeMutation.mutate(
+      { email, authCode, type: 'FIND_ID' },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            setIsVerified(true);
+            setError('');
+          } else {
+            setIsVerified(false);
+            setError(response.message || '인증번호가 일치하지 않습니다.');
+          }
+          setIsVerifyingCode(false);
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '인증번호 검증 중 오류가 발생했습니다.';
+          setError(errorMessage);
+          setIsVerifyingCode(false);
+        },
+      },
+    );
+  }, [email, authCode, verifyCodeMutation]);
 
-  // 아이디 찾기 완료 (Mock)
+  // 아이디 찾기 완료
   const handleFindId = useCallback(() => {
     if (!isVerified) return;
 
-    // TODO: API 연동 시 실제 요청으로 교체
-    // Mock 데이터
-    goNext(name, 'modelly1234');
-  }, [isVerified, name, goNext]);
+    findIdMutation.mutate(
+      { name, email },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess && response.result) {
+            goNext(response.result.name, response.result.loginId);
+          } else {
+            alert(response.message || '아이디 찾기에 실패했습니다.');
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '아이디 찾기 중 오류가 발생했습니다.';
+          alert(errorMessage);
+        },
+      },
+    );
+  }, [isVerified, name, email, goNext, findIdMutation]);
 
   // 뒤로가기
   const handleBack = () => {
@@ -180,7 +230,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
                     setAuthCode(e.target.value.replace(/[^0-9]/g, ''));
                     setError('');
                   }}
-                  maxLength={4}
+                  maxLength={6}
                   disabled={isVerified}
                 />
                 {timer > 0 && !isVerified && (
@@ -213,8 +263,8 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
 
         {/* 하단 버튼 */}
         <div className="mt-auto mb-[42px]">
-          <FixedBottomButton disabled={!isVerified} onClick={handleFindId}>
-            아이디 찾기
+          <FixedBottomButton disabled={!isVerified || findIdMutation.isPending} onClick={handleFindId}>
+            {findIdMutation.isPending ? '조회 중...' : '아이디 찾기'}
           </FixedBottomButton>
         </div>
       </form>
