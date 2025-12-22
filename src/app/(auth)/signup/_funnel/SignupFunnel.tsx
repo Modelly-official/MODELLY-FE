@@ -13,7 +13,7 @@ export const SignupFunnel: React.FC<SignupFunnelProps> = ({ isSocial }) => {
   });
 
   return (
-    <div className="bg-white min-h-screen relative">
+    <div className="relative min-h-screen bg-white">
       <Funnel>
         <Funnel.Step name="terms">
           <StepTerms goNext={() => setStep('role')} isSocial={isSocial} />

@@ -7,6 +7,7 @@ import { PasswordInput } from '@/src/components/signup/4-LoginInfo/PasswordInput
 import { useResetPassword } from '@/src/hooks/queries';
 import { usePasswordValidation } from '@/src/hooks/auth/find-password';
 import { AuthHeader } from '@/src/components/auth';
+import { showToast } from '@/src/utils';
 
 interface StepNewPasswordProps {
   email: string;
@@ -37,32 +38,32 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           if (response.isSuccess) {
             goNext();
           } else {
-            alert(response.message || '비밀번호 변경에 실패했습니다.');
+            showToast(response.message || '비밀번호 변경 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '비밀번호 변경 오류';
+          showToast(errorMessage);
         },
       },
     );
   }, [isValid, email, newPassword, resetPasswordMutation, goNext]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 */}
       <AuthHeader onBack={() => router.back()} />
 
       {/* 제목 */}
-      <div className="mt-4 mx-4">
+      <div className="mx-4 mt-4">
         <h1 className="text-body-1-medium tracking-tight">새로운 비밀번호</h1>
       </div>
 
       {/* 입력 폼 */}
-      <form className="flex flex-col gap-6 mt-8 mx-4 flex-1" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
         {/* 새 비밀번호 입력 */}
         <PasswordInput
           label="새로운 비밀번호"

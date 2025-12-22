@@ -20,10 +20,10 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
   if (!requestSent) return null;
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex gap-2 items-center min-w-0">
+      <div className="flex min-w-0 items-center gap-2">
         <input
           type="text"
-          className={`flex-1 border ${authCodeValid === false ? 'border-error' : 'border-gray-400'} rounded-xl px-4 h-[49px] text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+          className={`flex-1 border ${authCodeValid === false ? 'border-error' : 'border-gray-400'} text-body-2-medium h-[49px] rounded-xl px-4 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
           placeholder="인증번호 입력"
           value={authCode}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAuthCode(e.target.value)}
@@ -32,7 +32,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         />
         <button
           type="button"
-          className="w-20 rounded-xl h-[49px] text-body-2-medium bg-blue-200 text-blue-700 cursor-pointer"
+          className="text-body-2-medium h-[49px] w-20 cursor-pointer rounded-xl bg-blue-200 text-blue-700"
           onClick={handleVerifyAuthCode}
           disabled={!authCode}
         >
@@ -40,7 +40,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         </button>
       </div>
       {authCodeError && <p className="text-caption-1 text-error mt-1">{authCodeError}</p>}
-      {authCodeValid === true && <p className="text-caption-1 text-blue-700 mt-1">인증번호가 확인되었습니다.</p>}
+      {authCodeValid === true && <p className="text-caption-1 mt-1 text-blue-700">인증번호가 확인되었습니다.</p>}
     </div>
   );
 };

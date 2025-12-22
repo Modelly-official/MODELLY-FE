@@ -13,23 +13,23 @@ export default function ChatHeader({ title, rightLabel = '예약내역' }: Props
   const router = useRouter();
 
   return (
-    <header className="h-[51px] relative flex items-center px-4 py-3 mt-11">
+    <header className="relative mt-11 flex h-[51px] items-center px-4 py-3">
       <button
         type="button"
         onClick={() => router.push('/chat')}
-        className="absolute left-4 mx-[8.5px] flex items-center justify-center cursor-pointer"
+        className="absolute left-4 mx-[8.5px] flex cursor-pointer items-center justify-center"
         aria-label="채팅 목록으로 돌아가기"
       >
         <LeftArrowIcon />
       </button>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
+      <div className="absolute left-1/2 -translate-x-1/2 transform text-center">
         <div className="text-head-4-medium text-gray-950">{title}</div>
       </div>
 
-      <div className="absolute right-4 flex items-center gap-1 text-body-2-medium text-gray-800">
+      <div className="text-body-2-medium absolute right-4 flex items-center gap-1 text-gray-800">
         <span>{rightLabel}</span>
-        <DropDownArrowIcon className="w-5 h-5 text-gray-800" />
+        <DropDownArrowIcon className="h-5 w-5 text-gray-800" />
       </div>
     </header>
   );

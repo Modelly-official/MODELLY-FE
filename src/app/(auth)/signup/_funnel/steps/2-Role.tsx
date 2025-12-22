@@ -16,27 +16,24 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
   const totalSteps = isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <SignupHeader onBack={goPrev} totalSteps={totalSteps} currentStep={2} />
       <SignupTitle line1={SIGNUP_MESSAGES.ROLE.TITLE_1} line2={SIGNUP_MESSAGES.ROLE.TITLE_2} />
-      <div className="flex flex-row justify-between mt-10 mx-4 w-[calc(100%-2rem)] sm:w-[343px]">
+      <div className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-row justify-between sm:w-[343px]">
         {SIGNUP_ROLES.map((role) => (
           <button
             key={role.key}
             type="button"
-            className={`w-[166px] h-[166px] py-5 rounded-xl border text-body-1-semibold tracking-tight flex items-center justify-center transition-all cursor-pointer
-              ${
-                selectedRole === role.key
-                  ? 'bg-blue-600 text-white border-none'
-                  : 'bg-gray-100 text-gray-600 border-none'
-              }`}
+            className={`text-body-1-semibold flex h-[166px] w-[166px] cursor-pointer items-center justify-center rounded-xl border py-5 tracking-tight transition-all ${
+              selectedRole === role.key ? 'border-none bg-blue-600 text-white' : 'border-none bg-gray-100 text-gray-600'
+            }`}
             onClick={() => setSelectedRole(role.key)}
           >
             {role.label}
           </button>
         ))}
       </div>
-      <div className="mt-auto mb-[42px] mx-4">
+      <div className="mx-4 mt-auto mb-[42px]">
         <FixedBottomButton
           disabled={!selectedRole}
           onClick={() => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { SignupStoreField } from '@/src/stores';
 import { checkEmail } from '@/src/apis';
+import { Spinner } from '@/src/components/auth';
 
 interface BasicInfoInputProps {
   name: string;
@@ -54,24 +55,24 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
   return (
     <>
       <div className="flex flex-col gap-2">
-        <label className="text-gray-900 text-body-1-medium">이름 (실명)</label>
+        <label className="text-body-1-medium text-gray-900">이름 (실명)</label>
         <input
           type="text"
-          className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
+          className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
           placeholder="이름을 입력해주세요"
           value={name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField('name', e.target.value)}
           maxLength={20}
         />
       </div>
-      <div className="flex flex-col gap-2 mt-6 mb-6">
-        <label className="text-gray-900 text-body-1-medium">이메일</label>
-        <div className="flex gap-2 items-center">
+      <div className="mt-6 mb-6 flex flex-col gap-2">
+        <label className="text-body-1-medium text-gray-900">이메일</label>
+        <div className="flex items-center gap-2">
           <input
             type="email"
             className={`flex-1 border ${
               emailStatus === 'invalid' ? 'border-error' : 'border-gray-400'
-            } rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+            } text-body-2-medium rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="이메일을 입력해주세요"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
@@ -80,13 +81,21 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           />
           <button
             type="button"
-            className={`w-20 rounded-xl px-4 py-3.5 cursor-pointer text-body-2-medium ${
-              email && isValidEmailFormat(email) ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'
+            className={`text-body-2-medium w-20 rounded-xl px-4 py-3.5 ${
+              email && isValidEmailFormat(email)
+                ? 'cursor-pointer bg-blue-200 text-blue-700'
+                : 'cursor-not-allowed bg-gray-200 text-gray-600'
             }`}
             onClick={handleCheckEmail}
             disabled={!email || !isValidEmailFormat(email) || emailStatus === 'checking'}
           >
-            {emailStatus === 'checking' ? '확인중' : '중복확인'}
+            {emailStatus === 'checking' ? (
+              <div className="flex justify-center">
+                <Spinner />
+              </div>
+            ) : (
+              '중복확인'
+            )}
           </button>
         </div>
         {emailStatus === 'valid' && <p className="text-caption-1 text-blue-700">{emailMessage}</p>}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '@/src/styles/globals.css';
 import { QueryProvider } from '@/src/providers/QueryProvider';
+import { ToastProvider } from '@/src/providers/ToastProvider';
 
 export const metadata: Metadata = {
   title: 'Monde',
@@ -19,7 +20,9 @@ const RootLayout = ({
     <html lang="ko" suppressHydrationWarning>
       <body className="bg-white">
         <QueryProvider>
-          <div className="w-full sm:w-[375px] mx-auto min-h-screen overflow-x-hidden sm:shadow-2xl">{children}</div>
+          <ToastProvider>
+            <div className="mx-auto min-h-screen w-full overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>

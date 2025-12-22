@@ -21,18 +21,18 @@ export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profileI
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="relative w-[110px] h-[110px]">
-        <div className="w-[110px] h-[110px] rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+      <div className="relative h-[110px] w-[110px]">
+        <div className="flex h-[110px] w-[110px] items-center justify-center overflow-hidden rounded-full bg-gray-200">
           {profileImage ? (
-            <Image src={profileImage} alt="프로필" width={110} height={110} className="w-full h-full object-cover" />
+            <Image src={profileImage} alt="프로필" width={110} height={110} className="h-full w-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gray-500" />
+            <div className="h-full w-full bg-gray-500" />
           )}
         </div>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center cursor-pointer"
+          className="absolute right-0 bottom-0 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full"
         >
           <CameraIcon />
         </button>

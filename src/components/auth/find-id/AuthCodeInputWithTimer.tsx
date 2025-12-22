@@ -26,13 +26,13 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex gap-2 items-center">
-        <div className="flex-1 relative">
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
           <input
             type="text"
             className={`w-full border ${
               error ? 'border-error' : 'border-gray-400'
-            } rounded-xl px-4 h-[49px] text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none tracking-tight`}
+            } text-body-2-medium h-[49px] rounded-xl px-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="인증번호 입력"
             value={authCode}
             onChange={(e) => onAuthCodeChange(e.target.value.replace(/[^0-9]/g, ''))}
@@ -40,19 +40,19 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
             disabled={isVerified}
           />
           {timer > 0 && !isVerified && (
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-caption-1-medium text-gray-700">
+            <span className="text-caption-1-medium absolute top-1/2 right-4 -translate-y-1/2 text-gray-700">
               {formatTime(timer)}
             </span>
           )}
         </div>
         <button
           type="button"
-          className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight ${
+          className={`text-body-2-medium h-[49px] w-20 rounded-xl tracking-tight ${
             isVerified
-              ? 'bg-gray-200 text-gray-600 cursor-not-allowed'
+              ? 'cursor-not-allowed bg-gray-200 text-gray-600'
               : authCode.length >= 4
-                ? 'bg-blue-200 text-blue-700 cursor-pointer'
-                : 'bg-gray-200 text-gray-600 cursor-not-allowed'
+                ? 'cursor-pointer bg-blue-200 text-blue-700'
+                : 'cursor-not-allowed bg-gray-200 text-gray-600'
           }`}
           onClick={onVerify}
           disabled={authCode.length < 4 || isVerified || isLoading}
@@ -69,7 +69,7 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
         </button>
       </div>
       {error && <p className="text-caption-1-medium text-error tracking-tight">{error}</p>}
-      {isVerified && <p className="text-caption-1-medium text-blue-700 tracking-tight">인증번호가 확인되었습니다.</p>}
+      {isVerified && <p className="text-caption-1-medium tracking-tight text-blue-700">인증번호가 확인되었습니다.</p>}
     </div>
   );
 };

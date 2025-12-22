@@ -67,9 +67,7 @@ export default function useChatRoom(roomId?: string | number) {
         break;
       }
       const timeout = setTimeout(() => {
-        setMessages((prev) =>
-          prev.map((m) => (m.id === id ? { ...m, pending: false, failed: true } : m)),
-        );
+        setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, pending: false, failed: true } : m)));
         pendingTimeoutsRef.current.delete(id);
       }, SEND_TIMEOUT_MS);
       pendingTimeoutsRef.current.set(id, timeout);
@@ -251,9 +249,7 @@ export default function useChatRoom(roomId?: string | number) {
     }
 
     const timeout = setTimeout(() => {
-      setMessages((prev) =>
-        prev.map((m) => (m.id === optimistic.id ? { ...m, pending: false, failed: true } : m)),
-      );
+      setMessages((prev) => prev.map((m) => (m.id === optimistic.id ? { ...m, pending: false, failed: true } : m)));
       pendingTimeoutsRef.current.delete(String(optimistic.id));
     }, SEND_TIMEOUT_MS); // 제한 시간 내 서버 응답 없으면 실패로 간주
     pendingTimeoutsRef.current.set(String(optimistic.id), timeout);

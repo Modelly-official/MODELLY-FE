@@ -5,4 +5,3 @@ const FindPasswordPage = () => {
 };
 
 export default FindPasswordPage;
-

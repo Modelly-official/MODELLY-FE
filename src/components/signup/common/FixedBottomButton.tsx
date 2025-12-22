@@ -8,7 +8,7 @@ export const FixedBottomButton: React.FC<FixedBottomButtonProps> = ({ onClick, d
   return (
     <button
       type="button"
-      className={`w-full sm:w-[343px] mx-auto py-4 cursor-pointer rounded-full flex items-center justify-center text-body-1-semibold tracking-tight ${
+      className={`text-body-1-semibold mx-auto flex w-full cursor-pointer items-center justify-center rounded-full py-4 tracking-tight sm:w-[343px] ${
         disabled ? 'bg-gray-200 text-gray-600' : 'bg-black text-white'
       }`}
       disabled={disabled}

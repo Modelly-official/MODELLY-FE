@@ -35,13 +35,13 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({ value, onChange,
 
   return (
     <div className="flex flex-col gap-2">
-      {label && <label className="text-gray-900 text-body-1-medium">{label}</label>}
+      {label && <label className="text-body-1-medium text-gray-900">{label}</label>}
       <div className="relative" ref={dropdownRef}>
         {/* 드롭다운 버튼 */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-left focus:outline-none appearance-none bg-white cursor-pointer flex items-center justify-between ${
+          className={`text-body-2-medium flex w-full cursor-pointer appearance-none items-center justify-between rounded-xl border border-gray-400 bg-white px-4 py-3 text-left focus:outline-none ${
             value ? 'text-gray-900' : 'text-gray-600'
           }`}
         >
@@ -53,13 +53,13 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({ value, onChange,
 
         {/* 드롭다운 메뉴 */}
         {isOpen && (
-          <div className="absolute z-10 w-full py-3.5 bg-white border border-gray-300 rounded-xl overflow-hidden">
+          <div className="absolute z-10 w-full overflow-hidden rounded-xl border border-gray-300 bg-white py-3.5">
             {options.map((option, index) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full px-4 py-0 text-left text-body-2-medium cursor-pointer flex items-center justify-between ${
+                className={`text-body-2-medium flex w-full cursor-pointer items-center justify-between px-4 py-0 text-left ${
                   value === '' ? 'text-gray-900' : value === option.value ? 'text-gray-900' : 'text-gray-600'
                 } ${index > 0 ? 'mt-3' : ''}`}
               >
