@@ -19,9 +19,9 @@ export const StepSocialUser: React.FC<StepSocialUserProps> = ({ name, loginType 
   const serviceName = getSocialServiceName(loginType);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white px-4">
-      <div className="flex flex-col items-center gap-5 mb-[84px]">
-        <div className="relative w-[50px] h-[50px]">
+    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="mb-[84px] flex flex-col items-center gap-5">
+        <div className="relative h-[50px] w-[50px]">
           <SignupCompletedIcon />
         </div>
         <div className="flex flex-col items-center gap-1">
@@ -30,14 +30,14 @@ export const StepSocialUser: React.FC<StepSocialUserProps> = ({ name, loginType 
             <span className="text-head-2-semibold tracking-tight">{serviceName} 소셜 로그인 사용자</span>
             <span className="text-head-3-medium tracking-tight">입니다</span>
           </div>
-          <p className="text-body-1-medium text-gray-700 text-center tracking-tight mt-4">
+          <p className="text-body-1-medium mt-4 text-center tracking-tight text-gray-700">
             해당 서비스로 로그인해주세요
           </p>
         </div>
       </div>
       <button
         onClick={handleGoToLogin}
-        className="fixed bottom-[42px] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-[343px] py-4 bg-gray-900 text-white rounded-full text-body-1-medium cursor-pointer tracking-tight"
+        className="text-body-1-medium fixed bottom-[42px] left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 tracking-tight text-white sm:w-[343px]"
       >
         로그인 화면으로 이동
       </button>

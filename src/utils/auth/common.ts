@@ -9,4 +9,3 @@ export const getSocialServiceName = (loginType: string): string => {
   };
   return serviceMap[loginType] || loginType;
 };
-

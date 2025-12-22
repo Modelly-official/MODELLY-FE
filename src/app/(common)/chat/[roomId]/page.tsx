@@ -78,9 +78,9 @@ export default function ChatRoom() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-200">
+    <div className="flex h-screen flex-col bg-gray-200">
       <ChatHeader title={headerTitle} />
-      <main ref={containerRef} className="flex-1 overflow-auto px-4 py-3 scrollbar-hide" onScroll={handleScroll}>
+      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto px-4 py-3" onScroll={handleScroll}>
         <ul className="space-y-3">
           {messages.map((m, idx) => {
             const next = messages[idx + 1];

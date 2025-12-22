@@ -175,7 +175,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <SignupHeader
         onBack={goPrev}
         totalSteps={isSocial ? SIGNUP_STEPS.SOCIAL : SIGNUP_STEPS.REGULAR}
@@ -184,7 +184,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
       <SignupTitle line1={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_1} line2={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_2} />
 
       <form
-        className="flex flex-col gap-6 mt-10 mx-4 w-[calc(100%-2rem)] sm:w-[343px] flex-1"
+        className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
         <ProfileImageUpload profileImage={profileImage} onImageUpload={handleImageUpload} />
@@ -199,10 +199,10 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           />
           <GenderSelect value={gender} onChange={(value) => setField('gender', value)} />
           <div className="flex flex-col gap-2">
-            <label className="text-gray-900 text-body-1-medium">생년월일</label>
+            <label className="text-body-1-medium text-gray-900">생년월일</label>
             <input
               type="text"
-              className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
               placeholder="생년월일을 입력해주세요"
               value={birthDate}
               onChange={(e) => handleBirthDateChange(e.target.value)}

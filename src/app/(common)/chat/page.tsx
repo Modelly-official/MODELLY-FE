@@ -68,9 +68,9 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen py-10">
-      <h1 className="text-head-3-semibold px-4 mb-4">채팅</h1>
-      {error && <p className="text-red-500 px-4 mb-4">{error}</p>}
+    <div className="min-h-screen bg-white py-10">
+      <h1 className="text-head-3-semibold mb-4 px-4">채팅</h1>
+      {error && <p className="mb-4 px-4 text-red-500">{error}</p>}
       {role && chats && <ChatList chats={chats} onSelect={handleEnter} />}
     </div>
   );

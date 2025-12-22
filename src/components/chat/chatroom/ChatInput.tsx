@@ -37,21 +37,21 @@ export default function ChatInput({
   };
 
   return (
-    <div className="px-4 py-3 mb-6 bg-transparent">
+    <div className="mb-6 bg-transparent px-4 py-3">
       <div className="flex items-center gap-3">
         <button
           type="button"
           aria-label="사진 첨부"
           onClick={handleImageClick}
-          className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-gray-300 cursor-pointer"
+          className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border border-gray-300 bg-white"
         >
           <CameraIcon />
         </button>
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-        <div className="flex-1 relative">
-          <div className="bg-white rounded-xl h-12 flex items-center px-4 pr-12 border border-gray-300">
+        <div className="relative flex-1">
+          <div className="flex h-12 items-center rounded-xl border border-gray-300 bg-white px-4 pr-12">
             <input
-              className="flex-1 bg-transparent outline-none text-body-2-medium text-black placeholder-gray-600"
+              className="text-body-2-medium flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder}
@@ -66,7 +66,7 @@ export default function ChatInput({
             type="button"
             aria-label="전송"
             onClick={onSend}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center cursor-pointer"
+            className="absolute top-1/2 right-2 flex h-10 w-10 -translate-y-1/2 transform cursor-pointer items-center justify-center"
           >
             <SendIcon />
           </button>

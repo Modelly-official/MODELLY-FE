@@ -47,11 +47,11 @@ export const AddressInput: React.FC<AddressInputProps> = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-gray-900 text-body-1-medium">매장 주소</label>
+      <label className="text-body-1-medium text-gray-900">매장 주소</label>
       <div className="relative">
         <input
           type="text"
-          className="w-full border border-gray-400 rounded-xl px-4 py-3 pr-10 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none cursor-pointer"
+          className="text-body-2-medium w-full cursor-pointer rounded-xl border border-gray-400 px-4 py-3 pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none"
           placeholder="매장 주소를 입력해주세요"
           value={address}
           readOnly
@@ -60,14 +60,14 @@ export const AddressInput: React.FC<AddressInputProps> = ({
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
+          className="absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer"
         >
           <LocationIcon />
         </button>
       </div>
       <input
         type="text"
-        className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
+        className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
         placeholder="상세주소"
         value={detailAddress}
         onChange={(e) => onDetailAddressChange(e.target.value)}
@@ -75,12 +75,12 @@ export const AddressInput: React.FC<AddressInputProps> = ({
       />
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg w-[90%] max-w-[500px] p-4">
-            <div className="flex justify-between items-center mb-4">
+          <div className="w-[90%] max-w-[500px] rounded-lg bg-white p-4">
+            <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">주소 검색</h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-600 hover:text-gray-900 text-2xl curosor-pointer"
+                className="curosor-pointer text-2xl text-gray-600 hover:text-gray-900"
               >
                 ×
               </button>

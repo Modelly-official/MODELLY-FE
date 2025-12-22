@@ -10,7 +10,7 @@ const HTTP_URL = BASE + WS_PATH;
 
 export function createChatStompClient(
   token: string,
-  options?: { onConnect?: () => void; onDisconnect?: () => void; onError?: () => void }
+  options?: { onConnect?: () => void; onDisconnect?: () => void; onError?: () => void },
 ) {
   if (typeof window === 'undefined') return null;
 

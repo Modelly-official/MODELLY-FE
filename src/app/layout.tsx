@@ -19,7 +19,7 @@ const RootLayout = ({
     <html lang="ko" suppressHydrationWarning>
       <body className="bg-white">
         <QueryProvider>
-          <div className="w-full sm:w-[375px] mx-auto min-h-screen overflow-x-hidden sm:shadow-2xl">{children}</div>
+          <div className="mx-auto min-h-screen w-full overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
         </QueryProvider>
       </body>
     </html>

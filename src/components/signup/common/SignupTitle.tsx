@@ -6,8 +6,8 @@ interface SignupTitleProps {
 export const SignupTitle: React.FC<SignupTitleProps> = ({ line1, line2 }) => {
   return (
     <div className="mt-12 ml-4">
-      <p className="text-black text-head-3-semibold tracking-tight mb-0">{line1}</p>
-      {line2 && <p className="text-black text-head-3-semibold tracking-tight mb-0">{line2}</p>}
+      <p className="text-head-3-semibold mb-0 tracking-tight text-black">{line1}</p>
+      {line2 && <p className="text-head-3-semibold mb-0 tracking-tight text-black">{line2}</p>}
     </div>
   );
 };

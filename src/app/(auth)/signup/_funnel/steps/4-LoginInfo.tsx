@@ -84,21 +84,21 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
   if (isSocial) return null;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={4} />
       <SignupTitle line1={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_1} line2={SIGNUP_MESSAGES.LOGIN_INFO.TITLE_2} />
       <form
-        className="flex flex-col gap-6 mt-10 mx-4 w-[calc(100%-2rem)] sm:w-[343px] flex-1"
+        className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
         <div className="flex flex-col gap-6">
           {/* 아이디 */}
           <div className="flex flex-col gap-2">
-            <label className="text-gray-900 text-body-1-medium">아이디</label>
-            <div className="flex gap-2 items-center">
+            <label className="text-body-1-medium text-gray-900">아이디</label>
+            <div className="flex items-center gap-2">
               <input
                 type="text"
-                className="flex-1 border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
+                className="text-body-2-medium flex-1 rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
@@ -106,7 +106,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
               />
               <button
                 type="button"
-                className={`w-20 rounded-xl px-4 py-3.5 text-body-2-medium ${
+                className={`text-body-2-medium w-20 rounded-xl px-4 py-3.5 ${
                   username && username.length >= 1 ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'
                 } cursor-pointer`}
                 onClick={checkUsername}

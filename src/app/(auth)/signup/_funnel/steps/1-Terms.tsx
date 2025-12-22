@@ -29,29 +29,29 @@ export const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
   };
 
   return (
-    <div className="bg-white font-sans min-h-screen relative flex flex-col">
+    <div className="relative flex min-h-screen flex-col bg-white font-sans">
       <SignupHeader onBack={() => router.push('/login')} totalSteps={totalSteps} currentStep={1} />
       <SignupTitle line1={SIGNUP_MESSAGES.TERMS.TITLE_1} line2={SIGNUP_MESSAGES.TERMS.TITLE_2} />
       <div
-        className="flex items-center gap-4 bg-gray-100 rounded-xl p-4 mt-10 mx-4 w-[calc(100%-2rem)] sm:w-[343px] cursor-pointer"
+        className="mx-4 mt-10 flex w-[calc(100%-2rem)] cursor-pointer items-center gap-4 rounded-xl bg-gray-100 p-4 sm:w-[343px]"
         onClick={handleAllAgree}
       >
         {allAgreed ? <SelectedIcon /> : <SelectIcon />}
-        <span className="text-gray-900 text-body-1-medium tracking-tight">{SIGNUP_MESSAGES.TERMS.ALL_AGREE}</span>
+        <span className="text-body-1-medium tracking-tight text-gray-900">{SIGNUP_MESSAGES.TERMS.ALL_AGREE}</span>
       </div>
-      <div className="flex flex-col gap-2 mt-5 mx-4 w-[calc(100%-2rem)] sm:w-[343px]">
+      <div className="mx-4 mt-5 flex w-[calc(100%-2rem)] flex-col gap-2 sm:w-[343px]">
         {terms.map((term, idx) => (
           <div
             key={term.label}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex cursor-pointer items-center gap-2"
             onClick={() => handleTermToggle(idx)}
           >
             {term.checked ? <CheckedIcon /> : <CheckIcon />}
-            <span className="text-gray-900 text-body-2-medium tracking-tight">{term.label}</span>
+            <span className="text-body-2-medium tracking-tight text-gray-900">{term.label}</span>
           </div>
         ))}
       </div>
-      <div className="mt-auto mb-[42px] mx-4">
+      <div className="mx-4 mt-auto mb-[42px]">
         <FixedBottomButton disabled={!requiredAgreed} onClick={goNext}>
           {SIGNUP_MESSAGES.BUTTON.NEXT}
         </FixedBottomButton>

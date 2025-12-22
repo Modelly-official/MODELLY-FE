@@ -121,24 +121,24 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   }, [isVerified, name, email, goNext, findIdMutation]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 */}
       <AuthHeader onBack={() => router.back()} />
 
       {/* 제목 */}
-      <div className="mt-4 mx-4">
-        <h1 className="text-head-3-semibold text-gray-900 tracking-tight">아이디 찾기</h1>
-        <p className="text-body-1-medium text-gray-700 tracking-tight mt-2">이메일 인증을 통해 아이디를 확인합니다.</p>
+      <div className="mx-4 mt-4">
+        <h1 className="text-head-3-semibold tracking-tight text-gray-900">아이디 찾기</h1>
+        <p className="text-body-1-medium mt-2 tracking-tight text-gray-700">이메일 인증을 통해 아이디를 확인합니다.</p>
       </div>
 
       {/* 입력 폼 */}
-      <form className="flex flex-col gap-6 mt-8 mx-4 flex-1" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
         {/* 이름 입력 */}
         <div className="flex flex-col gap-2">
-          <label className="text-gray-900 text-body-1-medium tracking-tight">이름 (실명)</label>
+          <label className="text-body-1-medium tracking-tight text-gray-900">이름 (실명)</label>
           <input
             type="text"
-            className="border border-gray-400 rounded-xl px-4 py-3 text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none tracking-tight"
+            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
             placeholder="이름을 입력해주세요"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -148,11 +148,11 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
 
         {/* 이메일 입력 + 인증하기 버튼 */}
         <div className="flex flex-col gap-2">
-          <label className="text-gray-900 text-body-1-medium tracking-tight">이메일</label>
-          <div className="flex gap-2 items-center">
+          <label className="text-body-1-medium tracking-tight text-gray-900">이메일</label>
+          <div className="flex items-center gap-2">
             <input
               type="email"
-              className="flex-1 border border-gray-400 rounded-xl px-4 h-[49px] text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none tracking-tight bg-white"
+              className="text-body-2-medium h-[49px] flex-1 rounded-xl border border-gray-400 bg-white px-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
               placeholder="이메일을 입력해주세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -160,12 +160,12 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
             />
             <button
               type="button"
-              className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight ${
+              className={`text-body-2-medium h-[49px] w-20 rounded-xl tracking-tight ${
                 codeSent
-                  ? 'bg-white text-blue-700 border border-blue-400 cursor-pointer'
+                  ? 'cursor-pointer border border-blue-400 bg-white text-blue-700'
                   : name && validateEmail(email)
-                    ? 'bg-blue-200 text-blue-700 cursor-pointer'
-                    : 'bg-gray-200 text-gray-600 cursor-not-allowed'
+                    ? 'cursor-pointer bg-blue-200 text-blue-700'
+                    : 'cursor-not-allowed bg-gray-200 text-gray-600'
               }`}
               onClick={handleSendCode}
               disabled={!name || !validateEmail(email) || sendCodeMutation.isPending}

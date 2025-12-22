@@ -128,12 +128,12 @@ const SocialCallbackPage = ({ params }: PageProps) => {
   const providerName = PROVIDER_NAMES[provider as SocialProvider] || '소셜';
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
+    <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="text-center">
         <div className="mb-4">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
         </div>
-        <p className="text-gray-700 text-body-1-medium">{providerName} 로그인 처리 중...</p>
+        <p className="text-body-1-medium text-gray-700">{providerName} 로그인 처리 중...</p>
       </div>
     </div>
   );

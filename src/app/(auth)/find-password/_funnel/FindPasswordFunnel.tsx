@@ -36,7 +36,7 @@ export const FindPasswordFunnel: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen relative">
+    <div className="relative min-h-screen bg-white">
       <Funnel>
         <Funnel.Step name="input">
           <StepInput goNext={handleGoToNewPassword} goSocialUser={handleGoToSocialUser} />

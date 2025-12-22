@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import ProfileIcon from "@/public/icons/chat/profile.svg";
+import ProfileIcon from '@/public/icons/chat/profile.svg';
 import { Chat } from '@/src/types/chat';
 
 interface ChatListItemProps {
@@ -10,22 +10,22 @@ interface ChatListItemProps {
 export default function ChatListItem({ chat, onSelect }: ChatListItemProps) {
   const content = (
     <>
-      <div className="w-13 h-13 rounded-full bg-gray-300 flex items-center justify-center">
-        <ProfileIcon className="w-[34px] h-[34px] text-gray-500" />
+      <div className="flex h-13 w-13 items-center justify-center rounded-full bg-gray-300">
+        <ProfileIcon className="h-[34px] w-[34px] text-gray-500" />
       </div>
-      <div className="ml-3 flex-1 min-w-0">
-        <div className="h-6 flex justify-between items-center mb-0.5">
-          <span className="max-w-56 text-body-1-medium text-gray-900 truncate">{chat.name}</span>
-          <span className="text-xs text-gray-600 ml-2 whitespace-nowrap">{chat.lastTime}</span>
+      <div className="ml-3 min-w-0 flex-1">
+        <div className="mb-0.5 flex h-6 items-center justify-between">
+          <span className="text-body-1-medium max-w-56 truncate text-gray-900">{chat.name}</span>
+          <span className="ml-2 text-xs whitespace-nowrap text-gray-600">{chat.lastTime}</span>
         </div>
-        <div className="h-[21px] flex justify-between items-center">
+        <div className="flex h-[21px] items-center justify-between">
           <span
-            className={`max-w-56 text-body-2-medium truncate ${(chat.unread ?? 0) > 0 ? 'text-gray-900' : 'text-gray-700'}`}
+            className={`text-body-2-medium max-w-56 truncate ${(chat.unread ?? 0) > 0 ? 'text-gray-900' : 'text-gray-700'}`}
           >
             {chat.lastMessage}
           </span>
           {(chat.unread ?? 0) > 0 && (
-            <span className="ml-2 bg-blue-500 text-white text-caption-1-medium rounded-full px-2 py-0.5">
+            <span className="text-caption-1-medium ml-2 rounded-full bg-blue-500 px-2 py-0.5 text-white">
               {chat.unread}
             </span>
           )}
@@ -40,7 +40,7 @@ export default function ChatListItem({ chat, onSelect }: ChatListItemProps) {
         <button
           type="button"
           onClick={() => onSelect(chat)}
-          className="w-full flex items-center py-3 px-4 hover:bg-gray-50 cursor-pointer text-left"
+          className="flex w-full cursor-pointer items-center px-4 py-3 text-left hover:bg-gray-50"
         >
           {content}
         </button>
@@ -50,7 +50,7 @@ export default function ChatListItem({ chat, onSelect }: ChatListItemProps) {
 
   return (
     <li>
-      <Link href={`/chat/${chat.id}`} className="flex items-center py-3 px-4 hover:bg-gray-50 cursor-pointer">
+      <Link href={`/chat/${chat.id}`} className="flex cursor-pointer items-center px-4 py-3 hover:bg-gray-50">
         {content}
       </Link>
     </li>

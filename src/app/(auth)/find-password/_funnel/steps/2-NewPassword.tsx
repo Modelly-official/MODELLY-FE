@@ -52,17 +52,17 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
   }, [isValid, email, newPassword, resetPasswordMutation, goNext]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 */}
       <AuthHeader onBack={() => router.back()} />
 
       {/* 제목 */}
-      <div className="mt-4 mx-4">
+      <div className="mx-4 mt-4">
         <h1 className="text-body-1-medium tracking-tight">새로운 비밀번호</h1>
       </div>
 
       {/* 입력 폼 */}
-      <form className="flex flex-col gap-6 mt-8 mx-4 flex-1" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
         {/* 새 비밀번호 입력 */}
         <PasswordInput
           label="새로운 비밀번호"

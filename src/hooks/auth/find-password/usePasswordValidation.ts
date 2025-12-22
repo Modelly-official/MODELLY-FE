@@ -24,4 +24,3 @@ export const usePasswordValidation = (newPassword: string, confirmPassword: stri
     isValid: newPasswordError === 'success' && confirmPasswordError === 'success',
   };
 };
-
