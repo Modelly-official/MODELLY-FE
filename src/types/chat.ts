@@ -13,6 +13,7 @@ export type Message = {
   text: string;
   time?: string;
   imageUrls?: string[];
+  pending?: boolean; // 전송 대기 표시용(optimistic UI)
   failed?: boolean; // 전송 실패 표시용(optimistic UI)
 };
 

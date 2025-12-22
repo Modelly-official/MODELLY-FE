@@ -19,6 +19,9 @@ export default function MessageItem({
   const effectiveSharp = sharpCorner ?? defaultSharp;
   const cornerClass = effectiveSharp === 'right' ? 'rounded-br-none' : 'rounded-bl-none';
   const hasImages = (message.imageUrls?.length ?? 0) > 0;
+  const isPending = message.pending || message.failed;
+  const status = isPending ? '전송 중...' : null;
+  const statusClass = 'text-gray-600';
 
   return (
     <li className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}>
@@ -46,15 +49,27 @@ export default function MessageItem({
           </div>
         )}
         {message.text && (
-          <div
-            className={`inline-block px-4 py-3 text-body-2-medium rounded-2xl ${cornerClass} ${
-              message.fromMe ? 'bg-blue-300 text-blue-800' : 'bg-white text-gray-800 border border-gray-300'
-            }`}
-          >
-            {message.text}
+          <div className="flex items-end gap-2">
+            {status && message.fromMe && (
+              <span className={`${statusClass} text-caption-1-medium translate-y-0.5`}>{status}</span>
+            )}
+            <div
+              className={`inline-block px-4 py-3 text-body-2-medium rounded-2xl ${cornerClass} ${
+                message.fromMe ? 'bg-blue-300 text-blue-800' : 'bg-white text-gray-800 border border-gray-300'
+              }`}
+            >
+              {message.text}
+            </div>
+            {status && !message.fromMe && (
+              <span className={`${statusClass} text-caption-1-medium translate-y-0.5`}>{status}</span>
+            )}
           </div>
         )}
-        {showTime && <div className="text-caption-1-medium text-gray-600 mt-0.5">{message.time}</div>}
+        {(showTime || status) && (
+          <div className="text-caption-1-medium text-gray-600 mt-0.5 flex items-center gap-2">
+            {showTime && <span>{message.time}</span>}
+          </div>
+        )}
       </div>
     </li>
   );

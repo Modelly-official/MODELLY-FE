@@ -15,6 +15,7 @@ import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPa
 // 서버에서 초기 메시지 로드, STOMP를 통해 실시간 메시지 구독/수신
 // 텍스트/이미지 전송(낙관적 UI 포함) 및 읽음(READ) 처리
 export default function useChatRoom(roomId?: string | number) {
+  const SEND_TIMEOUT_MS = 3000;
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,12 +32,50 @@ export default function useChatRoom(roomId?: string | number) {
   const { clientRef, connected: stompConnected } = useStompClient();
   const subscriptionRef = useRef<StompSubscription | null>(null);
   const lastMessageIdRef = useRef<string | number | null>(null);
+  const pendingTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingQueueRef = useRef<{ id: string; payload: SendChatMessagePayload }[]>([]);
 
   const { sendImage: sendImageInternal, sendingImage } = useChatImage({
     roomId,
     clientRef,
     stompConnected,
   });
+
+  const showError = useCallback((message: string) => {
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+    }
+    setError(message);
+    errorTimeoutRef.current = setTimeout(() => {
+      setError(null);
+      errorTimeoutRef.current = null;
+    }, 3000);
+  }, []);
+
+  const flushPendingSends = useCallback(() => {
+    if (!roomId) return;
+    const client = clientRef.current;
+    if (!client || !stompConnected) return;
+
+    while (pendingQueueRef.current.length > 0) {
+      const { id, payload } = pendingQueueRef.current[0];
+      try {
+        publishMessage(client, roomId, payload);
+      } catch (err) {
+        console.error('flush send error', err);
+        break;
+      }
+      const timeout = setTimeout(() => {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, pending: false, failed: true } : m)),
+        );
+        pendingTimeoutsRef.current.delete(id);
+      }, SEND_TIMEOUT_MS);
+      pendingTimeoutsRef.current.set(id, timeout);
+      pendingQueueRef.current.shift();
+    }
+  }, [clientRef, roomId, stompConnected]);
 
   // 초기 메시지 로드
   // 컴포넌트(또는 방 변경) 시 서버에서 최근 메시지를 가져와 messages를 초기화
@@ -55,12 +94,12 @@ export default function useChatRoom(roomId?: string | number) {
       setHasNext(res.result.hasNext ?? false);
       setNextCursorMessageId(res.result.nextCursorMessageId ?? null);
     } catch (err) {
-      setError('이전 메시지를 불러오지 못했습니다.');
+      showError('이전 메시지를 불러오지 못했습니다.');
       console.error('fetchPrevMessages error', err);
     } finally {
       setLoading(false);
     }
-  }, [roomId, hasNext, nextCursorMessageId, effectiveUserId]);
+  }, [roomId, hasNext, nextCursorMessageId, effectiveUserId, showError]);
 
   useEffect(() => {
     if (!roomId) return undefined;
@@ -85,7 +124,7 @@ export default function useChatRoom(roomId?: string | number) {
         // 최초 진입 시 서버가 unread 읽음 처리
       } catch (err) {
         if (!active) return;
-        setError('메시지를 불러오지 못했습니다.');
+        showError('메시지를 불러오지 못했습니다.');
         console.error('load chat messages error', err);
       } finally {
         if (active) setLoading(false);
@@ -94,7 +133,7 @@ export default function useChatRoom(roomId?: string | number) {
     return () => {
       active = false;
     };
-  }, [roomId, effectiveUserId]);
+  }, [roomId, effectiveUserId, showError]);
 
   // 마지막 메시지 id 추적 (READ 처리용)
   // 마지막 메시지 id는 방 입장/재연결 시 서버에 읽음 위치를 알리기 위해 사용
@@ -102,6 +141,12 @@ export default function useChatRoom(roomId?: string | number) {
     const last = messages[messages.length - 1];
     lastMessageIdRef.current = last ? last.id : null;
   }, [messages]);
+
+  useEffect(() => {
+    if (stompConnected) {
+      flushPendingSends();
+    }
+  }, [stompConnected, flushPendingSends]);
 
   // STOMP 연결 및 구독: 핸들러 직접 덮어쓰기 없이 stompConnected 상태 기반으로 구독/해제만 담당
   useEffect(() => {
@@ -131,6 +176,12 @@ export default function useChatRoom(roomId?: string | number) {
           });
           if (tempIdx >= 0) {
             const temp = next[tempIdx];
+            // 타임아웃 정리
+            const timeout = pendingTimeoutsRef.current.get(String(temp.id));
+            if (timeout) {
+              clearTimeout(timeout);
+              pendingTimeoutsRef.current.delete(String(temp.id));
+            }
             const url = temp.imageUrls?.[0];
             // blob URL이면 해제하여 리소스 해제
             if (url && url.startsWith('blob:')) {
@@ -157,16 +208,25 @@ export default function useChatRoom(roomId?: string | number) {
     };
   }, [roomId, effectiveUserId, stompConnected, clientRef]);
 
+  useEffect(() => {
+    const timeouts = pendingTimeoutsRef.current;
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+      timeouts.clear();
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+        errorTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   const sendMessage = useCallback(() => {
     if (!roomId) return;
     const text = input.trim();
     if (!text) return;
 
     const client = clientRef.current;
-    if (!client || !stompConnected) {
-      setError('채팅 서버에 연결되지 않았습니다. 잠시 후 다시 시도해 주세요.');
-      return;
-    }
+    const connected = !!client && stompConnected;
 
     const now = new Date().toISOString();
     const optimistic: Message = {
@@ -174,6 +234,7 @@ export default function useChatRoom(roomId?: string | number) {
       fromMe: true,
       text,
       time: formatTime(now),
+      pending: true,
     };
     setMessages((prev) => [...prev, optimistic]);
     setInput('');
@@ -184,18 +245,18 @@ export default function useChatRoom(roomId?: string | number) {
       imageUrls: null,
     };
 
-    // 타임아웃 기반 실패 표시 로직 추가
+    if (!connected) {
+      pendingQueueRef.current.push({ id: String(optimistic.id), payload });
+      return;
+    }
+
     const timeout = setTimeout(() => {
-      setMessages((prev) => {
-        const idx = prev.findIndex((m) => m.id === optimistic.id);
-        if (idx >= 0) {
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], failed: true };
-          return updated;
-        }
-        return prev;
-      });
-    }, 5000); // 5초 내 서버 응답 없으면 실패 표시
+      setMessages((prev) =>
+        prev.map((m) => (m.id === optimistic.id ? { ...m, pending: false, failed: true } : m)),
+      );
+      pendingTimeoutsRef.current.delete(String(optimistic.id));
+    }, SEND_TIMEOUT_MS); // 제한 시간 내 서버 응답 없으면 실패로 간주
+    pendingTimeoutsRef.current.set(String(optimistic.id), timeout);
 
     try {
       publishMessage(client, roomId, payload);
@@ -204,10 +265,15 @@ export default function useChatRoom(roomId?: string | number) {
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
       setInput(text);
       clearTimeout(timeout);
+      pendingTimeoutsRef.current.delete(String(optimistic.id));
       console.error('send message error', err);
-      setError('메시지 전송에 실패했습니다.');
+      showError('메시지 전송에 실패했습니다.');
+      return;
     }
-  }, [input, roomId, stompConnected, clientRef]);
+
+    // 연결 유지 시 즉시 큐 비움 (동시에 호출해 중복 방지)
+    flushPendingSends();
+  }, [input, roomId, stompConnected, clientRef, showError, flushPendingSends]);
 
   const sendImage = useCallback(
     async (file: File) => {
@@ -232,10 +298,10 @@ export default function useChatRoom(roomId?: string | number) {
           URL.revokeObjectURL(objectUrl);
         } catch {}
         console.error('send image error', err);
-        setError('이미지 전송에 실패했습니다.');
+        showError('이미지 전송에 실패했습니다.');
       }
     },
-    [roomId, sendImageInternal],
+    [roomId, sendImageInternal, showError],
   );
 
   return {
