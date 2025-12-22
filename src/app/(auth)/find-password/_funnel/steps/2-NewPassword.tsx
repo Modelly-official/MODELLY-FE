@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
@@ -21,10 +21,6 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
   // 비밀번호 상태
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
-  // 유효성 상태
-  const [newPasswordError, setNewPasswordError] = useState<string | null>(null);
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
 
   // 비밀번호 유효성 검증
   const validatePassword = (password: string) => {
@@ -47,32 +43,19 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
     return true;
   };
 
-  // 새 비밀번호 변경 핸들러
-  useEffect(() => {
+  // 유효성 상태 - useMemo로 계산
+  const newPasswordError = useMemo(() => {
     if (newPassword === '') {
-      setNewPasswordError(null);
-      return;
+      return null;
     }
-
-    if (validatePassword(newPassword)) {
-      setNewPasswordError('success');
-    } else {
-      setNewPasswordError('error');
-    }
+    return validatePassword(newPassword) ? 'success' : 'error';
   }, [newPassword]);
 
-  // 비밀번호 확인 변경 핸들러
-  useEffect(() => {
+  const confirmPasswordError = useMemo(() => {
     if (confirmPassword === '') {
-      setConfirmPasswordError(null);
-      return;
+      return null;
     }
-
-    if (newPassword === confirmPassword) {
-      setConfirmPasswordError('success');
-    } else {
-      setConfirmPasswordError('error');
-    }
+    return newPassword === confirmPassword ? 'success' : 'error';
   }, [newPassword, confirmPassword]);
 
   // 완료 버튼 활성화 조건
