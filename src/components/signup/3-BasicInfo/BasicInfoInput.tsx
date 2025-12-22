@@ -70,7 +70,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
         <div className="flex items-center gap-2">
           <input
             type="email"
-            className={`flex-1 border ${
+            className={`flex-1 min-w-0 border ${
               emailStatus === 'invalid' ? 'border-error' : 'border-gray-400'
             } text-body-2-medium rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="이메일을 입력해주세요"
@@ -81,7 +81,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           />
           <button
             type="button"
-            className={`text-body-2-medium w-20 rounded-xl px-4 py-3.5 ${
+            className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
               email && isValidEmailFormat(email)
                 ? 'cursor-pointer bg-blue-200 text-blue-700'
                 : 'cursor-not-allowed bg-gray-200 text-gray-600'

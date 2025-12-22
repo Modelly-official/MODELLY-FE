@@ -98,7 +98,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                className="text-body-2-medium flex-1 rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+                className="text-body-2-medium min-w-0 flex-1 rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
@@ -106,7 +106,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
               />
               <button
                 type="button"
-                className={`text-body-2-medium w-20 rounded-xl px-4 py-3.5 ${
+                className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
                   username && username.length >= 1 ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'
                 } cursor-pointer`}
                 onClick={checkUsername}
