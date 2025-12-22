@@ -7,6 +7,7 @@ import { useSendFindIdCode, useVerifyEmailCode, useFindId } from '@/src/hooks/qu
 import { validateEmail } from '@/src/utils/auth/find-id';
 import { useTimer } from '@/src/hooks/auth/find-id';
 import { AuthHeader, Spinner, AuthCodeInputWithTimer } from '@/src/components/auth';
+import { showToast } from '@/src/utils';
 
 interface StepInputProps {
   goNext: (name: string, loginId: string, loginType: string) => void;
@@ -48,15 +49,15 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
             setAuthCode('');
             setIsVerified(false);
           } else {
-            alert(response.message || '인증번호 발송에 실패했습니다.');
+            showToast(response.message || '인증번호 발송 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '인증번호 발송 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '인증번호 발송 오류';
+          showToast(errorMessage);
         },
       },
     );
@@ -106,15 +107,15 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
           if (response.isSuccess && response.result) {
             goNext(response.result.name, response.result.loginId, response.result.loginType);
           } else {
-            alert(response.message || '아이디 찾기에 실패했습니다.');
+            showToast(response.message || '아이디 찾기 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '아이디 찾기 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '아이디 찾기 오류';
+          showToast(errorMessage);
         },
       },
     );

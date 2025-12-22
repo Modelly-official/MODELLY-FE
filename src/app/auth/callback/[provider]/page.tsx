@@ -4,6 +4,7 @@ import { use, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setAccessToken, setUserRole } from '@/src/stores';
 import { useSocialLoginCallback } from '@/src/hooks/queries';
+import { showToast } from '@/src/utils';
 import type { SocialProvider } from '@/src/utils/auth/socialLogin';
 import type { AxiosError } from 'axios';
 
@@ -32,7 +33,7 @@ const SocialCallbackPage = ({ params }: PageProps) => {
     const handleSocialLogin = () => {
       // 프로바이더 검증
       if (!(provider in PROVIDER_NAMES)) {
-        alert('지원하지 않는 로그인 방식입니다.');
+        showToast('지원하지 않는 로그인 방식입니다.');
         router.push('/login');
         return;
       }
@@ -49,13 +50,13 @@ const SocialCallbackPage = ({ params }: PageProps) => {
 
       // 에러 체크
       if (error) {
-        alert(`${providerName} 로그인 실패: ${errorDescription || error}`);
+        showToast(`${providerName} 로그인 실패: ${errorDescription || error}`);
         router.push('/login');
         return;
       }
 
       if (!code) {
-        alert('인증 코드가 없습니다. 다시 로그인해주세요.');
+        showToast('다시 로그인해주세요.');
         router.push('/login');
         return;
       }
@@ -96,7 +97,7 @@ const SocialCallbackPage = ({ params }: PageProps) => {
               router.push('/signup?social=true');
             }
           } else {
-            alert(response.message || '로그인 처리 중 오류가 발생했습니다.');
+            showToast(response.message || '로그인 실패');
             router.push('/login');
           }
         },
@@ -109,13 +110,13 @@ const SocialCallbackPage = ({ params }: PageProps) => {
 
           // 409 에러: 이미 가입된 사용자
           if (status === 409) {
-            alert('이미 가입한 사용자입니다. 다른 방법으로 시도해주세요.');
+            showToast('이미 가입된 사용자입니다.');
             router.push('/login');
             return;
           }
 
           const errorMessage = error.message || `${providerName} 로그인 중 오류가 발생했습니다.`;
-          alert(errorMessage);
+          showToast(errorMessage);
           router.push('/login');
         },
       });

@@ -7,6 +7,7 @@ import { useSendResetPasswordCode, useVerifyEmailCode, useVerifyResetPassword } 
 import { validateEmail } from '@/src/utils/auth/find-password';
 import { useTimer } from '@/src/hooks/auth/find-password';
 import { AuthHeader, Spinner, AuthCodeInputWithTimer } from '@/src/components/auth';
+import { showToast } from '@/src/utils';
 
 interface StepInputProps {
   goNext: (name: string, loginId: string, email: string) => void;
@@ -50,21 +51,21 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
             setAuthCode('');
             setIsVerified(false);
           } else {
-            alert(response.message || '인증번호 발송에 실패했습니다.');
+            showToast(response.message || '인증번호 발송 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string; code?: string; result?: { loginType?: string } } };
           };
-          const errorMessage = axiosError.response?.data?.message || '인증번호 발송 중 오류가 발생했습니다.';
+          const errorMessage = axiosError.response?.data?.message || '인증번호 발송 오류';
           const loginType = axiosError.response?.data?.result?.loginType;
 
           // 소셜 로그인 사용자인 경우
           if (loginType && loginType !== 'JWT') {
             goSocialUser(name, loginType);
           } else {
-            alert(errorMessage);
+            showToast(errorMessage);
           }
         },
       },
@@ -115,15 +116,15 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           if (response.isSuccess) {
             goNext(name, loginId, email);
           } else {
-            alert(response.message || '사용자 정보 검증에 실패했습니다.');
+            showToast(response.message || '사용자 정보 검증 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '사용자 정보 검증 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '사용자 정보 검증 오류';
+          showToast(errorMessage);
         },
       },
     );

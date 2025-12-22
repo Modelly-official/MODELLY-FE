@@ -7,6 +7,7 @@ import { PasswordInput } from '@/src/components/signup/4-LoginInfo/PasswordInput
 import { useResetPassword } from '@/src/hooks/queries';
 import { usePasswordValidation } from '@/src/hooks/auth/find-password';
 import { AuthHeader } from '@/src/components/auth';
+import { showToast } from '@/src/utils';
 
 interface StepNewPasswordProps {
   email: string;
@@ -37,15 +38,15 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           if (response.isSuccess) {
             goNext();
           } else {
-            alert(response.message || '비밀번호 변경에 실패했습니다.');
+            showToast(response.message || '비밀번호 변경 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '비밀번호 변경 오류';
+          showToast(errorMessage);
         },
       },
     );

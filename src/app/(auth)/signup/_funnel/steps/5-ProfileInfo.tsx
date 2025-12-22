@@ -18,6 +18,7 @@ import {
   convertImageToBase64,
   convertGenderToApi,
   convertCategoryToApi,
+  showToast,
 } from '@/src/utils';
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
 import type { SignupStepProps } from '@/src/types';
@@ -112,15 +113,15 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           if (response.isSuccess) {
             goNext();
           } else {
-            alert(response.message || '회원가입에 실패했습니다.');
+            showToast(response.message || '회원가입 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '회원가입 오류';
+          showToast(errorMessage);
         },
       });
     }
@@ -160,15 +161,15 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           if (response.isSuccess) {
             goNext();
           } else {
-            alert(response.message || '회원가입에 실패했습니다.');
+            showToast(response.message || '회원가입 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '회원가입 오류';
+          showToast(errorMessage);
         },
       });
     }

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLogin } from '@/src/hooks/queries';
 import { useAuthStore } from '@/src/stores';
-import { SOCIAL_LOGIN_URLS } from '@/src/utils';
+import { SOCIAL_LOGIN_URLS, showToast } from '@/src/utils';
 
 const LoginContent = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const LoginContent = () => {
 
   const handleLogin = () => {
     if (!loginId || !password) {
-      alert('아이디와 비밀번호를 입력해주세요.');
+      showToast('아이디와 비밀번호를 입력해주세요.');
       return;
     }
 
@@ -41,15 +41,15 @@ const LoginContent = () => {
             // 원래 페이지로 리다이렉트
             router.push(callbackUrl);
           } else {
-            alert(response.message || '로그인에 실패했습니다.');
+            showToast(response.message || '로그인 실패');
           }
         },
         onError: (error: unknown) => {
           const axiosError = error as {
             response?: { data?: { message?: string } };
           };
-          const errorMessage = axiosError.response?.data?.message || '로그인 중 오류가 발생했습니다.';
-          alert(errorMessage);
+          const errorMessage = axiosError.response?.data?.message || '로그인 오류';
+          showToast(errorMessage);
         },
       },
     );
