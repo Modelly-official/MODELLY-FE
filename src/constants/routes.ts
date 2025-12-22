@@ -5,6 +5,8 @@ export const PUBLIC_ROUTES = [
   '/',
   '/login',
   '/signup',
+  '/find-id', // 아이디 찾기
+  '/find-password', // 비밀번호 찾기
   '/auth/callback', // 소셜 로그인 콜백
 ];
 

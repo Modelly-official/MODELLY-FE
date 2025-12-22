@@ -1,0 +1,98 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { FixedBottomButton } from '@/src/components/signup';
+import { PasswordInput } from '@/src/components/signup/4-LoginInfo/PasswordInput';
+import { useResetPassword } from '@/src/hooks/queries';
+import { usePasswordValidation } from '@/src/hooks/auth/find-password';
+import { AuthHeader } from '@/src/components/auth';
+
+interface StepNewPasswordProps {
+  email: string;
+  goNext: () => void;
+}
+
+export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext }) => {
+  const router = useRouter();
+
+  // React Query Hook
+  const resetPasswordMutation = useResetPassword();
+
+  // 비밀번호 상태
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Custom Hook - 비밀번호 검증
+  const { newPasswordError, confirmPasswordError, isValid } = usePasswordValidation(newPassword, confirmPassword);
+
+  // 비밀번호 변경 완료
+  const handleComplete = useCallback(() => {
+    if (!isValid) return;
+
+    resetPasswordMutation.mutate(
+      { email, newPassword },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            goNext();
+          } else {
+            alert(response.message || '비밀번호 변경에 실패했습니다.');
+          }
+        },
+        onError: (error: unknown) => {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+          };
+          const errorMessage = axiosError.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.';
+          alert(errorMessage);
+        },
+      },
+    );
+  }, [isValid, email, newPassword, resetPasswordMutation, goNext]);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* 헤더 */}
+      <AuthHeader onBack={() => router.back()} />
+
+      {/* 제목 */}
+      <div className="mt-4 mx-4">
+        <h1 className="text-body-1-medium tracking-tight">새로운 비밀번호</h1>
+      </div>
+
+      {/* 입력 폼 */}
+      <form className="flex flex-col gap-6 mt-8 mx-4 flex-1" onSubmit={(e) => e.preventDefault()}>
+        {/* 새 비밀번호 입력 */}
+        <PasswordInput
+          label="새로운 비밀번호"
+          value={newPassword}
+          onChange={setNewPassword}
+          placeholder="비밀번호를 입력해주세요"
+          error={newPasswordError}
+          errorMessage="영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다."
+          hintMessage="영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다."
+          successMessage="사용 가능한 비밀번호입니다."
+        />
+
+        {/* 비밀번호 확인 */}
+        <PasswordInput
+          label="비밀번호 확인"
+          value={confirmPassword}
+          onChange={setConfirmPassword}
+          placeholder="비밀번호를 입력해주세요"
+          error={confirmPasswordError}
+          errorMessage="비밀번호가 일치하지 않습니다."
+          successMessage="비밀번호가 일치합니다."
+        />
+
+        {/* 하단 버튼 */}
+        <div className="mt-auto mb-[42px]">
+          <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
+            {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
+          </FixedBottomButton>
+        </div>
+      </form>
+    </div>
+  );
+};
