@@ -50,7 +50,7 @@ export const StepComplete: React.FC<StepCompleteProps> = ({ name, loginId, login
       </div>
       <button
         onClick={handleGoToLogin}
-        className="fixed bottom-[42px] left-1/2 -translate-x-1/2 w-[343px] py-4 bg-gray-900 text-white rounded-full text-body-1-medium cursor-pointer tracking-tight"
+        className="fixed bottom-[42px] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-[343px] py-4 bg-gray-900 text-white rounded-full text-body-1-medium cursor-pointer tracking-tight"
       >
         로그인 화면으로 이동
       </button>
