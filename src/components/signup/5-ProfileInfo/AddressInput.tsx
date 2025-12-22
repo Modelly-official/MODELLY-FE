@@ -80,7 +80,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
               <h3 className="text-lg font-semibold">주소 검색</h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="curosor-pointer text-2xl text-gray-600 hover:text-gray-900"
+                className="cursor-pointer text-2xl text-gray-600 hover:text-gray-900"
               >
                 ×
               </button>
