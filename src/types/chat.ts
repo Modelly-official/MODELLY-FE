@@ -46,7 +46,7 @@ export interface ChatMessageResponse {
   messageId: number;
   senderUserId: number;
   messageType: ChatMessageType;
-  message: string;
+  message?: string | null;
   imageUrls?: string[];
   createdAt: string;
   read: boolean;
