@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import SignupCompletedIcon from '@/public/icons/signup/signup-completed.svg';
+import { getSocialServiceName } from '@/src/utils/auth/common';
 
 interface StepCompleteProps {
   name: string;
@@ -14,16 +15,6 @@ export const StepComplete: React.FC<StepCompleteProps> = ({ name, loginId, login
 
   const handleGoToLogin = () => {
     router.push('/login');
-  };
-
-  // loginType을 서비스명으로 변환
-  const getSocialServiceName = (type: string): string => {
-    const serviceMap: Record<string, string> = {
-      KAKAO: '카카오',
-      NAVER: '네이버',
-      GOOGLE: '구글',
-    };
-    return serviceMap[type] || type;
   };
 
   // 소셜 로그인 여부 확인 (loginId가 null이거나 loginType이 JWT가 아닌 경우)
