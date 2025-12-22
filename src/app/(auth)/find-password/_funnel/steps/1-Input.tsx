@@ -209,20 +209,20 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
               )}
             </button>
           </div>
-        </div>
 
-        {/* 인증번호 입력 (인증번호 발송 후에만 표시) */}
-        {codeSent && (
-          <AuthCodeInputWithTimer
-            authCode={authCode}
-            onAuthCodeChange={handleAuthCodeChange}
-            timer={timer}
-            isVerified={isVerified}
-            error={error}
-            isLoading={verifyCodeMutation.isPending}
-            onVerify={handleVerifyCode}
-          />
-        )}
+          {/* 인증번호 입력 (인증번호 발송 후에만 표시) */}
+          {codeSent && (
+            <AuthCodeInputWithTimer
+              authCode={authCode}
+              onAuthCodeChange={handleAuthCodeChange}
+              timer={timer}
+              isVerified={isVerified}
+              error={error}
+              isLoading={verifyCodeMutation.isPending}
+              onVerify={handleVerifyCode}
+            />
+          )}
+        </div>
 
         {/* 하단 버튼 */}
         <div className="mt-auto mb-[42px]">
