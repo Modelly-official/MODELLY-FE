@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import DropdownArrowIcon from '@/public/icons/signup/dropdown-arrow.svg';
+import DropdownArrowIcon from '@/public/icons/common/down-arrow.svg';
 import DropdownSelectedIcon from '@/public/icons/signup/dropdown-selected.svg';
 
 interface CustomDropdownProps {
@@ -47,7 +47,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({ value, onChange,
         >
           <span>{selectedLabel}</span>
           <div className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-            <DropdownArrowIcon />
+            <DropdownArrowIcon className="text-gray-900" />
           </div>
         </button>
 
