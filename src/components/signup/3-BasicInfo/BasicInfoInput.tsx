@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { SignupStoreField } from '@/src/stores';
 import { checkEmail } from '@/src/apis';
+import { Spinner } from '@/src/components/auth';
 
 interface BasicInfoInputProps {
   name: string;
@@ -80,13 +81,21 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           />
           <button
             type="button"
-            className={`text-body-2-medium w-20 cursor-pointer rounded-xl px-4 py-3.5 ${
-              email && isValidEmailFormat(email) ? 'bg-blue-200 text-blue-700' : 'bg-gray-200 text-gray-600'
+            className={`text-body-2-medium w-20 rounded-xl px-4 py-3.5 ${
+              email && isValidEmailFormat(email)
+                ? 'cursor-pointer bg-blue-200 text-blue-700'
+                : 'cursor-not-allowed bg-gray-200 text-gray-600'
             }`}
             onClick={handleCheckEmail}
             disabled={!email || !isValidEmailFormat(email) || emailStatus === 'checking'}
           >
-            {emailStatus === 'checking' ? '확인중' : '중복확인'}
+            {emailStatus === 'checking' ? (
+              <div className="flex justify-center">
+                <Spinner />
+              </div>
+            ) : (
+              '중복확인'
+            )}
           </button>
         </div>
         {emailStatus === 'valid' && <p className="text-caption-1 text-blue-700">{emailMessage}</p>}
