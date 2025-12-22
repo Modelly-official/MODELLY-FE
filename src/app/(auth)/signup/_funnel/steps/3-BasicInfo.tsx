@@ -86,7 +86,10 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
     <div className="min-h-screen flex flex-col">
       <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={3} />
       <SignupTitle line1={SIGNUP_MESSAGES.BASIC_INFO.TITLE_1} line2={SIGNUP_MESSAGES.BASIC_INFO.TITLE_2} />
-      <form className="flex flex-col gap-6 mt-10 mx-4 w-[343px] flex-1" onSubmit={(e) => e.preventDefault()}>
+      <form
+        className="flex flex-col gap-6 mt-10 mx-4 w-[calc(100%-2rem)] sm:w-[343px] flex-1"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <div className="flex flex-col gap-2">
           <BasicInfoInput name={name} email={email || ''} setField={setField} />
           <PhoneInputWithAuth
