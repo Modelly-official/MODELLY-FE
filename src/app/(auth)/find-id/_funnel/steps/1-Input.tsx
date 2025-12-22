@@ -32,14 +32,11 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   const [codeSent, setCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState('');
-  const [isSendingCode, setIsSendingCode] = useState(false);
-  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
 
   // 인증번호 발송
   const handleSendCode = useCallback(() => {
     if (!name || !validateEmail(email)) return;
 
-    setIsSendingCode(true);
     sendCodeMutation.mutate(
       { name, email },
       {
@@ -53,7 +50,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
           } else {
             alert(response.message || '인증번호 발송에 실패했습니다.');
           }
-          setIsSendingCode(false);
         },
         onError: (error: unknown) => {
           const axiosError = error as {
@@ -61,7 +57,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
           };
           const errorMessage = axiosError.response?.data?.message || '인증번호 발송 중 오류가 발생했습니다.';
           alert(errorMessage);
-          setIsSendingCode(false);
         },
       },
     );
@@ -71,7 +66,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
   const handleVerifyCode = useCallback(() => {
     if (!authCode) return;
 
-    setIsVerifyingCode(true);
     verifyCodeMutation.mutate(
       { email, authCode, type: 'FIND_ID' },
       {
@@ -83,7 +77,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
             setIsVerified(false);
             setError(response.message || '인증번호가 일치하지 않습니다.');
           }
-          setIsVerifyingCode(false);
         },
         onError: (error: unknown) => {
           const axiosError = error as {
@@ -91,7 +84,6 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
           };
           const errorMessage = axiosError.response?.data?.message || '인증번호 검증 중 오류가 발생했습니다.';
           setError(errorMessage);
-          setIsVerifyingCode(false);
         },
       },
     );
@@ -176,9 +168,9 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
                     : 'bg-gray-200 text-gray-600 cursor-not-allowed'
               }`}
               onClick={handleSendCode}
-              disabled={!name || !validateEmail(email) || isSendingCode}
+              disabled={!name || !validateEmail(email) || sendCodeMutation.isPending}
             >
-              {isSendingCode ? (
+              {sendCodeMutation.isPending ? (
                 <div className="flex justify-center">
                   <Spinner />
                 </div>
@@ -198,7 +190,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
               timer={timer}
               isVerified={isVerified}
               error={error}
-              isLoading={isVerifyingCode}
+              isLoading={verifyCodeMutation.isPending}
               onVerify={handleVerifyCode}
             />
           )}
