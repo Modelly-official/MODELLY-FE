@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import '@/src/styles/globals.css';
 import { QueryProvider } from '@/src/providers/QueryProvider';
 import { ToastProvider } from '@/src/providers/ToastProvider';
@@ -9,6 +9,18 @@ export const metadata: Metadata = {
   icons: {
     icon: '/images/favicon.svg',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Monde',
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 const RootLayout = ({
