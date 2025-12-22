@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { createContext, useState, useCallback, ReactNode, useEffect, useMemo } from 'react';
 import Toast from '@/src/components/common/Toast';
 
 interface ToastContextType {
@@ -13,8 +13,12 @@ interface ToastProviderProps {
   children: ReactNode;
 }
 
-// 전역 showToast 함수를 위한 참조
-let globalShowToast: ((message: string) => void) | null = null;
+// window 객체에 타입 선언 추가
+declare global {
+  interface Window {
+    __toastShowFn?: (message: string) => void;
+  }
+}
 
 export function ToastProvider({ children }: ToastProviderProps) {
   const [message, setMessage] = useState<string>('');
@@ -33,23 +37,25 @@ export function ToastProvider({ children }: ToastProviderProps) {
     setIsVisible(false);
   }, []);
 
-  // 전역 showToast 함수 등록
+  // Provider 내부에서 window 객체에 showToast 등록 (SSR 안전)
   useEffect(() => {
-    globalShowToast = showToast;
+    if (typeof window !== 'undefined') {
+      window.__toastShowFn = showToast;
+    }
     return () => {
-      globalShowToast = null;
+      if (typeof window !== 'undefined') {
+        window.__toastShowFn = undefined;
+      }
     };
   }, [showToast]);
 
+  // Context value 메모이제이션으로 불필요한 리렌더 방지
+  const contextValue = useMemo(() => ({ showToast }), [showToast]);
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       {isVisible && <Toast message={message} onClose={hideToast} />}
     </ToastContext.Provider>
   );
-}
-
-// 전역에서 호출 가능한 showToast 함수
-export function getGlobalShowToast() {
-  return globalShowToast;
 }
