@@ -23,7 +23,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
       <div className="flex min-w-0 items-center gap-2">
         <input
           type="text"
-          className={`flex-1 border ${authCodeValid === false ? 'border-error' : 'border-gray-400'} text-body-2-medium h-[49px] rounded-xl px-4 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+          className={`flex-1 min-w-0 border ${authCodeValid === false ? 'border-error' : 'border-gray-400'} text-body-2-medium h-[49px] rounded-xl px-4 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
           placeholder="인증번호 입력"
           value={authCode}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAuthCode(e.target.value)}
@@ -32,7 +32,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         />
         <button
           type="button"
-          className="text-body-2-medium h-[49px] w-20 cursor-pointer rounded-xl bg-blue-200 text-blue-700"
+          className="text-body-2-medium h-[49px] w-20 shrink-0 cursor-pointer rounded-xl bg-blue-200 text-blue-700"
           onClick={handleVerifyAuthCode}
           disabled={!authCode}
         >

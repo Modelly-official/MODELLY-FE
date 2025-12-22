@@ -153,7 +153,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
           <div className="flex items-center gap-2">
             <input
               type="email"
-              className="text-body-2-medium h-[49px] flex-1 rounded-xl border border-gray-400 bg-white px-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="text-body-2-medium h-[49px] flex-1 min-w-0 rounded-xl border border-gray-400 bg-white px-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
               placeholder="이메일을 입력해주세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -161,7 +161,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
             />
             <button
               type="button"
-              className={`text-body-2-medium h-[49px] w-20 rounded-xl tracking-tight ${
+              className={`text-body-2-medium h-[49px] w-20 shrink-0 rounded-xl tracking-tight ${
                 codeSent
                   ? 'cursor-pointer border border-blue-400 bg-white text-blue-700'
                   : name && validateEmail(email)

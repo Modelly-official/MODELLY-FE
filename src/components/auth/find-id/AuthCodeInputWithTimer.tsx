@@ -27,7 +27,7 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-2">
-        <div className="relative flex-1">
+        <div className="relative min-w-0 flex-1">
           <input
             type="text"
             className={`w-full border ${
@@ -47,7 +47,7 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
         </div>
         <button
           type="button"
-          className={`text-body-2-medium h-[49px] w-20 rounded-xl tracking-tight ${
+          className={`text-body-2-medium h-[49px] w-20 shrink-0 rounded-xl tracking-tight ${
             isVerified
               ? 'cursor-not-allowed bg-gray-200 text-gray-600'
               : authCode.length >= 4
