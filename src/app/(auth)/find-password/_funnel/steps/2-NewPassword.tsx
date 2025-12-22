@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
 import { PasswordInput } from '@/src/components/signup/4-LoginInfo/PasswordInput';
 import { useResetPassword } from '@/src/hooks/queries';
+import { usePasswordValidation } from '@/src/hooks/auth/find-password';
+import { AuthHeader } from '@/src/components/auth';
 
 interface StepNewPasswordProps {
   email: string;
@@ -22,48 +23,12 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // 비밀번호 유효성 검증
-  const validatePassword = (password: string) => {
-    // 영문 대소문자, 숫자, 특수문자(~!@#$%) 중 3종 이상 포함
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecialChar = /[~!@#$%]/.test(password);
-
-    const typesCount = [hasLowerCase, hasUpperCase, hasNumber, hasSpecialChar].filter(Boolean).length;
-
-    if (password.length < 8 || password.length > 20) {
-      return false;
-    }
-
-    if (typesCount < 3) {
-      return false;
-    }
-
-    return true;
-  };
-
-  // 유효성 상태 - useMemo로 계산
-  const newPasswordError = useMemo(() => {
-    if (newPassword === '') {
-      return null;
-    }
-    return validatePassword(newPassword) ? 'success' : 'error';
-  }, [newPassword]);
-
-  const confirmPasswordError = useMemo(() => {
-    if (confirmPassword === '') {
-      return null;
-    }
-    return newPassword === confirmPassword ? 'success' : 'error';
-  }, [newPassword, confirmPassword]);
-
-  // 완료 버튼 활성화 조건
-  const isFormValid = newPasswordError === 'success' && confirmPasswordError === 'success';
+  // Custom Hook - 비밀번호 검증
+  const { newPasswordError, confirmPasswordError, isValid } = usePasswordValidation(newPassword, confirmPassword);
 
   // 비밀번호 변경 완료
   const handleComplete = useCallback(() => {
-    if (!isFormValid) return;
+    if (!isValid) return;
 
     resetPasswordMutation.mutate(
       { email, newPassword },
@@ -84,21 +49,12 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
         },
       },
     );
-  }, [isFormValid, email, newPassword, resetPasswordMutation, goNext]);
-
-  // 뒤로가기
-  const handleBack = () => {
-    router.back();
-  };
+  }, [isValid, email, newPassword, resetPasswordMutation, goNext]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* 헤더 */}
-      <div className="mt-15 mx-4">
-        <button type="button" onClick={handleBack} className="w-6 h-6 flex items-center justify-center cursor-pointer">
-          <LeftArrowIcon />
-        </button>
-      </div>
+      <AuthHeader onBack={() => router.back()} />
 
       {/* 제목 */}
       <div className="mt-4 mx-4">
@@ -132,7 +88,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
 
         {/* 하단 버튼 */}
         <div className="mt-auto mb-[42px]">
-          <FixedBottomButton disabled={!isFormValid || resetPasswordMutation.isPending} onClick={handleComplete}>
+          <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
             {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
           </FixedBottomButton>
         </div>

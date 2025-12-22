@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
 import { FixedBottomButton } from '@/src/components/signup';
 import { useSendResetPasswordCode, useVerifyEmailCode, useVerifyResetPassword } from '@/src/hooks/queries';
+import { validateEmail } from '@/src/utils/auth/find-password';
+import { useTimer } from '@/src/hooks/auth/find-password';
+import { AuthHeader, Spinner, AuthCodeInputWithTimer } from '@/src/components/auth';
 
 interface StepInputProps {
   goNext: (name: string, loginId: string, email: string) => void;
@@ -19,6 +21,9 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
   const verifyCodeMutation = useVerifyEmailCode();
   const verifyResetMutation = useVerifyResetPassword();
 
+  // Custom Hooks
+  const { timer, startTimer } = useTimer();
+
   // 입력 상태
   const [name, setName] = useState('');
   const [loginId, setLoginId] = useState('');
@@ -28,35 +33,11 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
   // 인증 상태
   const [codeSent, setCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [timer, setTimer] = useState(0);
   const [error, setError] = useState('');
-
-  // 이메일 유효성 검증
-  const isValidEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  // 타이머 포맷팅
-  const formatTime = (seconds: number) => {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  };
-
-  // 타이머 로직
-  useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timer]);
 
   // 인증번호 발송
   const handleSendCode = useCallback(() => {
-    if (!name || !loginId || !isValidEmail(email)) return;
+    if (!name || !loginId || !validateEmail(email)) return;
 
     sendCodeMutation.mutate(
       { name, loginId, email },
@@ -64,7 +45,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
         onSuccess: (response) => {
           if (response.isSuccess) {
             setCodeSent(true);
-            setTimer(180); // 3분
+            startTimer(180); // 3분
             setError('');
             setAuthCode('');
             setIsVerified(false);
@@ -88,7 +69,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
         },
       },
     );
-  }, [name, loginId, email, sendCodeMutation, goSocialUser]);
+  }, [name, loginId, email, sendCodeMutation, goSocialUser, startTimer]);
 
   // 인증번호 확인
   const handleVerifyCode = useCallback(() => {
@@ -117,6 +98,12 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
     );
   }, [email, authCode, verifyCodeMutation]);
 
+  // 인증번호 입력 변경
+  const handleAuthCodeChange = useCallback((value: string) => {
+    setAuthCode(value);
+    setError('');
+  }, []);
+
   // 비밀번호 재설정 진행 (사용자 정보 검증)
   const handleNextStep = useCallback(() => {
     if (!isVerified) return;
@@ -142,19 +129,10 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
     );
   }, [isVerified, name, loginId, email, verifyResetMutation, goNext]);
 
-  // 뒤로가기
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* 헤더 */}
-      <div className="mt-15 mx-4">
-        <button type="button" onClick={handleBack} className="w-6 h-6 flex items-center justify-center cursor-pointer">
-          <LeftArrowIcon />
-        </button>
-      </div>
+      <AuthHeader onBack={() => router.back()} />
 
       {/* 제목 */}
       <div className="mt-4 mx-4">
@@ -213,16 +191,16 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
               className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight ${
                 codeSent
                   ? 'bg-white text-blue-700 border border-blue-400 cursor-pointer'
-                  : name && loginId && isValidEmail(email)
+                  : name && loginId && validateEmail(email)
                     ? 'bg-blue-200 text-blue-700 cursor-pointer'
                     : 'bg-gray-200 text-gray-600 cursor-not-allowed'
               }`}
               onClick={handleSendCode}
-              disabled={((!name || !loginId || !isValidEmail(email)) && !codeSent) || sendCodeMutation.isPending}
+              disabled={((!name || !loginId || !validateEmail(email)) && !codeSent) || sendCodeMutation.isPending}
             >
               {sendCodeMutation.isPending ? (
                 <div className="flex justify-center">
-                  <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
+                  <Spinner />
                 </div>
               ) : codeSent ? (
                 '다시받기'
@@ -235,57 +213,15 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
 
         {/* 인증번호 입력 (인증번호 발송 후에만 표시) */}
         {codeSent && (
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-2 items-center">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  className={`w-full border ${
-                    error ? 'border-error' : 'border-gray-400'
-                  } rounded-xl px-4 h-[49px] text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none tracking-tight`}
-                  placeholder="인증번호 입력"
-                  value={authCode}
-                  onChange={(e) => {
-                    setAuthCode(e.target.value.replace(/[^0-9]/g, ''));
-                    setError('');
-                  }}
-                  maxLength={6}
-                  disabled={isVerified}
-                />
-                {timer > 0 && !isVerified && (
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-caption-1-medium text-gray-700">
-                    {formatTime(timer)}
-                  </span>
-                )}
-              </div>
-              <button
-                type="button"
-                className={`w-20 rounded-xl h-[49px] text-body-2-medium tracking-tight ${
-                  isVerified
-                    ? 'bg-gray-200 text-gray-600 cursor-not-allowed'
-                    : authCode.length >= 4
-                      ? 'bg-blue-200 text-blue-700 cursor-pointer'
-                      : 'bg-gray-200 text-gray-600 cursor-not-allowed'
-                }`}
-                onClick={handleVerifyCode}
-                disabled={authCode.length < 4 || isVerified || verifyCodeMutation.isPending}
-              >
-                {verifyCodeMutation.isPending ? (
-                  <div className="flex justify-center">
-                    <div className="w-5 h-5 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : isVerified ? (
-                  '인증완료'
-                ) : (
-                  '확인하기'
-                )}
-              </button>
-            </div>
-            {error && <p className="text-caption-1-medium text-error tracking-tight">{error}</p>}
-            {isVerified && (
-              <p className="text-caption-1-medium text-blue-700 tracking-tight">인증번호가 확인되었습니다.</p>
-            )}
-          </div>
+          <AuthCodeInputWithTimer
+            authCode={authCode}
+            onAuthCodeChange={handleAuthCodeChange}
+            timer={timer}
+            isVerified={isVerified}
+            error={error}
+            isLoading={verifyCodeMutation.isPending}
+            onVerify={handleVerifyCode}
+          />
         )}
 
         {/* 하단 버튼 */}

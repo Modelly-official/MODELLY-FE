@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import SignupCompletedIcon from '@/public/icons/signup/signup-completed.svg';
+import { getSocialServiceName } from '@/src/utils/auth/common';
 
 interface StepSocialUserProps {
   name: string;
@@ -13,16 +14,6 @@ export const StepSocialUser: React.FC<StepSocialUserProps> = ({ name, loginType 
 
   const handleGoToLogin = () => {
     router.push('/login');
-  };
-
-  // loginType을 서비스명으로 변환
-  const getSocialServiceName = (type: string): string => {
-    const serviceMap: Record<string, string> = {
-      KAKAO: '카카오',
-      NAVER: '네이버',
-      GOOGLE: '구글',
-    };
-    return serviceMap[type] || type;
   };
 
   const serviceName = getSocialServiceName(loginType);
@@ -53,4 +44,3 @@ export const StepSocialUser: React.FC<StepSocialUserProps> = ({ name, loginType 
     </div>
   );
 };
-
