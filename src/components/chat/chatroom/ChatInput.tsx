@@ -43,15 +43,15 @@ export default function ChatInput({
           type="button"
           aria-label="사진 첨부"
           onClick={handleImageClick}
-          className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border border-gray-300 bg-white"
+          className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-gray-300 bg-white"
         >
           <CameraIcon />
         </button>
         <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-        <div className="relative flex-1">
+        <div className="relative min-w-0 flex-1">
           <div className="flex h-12 items-center rounded-xl border border-gray-300 bg-white px-4 pr-12">
             <input
-              className="text-body-2-medium flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
+              className="text-body-2-medium min-w-0 flex-1 bg-transparent text-black placeholder-gray-600 outline-none"
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder}
