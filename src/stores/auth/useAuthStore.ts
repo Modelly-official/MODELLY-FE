@@ -58,13 +58,15 @@ export const setAccessToken = (token: string) => {
 // 쿠키에서 userRole 읽는 헬퍼 함수
 export const getUserRole = (): 'model' | 'designer' | null => {
   if (typeof document === 'undefined') return null;
-
-  const role = document.cookie
+  const rawRole = document.cookie
     .split('; ')
     .find((row) => row.startsWith('user_role='))
     ?.split('=')[1];
-
-  return role as 'model' | 'designer' | null;
+  if (!rawRole) return null;
+  const role = decodeURIComponent(rawRole);
+  if (role === '디자이너') return 'designer';
+  if (role === '모델') return 'model';
+  return null;
 };
 
 // 쿠키에 userRole 저장하는 헬퍼 함수

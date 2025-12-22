@@ -27,6 +27,15 @@
   }
 }
 
+@layer utilities {
+  .scrollbar-hide {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none;
+  }
+}
+
 /* Custom Utilities - Tailwind v4 @utility 디렉티브 사용 */
 @utility text-head-1-semibold {
   font-size: var(--text-head-1);

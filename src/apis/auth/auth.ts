@@ -9,6 +9,8 @@ import type {
   ApiResponse,
   SocialSignupRequest,
   SocialSignupResponse,
+  SocialLoginCallbackRequest,
+  SocialLoginCallbackResponse,
 } from '@/src/types';
 
 /**
@@ -82,5 +84,24 @@ export const validateToken = async (): Promise<ApiResponse<ValidateResponse>> =>
  */
 export const socialSignup = async (payload: SocialSignupRequest): Promise<ApiResponse<SocialSignupResponse>> => {
   const response = await axiosInstance.post<ApiResponse<SocialSignupResponse>>('/auth/social/signup', payload);
+  return response.data;
+};
+
+/**
+ * 소셜 로그인 콜백 처리
+ * - OAuth에서 받은 code를 백엔드로 전송하여 인증 처리 (POST 요청, request body 사용)
+ * - 백엔드가 소셜 로그인 제공자와 통신하여 사용자 정보 확인
+ * - 네이버는 code와 state 모두 필요, 카카오/구글은 code만 필요
+ *
+ * @returns userId, accessToken, registered, userRole
+ */
+export const processSocialLoginCallback = async (
+  provider: string,
+  payload: SocialLoginCallbackRequest,
+): Promise<ApiResponse<SocialLoginCallbackResponse>> => {
+  const response = await axiosInstance.post<ApiResponse<SocialLoginCallbackResponse>>(
+    `/auth/${provider}/login`,
+    payload, // request body로 전달
+  );
   return response.data;
 };

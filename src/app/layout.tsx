@@ -5,6 +5,9 @@ import { QueryProvider } from '@/src/providers/QueryProvider';
 export const metadata: Metadata = {
   title: 'Monde',
   description: '모델과 디자이너 매칭 플랫폼',
+  icons: {
+    icon: '/images/favicon.svg',
+  },
 };
 
 const RootLayout = ({

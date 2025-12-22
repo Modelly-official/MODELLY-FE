@@ -104,9 +104,13 @@ const LoginContent = () => {
 
         {/* 하단 링크 */}
         <div className="flex gap-4 text-gray-800 text-body-2-medium tracking-tight justify-center mb-20">
-          <span>아이디 찾기</span>
+          <Link href="/find-id" className="cursor-pointer hover:underline">
+            아이디 찾기
+          </Link>
           <span>|</span>
-          <span>비밀번호 찾기</span>
+          <Link href="/find-password" className="cursor-pointer hover:underline">
+            비밀번호 찾기
+          </Link>
           <span>|</span>
           <Link href="/signup" className="cursor-pointer hover:underline">
             회원가입
