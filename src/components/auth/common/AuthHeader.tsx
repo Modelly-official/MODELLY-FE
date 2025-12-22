@@ -1,4 +1,4 @@
-import LeftArrowIcon from '@/public/icons/signup/leftarrow.svg';
+import LeftArrowIcon from '@/public/icons/common/left-arrow.svg';
 
 interface AuthHeaderProps {
   onBack: () => void;
