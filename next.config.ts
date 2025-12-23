@@ -1,6 +1,15 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'modelly-s3.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/**',
+      },
+    ],
+  },
   webpack: (config) => {
     // @ts-expect-error 타입 에러 무시
     const fileLoaderRule = config.module.rules.find((rule) => rule.test?.test?.('.svg'));

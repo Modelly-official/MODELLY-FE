@@ -93,12 +93,12 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
       >
         <div className="flex flex-col gap-6">
           {/* 아이디 */}
-          <div className="flex flex-col gap-2">
-            <label className="text-body-1-medium text-gray-900">아이디</label>
+          <div className="flex flex-col">
+            <label className="text-body-1-medium mb-2 text-gray-900">아이디</label>
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                className="text-body-2-medium min-w-0 flex-1 rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+                className="text-body-2-medium min-w-0 flex-1 rounded-xl border border-gray-400 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none"
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
@@ -106,7 +106,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
               />
               <button
                 type="button"
-                className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
+                className={`text-body-2-medium w-20 shrink-0 rounded-xl py-[14px] ${
                   username && username.length >= 1 ? 'bg-purple-200 text-purple-700' : 'bg-gray-200 text-gray-600'
                 } cursor-pointer`}
                 onClick={checkUsername}
@@ -115,8 +115,16 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
                 중복확인
               </button>
             </div>
-            {isUsernameAvailable === true && <p className="text-caption-1 text-purple-700">사용 가능한 아이디입니다.</p>}
-            {isUsernameAvailable === false && <p className="text-caption-1 text-error">이미 사용 중인 아이디입니다.</p>}
+            {isUsernameAvailable === true && (
+              <div className="px-[6px] pt-[6px]">
+                <p className="text-caption-1-medium text-purple-700">사용 가능한 아이디입니다.</p>
+              </div>
+            )}
+            {isUsernameAvailable === false && (
+              <div className="px-[6px] pt-[6px]">
+                <p className="text-caption-1-medium text-error">이미 사용 중인 아이디입니다.</p>
+              </div>
+            )}
           </div>
 
           {/* 비밀번호 */}

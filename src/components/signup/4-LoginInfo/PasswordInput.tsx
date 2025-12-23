@@ -30,12 +30,12 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-body-1-medium text-gray-900">{label}</label>
+    <div className="flex flex-col">
+      <label className="text-body-1-medium mb-2 text-gray-900">{label}</label>
       <div className="relative">
         <input
           type={showPassword ? 'text' : 'password'}
-          className={`w-full border ${error === 'error' ? 'border-error' : 'border-gray-400'} text-body-2-medium rounded-xl px-4 py-3 pr-12 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+          className={`w-full border ${error === 'error' ? 'border-error' : 'border-gray-400'} text-body-2-medium rounded-xl px-4 py-[14px] pr-12 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -51,9 +51,21 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           </button>
         )}
       </div>
-      {error === null && hintMessage && <p className="text-caption-1 pl-1.5 text-gray-600">{hintMessage}</p>}
-      {error === 'error' && errorMessage && <p className="text-caption-1 text-error pl-1.5">{errorMessage}</p>}
-      {error === 'success' && successMessage && <p className="text-caption-1 pl-1.5 text-purple-700">{successMessage}</p>}
+      {error === null && hintMessage && (
+        <div className="pt-[6px] px-[6px]">
+          <p className="text-caption-1-medium text-gray-600">{hintMessage}</p>
+        </div>
+      )}
+      {error === 'error' && errorMessage && (
+        <div className="pt-[6px] px-[6px]">
+          <p className="text-caption-1-medium text-error">{errorMessage}</p>
+        </div>
+      )}
+      {error === 'success' && successMessage && (
+        <div className="pt-[6px] px-[6px]">
+          <p className="text-caption-1-medium text-purple-700">{successMessage}</p>
+        </div>
+      )}
     </div>
   );
 };

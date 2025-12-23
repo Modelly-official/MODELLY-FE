@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   SignupHeader,
   SignupTitle,
@@ -12,14 +13,8 @@ import {
 } from '@/src/components/signup';
 import { useSignupStore } from '@/src/stores';
 import { useSignup, useSocialSignup } from '@/src/hooks/queries';
-import {
-  formatBirthDate,
-  formatAddress,
-  convertImageToBase64,
-  convertGenderToApi,
-  convertCategoryToApi,
-  showToast,
-} from '@/src/utils';
+import { formatBirthDate, formatAddress, convertGenderToApi, convertCategoryToApi, showToast } from '@/src/utils';
+import { uploadProfileImage } from '@/src/apis';
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
 import type { SignupStepProps } from '@/src/types';
 import type { SignupRequest, SocialSignupRequest } from '@/src/types';
@@ -50,11 +45,21 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
 
   const signupMutation = useSignup();
   const socialSignupMutation = useSocialSignup();
+  const [isUploading, setIsUploading] = useState(false);
 
   // 프로필 이미지 업로드
   const handleImageUpload = async (file: File) => {
-    const base64 = await convertImageToBase64(file);
-    setProfileImage(base64);
+    try {
+      setIsUploading(true);
+      const imageUrl = await uploadProfileImage(file);
+      setProfileImage(imageUrl);
+      showToast('이미지가 업로드되었습니다.');
+    } catch (error) {
+      console.error('이미지 업로드 에러:', error);
+      showToast('이미지 업로드에 실패했습니다.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // 주소 검색 결과 처리
@@ -77,7 +82,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
   const isSubmitting = isSocial ? socialSignupMutation.isPending : signupMutation.isPending;
 
   const handleSubmit = () => {
-    if (!isFormValid || isSubmitting) return;
+    if (!isFormValid || isSubmitting || isUploading) return;
 
     const { addressLine1, addressLine2 } = formatAddress(address, detailAddress);
 
@@ -203,7 +208,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
             <label className="text-body-1-medium text-gray-900">생년월일</label>
             <input
               type="text"
-              className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none"
               placeholder="생년월일을 입력해주세요"
               value={birthDate}
               onChange={(e) => handleBirthDateChange(e.target.value)}
@@ -244,8 +249,8 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         </div>
 
         <div className={`mb-[42px] ${isDesigner ? 'mt-[45px]' : 'mt-auto'}`}>
-          <FixedBottomButton disabled={!isFormValid || isSubmitting} onClick={handleSubmit}>
-            {isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
+          <FixedBottomButton disabled={!isFormValid || isSubmitting || isUploading} onClick={handleSubmit}>
+            {isUploading ? '이미지 업로드 중...' : isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
           </FixedBottomButton>
         </div>
       </form>

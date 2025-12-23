@@ -51,7 +51,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
       <div className="relative">
         <input
           type="text"
-          className="text-body-2-medium w-full cursor-pointer rounded-xl border border-gray-400 px-4 py-3 pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+          className="text-body-2-medium w-full cursor-pointer rounded-xl border border-gray-400 px-4 py-[14px] pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none"
           placeholder="매장 주소를 입력해주세요"
           value={address}
           readOnly
@@ -67,7 +67,7 @@ export const AddressInput: React.FC<AddressInputProps> = ({
       </div>
       <input
         type="text"
-        className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+        className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none"
         placeholder="상세주소"
         value={detailAddress}
         onChange={(e) => onDetailAddressChange(e.target.value)}

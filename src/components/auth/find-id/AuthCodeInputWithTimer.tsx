@@ -25,14 +25,14 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
   onVerify,
 }) => {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col">
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
           <input
             type="text"
             className={`w-full border ${
               error ? 'border-error' : 'border-gray-400'
-            } text-body-2-medium h-[49px] rounded-xl px-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+            } text-body-2-medium rounded-xl px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="인증번호 입력"
             value={authCode}
             onChange={(e) => onAuthCodeChange(e.target.value.replace(/[^0-9]/g, ''))}
@@ -47,7 +47,7 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
         </div>
         <button
           type="button"
-          className={`text-body-2-medium h-[49px] w-20 shrink-0 rounded-xl tracking-tight ${
+          className={`text-body-2-medium w-20 shrink-0 rounded-xl py-[14px] tracking-tight ${
             isVerified
               ? 'cursor-not-allowed bg-gray-200 text-gray-600'
               : authCode.length >= 4
@@ -68,8 +68,16 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
           )}
         </button>
       </div>
-      {error && <p className="text-caption-1-medium text-error tracking-tight">{error}</p>}
-      {isVerified && <p className="text-caption-1-medium tracking-tight text-purple-700">인증번호가 확인되었습니다.</p>}
+      {error && (
+        <div className="px-[6px] pt-[6px]">
+          <p className="text-caption-1-medium text-error tracking-tight">{error}</p>
+        </div>
+      )}
+      {isVerified && (
+        <div className="px-[6px] pt-[6px]">
+          <p className="text-caption-1-medium tracking-tight text-purple-700">인증번호가 확인되었습니다.</p>
+        </div>
+      )}
     </div>
   );
 };

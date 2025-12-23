@@ -65,8 +65,8 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           maxLength={20}
         />
       </div>
-      <div className="mt-6 mb-6 flex flex-col gap-2">
-        <label className="text-body-1-medium text-gray-900">이메일</label>
+      <div className="mt-6 mb-6 flex flex-col">
+        <label className="text-body-1-medium mb-2 text-gray-900">이메일</label>
         <div className="flex items-center gap-2">
           <input
             type="email"
@@ -98,8 +98,16 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
             )}
           </button>
         </div>
-        {emailStatus === 'valid' && <p className="text-caption-1 text-purple-700">{emailMessage}</p>}
-        {emailStatus === 'invalid' && <p className="text-caption-1 text-error">{emailMessage}</p>}
+        {emailStatus === 'valid' && (
+          <div className="px-[6px] pt-[6px]">
+            <p className="text-caption-1-medium text-purple-700">{emailMessage}</p>
+          </div>
+        )}
+        {emailStatus === 'invalid' && (
+          <div className="px-[6px] pt-[6px]">
+            <p className="text-caption-1-medium text-error">{emailMessage}</p>
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BasicInfoInput,
   PhoneInputWithAuth,
@@ -25,9 +25,20 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
   const [authCodeError, setAuthCodeError] = useState('');
   const [authCodeValid, setAuthCodeValid] = useState<boolean | null>(null);
   const [requestSent, setRequestSent] = useState(false);
+  const [timer, setTimer] = useState(0);
 
   const sendSmsMutation = useSendSmsCode();
   const verifySmsMutation = useVerifySmsCode();
+
+  // 타이머 로직
+  useEffect(() => {
+    if (timer > 0 && !authCodeValid) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer, authCodeValid]);
 
   const handleRequestPhoneAuth = () => {
     if (!validatePhoneNumber(phoneNumber)) {
@@ -42,6 +53,7 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
           setAuthCode('');
           setAuthCodeValid(null);
           setAuthCodeError('');
+          setTimer(180); // 3분 (180초)
         } else {
           setAuthCodeError(response.message || '인증번호 발송에 실패했습니다.');
         }
@@ -107,6 +119,7 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
               authCodeError={authCodeError}
               authCodeValid={authCodeValid}
               requestSent={requestSent}
+              timer={timer}
             />
           </div>
         </div>
