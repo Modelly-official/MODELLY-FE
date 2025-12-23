@@ -98,7 +98,7 @@ const LoginContent = () => {
           </button>
 
           {/* 하단 링크 */}
-          <div className="text-body-2-medium mb-20 flex justify-center gap-4 tracking-tight text-gray-800">
+          <div className="text-body-2-medium mb-16 flex justify-center gap-4 tracking-tight text-gray-800">
             <Link href="/find-id" className="cursor-pointer hover:underline">
               아이디 찾기
             </Link>
