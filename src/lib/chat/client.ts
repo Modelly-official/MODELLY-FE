@@ -27,8 +27,8 @@ export function createChatStompClient(
     heartbeatIncoming: 15000,
     heartbeatOutgoing: 15000,
     reconnectDelay: baseDelay,
-    // 개발 환경에서만 디버그 로그 노출
-    debug: process.env.NODE_ENV === 'development' ? (msg) => console.log('[stomp]', msg) : undefined,
+    // 개발 환경에서만 디버그 로그 노출 (undefined 대신 빈 함수 사용)
+    debug: process.env.NODE_ENV === 'development' ? (msg) => console.log('[stomp]', msg) : () => {},
   });
 
   client.onConnect = () => {
