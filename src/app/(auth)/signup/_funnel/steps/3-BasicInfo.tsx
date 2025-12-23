@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BasicInfoInput,
   PhoneInputWithAuth,
@@ -25,9 +25,20 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
   const [authCodeError, setAuthCodeError] = useState('');
   const [authCodeValid, setAuthCodeValid] = useState<boolean | null>(null);
   const [requestSent, setRequestSent] = useState(false);
+  const [timer, setTimer] = useState(0);
 
   const sendSmsMutation = useSendSmsCode();
   const verifySmsMutation = useVerifySmsCode();
+
+  // 타이머 로직
+  useEffect(() => {
+    if (timer > 0 && !authCodeValid) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer, authCodeValid]);
 
   const handleRequestPhoneAuth = () => {
     if (!validatePhoneNumber(phoneNumber)) {
@@ -42,6 +53,7 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
           setAuthCode('');
           setAuthCodeValid(null);
           setAuthCodeError('');
+          setTimer(180); // 3분 (180초)
         } else {
           setAuthCodeError(response.message || '인증번호 발송에 실패했습니다.');
         }
@@ -87,26 +99,29 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
       <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={3} />
       <SignupTitle line1={SIGNUP_MESSAGES.BASIC_INFO.TITLE_1} line2={SIGNUP_MESSAGES.BASIC_INFO.TITLE_2} />
       <form
-        className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
+        className="mx-4 mt-8 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <BasicInfoInput name={name} email={email || ''} setField={setField} />
-          <PhoneInputWithAuth
-            phoneNumber={phoneNumber}
-            setField={setField}
-            handleRequestPhoneAuth={handleRequestPhoneAuth}
-            requestSent={requestSent}
-            isLoading={sendSmsMutation.isPending}
-          />
-          <AuthCodeInput
-            authCode={authCode}
-            setAuthCode={setAuthCode}
-            handleVerifyAuthCode={handleVerifyAuthCode}
-            authCodeError={authCodeError}
-            authCodeValid={authCodeValid}
-            requestSent={requestSent}
-          />
+          <div className="flex flex-col gap-2">
+            <PhoneInputWithAuth
+              phoneNumber={phoneNumber}
+              setField={setField}
+              handleRequestPhoneAuth={handleRequestPhoneAuth}
+              requestSent={requestSent}
+              isLoading={sendSmsMutation.isPending}
+            />
+            <AuthCodeInput
+              authCode={authCode}
+              setAuthCode={setAuthCode}
+              handleVerifyAuthCode={handleVerifyAuthCode}
+              authCodeError={authCodeError}
+              authCodeValid={authCodeValid}
+              requestSent={requestSent}
+              timer={timer}
+            />
+          </div>
         </div>
         <div className="mt-auto mb-[42px]">
           <FixedBottomButton disabled={!name || !email || !phoneNumber || !authCodeValid} onClick={goNext}>

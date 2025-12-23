@@ -152,7 +152,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <label className="text-body-1-medium tracking-tight text-gray-900">이름 (실명)</label>
           <input
             type="text"
-            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
             placeholder="이름을 입력해주세요"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -166,7 +166,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <label className="text-body-1-medium tracking-tight text-gray-900">아이디</label>
           <input
             type="text"
-            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
             placeholder="아이디를 입력해주세요"
             value={loginId}
             onChange={(e) => setLoginId(e.target.value)}
@@ -181,7 +181,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <div className="flex items-center gap-2">
             <input
               type="email"
-              className="text-body-2-medium h-[49px] min-w-0 flex-1 rounded-xl border border-gray-400 bg-white px-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="text-body-2-medium min-w-0 flex-1 rounded-xl border border-gray-400 bg-white px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
               placeholder="이메일을 입력해주세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -189,11 +189,11 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
             />
             <button
               type="button"
-              className={`text-body-2-medium h-[49px] w-20 shrink-0 rounded-xl tracking-tight ${
+              className={`text-body-2-medium w-20 shrink-0 rounded-xl py-[14px] tracking-tight ${
                 codeSent
-                  ? 'cursor-pointer border border-blue-400 bg-white text-blue-700'
+                  ? 'cursor-pointer border border-purple-400 bg-white text-purple-700'
                   : name && loginId && validateEmail(email)
-                    ? 'cursor-pointer bg-blue-200 text-blue-700'
+                    ? 'cursor-pointer bg-purple-200 text-purple-700'
                     : 'cursor-not-allowed bg-gray-200 text-gray-600'
               }`}
               onClick={handleSendCode}

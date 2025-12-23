@@ -25,7 +25,7 @@ export default function ChatListItem({ chat, onSelect }: ChatListItemProps) {
             {chat.lastMessage}
           </span>
           {(chat.unread ?? 0) > 0 && (
-            <span className="text-caption-1-medium ml-2 rounded-full bg-blue-500 px-2 py-0.5 text-white">
+            <span className="text-caption-1-medium ml-2 rounded-full bg-purple-500 px-2 py-0.5 text-white">
               {chat.unread}
             </span>
           )}

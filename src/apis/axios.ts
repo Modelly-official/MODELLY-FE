@@ -2,7 +2,7 @@ import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores';
 import axios from 'axios';
 
 // 인증 없이 접근 가능한 API
-const NON_AUTH_URLS = ['/auth/login', '/auth/signup', '/auth/refresh', '/auth/sms', '/auth/check'];
+const NON_AUTH_URLS = ['/auth/login', '/auth/signup', '/auth/refresh', '/auth/sms', '/auth/check', '/presigned-url'];
 
 export const axiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api`,

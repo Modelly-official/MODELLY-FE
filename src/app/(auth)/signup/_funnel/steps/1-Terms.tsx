@@ -33,13 +33,13 @@ export const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
       <SignupHeader onBack={() => router.push('/login')} totalSteps={totalSteps} currentStep={1} />
       <SignupTitle line1={SIGNUP_MESSAGES.TERMS.TITLE_1} line2={SIGNUP_MESSAGES.TERMS.TITLE_2} />
       <div
-        className="mx-4 mt-10 flex w-[calc(100%-2rem)] cursor-pointer items-center gap-4 rounded-xl bg-gray-100 p-4 sm:w-[343px]"
+        className="mx-4 mt-8 flex w-[calc(100%-2rem)] cursor-pointer items-center gap-4 rounded-xl bg-gray-100 p-[16px] sm:w-[343px]"
         onClick={handleAllAgree}
       >
         {allAgreed ? <SelectedIcon /> : <SelectIcon />}
         <span className="text-body-1-medium tracking-tight text-gray-900">{SIGNUP_MESSAGES.TERMS.ALL_AGREE}</span>
       </div>
-      <div className="mx-4 mt-5 flex w-[calc(100%-2rem)] flex-col gap-2 sm:w-[343px]">
+      <div className="mx-4 mt-4 flex w-[calc(100%-2rem)] flex-col gap-4 sm:w-[343px]">
         {terms.map((term, idx) => (
           <div
             key={term.label}
