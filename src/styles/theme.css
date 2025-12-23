@@ -4,6 +4,7 @@
   --color-white: #ffffff;
   --color-black: #222222;
   --color-error: #ff533d;
+  --color-star: #ffa300;
 
   /* Gray Scale */
   --color-gray-100: #f9f9fb;
@@ -17,15 +18,14 @@
   --color-gray-900: #2f2e32;
   --color-gray-950: #1c1c1e;
 
-  /* Blue Scale */
-  --color-blue-100: #eef7ff;
-  --color-blue-200: #e8f5ff;
-  --color-blue-300: #dbeeff;
-  --color-blue-400: #bae0ff;
-  --color-blue-500: #8bc9fe;
-  --color-blue-600: #6bbbff;
-  --color-blue-700: #319eff;
-  --color-blue-800: #0c8dff;
+  /* Purple Scale */
+  --color-pruple-100: #f1f4ff;
+  --color-pruple-200: #ebeeff;
+  --color-pruple-300: #e2e7ff;
+  --color-pruple-400: #c5c9ff;
+  --color-pruple-500: #8f93ff;
+  --color-pruple-600: #7a7dff;
+  --color-pruple-700: #5559ff;
 
   /* Font Family */
   --font-sans: 'Pretendard', sans-serif;
