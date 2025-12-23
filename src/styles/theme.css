@@ -19,13 +19,13 @@
   --color-gray-950: #1c1c1e;
 
   /* Purple Scale */
-  --color-pruple-100: #f1f4ff;
-  --color-pruple-200: #ebeeff;
-  --color-pruple-300: #e2e7ff;
-  --color-pruple-400: #c5c9ff;
-  --color-pruple-500: #8f93ff;
-  --color-pruple-600: #7a7dff;
-  --color-pruple-700: #5559ff;
+  --color-purple-100: #f1f4ff;
+  --color-purple-200: #ebeeff;
+  --color-purple-300: #e2e7ff;
+  --color-purple-400: #c5c9ff;
+  --color-purple-500: #8f93ff;
+  --color-purple-600: #7a7dff;
+  --color-purple-700: #5559ff;
 
   /* Font Family */
   --font-sans: 'Pretendard', sans-serif;
