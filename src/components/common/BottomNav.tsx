@@ -55,8 +55,8 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-400 bg-white">
-      <div className="mx-auto flex h-[60px] max-w-[600px]">
+    <nav className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-400 bg-white sm:w-[375px]">
+      <div className="flex h-[60px]">
         {navItems.map((item) => {
           const active = isActive(item.href);
           return (
