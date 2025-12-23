@@ -41,7 +41,7 @@ export const InstallPrompt = () => {
 
   return (
     <div className="fixed right-0 bottom-0 left-0 z-50 mx-auto w-full sm:w-[375px]">
-      <div className="bg-blue-800 px-5 py-4 text-white shadow-lg">
+      <div className="bg-purple-800 px-5 py-4 text-white shadow-lg">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
             <h3 className="text-body-1-semibold mb-1">Monde 앱 설치하기</h3>
@@ -59,7 +59,7 @@ export const InstallPrompt = () => {
           </div>
           <button
             onClick={handleClose}
-            className="text-body-1-semibold flex h-6 w-6 shrink-0 items-center justify-center rounded-full hover:bg-blue-700"
+            className="text-body-1-semibold flex h-6 w-6 shrink-0 items-center justify-center rounded-full hover:bg-purple-700"
             aria-label="닫기"
           >
             ✕

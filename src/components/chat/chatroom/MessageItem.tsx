@@ -40,7 +40,7 @@ export default function MessageItem({
               <div
                 key={`${message.id}-${idx}`}
                 className={`relative h-[180px] w-[180px] overflow-hidden rounded-2xl border ${
-                  message.fromMe ? 'border-blue-200' : 'border-gray-200'
+                  message.fromMe ? 'border-purple-200' : 'border-gray-200'
                 }`}
               >
                 <Image src={url} alt="보낸 이미지" fill sizes="180px" className="object-cover" unoptimized />
@@ -55,7 +55,7 @@ export default function MessageItem({
             )}
             <div
               className={`text-body-2-medium inline-block rounded-2xl px-4 py-3 ${cornerClass} ${
-                message.fromMe ? 'bg-blue-300 text-blue-800' : 'border border-gray-300 bg-white text-gray-800'
+                message.fromMe ? 'bg-purple-300 text-purple-800' : 'border border-gray-300 bg-white text-gray-800'
               }`}
             >
               {message.text}

@@ -99,7 +99,7 @@ const LoginContent = () => {
           <button
             onClick={handleLogin}
             disabled={loginMutation.isPending}
-            className="text-body-1-semibold mb-6 w-full cursor-pointer rounded-full bg-gray-900 px-2 py-4 tracking-tight text-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="text-body-1-semibold mb-6 w-full cursor-pointer rounded-full bg-gray-900 px-2 py-4 tracking-tight text-purple-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loginMutation.isPending ? '로그인 중...' : '로그인'}
           </button>

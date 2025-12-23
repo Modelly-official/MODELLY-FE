@@ -25,7 +25,9 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
             key={role.key}
             type="button"
             className={`text-body-1-semibold flex h-[166px] w-[166px] cursor-pointer items-center justify-center rounded-xl border py-5 tracking-tight transition-all ${
-              selectedRole === role.key ? 'border-none bg-blue-600 text-white' : 'border-none bg-gray-100 text-gray-600'
+              selectedRole === role.key
+                ? 'border-none bg-purple-500 text-white'
+                : 'border-none bg-gray-100 text-gray-600'
             }`}
             onClick={() => setSelectedRole(role.key)}
           >

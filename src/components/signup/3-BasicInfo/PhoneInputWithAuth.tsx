@@ -53,9 +53,9 @@ export const PhoneInputWithAuth: React.FC<PhoneInputWithAuthProps> = ({
           type="button"
           className={`text-body-2-medium h-[49px] w-20 shrink-0 rounded-xl ${
             requestSent
-              ? 'border border-blue-400 bg-white text-blue-700'
+              ? 'border border-purple-400 bg-white text-purple-700'
               : isValidPhone
-                ? 'bg-blue-200 text-blue-700'
+                ? 'bg-purple-200 text-purple-700'
                 : 'bg-gray-200 text-gray-600'
           } cursor-pointer`}
           onClick={handleRequestPhoneAuth}

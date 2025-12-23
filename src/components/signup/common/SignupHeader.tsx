@@ -14,9 +14,9 @@ export const SignupHeader: React.FC<SignupHeaderProps> = ({ onBack, totalSteps, 
           <LeftArrowIcon />
         </button>
       </div>
-      <div className="mt-1 flex gap-3">
+      <div className="mt-1 flex gap-2">
         {Array.from({ length: totalSteps }).map((_, idx) => (
-          <div key={idx} className={`h-1 flex-1 rounded ${idx < currentStep ? 'bg-blue-500' : 'bg-gray-300'}`} />
+          <div key={idx} className={`h-1 flex-1 rounded ${idx < currentStep ? 'bg-purple-500' : 'bg-gray-300'}`} />
         ))}
       </div>
     </div>

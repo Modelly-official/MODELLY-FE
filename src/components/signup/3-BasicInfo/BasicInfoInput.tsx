@@ -83,7 +83,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
             type="button"
             className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
               email && isValidEmailFormat(email)
-                ? 'cursor-pointer bg-blue-200 text-blue-700'
+                ? 'cursor-pointer bg-purple-200 text-purple-700'
                 : 'cursor-not-allowed bg-gray-200 text-gray-600'
             }`}
             onClick={handleCheckEmail}
@@ -98,7 +98,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
             )}
           </button>
         </div>
-        {emailStatus === 'valid' && <p className="text-caption-1 text-blue-700">{emailMessage}</p>}
+        {emailStatus === 'valid' && <p className="text-caption-1 text-purple-700">{emailMessage}</p>}
         {emailStatus === 'invalid' && <p className="text-caption-1 text-error">{emailMessage}</p>}
       </div>
     </>

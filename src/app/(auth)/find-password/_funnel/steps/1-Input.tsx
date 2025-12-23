@@ -191,9 +191,9 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
               type="button"
               className={`text-body-2-medium h-[49px] w-20 shrink-0 rounded-xl tracking-tight ${
                 codeSent
-                  ? 'cursor-pointer border border-blue-400 bg-white text-blue-700'
+                  ? 'cursor-pointer border border-purple-400 bg-white text-purple-700'
                   : name && loginId && validateEmail(email)
-                    ? 'cursor-pointer bg-blue-200 text-blue-700'
+                    ? 'cursor-pointer bg-purple-200 text-purple-700'
                     : 'cursor-not-allowed bg-gray-200 text-gray-600'
               }`}
               onClick={handleSendCode}

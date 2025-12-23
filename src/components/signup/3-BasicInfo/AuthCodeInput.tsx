@@ -32,7 +32,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         />
         <button
           type="button"
-          className="text-body-2-medium h-[49px] w-20 shrink-0 cursor-pointer rounded-xl bg-blue-200 text-blue-700"
+          className="text-body-2-medium h-[49px] w-20 shrink-0 cursor-pointer rounded-xl bg-purple-200 text-purple-700"
           onClick={handleVerifyAuthCode}
           disabled={!authCode}
         >
@@ -40,7 +40,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         </button>
       </div>
       {authCodeError && <p className="text-caption-1 text-error mt-1">{authCodeError}</p>}
-      {authCodeValid === true && <p className="text-caption-1 mt-1 text-blue-700">인증번호가 확인되었습니다.</p>}
+      {authCodeValid === true && <p className="text-caption-1 mt-1 text-purple-700">인증번호가 확인되었습니다.</p>}
     </div>
   );
 };

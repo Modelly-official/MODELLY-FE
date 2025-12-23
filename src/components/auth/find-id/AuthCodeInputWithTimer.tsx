@@ -51,7 +51,7 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
             isVerified
               ? 'cursor-not-allowed bg-gray-200 text-gray-600'
               : authCode.length >= 4
-                ? 'cursor-pointer bg-blue-200 text-blue-700'
+                ? 'cursor-pointer bg-purple-200 text-purple-700'
                 : 'cursor-not-allowed bg-gray-200 text-gray-600'
           }`}
           onClick={onVerify}
@@ -69,7 +69,7 @@ export const AuthCodeInputWithTimer: React.FC<AuthCodeInputWithTimerProps> = ({
         </button>
       </div>
       {error && <p className="text-caption-1-medium text-error tracking-tight">{error}</p>}
-      {isVerified && <p className="text-caption-1-medium tracking-tight text-blue-700">인증번호가 확인되었습니다.</p>}
+      {isVerified && <p className="text-caption-1-medium tracking-tight text-purple-700">인증번호가 확인되었습니다.</p>}
     </div>
   );
 };

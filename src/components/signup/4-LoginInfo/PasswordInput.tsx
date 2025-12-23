@@ -53,7 +53,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       </div>
       {error === null && hintMessage && <p className="text-caption-1 pl-1.5 text-gray-600">{hintMessage}</p>}
       {error === 'error' && errorMessage && <p className="text-caption-1 text-error pl-1.5">{errorMessage}</p>}
-      {error === 'success' && successMessage && <p className="text-caption-1 pl-1.5 text-blue-700">{successMessage}</p>}
+      {error === 'success' && successMessage && <p className="text-caption-1 pl-1.5 text-purple-700">{successMessage}</p>}
     </div>
   );
 };
