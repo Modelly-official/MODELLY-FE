@@ -37,7 +37,7 @@ const navItems: NavItem[] = [
     activeIcon: '/icons/nav/chat-active.svg',
   },
   {
-    label: '마이',
+    label: '마이페이지',
     href: '/mypage',
     icon: '/icons/nav/mypage.svg',
     activeIcon: '/icons/nav/mypage-active.svg',
@@ -55,29 +55,16 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-400">
-      <div className="flex h-[60px] max-w-[600px] mx-auto">
+    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-400 bg-white">
+      <div className="mx-auto flex h-[60px] max-w-[600px]">
         {navItems.map((item) => {
           const active = isActive(item.href);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex flex-1 flex-col items-center justify-center gap-1"
-            >
-              <div className="relative w-6 h-6">
-                <Image
-                  src={active ? item.activeIcon : item.icon}
-                  alt={item.label}
-                  fill
-                  className="object-contain"
-                />
+            <Link key={item.href} href={item.href} className="flex flex-1 flex-col items-center justify-center gap-1">
+              <div className="relative h-6 w-6">
+                <Image src={active ? item.activeIcon : item.icon} alt={item.label} fill className="object-contain" />
               </div>
-              <span
-                className={`text-caption-2 ${
-                  active ? 'text-gray-900 font-medium' : 'text-gray-500 font-regular'
-                }`}
-              >
+              <span className={`text-caption-1-medium ${active ? 'text-gray-900' : 'text-gray-500'}`}>
                 {item.label}
               </span>
             </Link>
@@ -87,4 +74,3 @@ export default function BottomNav() {
     </nav>
   );
 }
-
