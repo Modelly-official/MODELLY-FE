@@ -6,12 +6,14 @@ import { notFound } from 'next/navigation';
 import {
   PostHeader,
   ImageGallery,
-  DesignerInfo,
   PostTabs,
-  DetailContent,
+  ServiceTags,
+  AvailableDates,
+  InfoSection,
   PostActions,
 } from '@/src/components/post';
 import { mockRecruitmentDetail, mockRecruitmentDetail2 } from '@/src/mocks/explore';
+import Link from 'next/link';
 
 interface PostDetailPageProps {
   params: {
@@ -36,13 +38,38 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
     setIsFavorite(!isFavorite);
   };
 
+  // 서브카테고리를 한글로 변환
+  const getSubCategoryLabel = (subCategory: string) => {
+    const labels: Record<string, string> = {
+      HAIR_CUT: '커트',
+      HAIR_PERM: '펌',
+      HAIR_COLORING: '염색',
+      ONE_COLOR: '원컬러',
+      ART: '아트',
+      PEDICURE: '페디큐어',
+      EYELASH_PERM: '래쉬펌',
+      EYELASH_EXTENSION: '익스텐션',
+      LIP_TATTOO: '입술',
+      EYEBROW_TATTOO: '눈썹',
+      NORMAL_TATTOO: '타투',
+      ETC: '기타',
+    };
+    return labels[subCategory] || subCategory;
+  };
+
+  // 시술 가능한 날짜를 변환
+  const schedules = detail.recruitmentSchedule.map((schedule) => ({
+    date: schedule.recruitmentDate,
+    times: schedule.recruitmentTimes,
+  }));
+
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 (뒤로가기) */}
       <PostHeader />
 
       {/* 이미지 갤러리 */}
-      <ImageGallery images={detail.images} />
+      <ImageGallery images={detail.imageUrls} />
 
       {/* 제목 및 찜하기 */}
       <div className="flex items-start justify-between gap-4 px-4 pt-4">
@@ -59,14 +86,38 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
 
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
-        <DesignerInfo
-          designerId={detail.designer.id}
-          designerName={detail.designer.name}
-          shopName={detail.designer.shopName}
-          location={detail.designer.location}
-          rating={detail.designer.rating}
-          reviewCount={detail.designer.reviewCount}
-        />
+        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
+          <div className="flex items-center gap-1">
+            <span className="text-body-1-medium text-gray-800">디자이너</span>
+            <span className="text-body-2-medium text-gray-800">·</span>
+            <span className="text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
+            <Image
+              src="/icons/common/arrow-down.svg"
+              alt="디자이너 정보"
+              width={16}
+              height={16}
+              className="rotate-180"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            {/* 위치 */}
+            <div className="flex items-center gap-1">
+              <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
+              <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
+            </div>
+
+            {/* 별점 및 리뷰 */}
+            <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1">
+                <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
+                <span className="text-body-2-medium text-gray-700">5.0</span>
+              </div>
+              <span className="text-body-2-medium text-gray-800">·</span>
+              <span className="text-body-2-medium text-gray-700">리뷰 42</span>
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* 탭 */}
@@ -76,7 +127,91 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
 
       {/* 탭 내용 */}
       {activeTab === 'detail' ? (
-        <DetailContent detail={detail} />
+        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4">
+          {/* 시술 내용 */}
+          <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-body-2-semibold text-gray-900">시술 내용</h3>
+              <div className="flex gap-1">
+                {detail.subCategories.map((subCategory) => (
+                  <span
+                    key={subCategory}
+                    className="rounded bg-purple-200 px-2 py-1 text-caption-1-medium text-purple-700"
+                  >
+                    {getSubCategoryLabel(subCategory)}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-lg bg-gray-100 px-4 py-3">
+              <p className="whitespace-pre-wrap text-body-2-medium text-black">{detail.content}</p>
+            </div>
+          </div>
+
+          {/* 시술 가능한 날짜 */}
+          <div className="flex flex-col gap-2 overflow-hidden rounded-lg bg-white p-4">
+            <h3 className="text-body-2-semibold text-gray-900">시술 가능한 날짜</h3>
+            <AvailableDates schedules={schedules} />
+          </div>
+
+          {/* 모집 목적 */}
+          {(detail.goal1 || detail.goal2 || detail.goal3) && (
+            <div className="rounded-lg bg-white p-4">
+              <InfoSection title="모집 목적" content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')} />
+            </div>
+          )}
+
+          {/* 유의사항 */}
+          {detail.notice && (
+            <div className="rounded-lg bg-white p-4">
+              <h3 className="mb-2 text-body-2-semibold text-gray-900">유의사항</h3>
+              <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
+                  <span className="text-caption-1-medium text-white">✕</span>
+                </div>
+                <p className="flex-1 whitespace-pre-wrap text-body-2-medium text-black">{detail.notice}</p>
+              </div>
+            </div>
+          )}
+
+          {/* 사전 동의사항 */}
+          {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
+            <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
+              <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
+              {detail.agreeVideo && (
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
+                    <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
+                  </div>
+                  <p className="flex-1 text-body-2-medium text-black">영상 촬영 및 활용</p>
+                </div>
+              )}
+              {detail.agreeInsta && (
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
+                    <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
+                  </div>
+                  <p className="flex-1 text-body-2-medium text-black">인스타 업로드</p>
+                </div>
+              )}
+              {detail.agreeMosaic && (
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
+                    <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
+                  </div>
+                  <p className="flex-1 text-body-2-medium text-black">모자이크 처리</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 기타 */}
+          {detail.etc && (
+            <div className="rounded-lg bg-white p-4">
+              <InfoSection title="기타" content={detail.etc} hasIcon={false} />
+            </div>
+          )}
+        </div>
       ) : (
         <div className="flex flex-1 items-center justify-center p-8">
           <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
@@ -85,8 +220,7 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
 
       {/* 하단 액션 버튼 (채팅하기 / 예약하기) */}
       <div className="h-[88px]" /> {/* 하단 버튼 영역 공간 확보 */}
-      <PostActions recruitmentId={detail.id} designerId={detail.designer.id} />
+      <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
     </div>
   );
 }
-

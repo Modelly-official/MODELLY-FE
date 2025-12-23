@@ -28,8 +28,8 @@ export default function ExplorePage() {
   // Mock 데이터 사용
   const recruitments = mockRecruitmentItems;
   const designers = mockDesignerItems;
-  const totalRecruitments = mockRecruitmentListResponse.data.items.length;
-  const totalDesigners = mockDesignerListResponse.data.items.length;
+  const totalRecruitments = mockRecruitmentListResponse.items.length;
+  const totalDesigners = mockDesignerListResponse.items.length;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
