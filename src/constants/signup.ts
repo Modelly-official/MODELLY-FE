@@ -18,7 +18,7 @@ export const SIGNUP_MESSAGES = {
   },
   ROLE: {
     TITLE_1: '어떤 역할로',
-    TITLE_2: 'Modelly를 이용하시겠어요?',
+    TITLE_2: 'Monde를 이용하시겠어요?',
   },
   BASIC_INFO: {
     TITLE_1: '반가워요!',
@@ -29,7 +29,7 @@ export const SIGNUP_MESSAGES = {
     TITLE_2: '정보를 입력해주세요',
   },
   PROFILE_INFO: {
-    TITLE_1: 'Modelly에서 사용할',
+    TITLE_1: 'Monde에서 사용할',
     TITLE_2: '프로필 정보를 입력해주세요',
   },
   COMPLETE: {

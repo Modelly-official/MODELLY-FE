@@ -57,4 +57,3 @@ export const uploadProfileImage = async (file: File): Promise<string> => {
   // 3. imageUrl 반환
   return imageUrl;
 };
-

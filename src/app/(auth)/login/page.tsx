@@ -60,15 +60,8 @@ const LoginContent = () => {
     <>
       <div className="relative bg-white font-sans">
         {/* Modelly 로고 */}
-        <div className="mx-auto mt-[164px] mb-0 h-[58px] w-[212px]">
-          <Image
-            src="/images/modelly.svg"
-            alt="Modelly Logo"
-            width={212}
-            height={58}
-            className="h-full w-full"
-            priority
-          />
+        <div className="mx-auto mt-[98px] mb-15 h-[50px] w-[206px]">
+          <Image src="/images/monde.svg" alt="Monde Logo" width={212} height={58} className="h-full w-full" priority />
         </div>
 
         {/* 입력 폼 */}
