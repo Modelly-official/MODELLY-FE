@@ -64,8 +64,20 @@ export const getUserRole = (): 'model' | 'designer' | null => {
     ?.split('=')[1];
   if (!rawRole) return null;
   const role = decodeURIComponent(rawRole);
+
+  // 영문 소문자 (정상 케이스)
+  if (role === 'designer' || role === 'model') {
+    return role;
+  }
+  // 한글 (하위 호환성)
   if (role === '디자이너') return 'designer';
   if (role === '모델') return 'model';
+  // 대문자 (하위 호환성)
+  const lowerRole = role.toLowerCase();
+  if (lowerRole === 'designer' || lowerRole === 'model') {
+    return lowerRole as 'model' | 'designer';
+  }
+
   return null;
 };
 
