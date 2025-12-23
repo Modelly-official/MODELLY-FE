@@ -1,20 +1,43 @@
 // 라우트 설정
 
-// 로그인 안해도 접속 가능 경로
+// ===== 공개 라우트 (로그인 없이 접근 가능) =====
 export const PUBLIC_ROUTES = [
   '/',
   '/login',
   '/signup',
-  '/find-id', // 아이디 찾기
-  '/find-password', // 비밀번호 찾기
-  '/auth/callback', // 소셜 로그인 콜백
+  '/find-id',
+  '/find-password',
+  '/auth/callback',
+  // 모델 공개 페이지
+  '/explore', // 모델 탐색(공고)
+  '/home', // (예정) 모델 홈 - 추후 구현 시 /explore로 redirect
+  '/map', // 지도
+  // 공통 공개 페이지
+  '/post', // 공고 상세
+  '/designer', // 디자이너 프로필
+  '/terms',
+  '/privacy',
+  '/faq',
 ];
 
-// 로그인 후 모델만 접속 가능 경로 (임시로 넣어둠)
-export const MODEL_ONLY_ROUTES = ['/model'];
+// ===== 모델 전용 라우트 =====
+export const MODEL_ONLY_ROUTES = [
+  '/favorites', // 찜 목록
+  '/model/chat', // 모델 채팅
+  '/model/mypage', // 모델 마이페이지
+];
 
-// 로그인 후 디자이너만 접속 가능 경로 (임시로 넣어둠)
-export const DESIGNER_ONLY_ROUTES = ['/designer'];
+// ===== 디자이너 전용 라우트 =====
+export const DESIGNER_ONLY_ROUTES = [
+  '/designer/home', // 디자이너 홈
+  '/designer/posts', // 내 공고
+  '/designer/calendar', // 캘린더
+  '/designer/chat', // 디자이너 채팅
+  '/designer/mypage', // 디자이너 마이페이지
+];
 
-// 로그인 후, 디자이너나 모델 둘 다 접속 가능 경로
-export const AUTHENTICATED_ROUTES = ['/chat'];
+// ===== 인증된 사용자 공통 라우트 =====
+export const AUTHENTICATED_ROUTES = [
+  '/chat', // 채팅 (공통)
+  '/reservation', // 예약 관련
+];
