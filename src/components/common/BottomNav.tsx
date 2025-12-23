@@ -55,12 +55,16 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-400 bg-white sm:w-[375px]">
-      <div className="flex h-[60px]">
+    <nav className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-400 bg-white pt-2 sm:w-[375px]">
+      <div className="flex">
         {navItems.map((item) => {
           const active = isActive(item.href);
           return (
-            <Link key={item.href} href={item.href} className="flex flex-1 flex-col items-center justify-center gap-1">
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex flex-1 flex-col items-center justify-center gap-1 py-2"
+            >
               <div className="relative h-6 w-6">
                 <Image src={active ? item.activeIcon : item.icon} alt={item.label} fill className="object-contain" />
               </div>
