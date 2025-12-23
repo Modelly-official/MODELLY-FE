@@ -19,7 +19,7 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
     <div className="flex min-h-screen flex-col">
       <SignupHeader onBack={goPrev} totalSteps={totalSteps} currentStep={2} />
       <SignupTitle line1={SIGNUP_MESSAGES.ROLE.TITLE_1} line2={SIGNUP_MESSAGES.ROLE.TITLE_2} />
-      <div className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-row justify-between sm:w-[343px]">
+      <div className="mx-4 mt-8 flex w-[calc(100%-2rem)] flex-row justify-center gap-3 sm:w-[343px]">
         {SIGNUP_ROLES.map((role) => (
           <button
             key={role.key}
