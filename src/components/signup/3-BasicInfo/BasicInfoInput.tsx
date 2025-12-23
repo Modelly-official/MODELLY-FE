@@ -58,7 +58,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
         <label className="text-body-1-medium text-gray-900">이름 (실명)</label>
         <input
           type="text"
-          className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+          className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none"
           placeholder="이름을 입력해주세요"
           value={name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField('name', e.target.value)}
@@ -70,9 +70,9 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
         <div className="flex items-center gap-2">
           <input
             type="email"
-            className={`flex-1 min-w-0 border ${
+            className={`min-w-0 flex-1 border ${
               emailStatus === 'invalid' ? 'border-error' : 'border-gray-400'
-            } text-body-2-medium rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+            } text-body-2-medium rounded-xl px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none`}
             placeholder="이메일을 입력해주세요"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
@@ -81,7 +81,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           />
           <button
             type="button"
-            className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
+            className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-[14px] ${
               email && isValidEmailFormat(email)
                 ? 'cursor-pointer bg-purple-200 text-purple-700'
                 : 'cursor-not-allowed bg-gray-200 text-gray-600'

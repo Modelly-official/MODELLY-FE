@@ -87,26 +87,28 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
       <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={3} />
       <SignupTitle line1={SIGNUP_MESSAGES.BASIC_INFO.TITLE_1} line2={SIGNUP_MESSAGES.BASIC_INFO.TITLE_2} />
       <form
-        className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
+        className="mx-4 mt-8 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           <BasicInfoInput name={name} email={email || ''} setField={setField} />
-          <PhoneInputWithAuth
-            phoneNumber={phoneNumber}
-            setField={setField}
-            handleRequestPhoneAuth={handleRequestPhoneAuth}
-            requestSent={requestSent}
-            isLoading={sendSmsMutation.isPending}
-          />
-          <AuthCodeInput
-            authCode={authCode}
-            setAuthCode={setAuthCode}
-            handleVerifyAuthCode={handleVerifyAuthCode}
-            authCodeError={authCodeError}
-            authCodeValid={authCodeValid}
-            requestSent={requestSent}
-          />
+          <div className="flex flex-col gap-2">
+            <PhoneInputWithAuth
+              phoneNumber={phoneNumber}
+              setField={setField}
+              handleRequestPhoneAuth={handleRequestPhoneAuth}
+              requestSent={requestSent}
+              isLoading={sendSmsMutation.isPending}
+            />
+            <AuthCodeInput
+              authCode={authCode}
+              setAuthCode={setAuthCode}
+              handleVerifyAuthCode={handleVerifyAuthCode}
+              authCodeError={authCodeError}
+              authCodeValid={authCodeValid}
+              requestSent={requestSent}
+            />
+          </div>
         </div>
         <div className="mt-auto mb-[42px]">
           <FixedBottomButton disabled={!name || !email || !phoneNumber || !authCodeValid} onClick={goNext}>
