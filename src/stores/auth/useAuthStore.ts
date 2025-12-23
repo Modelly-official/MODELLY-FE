@@ -70,10 +70,23 @@ export const getUserRole = (): 'model' | 'designer' | null => {
 };
 
 // 쿠키에 userRole 저장하는 헬퍼 함수
-export const setUserRole = (role: 'model' | 'designer') => {
+export const setUserRole = (role: 'model' | 'designer' | string) => {
   if (typeof document === 'undefined') return;
 
-  document.cookie = `user_role=${role}; path=/; max-age=3600; SameSite=Lax${
+  // 한글이나 대문자가 들어와도 영문 소문자로 정규화
+  let normalizedRole: 'model' | 'designer';
+
+  const lowerRole = role.toLowerCase();
+  if (lowerRole === 'model' || role === '모델') {
+    normalizedRole = 'model';
+  } else if (lowerRole === 'designer' || role === '디자이너') {
+    normalizedRole = 'designer';
+  } else {
+    console.error('Invalid role:', role);
+    return;
+  }
+
+  document.cookie = `user_role=${normalizedRole}; path=/; max-age=3600; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };

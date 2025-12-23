@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { PUBLIC_ROUTES, MODEL_ONLY_ROUTES, DESIGNER_ONLY_ROUTES } from '@/src/constants/routes';
+import { PUBLIC_ROUTES, MODEL_ONLY_ROUTES, DESIGNER_ONLY_ROUTES, AUTHENTICATED_ROUTES } from '@/src/constants/routes';
 import { ValidateResponse, ApiResponse } from '@/src/types/auth/auth';
 
 /**
@@ -9,7 +9,14 @@ import { ValidateResponse, ApiResponse } from '@/src/types/auth/auth';
  */
 export async function verifyAccessToken(accessToken: string): Promise<boolean> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/validate`, {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (!apiBaseUrl) {
+      console.error('NEXT_PUBLIC_API_BASE_URL is not defined');
+      return false;
+    }
+
+    const response = await fetch(`${apiBaseUrl}/api/auth/validate`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -17,6 +24,7 @@ export async function verifyAccessToken(accessToken: string): Promise<boolean> {
     });
 
     if (!response.ok) {
+      console.error('Token validation failed:', response.status);
       return false;
     }
 
@@ -36,13 +44,20 @@ export async function verifyAccessToken(accessToken: string): Promise<boolean> {
  */
 export async function refreshAccessToken(request: NextRequest): Promise<string | null> {
   try {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (!apiBaseUrl) {
+      console.error('NEXT_PUBLIC_API_BASE_URL is not defined');
+      return null;
+    }
+
     const refreshToken = request.cookies.get('refresh_token')?.value;
 
     if (!refreshToken) {
       return null;
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/refresh`, {
+    const response = await fetch(`${apiBaseUrl}/api/auth/refresh`, {
       method: 'POST',
       headers: {
         Cookie: `refresh_token=${refreshToken}`,
@@ -50,6 +65,7 @@ export async function refreshAccessToken(request: NextRequest): Promise<string |
     });
 
     if (!response.ok) {
+      console.error('Token refresh failed:', response.status);
       return null;
     }
 
@@ -80,11 +96,18 @@ export function isPublicRoute(pathname: string): boolean {
  * 역할 기반 접근 권한 확인
  */
 export function checkRoleAccess(pathname: string, role: string): boolean {
+  // role을 소문자로 정규화 (대소문자 혼용 방지)
+  const normalizedRole = role?.toLowerCase();
+
   if (MODEL_ONLY_ROUTES.some((route) => pathname.startsWith(route))) {
-    return role === 'model';
+    return normalizedRole === 'model';
   }
   if (DESIGNER_ONLY_ROUTES.some((route) => pathname.startsWith(route))) {
-    return role === 'designer';
+    return normalizedRole === 'designer';
+  }
+  // 인증된 사용자만 접근 가능한 라우트 (모델/디자이너 모두 접근 가능)
+  if (AUTHENTICATED_ROUTES.some((route) => pathname.startsWith(route))) {
+    return normalizedRole === 'model' || normalizedRole === 'designer';
   }
   return true;
 }
