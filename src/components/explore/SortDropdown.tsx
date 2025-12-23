@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
-import type { SortOption } from '@/src/types';
+import type { SortOption } from '@/src/constants/explore';
 
 interface SortDropdownProps {
   sortOptions: SortOption[];

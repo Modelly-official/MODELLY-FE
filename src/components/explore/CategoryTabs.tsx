@@ -1,6 +1,6 @@
 'use client';
 
-import type { Category } from '@/src/types';
+import type { Category } from '@/src/constants/explore';
 
 interface CategoryTabsProps {
   categories: Category[];

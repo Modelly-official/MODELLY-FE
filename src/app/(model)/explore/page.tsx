@@ -23,7 +23,7 @@ export default function ExplorePage() {
   const [view, setView] = useState<'designer' | 'recruitment'>('recruitment');
   const [selectedCategory, setSelectedCategory] = useState('HAIR');
   const [selectedSubCategory, setSelectedSubCategory] = useState('ALL');
-  const [selectedSort, setSelectedSort] = useState('REVIEW');
+  const [selectedSort, setSelectedSort] = useState('MOST_REVIEWS');
 
   // Mock 데이터 사용
   const recruitments = mockRecruitmentItems;
@@ -75,14 +75,14 @@ export default function ExplorePage() {
           /* 공고 그리드 (2열) */
           <div className="grid grid-cols-2 gap-x-2 gap-y-6">
             {recruitments.map((recruitment) => (
-              <RecruitmentCard key={recruitment.id} recruitment={recruitment} />
+              <RecruitmentCard key={recruitment.recruitmentId} recruitment={recruitment} />
             ))}
           </div>
         ) : (
           /* 디자이너 리스트 */
           <div className="flex flex-col gap-6">
             {designers.map((designer) => (
-              <DesignerCard key={designer.id} designer={designer} />
+              <DesignerCard key={designer.designerId} designer={designer} />
             ))}
           </div>
         )}

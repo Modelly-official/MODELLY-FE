@@ -1,6 +1,6 @@
 'use client';
 
-import type { SubCategory } from '@/src/types';
+import type { SubCategory } from '@/src/constants/explore';
 
 interface SubCategoryChipsProps {
   subCategories: SubCategory[];
