@@ -13,8 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     // 배경색 (theme.css의 white)
     background_color: '#ffffff',
-    // 테마 컬러 (theme.css의 blue-800, 브랜드 메인 컬러)
-    theme_color: '#0c8dff',
+    // 테마 컬러 (theme.css의 white)
+    theme_color: '#ffffff',
     // PWA 아이콘 설정
     icons: [
       {
