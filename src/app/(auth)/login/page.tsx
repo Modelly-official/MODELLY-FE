@@ -12,7 +12,7 @@ import { InstallPrompt } from '@/src/components/common';
 const LoginContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = searchParams.get('callbackUrl');
   const { setUser } = useAuthStore();
 
   const [loginId, setLoginId] = useState('');
@@ -31,16 +31,21 @@ const LoginContent = () => {
       {
         onSuccess: (response) => {
           if (response.isSuccess && response.result) {
+            const userRole = response.result.userRole.toLowerCase() as 'model' | 'designer';
+
             // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
             setUser({
               userId: response.result.userId,
-              role: response.result.userRole.toLowerCase() as 'model' | 'designer',
+              role: userRole,
               username: loginId,
               loginId,
             });
 
-            // 원래 페이지로 리다이렉트
-            router.push(callbackUrl);
+            // role에 따른 리다이렉트
+            // Designer: 항상 Designer 홈으로
+            // Model: callbackUrl 또는 루트로
+            const redirectUrl = userRole === 'designer' ? '/designer/home' : (callbackUrl || '/');
+            router.push(redirectUrl);
           } else {
             showToast(response.message || '로그인 실패');
           }
