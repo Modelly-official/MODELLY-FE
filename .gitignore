@@ -45,5 +45,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+#cursor
 .cursorrules
 .cursor/
+
+#claude
+ClAUDE.md
+.claude/
+
+#vscode
+.vscode/

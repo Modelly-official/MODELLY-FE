@@ -60,6 +60,27 @@
   .animate-toast-exit {
     animation: toast-fade-out 0.3s ease-out;
   }
+
+  /* Skeleton Shimmer Animation */
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-gray-200) 25%,
+      var(--color-gray-300) 50%,
+      var(--color-gray-200) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
 }
 
 /* Custom Utilities - Tailwind v4 @utility 디렉티브 사용 */

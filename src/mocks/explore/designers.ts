@@ -1,0 +1,117 @@
+// 디자이너 목록 Mock 데이터
+
+import { DesignerListItem, DesignerListResponse } from '@/src/types/designer';
+
+// Mock 디자이너 리스트 아이템들 (Figma 기준)
+export const mockDesignerItems: DesignerListItem[] = [
+  {
+    designerId: 1,
+    designerName: '주디 디자이너',
+    shop: '준오헤어',
+    shopAddress: '서울시 마포구 연남동 123-45',
+    thumbnail: '/images/mocks/profile-1.png',
+    category: 'HAIR',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: false,
+    createdAt: '2024-12-24T10:00:00Z',
+  },
+  {
+    designerId: 2,
+    designerName: '주디 디자이너',
+    shop: '앙뜨레 살롱',
+    shopAddress: '서울시 서대문구 홍천동 234-56',
+    thumbnail: '/images/mocks/profile-1.png',
+    category: 'HAIR',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: true,
+    createdAt: '2024-12-23T15:30:00Z',
+  },
+  {
+    designerId: 3,
+    designerName: '주디 디자이너',
+    shop: '미니헤어',
+    shopAddress: '서울시 마포구 동교동 345-67',
+    thumbnail: '/images/mocks/profile-1.png',
+    category: 'HAIR',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: false,
+    createdAt: '2024-12-23T09:00:00Z',
+  },
+  {
+    designerId: 4,
+    designerName: '주디 디자이너',
+    shop: '리안헤어',
+    shopAddress: '서울시 마포구 연남동 456-78',
+    thumbnail: '/images/mocks/profile-1.png',
+    category: 'HAIR',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: false,
+    createdAt: '2024-12-22T14:00:00Z',
+  },
+  {
+    designerId: 5,
+    designerName: '주디 디자이너',
+    shop: '준오헤어',
+    shopAddress: '서울시 마포구 연남동 567-89',
+    thumbnail: '/images/mocks/profile-1.png',
+    category: 'HAIR',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: true,
+    createdAt: '2024-12-22T11:00:00Z',
+  },
+  {
+    designerId: 6,
+    designerName: '서아 디자이너',
+    shop: '무드킷 헤어',
+    shopAddress: '서울시 마포구 연남동 678-90',
+    thumbnail: '/images/mocks/profile-2.png',
+    category: 'HAIR',
+    reviewCount: 42,
+    distance: 500,
+    isLiked: false,
+    createdAt: '2024-12-21T16:00:00Z',
+  },
+  {
+    designerId: 7,
+    designerName: '민지 디자이너',
+    shop: '헤어랩',
+    shopAddress: '서울시 강남구 역삼동 789-12',
+    thumbnail: '/images/mocks/profile-3.png',
+    category: 'HAIR',
+    reviewCount: 95,
+    distance: 1200,
+    isLiked: false,
+    createdAt: '2024-12-21T13:00:00Z',
+  },
+  {
+    designerId: 8,
+    designerName: '수아 디자이너',
+    shop: '뷰티살롱',
+    shopAddress: '서울시 서대문구 신촌동 234-56',
+    thumbnail: '/images/mocks/profile-2.png',
+    category: 'HAIR',
+    reviewCount: 76,
+    distance: 800,
+    isLiked: true,
+    createdAt: '2024-12-20T10:30:00Z',
+  },
+];
+
+// Mock 디자이너 리스트 응답 (첫 페이지)
+export const mockDesignerListResponse: DesignerListResponse = {
+  items: mockDesignerItems.slice(0, 6),
+  hasNext: true,
+  nextCursor: 6,
+};
+
+// Mock 디자이너 리스트 응답 (두 번째 페이지)
+export const mockDesignerListResponse2: DesignerListResponse = {
+  items: mockDesignerItems.slice(6, 8),
+  hasNext: false,
+  nextCursor: 8,
+};

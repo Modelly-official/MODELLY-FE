@@ -11,7 +11,7 @@ export const FindPasswordFunnel: React.FC = () => {
 
   // 결과 상태
   const [userName, setUserName] = useState('');
-  const [userLoginId, setUserLoginId] = useState('');
+  const [, setUserLoginId] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [socialLoginType, setSocialLoginType] = useState('');
 

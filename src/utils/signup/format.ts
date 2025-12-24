@@ -20,7 +20,7 @@ export function formatLoginId(value: string): string {
 }
 
 // 주소 포맷팅 (시군구와 상세주소로 분리)
-export function formatAddress(
+export function formatAddressLines(
   fullAddress: string,
   detailAddress: string = '',
 ): { addressLine1: string; addressLine2: string } {

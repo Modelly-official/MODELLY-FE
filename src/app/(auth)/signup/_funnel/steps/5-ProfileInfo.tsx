@@ -13,7 +13,7 @@ import {
 } from '@/src/components/signup';
 import { useSignupStore } from '@/src/stores';
 import { useSignup, useSocialSignup } from '@/src/hooks/queries';
-import { formatBirthDate, formatAddress, convertGenderToApi, convertCategoryToApi, showToast } from '@/src/utils';
+import { formatBirthDate, formatAddressLines, convertGenderToApi, convertCategoryToApi, showToast } from '@/src/utils';
 import { uploadProfileImage } from '@/src/apis';
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
 import type { SignupStepProps } from '@/src/types';
@@ -84,7 +84,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
   const handleSubmit = () => {
     if (!isFormValid || isSubmitting || isUploading) return;
 
-    const { addressLine1, addressLine2 } = formatAddress(address, detailAddress);
+    const { addressLine1, addressLine2 } = formatAddressLines(address, detailAddress);
 
     // 소셜 회원가입
     if (isSocial) {
