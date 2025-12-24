@@ -14,7 +14,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: '홈',
-    href: '/home',
+    href: '/',
     icon: '/icons/nav/home.svg',
     activeIcon: '/icons/nav/home-active.svg',
   },
@@ -48,8 +48,8 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    if (href === '/home') {
-      return pathname === '/home';
+    if (href === '/') {
+      return pathname === '/';
     }
     return pathname.startsWith(href);
   };
