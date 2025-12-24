@@ -1,199 +1,73 @@
-'use client';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { getQueryClient } from '@/src/lib/queryClient';
+import { getRecruitmentDetail } from '@/src/apis';
+import { recruitmentKeys } from '@/src/hooks/queries/explore';
+import { PostDetailContent } from '@/src/components/post';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { notFound, useParams } from 'next/navigation';
-import { ImageGallery, PostTabs, AvailableDates, InfoSection, PostActions } from '@/src/components/post';
-import { mockRecruitmentDetail, mockRecruitmentDetail2 } from '@/src/mocks/explore';
-import Link from 'next/link';
+interface PostDetailPageProps {
+  params: Promise<{ id: string }>;
+}
 
-export default function PostDetailPage() {
-  const params = useParams();
-  const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
-  const [isFavorite, setIsFavorite] = useState(false);
+// SEO 메타데이터 동적 생성
+export async function generateMetadata({ params }: PostDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const recruitmentId = parseInt(id, 10);
 
-  // Mock 데이터에서 해당 ID의 공고 찾기
-  const postId = parseInt(params.id as string);
-  const detail = postId === 1 ? mockRecruitmentDetail : postId === 2 ? mockRecruitmentDetail2 : null;
+  if (isNaN(recruitmentId)) {
+    return {
+      title: '공고를 찾을 수 없습니다 | MODELLY',
+    };
+  }
 
-  if (!detail) {
+  try {
+    const response = await getRecruitmentDetail(recruitmentId);
+    const detail = response.result;
+
+    return {
+      title: `${detail.title} | MODELLY`,
+      description: detail.content.slice(0, 150),
+      openGraph: {
+        title: detail.title,
+        description: detail.content.slice(0, 150),
+        images: detail.imageUrls.length > 0 ? [detail.imageUrls[0]] : [],
+        type: 'article',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: detail.title,
+        description: detail.content.slice(0, 150),
+        images: detail.imageUrls.length > 0 ? [detail.imageUrls[0]] : [],
+      },
+    };
+  } catch {
+    return {
+      title: '공고를 찾을 수 없습니다 | MODELLY',
+    };
+  }
+}
+
+export default async function PostDetailPage({ params }: PostDetailPageProps) {
+  const { id } = await params;
+  const recruitmentId = parseInt(id, 10);
+
+  // 유효하지 않은 ID
+  if (isNaN(recruitmentId)) {
     notFound();
   }
 
-  const handleFavoriteClick = () => {
-    // TODO: 찜하기 API 연동 (추후 구현)
-    setIsFavorite(!isFavorite);
-  };
+  const queryClient = getQueryClient();
 
-  // 서브카테고리를 한글로 변환
-  const getSubCategoryLabel = (subCategory: string) => {
-    const labels: Record<string, string> = {
-      HAIR_CUT: '커트',
-      HAIR_PERM: '펌',
-      HAIR_COLORING: '염색',
-      ONE_COLOR: '원컬러',
-      ART: '아트',
-      PEDICURE: '페디큐어',
-      EYELASH_PERM: '래쉬펌',
-      EYELASH_EXTENSION: '익스텐션',
-      LIP_TATTOO: '입술',
-      EYEBROW_TATTOO: '눈썹',
-      NORMAL_TATTOO: '타투',
-      ETC: '기타',
-    };
-    return labels[subCategory] || subCategory;
-  };
+  // SSR에서 데이터 프리페치
+  await queryClient.prefetchQuery({
+    queryKey: recruitmentKeys.detail(recruitmentId),
+    queryFn: () => getRecruitmentDetail(recruitmentId),
+  });
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      {/* 이미지 갤러리 */}
-      <ImageGallery images={detail.imageUrls} />
-      {/* 제목 및 찜하기 */}
-      <div className="flex items-start justify-between gap-4 px-4 pt-4">
-        <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
-        <button
-          type="button"
-          onClick={handleFavoriteClick}
-          className="flex size-6 shrink-0 items-center justify-center"
-        >
-          <Image
-            src={isFavorite ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
-            alt="찜하기"
-            width={24}
-            height={24}
-          />
-        </button>
-      </div>
-      {/* 디자이너 정보 */}
-      <div className="px-4 pt-2">
-        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-            <span className="text-body-1-medium text-gray-800">디자이너</span>
-            <span className="text-body-2-medium text-gray-800">·</span>
-            <span className="text-body-1-medium mr-1 text-gray-800">{detail.designerProfile.shop}</span>
-            <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            {/* 위치 */}
-            <div className="flex items-center gap-1">
-              <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-              <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
-            </div>
-
-            {/* 별점 및 리뷰 */}
-            <div className="flex items-center gap-1">
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
-                <span className="text-body-2-medium text-gray-700">5.0</span>
-              </div>
-              <span className="text-body-2-medium text-gray-800">·</span>
-              <span className="text-body-2-medium text-gray-700">리뷰 42</span>
-            </div>
-          </div>
-        </Link>
-      </div>
-      {/* 탭 */}
-      <div className="mt-6">
-        <PostTabs activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
-      {/* 탭 내용 */}
-      {activeTab === 'detail' ? (
-        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4">
-          {/* 시술 내용 */}
-          <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-body-2-semibold text-gray-900">시술 내용</h3>
-              <div className="flex gap-1">
-                {detail.subCategories.map((subCategory) => (
-                  <span
-                    key={subCategory}
-                    className="text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700"
-                  >
-                    {getSubCategoryLabel(subCategory)}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-lg bg-gray-100 px-4 py-3">
-              <p className="text-body-2-medium whitespace-pre-wrap text-black">{detail.content}</p>
-            </div>
-          </div>
-
-          {/* 시술 가능한 날짜 */}
-          <div className="flex flex-col gap-2 overflow-hidden rounded-lg bg-white p-4">
-            <h3 className="text-body-2-semibold text-gray-900">시술 가능한 날짜</h3>
-            <AvailableDates schedules={detail.recruitmentSchedule} />
-          </div>
-
-          {/* 모집 목적 */}
-          {(detail.goal1 || detail.goal2 || detail.goal3) && (
-            <div className="rounded-lg bg-white p-4">
-              <InfoSection
-                title="모델 모집 목적"
-                content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')}
-              />
-            </div>
-          )}
-
-          {/* 유의사항 */}
-          {detail.notice && (
-            <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
-              <h3 className="text-body-2-semibold text-gray-900">유의사항</h3>
-              <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
-                  <span className="text-caption-1-medium text-white">✕</span>
-                </div>
-                <p className="text-body-2-medium flex-1 whitespace-pre-wrap text-black">{detail.notice}</p>
-              </div>
-            </div>
-          )}
-
-          {/* 사전 동의사항 */}
-          {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
-            <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
-              <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
-              {detail.agreeVideo && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
-                  </div>
-                  <p className="text-body-2-medium flex-1 text-black">영상 촬영 및 활용</p>
-                </div>
-              )}
-              {detail.agreeInsta && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
-                  </div>
-                  <p className="text-body-2-medium flex-1 text-black">인스타 업로드</p>
-                </div>
-              )}
-              {detail.agreeMosaic && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
-                  </div>
-                  <p className="text-body-2-medium flex-1 text-black">모자이크 처리</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 기타 */}
-          {detail.etc && (
-            <div className="rounded-lg bg-white p-4">
-              <InfoSection title="기타" content={detail.etc} hasIcon={false} />
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="flex flex-1 items-center justify-center p-8">
-          <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
-        </div>
-      )}
-      {/* 하단 액션 버튼 (채팅하기 / 예약하기) */}
-      <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PostDetailContent recruitmentId={recruitmentId} />
+    </HydrationBoundary>
   );
 }
