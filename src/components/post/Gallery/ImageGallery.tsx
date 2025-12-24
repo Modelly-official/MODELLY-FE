@@ -11,6 +11,11 @@ interface ImageGalleryProps {
 export default function ImageGallery({ images }: ImageGalleryProps) {
   const [currentIndex] = useState(0);
 
+  // 빈 배열 처리
+  if (images.length === 0) {
+    return null;
+  }
+
   return (
     <div className="relative h-[375px] w-full">
       {/* 헤더 */}

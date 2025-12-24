@@ -14,15 +14,15 @@ export const mockRecruitmentDetail: RecruitmentDetail = {
   title: '헤어 컨설팅 모델 모집합니다',
   recruitmentSchedule: [
     {
-      recruitmentDate: '2024-12-28',
+      recruitmentDate: '2025-12-28',
       recruitmentTimes: ['10:00', '14:00', '16:00'],
     },
     {
-      recruitmentDate: '2024-12-29',
+      recruitmentDate: '2025-12-29',
       recruitmentTimes: ['11:00', '15:00'],
     },
     {
-      recruitmentDate: '2024-12-30',
+      recruitmentDate: '2025-12-30',
       recruitmentTimes: ['10:00', '13:00', '17:00'],
     },
   ],
@@ -59,11 +59,11 @@ export const mockRecruitmentDetail2: RecruitmentDetail = {
   title: '포트폴리오 촬영용 헤어 모델',
   recruitmentSchedule: [
     {
-      recruitmentDate: '2024-12-27',
+      recruitmentDate: '2025-12-27',
       recruitmentTimes: ['13:00', '15:00'],
     },
     {
-      recruitmentDate: '2024-12-28',
+      recruitmentDate: '2025-12-28',
       recruitmentTimes: ['10:00', '14:00'],
     },
   ],

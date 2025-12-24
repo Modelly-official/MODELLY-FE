@@ -7,6 +7,7 @@ export type SubCategory =
   | 'HAIR_CUT'
   | 'HAIR_PERM'
   | 'HAIR_COLORING'
+  | 'HAIR_MAGIC'
   | 'ONE_COLOR'
   | 'ART'
   | 'PEDICURE'
@@ -14,8 +15,7 @@ export type SubCategory =
   | 'EYELASH_EXTENSION'
   | 'LIP_TATTOO'
   | 'EYEBROW_TATTOO'
-  | 'NORMAL_TATTOO'
-  | 'ETC';
+  | 'NORMAL_TATTOO';
 
 // ===== 정렬 옵션 =====
 export type SortOption = 'NEWEST' | 'MOST_REVIEWS' | 'DISTANCE';

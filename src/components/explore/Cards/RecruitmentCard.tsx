@@ -27,6 +27,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false }: R
       HAIR_CUT: '커트',
       HAIR_PERM: '펌',
       HAIR_COLORING: '염색',
+      HAIR_MAGIC: '매직',
       ONE_COLOR: '원컬러',
       ART: '아트',
       PEDICURE: '페디큐어',
@@ -35,7 +36,6 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false }: R
       LIP_TATTOO: '입술',
       EYEBROW_TATTOO: '눈썹',
       NORMAL_TATTOO: '타투',
-      ETC: '기타',
     };
     return labels[subCategory] || subCategory;
   };

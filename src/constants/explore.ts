@@ -34,7 +34,7 @@ export const HAIR_SUB_CATEGORIES: SubCategory[] = [
   { code: 'HAIR_CUT', name: '커트' },
   { code: 'HAIR_PERM', name: '펌' },
   { code: 'HAIR_COLORING', name: '염색' },
-  { code: 'ETC', name: '매직' },
+  { code: 'HAIR_MAGIC', name: '매직' },
 ];
 
 // 정렬 옵션

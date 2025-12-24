@@ -16,7 +16,6 @@ export const PUBLIC_ROUTES = [
   '/mypage', // 마이페이지 - 비로그인 시 블러+모달 표시
   // 공통 공개 페이지
   '/post', // 공고 상세
-  '/designer', // 디자이너 프로필 (공개)
   '/terms',
   '/privacy',
   '/faq',
