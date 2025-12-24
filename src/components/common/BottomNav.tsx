@@ -47,6 +47,11 @@ const navItems: NavItem[] = [
 export default function BottomNav() {
   const pathname = usePathname();
 
+  // post 상세 페이지에서는 BottomNav 숨김 (PostActions 사용)
+  if (pathname.startsWith('/post/')) {
+    return null;
+  }
+
   const isActive = (href: string) => {
     if (href === '/') {
       return pathname === '/';

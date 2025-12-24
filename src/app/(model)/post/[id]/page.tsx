@@ -193,7 +193,6 @@ export default function PostDetailPage() {
         </div>
       )}
       {/* 하단 액션 버튼 (채팅하기 / 예약하기) */}
-      <div className="h-[88px]" /> {/* 하단 버튼 영역 공간 확보 */}
       <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
     </div>
   );
