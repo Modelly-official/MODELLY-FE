@@ -162,7 +162,7 @@ export default function PostDetailPage() {
               {detail.agreeVideo && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
-                    <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
+                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">영상 촬영 및 활용</p>
                 </div>
@@ -170,7 +170,7 @@ export default function PostDetailPage() {
               {detail.agreeInsta && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
-                    <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
+                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">인스타 업로드</p>
                 </div>
@@ -178,7 +178,7 @@ export default function PostDetailPage() {
               {detail.agreeMosaic && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
-                    <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
+                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">모자이크 처리</p>
                 </div>

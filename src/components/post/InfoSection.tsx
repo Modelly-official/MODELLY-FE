@@ -10,8 +10,8 @@ interface InfoSectionProps {
 }
 
 export default function InfoSection({ title, content, hasIcon = true, iconType = 'check' }: InfoSectionProps) {
-  const iconSrc = iconType === 'check' ? '/icons/common/check.svg' : '/icons/common/close.svg';
-  const iconBgColor = iconType === 'check' ? 'bg-purple-700' : 'bg-gray-800';
+  const iconSrc = iconType === 'check' ? '/icons/post/check.svg' : '/icons/common/close.svg';
+  const iconBgColor = iconType === 'check' ? 'bg-purple-600' : 'bg-gray-800';
 
   return (
     <div className="flex flex-col gap-2">
@@ -22,9 +22,8 @@ export default function InfoSection({ title, content, hasIcon = true, iconType =
             <Image src={iconSrc} alt="" width={12} height={12} className="text-white" />
           </div>
         )}
-        <p className="flex-1 text-body-2-medium text-black">{content}</p>
+        <p className="text-body-2-medium flex-1 text-black">{content}</p>
       </div>
     </div>
   );
 }
-
