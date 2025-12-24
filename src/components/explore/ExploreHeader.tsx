@@ -20,7 +20,7 @@ export default function ExploreHeader({ view, onViewChange }: ExploreHeaderProps
         <button
           type="button"
           onClick={() => onViewChange('designer')}
-          className={`rounded px-4 py-1 text-body-2-semibold transition-colors ${
+          className={`rounded px-4 py-1 text-body-2-semibold transition-colors cursor-pointer ${
             view === 'designer' ? 'bg-white text-gray-800' : 'text-gray-600'
           }`}
         >
@@ -29,7 +29,7 @@ export default function ExploreHeader({ view, onViewChange }: ExploreHeaderProps
         <button
           type="button"
           onClick={() => onViewChange('recruitment')}
-          className={`rounded px-4 py-1 text-body-2-semibold transition-colors ${
+          className={`rounded px-4 py-1 text-body-2-semibold transition-colors cursor-pointer ${
             view === 'recruitment' ? 'bg-white text-gray-800' : 'text-gray-600'
           }`}
         >

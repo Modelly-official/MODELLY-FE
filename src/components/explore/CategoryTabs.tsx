@@ -18,7 +18,7 @@ export default function CategoryTabs({ categories, selectedCategory, onCategoryC
             key={category.code}
             type="button"
             onClick={() => onCategoryChange(category.code)}
-            className={`flex-1 px-3 py-2 text-body-1-medium transition-colors ${
+            className={`flex-1 px-3 py-2 text-body-1-medium transition-colors cursor-pointer ${
               isActive ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-600'
             }`}
           >

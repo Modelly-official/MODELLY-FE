@@ -44,7 +44,7 @@ export default function RecruitmentCard({ recruitment }: RecruitmentCardProps) {
         <button
           type="button"
           onClick={handleFavoriteClick}
-          className="absolute bottom-4 right-4 flex size-6 items-center justify-center"
+          className="absolute bottom-4 right-4 flex size-6 items-center justify-center cursor-pointer"
         >
           <Image
             src={recruitment.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}

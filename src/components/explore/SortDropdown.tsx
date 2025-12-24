@@ -32,7 +32,7 @@ export default function SortDropdown({ sortOptions, selectedSort, onSortChange }
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-body-2-medium text-black"
+        className="flex items-center gap-1 text-body-2-medium text-black cursor-pointer"
       >
         {selectedOption?.name}
         <Image
