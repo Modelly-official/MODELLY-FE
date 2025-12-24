@@ -24,7 +24,7 @@ export default function SearchBar({ value = '', onChange, onSearch }: SearchBarP
         onChange={(e) => onChange?.(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="검색하기"
-        className="text-body-2-medium flex-1 bg-transparent text-gray-900 placeholder:text-gray-700 outline-none"
+        className="text-body-2-medium flex-1 bg-transparent text-gray-900 placeholder:text-gray-700 focus:placeholder:text-transparent outline-none"
       />
     </div>
   );
