@@ -24,6 +24,7 @@ export default function ExplorePage() {
   const [selectedCategory, setSelectedCategory] = useState('HAIR');
   const [selectedSubCategory, setSelectedSubCategory] = useState('ALL');
   const [selectedSort, setSelectedSort] = useState('MOST_REVIEWS');
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   // Mock 데이터 사용
   const recruitments = mockRecruitmentItems;
@@ -46,7 +47,7 @@ export default function ExplorePage() {
       {/* 검색 및 필터 영역 */}
       <div className="flex flex-col gap-3 px-4 py-4">
         {/* 검색바 */}
-        <SearchBar />
+        <SearchBar value={searchKeyword} onChange={setSearchKeyword} />
 
         {/* 공고 탐색일 때만 서브 카테고리 칩 표시 */}
         {view === 'recruitment' && (
