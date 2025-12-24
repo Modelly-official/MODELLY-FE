@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import PostHeader from './PostHeader';
+import { PostHeader } from '../Header';
 
 interface ImageGalleryProps {
   images: string[];
