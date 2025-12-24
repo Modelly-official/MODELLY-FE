@@ -70,14 +70,8 @@ export default function PostDetailPage() {
           <div className="flex items-center gap-1">
             <span className="text-body-1-medium text-gray-800">디자이너</span>
             <span className="text-body-2-medium text-gray-800">·</span>
-            <span className="text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
-            <Image
-              src="/icons/common/arrow-down.svg"
-              alt="디자이너 정보"
-              width={16}
-              height={16}
-              className="rotate-180"
-            />
+            <span className="text-body-1-medium mr-1 text-gray-800">{detail.designerProfile.shop}</span>
+            <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
           </div>
 
           <div className="flex flex-col gap-1">
@@ -146,7 +140,7 @@ export default function PostDetailPage() {
           {detail.notice && (
             <div className="rounded-lg bg-white p-4">
               <h3 className="text-body-2-semibold mb-2 text-gray-900">유의사항</h3>
-              <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+              <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                 <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
                   <span className="text-caption-1-medium text-white">✕</span>
                 </div>
@@ -160,7 +154,7 @@ export default function PostDetailPage() {
             <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
               <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
               {detail.agreeVideo && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
@@ -168,7 +162,7 @@ export default function PostDetailPage() {
                 </div>
               )}
               {detail.agreeInsta && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
@@ -176,7 +170,7 @@ export default function PostDetailPage() {
                 </div>
               )}
               {detail.agreeMosaic && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>

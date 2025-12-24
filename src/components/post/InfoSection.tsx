@@ -16,7 +16,7 @@ export default function InfoSection({ title, content, hasIcon = true, iconType =
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-body-2-semibold text-gray-900">{title}</h3>
-      <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
+      <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
         {hasIcon && (
           <div className={`flex size-[22px] shrink-0 items-center justify-center rounded-full ${iconBgColor}`}>
             <Image src={iconSrc} alt="" width={12} height={12} className="text-white" />

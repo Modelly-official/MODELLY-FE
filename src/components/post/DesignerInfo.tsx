@@ -25,8 +25,8 @@ export default function DesignerInfo({
       <div className="flex items-center gap-1">
         <span className="text-body-1-medium text-gray-800">{designerName}</span>
         <span className="text-body-2-medium text-gray-800">·</span>
-        <span className="text-body-1-medium text-gray-800">{shopName}</span>
-        <Image src="/icons/common/arrow-down.svg" alt="디자이너 정보" width={16} height={16} className="rotate-270" />
+        <span className="text-body-1-medium mr-1 text-gray-800">{shopName}</span>
+        <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
       </div>
 
       <div className="flex flex-col gap-1">
