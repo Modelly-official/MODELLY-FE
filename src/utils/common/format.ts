@@ -3,7 +3,7 @@
  * @param fullAddress "서울시 강남구 청담동 123-45"
  * @returns "강남구 청담동"
  */
-export function formatAddress(fullAddress: string): string {
+export function formatDistrict(fullAddress: string): string {
   // 정규식으로 "XX구 XX동" 패턴 추출
   const match = fullAddress.match(/([가-힣]+[구군])\s*([가-힣]+[동읍면리])/);
   if (match) {

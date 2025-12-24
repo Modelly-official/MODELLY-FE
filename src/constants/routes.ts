@@ -1,6 +1,7 @@
 // 라우트 설정
 
 // ===== 공개 라우트 (로그인 없이 접근 가능) =====
+// 비로그인 사용자도 접근 가능하며, 로그인 필요 기능은 모달로 제어
 export const PUBLIC_ROUTES = [
   '/',
   '/login',
@@ -8,13 +9,15 @@ export const PUBLIC_ROUTES = [
   '/find-id',
   '/find-password',
   '/auth/callback',
-  // 모델 공개 페이지
-  '/explore', // 모델 탐색(공고)
-  '/home', // (예정) 모델 홈 - 추후 구현 시 /explore로 redirect
-  '/map', // 지도
+  // 모델 공개 페이지 (비로그인도 접근 가능, 제한 기능은 모달로 제어)
+  '/explore', // 탐색 - 리스트 확인 가능, 공고 클릭 시 모달
+  '/home', // 홈 - 예약 배너에 "로그인 후 예약하러 가기"
+  '/map', // 지도 - 리스트 확인 가능, 공고 클릭 시 모달
+  '/chat', // 채팅 - 비로그인 시 모달 표시
+  '/mypage', // 마이페이지 - 비로그인 시 블러+모달 표시
   // 공통 공개 페이지
   '/post', // 공고 상세
-  '/designer', // 디자이너 프로필
+  '/designer', // 디자이너 프로필 (공개)
   '/terms',
   '/privacy',
   '/faq',
@@ -23,8 +26,6 @@ export const PUBLIC_ROUTES = [
 // ===== 모델 전용 라우트 =====
 export const MODEL_ONLY_ROUTES = [
   '/favorites', // 찜 목록
-  '/model/chat', // 모델 채팅
-  '/model/mypage', // 모델 마이페이지
 ];
 
 // ===== 디자이너 전용 라우트 =====
@@ -38,6 +39,5 @@ export const DESIGNER_ONLY_ROUTES = [
 
 // ===== 인증된 사용자 공통 라우트 =====
 export const AUTHENTICATED_ROUTES = [
-  '/chat', // 채팅 (공통)
   '/reservation', // 예약 관련
 ];
