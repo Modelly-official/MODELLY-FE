@@ -70,12 +70,16 @@ export default function ExplorePage() {
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="flex-1 px-4 pb-6">
+      <div className="flex-1 pb-6">
         {view === 'recruitment' ? (
           /* 공고 그리드 (2열) */
           <div className="grid grid-cols-2 gap-x-2 gap-y-6">
-            {recruitments.map((recruitment) => (
-              <RecruitmentCard key={recruitment.recruitmentId} recruitment={recruitment} />
+            {recruitments.map((recruitment, index) => (
+              <RecruitmentCard
+                key={recruitment.recruitmentId}
+                recruitment={recruitment}
+                isLeftColumn={index % 2 === 0}
+              />
             ))}
           </div>
         ) : (

@@ -52,12 +52,6 @@ export default function PostDetailPage() {
     return labels[subCategory] || subCategory;
   };
 
-  // 시술 가능한 날짜를 변환
-  const schedules = detail.recruitmentSchedule.map((schedule) => ({
-    date: schedule.recruitmentDate,
-    times: schedule.recruitmentTimes,
-  }));
-
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 (뒤로가기) */}
@@ -145,7 +139,7 @@ export default function PostDetailPage() {
           {/* 시술 가능한 날짜 */}
           <div className="flex flex-col gap-2 overflow-hidden rounded-lg bg-white p-4">
             <h3 className="text-body-2-semibold text-gray-900">시술 가능한 날짜</h3>
-            <AvailableDates schedules={schedules} />
+            <AvailableDates schedules={detail.recruitmentSchedule} />
           </div>
 
           {/* 모집 목적 */}

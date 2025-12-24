@@ -1,19 +1,23 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
 
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
+  isLeftColumn?: boolean;
 }
 
-export default function RecruitmentCard({ recruitment }: RecruitmentCardProps) {
+export default function RecruitmentCard({ recruitment, isLeftColumn = false }: RecruitmentCardProps) {
+  const [isLiked, setIsLiked] = useState(recruitment.isLiked);
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // TODO: 찜하기 기능 구현 (Zustand + API)
-    console.log('찜하기:', recruitment.recruitmentId);
+    setIsLiked((prev) => !prev);
+    // TODO: 찜하기 API 연동
   };
 
   // 서브카테고리를 한글로 변환
@@ -44,10 +48,10 @@ export default function RecruitmentCard({ recruitment }: RecruitmentCardProps) {
         <button
           type="button"
           onClick={handleFavoriteClick}
-          className="absolute bottom-4 right-4 flex size-6 items-center justify-center cursor-pointer"
+          className="absolute right-4 bottom-4 flex size-6 cursor-pointer items-center justify-center"
         >
           <Image
-            src={recruitment.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
+            src={isLiked ? '/icons/explore/heart-active.svg' : '/icons/explore/heart.svg'}
             alt="찜하기"
             width={24}
             height={24}
@@ -56,10 +60,10 @@ export default function RecruitmentCard({ recruitment }: RecruitmentCardProps) {
       </div>
 
       {/* 정보 */}
-      <div className="flex flex-col gap-2 px-2">
+      <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pl-4 pr-[9px]' : 'pl-[10px] pr-4'}`}>
         <div className="flex flex-col gap-1">
           {/* 제목 */}
-          <h3 className="truncate text-body-1-semibold text-black">{recruitment.title}</h3>
+          <h3 className="text-body-1-semibold truncate text-black">{recruitment.title}</h3>
 
           {/* 디자이너 정보 */}
           <div className="flex flex-col gap-0.5">
@@ -90,7 +94,7 @@ export default function RecruitmentCard({ recruitment }: RecruitmentCardProps) {
         {/* 서비스 태그 */}
         <div className="flex flex-wrap gap-1">
           {recruitment.subCategories.slice(0, 2).map((subCategory) => (
-            <span key={subCategory} className="rounded bg-purple-200 px-2 py-1 text-caption-1-medium text-purple-700">
+            <span key={subCategory} className="text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700">
               {getSubCategoryLabel(subCategory)}
             </span>
           ))}
@@ -99,4 +103,3 @@ export default function RecruitmentCard({ recruitment }: RecruitmentCardProps) {
     </Link>
   );
 }
-
