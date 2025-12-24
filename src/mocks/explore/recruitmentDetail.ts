@@ -2,15 +2,16 @@
 
 import { RecruitmentDetail } from '@/src/types/recruitment/recruitment';
 
+// Figma 기준 공고 상세 데이터
 export const mockRecruitmentDetail: RecruitmentDetail = {
   designerProfile: {
     userId: 101,
     designerId: 1,
-    shop: '청담 헤어살롱',
-    shopAddress: '서울시 강남구 청담동 123-45',
+    shop: '무드컷 헤어',
+    shopAddress: '서울시 마포구 연남동 123-45',
   },
   recruitmentId: 1,
-  title: '레이어드 펌 모델 구합니다',
+  title: '헤어 컨설팅 모델 모집합니다',
   recruitmentSchedule: [
     {
       recruitmentDate: '2024-12-28',
@@ -47,16 +48,16 @@ export const mockRecruitmentDetail: RecruitmentDetail = {
   etc: '시술 후 홈케어 방법과 스타일링 팁도 자세히 알려드립니다. 궁금한 점이 있으시면 언제든 문의해주세요!',
 };
 
-// 다양한 공고 상세 Mock 데이터 (추가)
+// 두 번째 공고 상세 Mock 데이터
 export const mockRecruitmentDetail2: RecruitmentDetail = {
   designerProfile: {
     userId: 102,
     designerId: 2,
-    shop: '강남 뷰티살롱',
-    shopAddress: '서울시 강남구 신사동 567-89',
+    shop: '무드컷 스튜디오',
+    shopAddress: '서울시 마포구 상수동 234-56',
   },
   recruitmentId: 2,
-  title: '시술 염색 모델 모집',
+  title: '포트폴리오 촬영용 헤어 모델',
   recruitmentSchedule: [
     {
       recruitmentDate: '2024-12-27',
@@ -82,4 +83,3 @@ export const mockRecruitmentDetail2: RecruitmentDetail = {
   agreeMosaic: true,
   etc: '염색 후 컬러 유지를 위한 홈케어 제품도 추천해드립니다.',
 };
-

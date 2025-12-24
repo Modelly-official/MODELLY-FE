@@ -19,7 +19,7 @@ export default function PostHeader({ onBack }: PostHeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-1/2 z-50 flex h-[52px] w-full max-w-[600px] -translate-x-1/2 items-center bg-transparent px-4 py-2.5 sm:w-[375px]">
+    <header className="absolute top-0 left-0 z-50 flex h-[52px] w-full items-center bg-transparent px-4 py-2.5">
       <button type="button" onClick={handleBack} className="flex size-6 items-center justify-center">
         <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={10} height={10} />
       </button>

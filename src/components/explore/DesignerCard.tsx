@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { DesignerListItem } from '@/src/types';
+import { formatDistrict, formatDistance } from '@/src/utils/common';
 
 interface DesignerCardProps {
   designer: DesignerListItem;
@@ -33,7 +34,7 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
             {/* 위치 및 샵 이름 */}
             <div className="flex items-center gap-1 text-body-2-medium text-gray-700">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-              <span>{designer.shopAddress}</span>
+              <span>{formatDistrict(designer.shopAddress)}</span>
               <span>·</span>
               <span>{designer.shop}</span>
             </div>
@@ -47,7 +48,7 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
                 </span>
               </div>
               <span className="text-body-2-medium text-gray-700">·</span>
-              <span className="text-caption-1-medium text-gray-700">{designer.distance}km</span>
+              <span className="text-caption-1-medium text-gray-700">{formatDistance(designer.distance)}</span>
             </div>
           </div>
         </div>

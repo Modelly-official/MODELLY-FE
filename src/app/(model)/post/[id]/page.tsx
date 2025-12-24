@@ -3,15 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
-import {
-  PostHeader,
-  ImageGallery,
-  PostTabs,
-  ServiceTags,
-  AvailableDates,
-  InfoSection,
-  PostActions,
-} from '@/src/components/post';
+import { ImageGallery, PostTabs, ServiceTags, AvailableDates, InfoSection, PostActions } from '@/src/components/post';
 import { mockRecruitmentDetail, mockRecruitmentDetail2 } from '@/src/mocks/explore';
 import Link from 'next/link';
 
@@ -54,8 +46,6 @@ export default function PostDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* 헤더 (뒤로가기) */}
-      <PostHeader />
       {/* 이미지 갤러리 */}
       <ImageGallery images={detail.imageUrls} />
       {/* 제목 및 찜하기 */}

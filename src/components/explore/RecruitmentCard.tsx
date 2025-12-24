@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
+import { formatDistrict, formatDistance } from '@/src/utils/common';
 
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
@@ -60,7 +61,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false }: R
       </div>
 
       {/* 정보 */}
-      <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pl-4 pr-[9px]' : 'pl-[10px] pr-4'}`}>
+      <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pr-[9px] pl-4' : 'pr-4 pl-[10px]'}`}>
         <div className="flex flex-col gap-1">
           {/* 제목 */}
           <h3 className="text-body-1-semibold truncate text-black">{recruitment.title}</h3>
@@ -74,7 +75,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false }: R
             {/* 위치 */}
             <div className="flex items-center gap-1">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-              <span className="text-caption-1-medium text-gray-700">{recruitment.shopAddress}</span>
+              <span className="text-caption-1-medium text-gray-700">{formatDistrict(recruitment.shopAddress)}</span>
             </div>
 
             {/* 별점 및 거리 */}
@@ -86,7 +87,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false }: R
                 </span>
               </div>
               <span className="text-body-2-medium text-gray-700">·</span>
-              <span className="text-caption-1-medium text-gray-700">{recruitment.distance}km</span>
+              <span className="text-caption-1-medium text-gray-700">{formatDistance(recruitment.distance)}</span>
             </div>
           </div>
         </div>

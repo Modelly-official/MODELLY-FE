@@ -26,7 +26,7 @@ export default function DesignerInfo({
         <span className="text-body-1-medium text-gray-800">{designerName}</span>
         <span className="text-body-2-medium text-gray-800">·</span>
         <span className="text-body-1-medium text-gray-800">{shopName}</span>
-        <Image src="/icons/common/arrow-down.svg" alt="디자이너 정보" width={16} height={16} className="rotate-180" />
+        <Image src="/icons/common/arrow-down.svg" alt="디자이너 정보" width={16} height={16} className="rotate-270" />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -49,4 +49,3 @@ export default function DesignerInfo({
     </Link>
   );
 }
-
