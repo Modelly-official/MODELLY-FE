@@ -1,5 +1,8 @@
 // Types index - 타입 통합 export
 
+// Common types
+export * from './common';
+
 // Auth types
 export * from './auth';
 
