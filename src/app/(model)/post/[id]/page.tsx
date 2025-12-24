@@ -130,7 +130,7 @@ export default function PostDetailPage() {
           {(detail.goal1 || detail.goal2 || detail.goal3) && (
             <div className="rounded-lg bg-white p-4">
               <InfoSection
-                title="모집 목적"
+                title="모델 모집 목적"
                 content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')}
               />
             </div>
@@ -138,8 +138,8 @@ export default function PostDetailPage() {
 
           {/* 유의사항 */}
           {detail.notice && (
-            <div className="rounded-lg bg-white p-4">
-              <h3 className="text-body-2-semibold mb-2 text-gray-900">유의사항</h3>
+            <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
+              <h3 className="text-body-2-semibold text-gray-900">유의사항</h3>
               <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                 <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
                   <span className="text-caption-1-medium text-white">✕</span>
@@ -151,11 +151,11 @@ export default function PostDetailPage() {
 
           {/* 사전 동의사항 */}
           {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
-            <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
+            <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
               <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
               {detail.agreeVideo && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">영상 촬영 및 활용</p>
@@ -163,7 +163,7 @@ export default function PostDetailPage() {
               )}
               {detail.agreeInsta && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">인스타 업로드</p>
@@ -171,7 +171,7 @@ export default function PostDetailPage() {
               )}
               {detail.agreeMosaic && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
-                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">모자이크 처리</p>

@@ -20,7 +20,7 @@ export default function DetailContent({ detail }: DetailContentProps) {
           <ServiceTags services={detail.subCategories} />
         </div>
         <div className="rounded-lg bg-gray-100 px-4 py-3">
-          <p className="text-body-2-medium text-black">{detail.content}</p>
+          <p className="text-body-2-medium whitespace-pre-wrap text-black">{detail.content}</p>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ export default function DetailContent({ detail }: DetailContentProps) {
       {/* 전달사항 */}
       {detail.etc && (
         <div className="rounded-lg bg-white p-4">
-          <InfoSection title="전달사항" content={detail.etc} />
+          <InfoSection title="기타" content={detail.etc} hasIcon={false} />
         </div>
       )}
 
@@ -62,11 +62,11 @@ export default function DetailContent({ detail }: DetailContentProps) {
 
       {/* 사전 동의사항 */}
       {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
-        <div className="flex flex-col gap-4 rounded-lg bg-white px-4 py-3">
+        <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
           <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
-          {detail.agreeVideo && <InfoSection title="" content="시술 과정 영상 촬영 및 활용 동의" hasIcon />}
-          {detail.agreeInsta && <InfoSection title="" content="인스타그램 게시물 활용 동의" hasIcon />}
-          {detail.agreeMosaic && <InfoSection title="" content="얼굴 모자이크 처리 동의" hasIcon />}
+          {detail.agreeVideo && <InfoSection title="" content="영상 촬영 및 활용" hasIcon />}
+          {detail.agreeInsta && <InfoSection title="" content="인스타 업로드" hasIcon />}
+          {detail.agreeMosaic && <InfoSection title="" content="모자이크 처리" hasIcon />}
         </div>
       )}
     </div>
