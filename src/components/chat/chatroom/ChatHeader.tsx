@@ -7,9 +7,14 @@ import DropDownArrowIcon from '@/public/icons/common/down-arrow.svg';
 type Props = {
   title: string;
   rightLabel?: string;
+  showReservation?: boolean;
 };
 
-export default function ChatHeader({ title, rightLabel = '예약내역' }: Props) {
+export default function ChatHeader({
+  title,
+  rightLabel = '예약내역',
+  showReservation = false,
+}: Props) {
   const router = useRouter();
 
   return (
@@ -27,10 +32,12 @@ export default function ChatHeader({ title, rightLabel = '예약내역' }: Props
         <div className="text-head-4-medium text-gray-950">{title}</div>
       </div>
 
-      <div className="text-body-2-medium absolute right-4 flex items-center gap-1 text-gray-800">
-        <span>{rightLabel}</span>
-        <DropDownArrowIcon className="h-5 w-5 text-gray-800" />
-      </div>
+      {showReservation && (
+        <div className="text-body-2-medium absolute right-4 flex items-center gap-1 text-gray-800">
+          <span>{rightLabel}</span>
+          <DropDownArrowIcon className="h-5 w-5 text-gray-800" />
+        </div>
+      )}
     </header>
   );
 }
