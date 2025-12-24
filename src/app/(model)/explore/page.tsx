@@ -84,7 +84,7 @@ export default function ExplorePage() {
           </div>
         ) : (
           /* 디자이너 리스트 */
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 px-4">
             {designers.map((designer) => (
               <DesignerCard key={designer.designerId} designer={designer} />
             ))}

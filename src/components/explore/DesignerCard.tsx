@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { DesignerListItem } from '@/src/types';
@@ -10,11 +11,13 @@ interface DesignerCardProps {
 }
 
 export default function DesignerCard({ designer }: DesignerCardProps) {
+  const [isLiked, setIsLiked] = useState(designer.isLiked);
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // TODO: 찜하기 기능 구현 (Zustand + API)
-    console.log('찜하기:', designer.designerId);
+    setIsLiked((prev) => !prev);
+    // TODO: API 연동 시 찜하기/취소 API 호출
   };
 
   return (
@@ -57,7 +60,7 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
       {/* 오른쪽: 찜하기 버튼 */}
       <button type="button" onClick={handleFavoriteClick} className="flex size-5 shrink-0 items-center justify-center">
         <Image
-          src={designer.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
+          src={isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
           alt="찜하기"
           width={20}
           height={20}
