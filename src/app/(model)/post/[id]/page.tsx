@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import {
   PostHeader,
   ImageGallery,
@@ -15,18 +15,13 @@ import {
 import { mockRecruitmentDetail, mockRecruitmentDetail2 } from '@/src/mocks/explore';
 import Link from 'next/link';
 
-interface PostDetailPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function PostDetailPage({ params }: PostDetailPageProps) {
+export default function PostDetailPage() {
+  const params = useParams();
   const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
   const [isFavorite, setIsFavorite] = useState(false);
 
   // Mock 데이터에서 해당 ID의 공고 찾기
-  const postId = parseInt(params.id);
+  const postId = parseInt(params.id as string);
   const detail = postId === 1 ? mockRecruitmentDetail : postId === 2 ? mockRecruitmentDetail2 : null;
 
   if (!detail) {
@@ -67,14 +62,16 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
     <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 (뒤로가기) */}
       <PostHeader />
-
       {/* 이미지 갤러리 */}
       <ImageGallery images={detail.imageUrls} />
-
       {/* 제목 및 찜하기 */}
       <div className="flex items-start justify-between gap-4 px-4 pt-4">
-        <h1 className="flex-1 text-head-2-semibold text-gray-900">{detail.title}</h1>
-        <button type="button" onClick={handleFavoriteClick} className="flex size-6 shrink-0 items-center justify-center">
+        <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
+        <button
+          type="button"
+          onClick={handleFavoriteClick}
+          className="flex size-6 shrink-0 items-center justify-center"
+        >
           <Image
             src={isFavorite ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
             alt="찜하기"
@@ -83,7 +80,6 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
           />
         </button>
       </div>
-
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
         <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
@@ -119,12 +115,10 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
           </div>
         </Link>
       </div>
-
       {/* 탭 */}
       <div className="mt-6">
         <PostTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
-
       {/* 탭 내용 */}
       {activeTab === 'detail' ? (
         <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4">
@@ -136,7 +130,7 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
                 {detail.subCategories.map((subCategory) => (
                   <span
                     key={subCategory}
-                    className="rounded bg-purple-200 px-2 py-1 text-caption-1-medium text-purple-700"
+                    className="text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700"
                   >
                     {getSubCategoryLabel(subCategory)}
                   </span>
@@ -144,7 +138,7 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
               </div>
             </div>
             <div className="rounded-lg bg-gray-100 px-4 py-3">
-              <p className="whitespace-pre-wrap text-body-2-medium text-black">{detail.content}</p>
+              <p className="text-body-2-medium whitespace-pre-wrap text-black">{detail.content}</p>
             </div>
           </div>
 
@@ -157,19 +151,22 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
           {/* 모집 목적 */}
           {(detail.goal1 || detail.goal2 || detail.goal3) && (
             <div className="rounded-lg bg-white p-4">
-              <InfoSection title="모집 목적" content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')} />
+              <InfoSection
+                title="모집 목적"
+                content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')}
+              />
             </div>
           )}
 
           {/* 유의사항 */}
           {detail.notice && (
             <div className="rounded-lg bg-white p-4">
-              <h3 className="mb-2 text-body-2-semibold text-gray-900">유의사항</h3>
+              <h3 className="text-body-2-semibold mb-2 text-gray-900">유의사항</h3>
               <div className="flex items-start gap-3 rounded-lg bg-gray-100 p-3">
                 <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
                   <span className="text-caption-1-medium text-white">✕</span>
                 </div>
-                <p className="flex-1 whitespace-pre-wrap text-body-2-medium text-black">{detail.notice}</p>
+                <p className="text-body-2-medium flex-1 whitespace-pre-wrap text-black">{detail.notice}</p>
               </div>
             </div>
           )}
@@ -183,7 +180,7 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
                     <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
                   </div>
-                  <p className="flex-1 text-body-2-medium text-black">영상 촬영 및 활용</p>
+                  <p className="text-body-2-medium flex-1 text-black">영상 촬영 및 활용</p>
                 </div>
               )}
               {detail.agreeInsta && (
@@ -191,7 +188,7 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
                     <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
                   </div>
-                  <p className="flex-1 text-body-2-medium text-black">인스타 업로드</p>
+                  <p className="text-body-2-medium flex-1 text-black">인스타 업로드</p>
                 </div>
               )}
               {detail.agreeMosaic && (
@@ -199,7 +196,7 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-700">
                     <Image src="/icons/common/check.svg" alt="" width={12} height={12} />
                   </div>
-                  <p className="flex-1 text-body-2-medium text-black">모자이크 처리</p>
+                  <p className="text-body-2-medium flex-1 text-black">모자이크 처리</p>
                 </div>
               )}
             </div>
@@ -217,7 +214,6 @@ export default function PostDetailPage({ params }: PostDetailPageProps) {
           <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
         </div>
       )}
-
       {/* 하단 액션 버튼 (채팅하기 / 예약하기) */}
       <div className="h-[88px]" /> {/* 하단 버튼 영역 공간 확보 */}
       <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
