@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
-import { ImageGallery, PostTabs, ServiceTags, AvailableDates, InfoSection, PostActions } from '@/src/components/post';
+import { ImageGallery, PostTabs, AvailableDates, InfoSection, PostActions } from '@/src/components/post';
 import { mockRecruitmentDetail, mockRecruitmentDetail2 } from '@/src/mocks/explore';
 import Link from 'next/link';
 

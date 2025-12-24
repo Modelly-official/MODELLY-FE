@@ -9,7 +9,7 @@ interface ImageGalleryProps {
 }
 
 export default function ImageGallery({ images }: ImageGalleryProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex] = useState(0);
 
   return (
     <div className="relative h-[375px] w-full">
