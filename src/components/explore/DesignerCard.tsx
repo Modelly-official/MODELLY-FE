@@ -35,7 +35,7 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
 
           <div className="flex flex-col gap-0.5">
             {/* 위치 및 샵 이름 */}
-            <div className="flex items-center gap-1 text-body-2-medium text-gray-700">
+            <div className="text-body-2-medium flex items-center gap-1 text-gray-700">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
               <span>{formatDistrict(designer.shopAddress)}</span>
               <span>·</span>
@@ -58,7 +58,11 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
       </div>
 
       {/* 오른쪽: 찜하기 버튼 */}
-      <button type="button" onClick={handleFavoriteClick} className="flex size-5 shrink-0 items-center justify-center">
+      <button
+        type="button"
+        onClick={handleFavoriteClick}
+        className="flex size-5 shrink-0 cursor-pointer items-center justify-center"
+      >
         <Image
           src={isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
           alt="찜하기"
@@ -69,4 +73,3 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
     </Link>
   );
 }
-
