@@ -4,4 +4,5 @@ export * from './Designer';
 export * from './Content';
 export * from './Actions';
 export * from './Skeleton';
+export { default as PostDetailContent } from './PostDetailContent';
 
