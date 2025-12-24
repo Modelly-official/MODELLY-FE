@@ -9,16 +9,17 @@ import { formatDistrict, formatDistance } from '@/src/utils/common';
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
   isLeftColumn?: boolean;
+  onLikeToggle?: () => void;
 }
 
-export default function RecruitmentCard({ recruitment, isLeftColumn = false }: RecruitmentCardProps) {
+export default function RecruitmentCard({ recruitment, isLeftColumn = false, onLikeToggle }: RecruitmentCardProps) {
   const [isLiked, setIsLiked] = useState(recruitment.isLiked);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsLiked((prev) => !prev);
-    // TODO: 찜하기 API 연동
+    onLikeToggle?.();
   };
 
   // 서브카테고리를 한글로 변환

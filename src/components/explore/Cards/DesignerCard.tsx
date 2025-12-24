@@ -8,16 +8,17 @@ import { formatDistrict, formatDistance } from '@/src/utils/common';
 
 interface DesignerCardProps {
   designer: DesignerListItem;
+  onLikeToggle?: () => void;
 }
 
-export default function DesignerCard({ designer }: DesignerCardProps) {
+export default function DesignerCard({ designer, onLikeToggle }: DesignerCardProps) {
   const [isLiked, setIsLiked] = useState(designer.isLiked);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsLiked((prev) => !prev);
-    // TODO: API 연동 시 찜하기/취소 API 호출
+    onLikeToggle?.();
   };
 
   return (
