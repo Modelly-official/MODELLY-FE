@@ -34,7 +34,7 @@ const RootLayout = ({
       <body className="bg-white">
         <QueryProvider>
           <ToastProvider>
-            <div className="mx-auto min-h-screen w-full overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
+            <div className="mx-auto min-h-screen w-full min-w-[375px] overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
           </ToastProvider>
         </QueryProvider>
       </body>
