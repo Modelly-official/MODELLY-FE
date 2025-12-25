@@ -12,7 +12,7 @@ import {
   RecruitmentCardSkeleton,
   DesignerCardSkeleton,
 } from '@/src/components/explore';
-import { CATEGORIES, HAIR_SUB_CATEGORIES, SORT_OPTIONS } from '@/src/constants/explore';
+import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
 import { useRecruitments, useDesigners } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike, useToggleDesignerLike } from '@/src/hooks/queries/likes';
 import type { Category, SubCategory, SortOption } from '@/src/types';
@@ -120,7 +120,10 @@ export default function ExploreContent() {
       <CategoryTabs
         categories={CATEGORIES}
         selectedCategory={selectedCategory}
-        onCategoryChange={(cat) => setSelectedCategory(cat as Category)}
+        onCategoryChange={(cat) => {
+          setSelectedCategory(cat as Category);
+          setSelectedSubCategory('ALL'); // 카테고리 변경 시 서브카테고리 리셋
+        }}
       />
 
       {/* 검색 및 필터 영역 */}
@@ -131,7 +134,7 @@ export default function ExploreContent() {
         {/* 공고 탐색일 때만 서브 카테고리 칩 표시 */}
         {view === 'recruitment' && (
           <SubCategoryChips
-            subCategories={HAIR_SUB_CATEGORIES}
+            subCategories={SUB_CATEGORIES_BY_CATEGORY[selectedCategory]}
             selectedSubCategory={selectedSubCategory}
             onSubCategoryChange={(sub) => setSelectedSubCategory(sub as SubCategory | 'ALL')}
           />
