@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PUBLIC_ROUTES, MODEL_ONLY_ROUTES, DESIGNER_ONLY_ROUTES, AUTHENTICATED_ROUTES } from '@/src/constants/routes';
-import { ValidateResponse, ApiResponse } from '@/src/types/auth/auth';
+import { ValidateResponse } from '@/src/types/auth/auth';
+import { ApiResponse } from '@/src/types';
 
 /**
  * 백엔드 API로 accessToken 유효성 검증

@@ -91,5 +91,6 @@ export interface RecruitmentDetail {
   agreeInsta: boolean;
   agreeMosaic: boolean;
   etc: string;
+  isLiked: boolean;
 }
 
