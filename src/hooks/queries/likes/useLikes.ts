@@ -23,8 +23,10 @@ export function useToggleRecruitmentLike() {
       }
       return toggleRecruitmentLike(recruitmentId);
     },
-    onSuccess: () => {
+    onSuccess: (_, recruitmentId) => {
+      // 목록 및 상세 쿼리 모두 갱신
       queryClient.invalidateQueries({ queryKey: recruitmentKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentKeys.detail(recruitmentId) });
     },
   });
 }
@@ -46,8 +48,10 @@ export function useToggleDesignerLike() {
       }
       return toggleDesignerLike(designerId);
     },
-    onSuccess: () => {
+    onSuccess: (_, designerId) => {
+      // 목록 및 상세 쿼리 모두 갱신
       queryClient.invalidateQueries({ queryKey: designerKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: designerKeys.detail(designerId) });
     },
   });
 }

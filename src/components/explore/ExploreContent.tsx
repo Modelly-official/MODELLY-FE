@@ -15,6 +15,8 @@ import {
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
 import { useRecruitments, useDesigners } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike, useToggleDesignerLike } from '@/src/hooks/queries/likes';
+import { useUserLocation } from '@/src/hooks/custom';
+import { useToast } from '@/src/hooks/common/useToast';
 import type { Category, SubCategory, SortOption } from '@/src/types';
 
 export default function ExploreContent() {
@@ -25,8 +27,32 @@ export default function ExploreContent() {
   const [selectedSort, setSelectedSort] = useState<SortOption>('NEWEST');
   const [searchKeyword, setSearchKeyword] = useState('');
 
+  // 위치 정보 훅
+  const { location, error: locationError, isLoading: isLocationLoading, requestLocation } = useUserLocation();
+  const { showToast } = useToast();
+
   // Infinite scroll observer ref
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // 거리순 정렬 시 위치 정보 필요 여부
+  const needsLocation = selectedSort === 'DISTANCE';
+  const hasLocation = !!location;
+
+  // 거리순 정렬 선택 시 위치 요청
+  const handleSortChange = (sort: SortOption) => {
+    if (sort === 'DISTANCE' && !location && !isLocationLoading) {
+      requestLocation();
+    }
+    setSelectedSort(sort);
+  };
+
+  // 위치 에러 시 기본 정렬로 복귀
+  useEffect(() => {
+    if (locationError && selectedSort === 'DISTANCE') {
+      showToast(locationError);
+      setSelectedSort('NEWEST');
+    }
+  }, [locationError, selectedSort, showToast]);
 
   // Query params
   const recruitmentParams = {
@@ -34,13 +60,20 @@ export default function ExploreContent() {
     subCategory: selectedSubCategory === 'ALL' ? undefined : selectedSubCategory,
     keyword: searchKeyword || undefined,
     sortOption: selectedSort,
+    userLatitude: needsLocation ? location?.latitude : undefined,
+    userLongitude: needsLocation ? location?.longitude : undefined,
   };
 
   const designerParams = {
     category: selectedCategory,
     keyword: searchKeyword || undefined,
     sortOption: selectedSort,
+    userLatitude: needsLocation ? location?.latitude : undefined,
+    userLongitude: needsLocation ? location?.longitude : undefined,
   };
+
+  // 거리순 정렬 시 위치 정보가 없으면 쿼리 비활성화
+  const canQueryWithDistance = !needsLocation || hasLocation;
 
   // Query hooks
   const {
@@ -49,7 +82,7 @@ export default function ExploreContent() {
     hasNextPage: hasNextRecruitments,
     isFetchingNextPage: isFetchingNextRecruitments,
     isLoading: isLoadingRecruitments,
-  } = useRecruitments({ ...recruitmentParams, enabled: view === 'recruitment' });
+  } = useRecruitments({ ...recruitmentParams, enabled: view === 'recruitment' && canQueryWithDistance });
 
   const {
     data: designerData,
@@ -57,7 +90,7 @@ export default function ExploreContent() {
     hasNextPage: hasNextDesigners,
     isFetchingNextPage: isFetchingNextDesigners,
     isLoading: isLoadingDesigners,
-  } = useDesigners({ ...designerParams, enabled: view === 'designer' });
+  } = useDesigners({ ...designerParams, enabled: view === 'designer' && canQueryWithDistance });
 
   // Like mutations
   const { mutate: toggleRecruitmentLike } = useToggleRecruitmentLike();
@@ -108,7 +141,9 @@ export default function ExploreContent() {
     return () => observer.disconnect();
   }, [handleObserver]);
 
-  const isLoading = view === 'recruitment' ? isLoadingRecruitments : isLoadingDesigners;
+  // 거리순 정렬에서 위치 로딩 중이거나 데이터 로딩 중인 경우
+  const isWaitingForLocation = needsLocation && !hasLocation && isLocationLoading;
+  const isLoading = isWaitingForLocation || (view === 'recruitment' ? isLoadingRecruitments : isLoadingDesigners);
   const isFetchingNext = view === 'recruitment' ? isFetchingNextRecruitments : isFetchingNextDesigners;
 
   return (
@@ -151,7 +186,7 @@ export default function ExploreContent() {
           <SortDropdown
             sortOptions={SORT_OPTIONS}
             selectedSort={selectedSort}
-            onSortChange={(sort) => setSelectedSort(sort as SortOption)}
+            onSortChange={(sort) => handleSortChange(sort as SortOption)}
           />
         </div>
       </div>

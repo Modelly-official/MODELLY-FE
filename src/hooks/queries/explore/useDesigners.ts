@@ -6,6 +6,8 @@ export const designerKeys = {
   all: ['designers'] as const,
   lists: () => [...designerKeys.all, 'list'] as const,
   list: (params: DesignerListParams) => [...designerKeys.lists(), params] as const,
+  details: () => [...designerKeys.all, 'detail'] as const,
+  detail: (id: number) => [...designerKeys.details(), id] as const,
 };
 
 interface UseDesignersParams extends Omit<DesignerListParams, 'cursorId'> {
