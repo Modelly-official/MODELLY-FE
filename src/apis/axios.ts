@@ -1,4 +1,5 @@
 import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores';
+import { apiLogger } from '@/src/utils';
 import axios from 'axios';
 
 // 인증 없이 접근 가능한 API
@@ -12,7 +13,7 @@ export const axiosInstance = axios.create({
   withCredentials: true, // refreshToken 쿠키 자동 전송
 });
 
-// Request Interceptor: 쿠키에서 accessToken 읽어서 헤더에 추가
+// Request Interceptor: 쿠키에서 accessToken 읽어서 헤더에 추가 + 로깅
 axiosInstance.interceptors.request.use(
   (config) => {
     const isNonAuthRequest = NON_AUTH_URLS.some((path) => config.url?.includes(path));
@@ -25,12 +26,15 @@ axiosInstance.interceptors.request.use(
       }
     }
 
+    // API 로깅 (NEXT_PUBLIC_API_LOGGING=true 일 때만 활성화)
+    apiLogger.request(config.method || 'GET', config.url || '', config.params || config.data);
+
     return config;
   },
   (error) => Promise.reject(error),
 );
 
-// Response Interceptor: 새 accessToken이 오면 쿠키에 저장
+// Response Interceptor: 새 accessToken이 오면 쿠키에 저장 + 로깅
 axiosInstance.interceptors.response.use(
   (response) => {
     const authHeader = response.headers['authorization'];
@@ -38,12 +42,19 @@ axiosInstance.interceptors.response.use(
       const newToken = authHeader.split(' ')[1];
       setAccessToken(newToken); // 쿠키에 저장
     }
+
+    // API 로깅 (성공)
+    apiLogger.response(response.config.url || '', response.status, response.data);
+
     return response;
   },
   (error) => {
     const { clearAuth } = useAuthStore.getState();
     const res = error.response;
     const code = res?.data?.serviceCode || res?.data?.data?.codeName || '';
+
+    // API 로깅 (에러)
+    apiLogger.error(res?.config?.url || '', res?.status || 0, res?.data || error.message);
 
     const shouldLogout =
       res?.status === 401 ||
