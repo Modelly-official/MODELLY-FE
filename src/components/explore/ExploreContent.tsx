@@ -22,7 +22,7 @@ export default function ExploreContent() {
   const [view, setView] = useState<'designer' | 'recruitment'>('recruitment');
   const [selectedCategory, setSelectedCategory] = useState<Category>('HAIR');
   const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory | 'ALL'>('ALL');
-  const [selectedSort, setSelectedSort] = useState<SortOption>('MOST_REVIEWS');
+  const [selectedSort, setSelectedSort] = useState<SortOption>('NEWEST');
   const [searchKeyword, setSearchKeyword] = useState('');
 
   // Infinite scroll observer ref
