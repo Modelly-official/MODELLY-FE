@@ -20,18 +20,18 @@ export const apiLogger = {
   request: (method: string, url: string, params?: unknown) => {
     if (!isLoggingEnabled()) return;
     const prefix = getPrefix();
-    console.log(`${prefix} [REQ] ${method.toUpperCase()} ${url}`, params ?? '');
+    console.log(`${prefix} [REQUEST] ${method.toUpperCase()} ${url}`, params ?? '');
   },
 
   response: (url: string, status: number, data: unknown) => {
     if (!isLoggingEnabled()) return;
     const prefix = getPrefix();
-    console.log(`${prefix} [RES] ${status} ${url}`, data);
+    console.log(`${prefix} [RESPONSE] ${status} ${url}`, data);
   },
 
   error: (url: string, status: number, error: unknown) => {
     if (!isLoggingEnabled()) return;
     const prefix = getPrefix();
-    console.error(`${prefix} [ERR] ${status} ${url}`, error);
+    console.error(`${prefix} [ERROR] ${status} ${url}`, error);
   },
 };
