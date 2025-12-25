@@ -72,12 +72,7 @@
   }
 
   .animate-skeleton {
-    background: linear-gradient(
-      90deg,
-      var(--color-gray-200) 25%,
-      var(--color-gray-300) 50%,
-      var(--color-gray-200) 75%
-    );
+    background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-300) 50%, var(--color-gray-200) 75%);
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s ease-in-out infinite;
   }
@@ -159,37 +154,6 @@
 @utility text-caption-2-regular {
   font-size: var(--text-caption-2);
   font-weight: var(--font-weight-regular);
-  line-height: var(--leading-150);
-}
-
-/* Number Typography - 숫자 전용 타이포그래피 */
-@utility text-number-1 {
-  font-size: var(--text-head-1);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-2 {
-  font-size: var(--text-head-2);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-3 {
-  font-size: var(--text-head-3);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-4 {
-  font-size: var(--text-body-1);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-5 {
-  font-size: var(--text-body-2);
-  font-weight: var(--font-weight-medium);
   line-height: var(--leading-150);
 }
 
