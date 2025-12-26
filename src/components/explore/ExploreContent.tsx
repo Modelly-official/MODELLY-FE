@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   ExploreHeader,
   CategoryTabs,
@@ -27,9 +27,21 @@ export default function ExploreContent() {
   const [selectedSort, setSelectedSort] = useState<SortOption>('NEWEST');
   const [searchKeyword, setSearchKeyword] = useState('');
 
-  // 위치 정보 훅
-  const { location, error: locationError, isLoading: isLocationLoading, requestLocation } = useUserLocation();
   const { showToast } = useToast();
+
+  // 위치 에러 핸들러 (콜백으로 처리하여 effect 내 setState 방지)
+  const handleLocationError = useCallback(
+    (errorMessage: string) => {
+      showToast(errorMessage);
+      setSelectedSort('NEWEST');
+    },
+    [showToast]
+  );
+
+  // 위치 정보 훅
+  const { location, isLoading: isLocationLoading, requestLocation } = useUserLocation({
+    onError: handleLocationError,
+  });
 
   // Infinite scroll observer ref
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -40,29 +52,11 @@ export default function ExploreContent() {
 
   // 거리순 정렬 선택 시 위치 요청
   const handleSortChange = (sort: SortOption) => {
-    console.log('[ExploreContent] handleSortChange 호출:', sort);
-    console.log('[ExploreContent] 현재 상태:', { location, isLocationLoading, needsLocation: sort === 'DISTANCE' });
-
     if (sort === 'DISTANCE' && !location && !isLocationLoading) {
-      console.log('[ExploreContent] requestLocation 호출 조건 충족');
       requestLocation();
-    } else {
-      console.log('[ExploreContent] requestLocation 호출 조건 미충족:', {
-        isDistance: sort === 'DISTANCE',
-        hasLocation: !!location,
-        isLocationLoading,
-      });
     }
     setSelectedSort(sort);
   };
-
-  // 위치 에러 시 기본 정렬로 복귀
-  useEffect(() => {
-    if (locationError && selectedSort === 'DISTANCE') {
-      showToast(locationError);
-      setSelectedSort('NEWEST');
-    }
-  }, [locationError, selectedSort, showToast]);
 
   // Query params
   const recruitmentParams = {
