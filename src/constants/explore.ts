@@ -37,6 +37,37 @@ export const HAIR_SUB_CATEGORIES: SubCategory[] = [
   { code: 'HAIR_MAGIC', name: '매직' },
 ];
 
+// 서브 카테고리 (네일)
+export const NAIL_SUB_CATEGORIES: SubCategory[] = [
+  { code: 'ALL', name: '전체' },
+  { code: 'ONE_COLOR', name: '원컬러' },
+  { code: 'ART', name: '아트' },
+  { code: 'PEDICURE', name: '페디큐어' },
+];
+
+// 서브 카테고리 (속눈썹)
+export const EYELASH_SUB_CATEGORIES: SubCategory[] = [
+  { code: 'ALL', name: '전체' },
+  { code: 'EYELASH_PERM', name: '펌' },
+  { code: 'EYELASH_EXTENSION', name: '연장' },
+];
+
+// 서브 카테고리 (타투)
+export const TATTOO_SUB_CATEGORIES: SubCategory[] = [
+  { code: 'ALL', name: '전체' },
+  { code: 'NORMAL_TATTOO', name: '일반 디자인' },
+  { code: 'LIP_TATTOO', name: '입술 문신' },
+  { code: 'EYEBROW_TATTOO', name: '눈썹 문신' },
+];
+
+// 카테고리별 서브카테고리 매핑
+export const SUB_CATEGORIES_BY_CATEGORY: Record<CategoryType, SubCategory[]> = {
+  HAIR: HAIR_SUB_CATEGORIES,
+  NAIL: NAIL_SUB_CATEGORIES,
+  EYELASH: EYELASH_SUB_CATEGORIES,
+  TATTOO: TATTOO_SUB_CATEGORIES,
+};
+
 // 정렬 옵션
 export const SORT_OPTIONS: SortOption[] = [
   { code: 'NEWEST', name: '최신순' },

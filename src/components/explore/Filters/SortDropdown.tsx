@@ -38,8 +38,8 @@ export default function SortDropdown({ sortOptions, selectedSort, onSortChange }
         <Image
           src="/icons/common/arrow-down.svg"
           alt="정렬"
-          width={16}
-          height={16}
+          width={10}
+          height={10}
           className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>

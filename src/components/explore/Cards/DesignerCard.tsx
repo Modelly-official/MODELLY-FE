@@ -8,16 +8,17 @@ import { formatDistrict, formatDistance } from '@/src/utils/common';
 
 interface DesignerCardProps {
   designer: DesignerListItem;
+  onLikeToggle?: () => void;
 }
 
-export default function DesignerCard({ designer }: DesignerCardProps) {
-  const [isLiked, setIsLiked] = useState(designer.isLiked);
+export default function DesignerCard({ designer, onLikeToggle }: DesignerCardProps) {
+  const [isLiked, setIsLiked] = useState(designer.isLiked ?? false);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsLiked((prev) => !prev);
-    // TODO: API 연동 시 찜하기/취소 API 호출
+    onLikeToggle?.();
   };
 
   return (
@@ -47,11 +48,11 @@ export default function DesignerCard({ designer }: DesignerCardProps) {
               <div className="flex items-center gap-1">
                 <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
                 <span className="text-caption-1-medium text-gray-700">
-                  5.0 ({designer.reviewCount.toLocaleString()})
+                  5.0 ({(designer.reviewCount ?? 0).toLocaleString()})
                 </span>
               </div>
               <span className="text-body-2-medium text-gray-700">·</span>
-              <span className="text-caption-1-medium text-gray-700">{formatDistance(designer.distance)}</span>
+              <span className="text-caption-1-medium text-gray-700">{formatDistance(designer.distance ?? 0)}</span>
             </div>
           </div>
         </div>

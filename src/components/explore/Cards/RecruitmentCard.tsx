@@ -9,16 +9,17 @@ import { formatDistrict, formatDistance } from '@/src/utils/common';
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
   isLeftColumn?: boolean;
+  onLikeToggle?: () => void;
 }
 
-export default function RecruitmentCard({ recruitment, isLeftColumn = false }: RecruitmentCardProps) {
-  const [isLiked, setIsLiked] = useState(recruitment.isLiked);
+export default function RecruitmentCard({ recruitment, isLeftColumn = false, onLikeToggle }: RecruitmentCardProps) {
+  const [isLiked, setIsLiked] = useState(recruitment.isLiked ?? false);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsLiked((prev) => !prev);
-    // TODO: 찜하기 API 연동
+    onLikeToggle?.();
   };
 
   // 서브카테고리를 한글로 변환
@@ -83,11 +84,11 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false }: R
               <div className="flex items-center gap-1">
                 <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
                 <span className="text-caption-1-medium text-gray-700">
-                  5.0 ({recruitment.reviewCount.toLocaleString()})
+                  5.0 ({(recruitment.reviewCount ?? 0).toLocaleString()})
                 </span>
               </div>
               <span className="text-body-2-medium text-gray-700">·</span>
-              <span className="text-caption-1-medium text-gray-700">{formatDistance(recruitment.distance)}</span>
+              <span className="text-caption-1-medium text-gray-700">{formatDistance(recruitment.distance ?? 0)}</span>
             </div>
           </div>
         </div>
