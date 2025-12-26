@@ -13,7 +13,7 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
 
   return (
     <li>
-      <Link href={`/chat/${chat.roomId}`} className="flex cursor-pointer items-center px-4 py-3 hover:bg-gray-100">
+      <Link href={`/chat/${chat.roomId}`} className="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-100">
         {/* 프로필 이미지 52x52 */}
         <div className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-gray-300">
           {chat.profileImageUrl ? (
@@ -26,7 +26,7 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
         </div>
 
         {/* 채팅 정보 */}
-        <div className="ml-3 min-w-0 flex-1">
+        <div className="min-w-0 flex-1">
           {/* 이름 + 시간 */}
           <div className="flex items-center justify-between">
             <span className="text-body-1-medium max-w-[224px] truncate text-gray-900">{chat.name}</span>
