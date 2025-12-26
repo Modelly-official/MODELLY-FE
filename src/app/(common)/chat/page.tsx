@@ -23,15 +23,21 @@ export default function ChatPage() {
   // 비로그인 상태이고 모달을 닫지 않은 경우 표시
   const showLoginModal = !isAuthenticated && !modalDismissed;
 
-  // 인증된 경우에만 API 호출
-  const { data, isLoading, error } = useChatRooms({ enabled: isAuthenticated });
+  // 인증된 경우에만 API 호출 (무한 스크롤)
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
+    enabled: isAuthenticated,
+  });
+
+  // 모든 페이지의 채팅방을 하나의 배열로 합침
+  const allChats = useMemo(() => {
+    return data?.pages.flatMap((page) => page.result ?? []) ?? [];
+  }, [data?.pages]);
 
   // 검색 필터링
   const filteredChats = useMemo(() => {
-    const chatList = data?.result ?? [];
-    if (!searchKeyword) return chatList;
-    return chatList.filter((chat) => chat.name.toLowerCase().includes(searchKeyword.toLowerCase()));
-  }, [data?.result, searchKeyword]);
+    if (!searchKeyword) return allChats;
+    return allChats.filter((chat) => chat.name.toLowerCase().includes(searchKeyword.toLowerCase()));
+  }, [allChats, searchKeyword]);
 
   // 에러 처리
   useEffect(() => {
@@ -44,7 +50,13 @@ export default function ChatPage() {
     <div className="min-h-screen bg-white pb-20">
       <h1 className="text-head-2-semibold px-5 py-3">채팅</h1>
       <ChatSearch onSearch={setSearchKeyword} />
-      <ChatList chats={filteredChats} isLoading={isLoading} />
+      <ChatList
+        chats={filteredChats}
+        isLoading={isLoading}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={fetchNextPage}
+      />
       <BottomNav />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setModalDismissed(true)} callbackUrl="/chat" />
     </div>
