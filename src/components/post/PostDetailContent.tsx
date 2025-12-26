@@ -182,7 +182,7 @@ export default function PostDetailContent({ recruitmentId }: PostDetailContentPr
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
-                  <p className="text-body-2-medium flex-1 text-black">영상 촬영 및 활용</p>
+                  <p className="text-body-2-medium flex-1 text-black">영상 촬영</p>
                 </div>
               )}
               {detail.agreeInsta && (
@@ -198,7 +198,7 @@ export default function PostDetailContent({ recruitmentId }: PostDetailContentPr
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
                   </div>
-                  <p className="text-body-2-medium flex-1 text-black">모자이크 처리</p>
+                  <p className="text-body-2-medium flex-1 text-black">모자이크 가능</p>
                 </div>
               )}
             </div>

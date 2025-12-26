@@ -64,9 +64,9 @@ export default function DetailContent({ detail }: DetailContentProps) {
       {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
         <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
           <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
-          {detail.agreeVideo && <InfoSection title="" content="영상 촬영 및 활용" hasIcon />}
+          {detail.agreeVideo && <InfoSection title="" content="영상 촬영" hasIcon />}
           {detail.agreeInsta && <InfoSection title="" content="인스타 업로드" hasIcon />}
-          {detail.agreeMosaic && <InfoSection title="" content="모자이크 처리" hasIcon />}
+          {detail.agreeMosaic && <InfoSection title="" content="모자이크 가능" hasIcon />}
         </div>
       )}
     </div>
