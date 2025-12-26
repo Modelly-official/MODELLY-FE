@@ -40,8 +40,18 @@ export default function ExploreContent() {
 
   // 거리순 정렬 선택 시 위치 요청
   const handleSortChange = (sort: SortOption) => {
+    console.log('[ExploreContent] handleSortChange 호출:', sort);
+    console.log('[ExploreContent] 현재 상태:', { location, isLocationLoading, needsLocation: sort === 'DISTANCE' });
+
     if (sort === 'DISTANCE' && !location && !isLocationLoading) {
+      console.log('[ExploreContent] requestLocation 호출 조건 충족');
       requestLocation();
+    } else {
+      console.log('[ExploreContent] requestLocation 호출 조건 미충족:', {
+        isDistance: sort === 'DISTANCE',
+        hasLocation: !!location,
+        isLocationLoading,
+      });
     }
     setSelectedSort(sort);
   };
