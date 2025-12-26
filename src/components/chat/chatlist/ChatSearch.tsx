@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import SearchIcon from '@/public/icons/chat/search.svg';
-import CloseIcon from '@/public/icons/common/close.svg';
+import CloseIcon from '@/public/icons/chat/close.svg';
 
 type Props = {
   onSearch?: (keyword: string) => void;
@@ -39,9 +39,9 @@ export default function ChatSearch({ onSearch }: Props) {
         <button
           type="button"
           onClick={handleClear}
-          className="ml-2 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-500"
+          className="ml-2 flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-500"
         >
-          <CloseIcon className="h-3 w-3 text-white" />
+          <CloseIcon className="text-white" />
         </button>
       )}
     </div>
