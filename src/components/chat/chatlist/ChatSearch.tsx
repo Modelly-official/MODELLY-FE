@@ -27,7 +27,7 @@ export default function ChatSearch({ onSearch }: Props) {
   }, [onSearch]);
 
   return (
-    <div className="mx-4 mt-2 mb-[5px] flex items-center rounded-xl bg-gray-200 px-4 py-3.5">
+    <div className="mx-4 mt-2 mb-4 flex items-center gap-2 rounded-xl bg-gray-200 px-4 py-3.5">
       <SearchIcon className="h-[18px] w-[18px] shrink-0 text-gray-700" />
       <input
         type="text"
@@ -36,7 +36,7 @@ export default function ChatSearch({ onSearch }: Props) {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={isFocused ? '' : '검색하기'}
-        className="text-body-2-medium w-full bg-transparent pl-2 text-black placeholder-gray-700 outline-none"
+        className="text-body-2-medium w-full bg-transparent text-black placeholder-gray-700 outline-none"
       />
       {value && (
         <button
