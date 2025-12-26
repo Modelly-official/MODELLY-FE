@@ -4,6 +4,7 @@ export const API_CONFIG = {
     recruitments: true,
     recruitmentDetail: true,
     designers: true,
+    designerRecruitments: true,
   },
 } as const;
 

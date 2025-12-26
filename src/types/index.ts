@@ -14,3 +14,6 @@ export * from './recruitment';
 
 // Designer types
 export * from './designer';
+
+// My Recruitment types (Designer)
+export * from './myRecruitment';
