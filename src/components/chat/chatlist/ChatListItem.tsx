@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProfileIcon from '@/public/icons/chat/profile.svg';
@@ -9,15 +12,23 @@ interface ChatListItemProps {
 }
 
 export default function ChatListItem({ chat }: ChatListItemProps) {
+  const [imageError, setImageError] = useState(false);
   const hasUnread = chat.unreadMessages > 0;
+  const displayCount = chat.unreadMessages > 99 ? '99+' : chat.unreadMessages;
 
   return (
     <li>
       <Link href={`/chat/${chat.roomId}`} className="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-100">
         {/* 프로필 이미지 52x52 */}
         <div className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-gray-300">
-          {chat.profileImageUrl ? (
-            <Image src={chat.profileImageUrl} alt={chat.name} fill className="object-cover" />
+          {chat.profileImageUrl && !imageError ? (
+            <Image
+              src={chat.profileImageUrl}
+              alt={chat.name}
+              fill
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <ProfileIcon className="h-[34px] w-[34px] text-gray-500" />
@@ -43,8 +54,8 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
               {chat.lastMessage}
             </span>
             {hasUnread && (
-              <span className="text-caption-1-medium ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-purple-500 text-white">
-                {chat.unreadMessages}
+              <span className="text-caption-1-medium ml-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-purple-500 px-1.5 text-white">
+                {displayCount}
               </span>
             )}
           </div>
