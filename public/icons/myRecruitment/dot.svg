@@ -1,3 +1,5 @@
-<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 2.66667 2.66667" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path id="Oval" fill-rule="evenodd" clip-rule="evenodd" d="M1.33333 2.16667C1.79357 2.16667 2.16667 1.79357 2.16667 1.33333C2.16667 0.873096 1.79357 0.5 1.33333 0.5C0.873096 0.5 0.5 0.873096 0.5 1.33333C0.5 1.79357 0.873096 2.16667 1.33333 2.16667Z" fill="var(--fill-0, #2F2E32)" stroke="var(--stroke-0, #2F2E32)"/>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="10" cy="4" r="1.5" fill="#2F2E32"/>
+<circle cx="10" cy="10" r="1.5" fill="#2F2E32"/>
+<circle cx="10" cy="16" r="1.5" fill="#2F2E32"/>
 </svg>
