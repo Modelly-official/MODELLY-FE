@@ -10,6 +10,7 @@ type Props = {
 
 export default function ChatSearch({ onSearch }: Props) {
   const [value, setValue] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   // debounce 적용 (300ms)
   useEffect(() => {
@@ -32,7 +33,9 @@ export default function ChatSearch({ onSearch }: Props) {
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="검색하기"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder={isFocused ? '' : '검색하기'}
         className="text-body-2-medium w-full bg-transparent pl-2 text-black placeholder-gray-700 outline-none"
       />
       {value && (
