@@ -37,8 +37,8 @@ export default function ChatInput({
   };
 
   return (
-    <div className="mb-6 bg-transparent px-4 py-3">
-      <div className="flex items-center gap-3">
+    <div className="bg-transparent px-4 pb-3">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           aria-label="사진 첨부"

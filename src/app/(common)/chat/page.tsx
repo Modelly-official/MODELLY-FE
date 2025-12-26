@@ -41,16 +41,12 @@ export default function ChatPage() {
   }, [error, showToast]);
 
   return (
-    <div className="min-h-screen bg-white pt-3">
+    <div className="min-h-screen bg-white">
       <h1 className="text-head-2-semibold px-5 py-3">채팅</h1>
       <ChatSearch onSearch={setSearchKeyword} />
       <ChatList chats={filteredChats} isLoading={isLoading} />
       <BottomNav />
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setModalDismissed(true)}
-        callbackUrl="/chat"
-      />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setModalDismissed(true)} callbackUrl="/chat" />
     </div>
   );
 }

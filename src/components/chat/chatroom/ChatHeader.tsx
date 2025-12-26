@@ -10,15 +10,11 @@ type Props = {
   showReservation?: boolean;
 };
 
-export default function ChatHeader({
-  title,
-  rightLabel = '예약내역',
-  showReservation = false,
-}: Props) {
+export default function ChatHeader({ title, rightLabel = '예약내역', showReservation = false }: Props) {
   const router = useRouter();
 
   return (
-    <header className="relative mt-11 flex h-[51px] items-center px-4 py-3">
+    <header className="relative flex h-[51px] items-center px-4 py-3">
       <button
         type="button"
         onClick={() => router.push('/chat')}
