@@ -1,3 +1,19 @@
+export type ChatRole = 'DESIGNER' | 'MODEL';
+export type ChatMessageType = 'TEXT' | 'IMAGE' | 'RESERVATION_REQUEST' | 'RESERVATION_ACCEPT' | 'RESERVATION_REJECT';
+
+// 예약 상태
+export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'CHANGE_REQUESTED' | 'CANCELLED';
+
+// 예약 정보
+export interface Reservation {
+  id: number;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  status: ReservationStatus;
+  location?: string;
+  concept?: string;
+}
+
 export type Message = {
   id: number | string;
   fromMe: boolean;
@@ -6,10 +22,9 @@ export type Message = {
   imageUrls?: string[];
   pending?: boolean; // 전송 대기 표시용(optimistic UI)
   failed?: boolean; // 전송 실패 표시용(optimistic UI)
+  messageType?: ChatMessageType; // 메시지 타입 (TEXT, IMAGE, RESERVATION_*)
+  reservation?: Reservation; // 예약 관련 메시지일 경우 예약 정보
 };
-
-export type ChatRole = 'DESIGNER' | 'MODEL';
-export type ChatMessageType = 'TEXT' | 'IMAGE';
 
 export interface ChatRoomSummary {
   roomId: number;
