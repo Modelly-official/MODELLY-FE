@@ -154,10 +154,10 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
   setNotice: (notice) => set({ notice }),
 
   setPurpose: (purpose) =>
-    set({
+    set((state) => ({
       purpose,
-      purposeDetail: purpose === 'OTHER' ? '' : '', // 기타 외 선택 시 상세 초기화
-    }),
+      purposeDetail: purpose === 'OTHER' ? state.purposeDetail : '', // OTHER 선택 시 유지, 그 외 초기화
+    })),
 
   setPurposeDetail: (purposeDetail) => set({ purposeDetail }),
 
@@ -169,10 +169,10 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
   setAgreeMosaic: (agree) => set({ agreeMosaic: agree }),
 
   setAgreeEtc: (agree) =>
-    set({
+    set((state) => ({
       agreeEtc: agree,
-      etc: agree ? '' : '', // 체크 해제 시 내용 초기화
-    }),
+      etc: agree ? state.etc : '', // 체크 시 유지, 해제 시 초기화
+    })),
 
   setEtc: (etc) => set({ etc }),
 
