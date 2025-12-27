@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import MonthCalendar from '@/src/components/myRecruitment/Calendar/MonthCalendar';
+import TimeSelector from '@/src/components/myRecruitment/Calendar/TimeSelector';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 
 /**
@@ -17,7 +18,16 @@ export default function CreateRecruitmentPage() {
   const [focusedDate, setFocusedDate] = useState<string | null>(null);
 
   // Zustand store
-  const { selectedDates, toggleDate, addDates } = useRecruitmentFormStore();
+  const {
+    selectedDates,
+    toggleDate,
+    addDates,
+    selectedTimes,
+    toggleTimeForDate,
+    applyTimesToAll,
+    setApplyTimesToAll,
+    applyFirstDateTimesToAll,
+  } = useRecruitmentFormStore();
 
   // 날짜 추가 시 첫 번째 날짜로 자동 포커스 설정
   const handleDatesSelect = (dates: string[]) => {
@@ -70,7 +80,8 @@ export default function CreateRecruitmentPage() {
       <div className="flex-1 space-y-6 p-4">
         {/* MonthCalendar 테스트 */}
         <div>
-          <h2 className="text-body-1-semibold mb-2 text-gray-900">날짜 및 시간</h2>
+          <span className="text-body-1-semibold mb-2 text-gray-900">날짜 및 시간</span>
+          <span className="text-head-3-semibold ml-1 text-purple-500">*</span>
           <MonthCalendar
             year={currentYear}
             month={currentMonth}
@@ -84,12 +95,37 @@ export default function CreateRecruitmentPage() {
           />
         </div>
 
+        {/* TimeSelector - 포커스된 날짜가 있을 때만 표시 */}
+        {focusedDate && (
+          <TimeSelector
+            selectedTimes={selectedTimes[focusedDate] || []}
+            onTimeToggle={(time) => {
+              toggleTimeForDate(focusedDate, time);
+              // 일괄 설정이 켜져 있으면 모든 날짜에 적용
+              if (applyTimesToAll) {
+                applyFirstDateTimesToAll();
+              }
+            }}
+            applyToAll={applyTimesToAll}
+            onApplyToAllChange={(apply) => {
+              setApplyTimesToAll(apply);
+              if (apply) {
+                applyFirstDateTimesToAll();
+              }
+            }}
+          />
+        )}
+
         {/* 선택된 날짜 디버그 */}
         <div className="space-y-2 rounded-lg bg-gray-100 p-4">
           <p className="text-body-2-medium text-gray-700">
             선택된 날짜: {selectedDates.length > 0 ? selectedDates.join(', ') : '없음'}
           </p>
           <p className="text-body-2-medium text-gray-700">포커스된 날짜: {focusedDate ?? '없음'}</p>
+          <p className="text-body-2-medium text-gray-700">
+            선택된 시간:{' '}
+            {focusedDate && selectedTimes[focusedDate]?.length > 0 ? selectedTimes[focusedDate].join(', ') : '없음'}
+          </p>
         </div>
       </div>
     </div>
