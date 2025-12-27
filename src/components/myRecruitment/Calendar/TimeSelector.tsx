@@ -1,22 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import Image from 'next/image';
-
-// 체크 아이콘 (인라인 SVG)
-function CheckIcon({ color = 'white' }: { color?: string }) {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M11 4L5.56 10L3 7.17647"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import CheckSmallIcon from '@/public/icons/myRecruitment/form/check-small.svg';
+import ArrowDownIcon from '@/public/icons/common/arrow-down.svg';
 
 interface TimeSelectorProps {
   selectedTimes: string[]; // ["09:00", "14:30"]
@@ -91,7 +77,7 @@ export default function TimeSelector({
             applyToAll ? 'bg-purple-500' : 'bg-gray-200'
           }`}
         >
-          <CheckIcon color={applyToAll ? 'white' : '#8B8D94'} />
+          <CheckSmallIcon className={applyToAll ? 'text-white' : 'text-gray-500'} />
         </div>
         <span className="text-body-2-regular text-gray-900">해당 시간으로 일괄 설정</span>
       </button>
@@ -104,12 +90,8 @@ export default function TimeSelector({
           className="flex cursor-pointer items-center justify-between"
         >
           <span className="text-body-2-regular text-gray-900">오전</span>
-          <Image
-            src="/icons/common/arrow-down.svg"
-            alt=""
-            width={16}
-            height={9}
-            className={`transition-transform ${isAmExpanded ? 'rotate-180' : ''}`}
+          <ArrowDownIcon
+            className={`h-[9px] w-4 transition-transform ${isAmExpanded ? 'rotate-180' : ''}`}
           />
         </button>
 
@@ -141,12 +123,8 @@ export default function TimeSelector({
           className="flex cursor-pointer items-center justify-between"
         >
           <span className="text-body-2-regular text-gray-900">오후</span>
-          <Image
-            src="/icons/common/arrow-down.svg"
-            alt=""
-            width={16}
-            height={9}
-            className={`transition-transform ${isPmExpanded ? 'rotate-180' : ''}`}
+          <ArrowDownIcon
+            className={`h-[9px] w-4 transition-transform ${isPmExpanded ? 'rotate-180' : ''}`}
           />
         </button>
 

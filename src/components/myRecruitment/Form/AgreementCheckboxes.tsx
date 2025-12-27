@@ -1,19 +1,6 @@
 'use client';
 
-// 체크 아이콘 (인라인 SVG)
-function CheckIcon({ color = 'white' }: { color?: string }) {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M11 4L5.56 10L3 7.17647"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import CheckSmallIcon from '@/public/icons/myRecruitment/form/check-small.svg';
 
 interface AgreementCheckboxesProps {
   agreeVideo: boolean;
@@ -77,7 +64,7 @@ export default function AgreementCheckboxes({
                 agreement.checked ? 'bg-purple-500' : 'bg-gray-200'
               }`}
             >
-              <CheckIcon color={agreement.checked ? 'white' : '#8B8D94'} />
+              <CheckSmallIcon className={agreement.checked ? 'text-white' : 'text-gray-500'} />
             </div>
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-body-2-medium text-gray-900">{agreement.label}</span>

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import Image from 'next/image';
 import PlusIcon from '@/src/assets/icons/plus.svg';
+import CloseSmallIcon from '@/public/icons/myRecruitment/form/close-small.svg';
 
 interface ImageUploaderProps {
   previewUrls: string[];
@@ -59,21 +60,7 @@ export default function ImageUploader({
               onClick={() => onImageRemove(index)}
               className="absolute top-2 right-2 flex size-6 cursor-pointer items-center justify-center rounded-full bg-black/50"
             >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9 3L3 9M3 3L9 9"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <CloseSmallIcon />
             </button>
           </div>
         ))}

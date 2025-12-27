@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
-import Image from 'next/image';
 import CalendarHeader from './CalendarHeader';
+import XCircleIcon from '@/public/icons/common/x-circle.svg';
 
 interface MonthCalendarProps {
   year: number;
@@ -265,7 +265,7 @@ export default function MonthCalendar({
                           className="cursor-pointer"
                           aria-label="날짜 선택 취소"
                         >
-                          <Image src="/icons/common/x-circle.svg" alt="" width={18} height={18} />
+                          <XCircleIcon className="size-[18px]" />
                         </button>
                       ) : null}
                     </div>
