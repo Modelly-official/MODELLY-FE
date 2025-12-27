@@ -16,7 +16,9 @@ export interface MyRecruitmentListParams {
 export interface MyRecruitmentListItem {
   recruitmentId: number;
   title: string;
-  earliestRecruitmentDate: string; // "2025-12-24"
+  period: string; // "12.28 ~ 1.1" 형식
+  reviewCount: number;
+  averageRating: number;
   // UI용 추가 필드 (API 응답에 포함되면 사용)
   thumbnail?: string;
   category?: Category;

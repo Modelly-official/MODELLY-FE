@@ -91,10 +91,10 @@ function getMockDesignerRecruitments(
 ): Promise<ApiResponse<MyRecruitmentListResponse>> {
   const { month, size = DEFAULT_PAGE_SIZE, cursorId } = params;
 
-  // 해당 월에 맞는 공고 필터링
-  const filteredItems = mockMyRecruitmentItems.filter((item) =>
-    item.earliestRecruitmentDate.startsWith(month)
-  );
+  // 해당 월에 맞는 공고 필터링 (_month 필드로 필터링 후 제거)
+  const filteredItems = mockMyRecruitmentItems
+    .filter((item) => item._month === month)
+    .map(({ _month, ...rest }) => rest);
 
   // 커서 기반 페이징
   const startIndex = cursorId
