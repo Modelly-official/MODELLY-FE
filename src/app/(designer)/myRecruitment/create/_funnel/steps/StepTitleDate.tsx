@@ -31,7 +31,7 @@ export default function StepTitleDate({ goNext, goPrev }: StepTitleDateProps) {
     toggleTimeForDate,
     applyTimesToAll,
     setApplyTimesToAll,
-    applyFirstDateTimesToAll,
+    applyFocusedDateTimesToAll,
   } = useRecruitmentFormStore();
 
   // 날짜 추가 시 첫 번째 날짜로 자동 포커스 설정
@@ -125,16 +125,17 @@ export default function StepTitleDate({ goNext, goPrev }: StepTitleDateProps) {
             selectedTimes={selectedTimes[focusedDate] || []}
             onTimeToggle={(time) => {
               toggleTimeForDate(focusedDate, time);
-              // 일괄 설정이 켜져 있으면 모든 날짜에 적용
+              // 일괄 설정이 켜져 있으면 현재 포커스 날짜 기준으로 모든 날짜에 적용
               if (applyTimesToAll) {
-                applyFirstDateTimesToAll();
+                applyFocusedDateTimesToAll(focusedDate);
               }
             }}
             applyToAll={applyTimesToAll}
             onApplyToAllChange={(apply) => {
               setApplyTimesToAll(apply);
               if (apply) {
-                applyFirstDateTimesToAll();
+                // 현재 포커스된 날짜의 시간을 기준으로 일괄 적용
+                applyFocusedDateTimesToAll(focusedDate);
               }
             }}
           />

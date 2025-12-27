@@ -43,7 +43,7 @@ interface RecruitmentFormStore extends RecruitmentFormState {
   setTimesForDate: (date: string, times: string[]) => void;
   toggleTimeForDate: (date: string, time: string) => void;
   setApplyTimesToAll: (apply: boolean) => void;
-  applyFirstDateTimesToAll: () => void;
+  applyFocusedDateTimesToAll: (focusedDate: string) => void;
 
   // Step 2 actions
   setContent: (content: string) => void;
@@ -126,14 +126,14 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
 
   setApplyTimesToAll: (apply) => set({ applyTimesToAll: apply }),
 
-  applyFirstDateTimesToAll: () =>
+  applyFocusedDateTimesToAll: (focusedDate) =>
     set((state) => {
-      if (state.selectedDates.length === 0) return state;
-      const firstDate = state.selectedDates[0];
-      const firstTimes = state.selectedTimes[firstDate] || [];
+      if (state.selectedDates.length === 0 || !focusedDate) return state;
+      // 현재 포커스된 날짜의 시간을 기준으로 모든 날짜에 적용
+      const focusedTimes = state.selectedTimes[focusedDate] || [];
       const newTimes: Record<string, string[]> = {};
       state.selectedDates.forEach((date) => {
-        newTimes[date] = [...firstTimes];
+        newTimes[date] = [...focusedTimes];
       });
       return { selectedTimes: newTimes };
     }),
