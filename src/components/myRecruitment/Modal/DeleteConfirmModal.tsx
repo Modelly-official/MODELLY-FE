@@ -9,17 +9,12 @@ interface DeleteConfirmModalProps {
   isLoading?: boolean;
 }
 
-export default function DeleteConfirmModal({
-  isOpen,
-  onClose,
-  onConfirm,
-  isLoading = false,
-}: DeleteConfirmModalProps) {
+export default function DeleteConfirmModal({ isOpen, onClose, onConfirm, isLoading = false }: DeleteConfirmModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]" onClick={onClose}>
-      <div className="relative w-[311px] rounded-[20px] bg-white px-5 pb-6 pt-4" onClick={(e) => e.stopPropagation()}>
+      <div className="relative w-[311px] rounded-[20px] bg-white px-5 pt-4 pb-6" onClick={(e) => e.stopPropagation()}>
         {/* X 닫기 버튼 */}
         <div className="flex justify-end pb-1">
           <button type="button" onClick={onClose} className="cursor-pointer p-1">
@@ -29,8 +24,7 @@ export default function DeleteConfirmModal({
 
         {/* 안내 텍스트 */}
         <div className="mb-6 text-center">
-          <p className="text-body-1-medium tracking-tight text-gray-900">정말 삭제하시겠습니까?</p>
-          <p className="mt-2 text-body-2-regular text-gray-70">삭제된 모집글은 복구할 수 없습니다</p>
+          <p className="text-body-1-medium tracking-tight text-gray-900">모집글을 삭제하시겠습니까?</p>
         </div>
 
         {/* 버튼 영역 */}
@@ -40,7 +34,7 @@ export default function DeleteConfirmModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="h-12 flex-1 cursor-pointer rounded-full border border-gray-400 bg-white text-body-2-medium tracking-tight text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
+            className="text-body-2-medium h-12 flex-1 cursor-pointer rounded-full border border-gray-400 bg-white tracking-tight text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
           >
             취소
           </button>
@@ -50,7 +44,7 @@ export default function DeleteConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="h-12 flex-1 cursor-pointer rounded-full bg-error text-body-2-medium tracking-tight text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="text-body-2-medium h-12 flex-1 cursor-pointer rounded-full bg-gray-900 tracking-tight text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? '삭제 중...' : '삭제'}
           </button>
