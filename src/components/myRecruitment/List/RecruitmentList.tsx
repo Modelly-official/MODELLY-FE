@@ -23,8 +23,8 @@ export default function RecruitmentList({ recruitments, onEdit, onDelete, onClic
         modules={[Pagination]}
         pagination={{
           clickable: true,
-          bulletClass: 'swiper-pagination-bullet !bg-gray-40 !opacity-100',
-          bulletActiveClass: '!bg-gray-90',
+          bulletClass: 'swiper-pagination-bullet !bg-gray-400 !opacity-100 !rounded-[3px]',
+          bulletActiveClass: '!bg-gray-900 !w-5',
         }}
         spaceBetween={16}
         slidesPerView="auto"
@@ -46,6 +46,7 @@ export default function RecruitmentList({ recruitments, onEdit, onDelete, onClic
           width: 6px;
           height: 6px;
           margin: 0 3px !important;
+          transition: width 0.2s ease;
         }
       `}</style>
     </div>

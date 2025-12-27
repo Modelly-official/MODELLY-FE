@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import DotIcon from '@/public/icons/myRecruitment/dot.svg';
+import { CategoryBadge } from '@/src/components/common';
 import type { MyRecruitmentListItem } from '@/src/types/myRecruitment/recruitment';
 import { formatDateRange } from '@/src/types/myRecruitment/recruitment';
 
@@ -39,29 +40,21 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
     onClick?.(recruitment.recruitmentId);
   };
 
-  // 카테고리 표시 텍스트
-  const categoryText = recruitment.subCategories?.[0] || recruitment.category || '';
+  // 카테고리 표시 코드 (서브카테고리 우선, 없으면 메인 카테고리)
+  const categoryCode = recruitment.subCategories?.[0] || recruitment.category || '';
 
   // 날짜 표시
   const dateText = formatDateRange([recruitment.earliestRecruitmentDate]);
 
   return (
-    <div
-      className="w-[286px] cursor-pointer shadow-[0px_4px_11px_0px_rgba(34,34,34,0.06)]"
-      onClick={handleCardClick}
-    >
+    <div className="w-[286px] cursor-pointer shadow-[0px_4px_11px_0px_rgba(34,34,34,0.06)]" onClick={handleCardClick}>
       {/* 썸네일 이미지 */}
-      <div className="relative h-[286px] w-[286px] overflow-hidden rounded-t-2xl bg-gray-30">
+      <div className="relative h-[286px] w-[286px] overflow-hidden rounded-t-2xl bg-gray-300">
         {recruitment.thumbnail ? (
-          <Image
-            src={recruitment.thumbnail}
-            alt={recruitment.title}
-            fill
-            className="object-cover"
-          />
+          <Image src={recruitment.thumbnail} alt={recruitment.title} fill className="object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gray-30">
-            <span className="text-body-2-medium text-gray-50">이미지 없음</span>
+          <div className="flex h-full w-full items-center justify-center bg-gray-300">
+            <span className="text-body-2-medium text-gray-500">이미지 없음</span>
           </div>
         )}
       </div>
@@ -70,23 +63,19 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
       <div className="relative flex items-start justify-between rounded-b-2xl bg-white p-4">
         <div className="flex w-[206px] flex-col gap-[9px]">
           {/* 카테고리 배지 */}
-          {categoryText && (
+          {categoryCode && (
             <div className="flex">
-              <span className="rounded bg-purple-20 px-2 py-[2px] text-caption-1-medium text-purple-70">
-                {categoryText}
-              </span>
+              <CategoryBadge category={categoryCode} />
             </div>
           )}
 
           {/* 제목 */}
-          <p className="line-clamp-2 text-head-4-semibold text-black">
-            {recruitment.title}
-          </p>
+          <p className="text-head-4-semibold line-clamp-2 text-black">{recruitment.title}</p>
 
           {/* 날짜 */}
           <div className="flex items-center gap-1">
             <CalendarIcon className="h-4 w-4" />
-            <span className="text-body-2-medium text-gray-70">{dateText}</span>
+            <span className="text-body-2-medium text-gray-700">{dateText}</span>
           </div>
         </div>
 
@@ -95,7 +84,7 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
           <button
             type="button"
             onClick={handleMenuClick}
-            className="flex h-5 w-5 items-center justify-center"
+            className="flex h-5 w-5 cursor-pointer items-center justify-center"
             aria-label="더보기"
           >
             <DotIcon className="h-5 w-5" />
@@ -112,18 +101,18 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
                   setIsMenuOpen(false);
                 }}
               />
-              <div className="absolute right-0 top-6 z-20 overflow-hidden rounded-[10px] border border-gray-40 bg-white">
+              <div className="absolute top-6 right-0 z-20 overflow-hidden rounded-[10px] border border-gray-400 bg-white">
                 <button
                   type="button"
                   onClick={handleEdit}
-                  className="block w-full border-b border-gray-40 px-[13px] py-[6px] text-caption-1-medium text-gray-90 hover:bg-gray-10"
+                  className="text-caption-1-medium block w-full cursor-pointer whitespace-nowrap border-b border-gray-400 px-[13px] py-[6px] text-gray-900 hover:bg-gray-100"
                 >
                   수정
                 </button>
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="block w-full px-[13px] py-[6px] text-caption-1-medium text-gray-90 hover:bg-gray-10"
+                  className="text-caption-1-medium block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-gray-900 hover:bg-gray-100"
                 >
                   삭제
                 </button>
