@@ -79,6 +79,16 @@ export interface RecruitmentMutationResponse {
 
 // ===== Funnel 폼 상태 =====
 
+/** 목적 타입 */
+export type PurposeType = 'PORTFOLIO' | 'COMPETITION' | 'OTHER';
+
+/** 목적 옵션 */
+export const PURPOSE_OPTIONS = [
+  { code: 'PORTFOLIO' as PurposeType, name: '포트폴리오' },
+  { code: 'COMPETITION' as PurposeType, name: '대회 및 시험' },
+  { code: 'OTHER' as PurposeType, name: '기타(직접 작성)' },
+] as const;
+
 /** 공고 등록 Funnel 폼 상태 */
 export interface RecruitmentFormState {
   // Step 1: 제목 + 날짜/시간
@@ -87,16 +97,21 @@ export interface RecruitmentFormState {
   selectedTimes: Record<string, string[]>; // { "2025-12-30": ["10:00", "14:00"] }
   applyTimesToAll: boolean; // "해당 시간으로 일괄 설정" 체크
 
-  // Step 2: 카테고리 + 내용 + 동의
-  category: Category | null;
-  subCategories: SubCategory[];
-  content: string;
-  notice: string;
-  goals: [string, string, string]; // [goal1, goal2, goal3]
-  agreeVideo: boolean;
-  agreeInsta: boolean;
-  agreeMosaic: boolean;
-  etc: string;
+  // Step 2: 시술 내용 + 카테고리 + 제한사항 + 전달사항 + 목적 + 동의
+  content: string; // 시술 내용
+  category: Category | null; // 메인 카테고리 (HAIR, NAIL 등)
+  subCategory: string | null; // 서브 카테고리 (커트, 염색, 펌, 기타)
+  restrictions: string; // 제한 사항
+  notice: string; // 전달 사항
+  purpose: PurposeType | null; // 목적
+  purposeDetail: string; // 목적 상세 (기타 선택 시)
+
+  // 사전 동의 사항
+  agreeVideo: boolean; // 영상 촬영
+  agreeInsta: boolean; // 인스타 업로드
+  agreeMosaic: boolean; // 모자이크 가능
+  agreeEtc: boolean; // 그 외(직접 작성)
+  etc: string; // 그 외 상세 내용
 
   // 이미지
   imageFiles: File[];

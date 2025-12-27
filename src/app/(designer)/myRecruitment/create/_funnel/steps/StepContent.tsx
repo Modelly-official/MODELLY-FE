@@ -2,12 +2,23 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import CategorySelector from '@/src/components/myRecruitment/Form/CategorySelector';
-import ContentInput from '@/src/components/myRecruitment/Form/ContentInput';
-import GoalInputs from '@/src/components/myRecruitment/Form/GoalInputs';
-import AgreementCheckboxes from '@/src/components/myRecruitment/Form/AgreementCheckboxes';
+import TextArea from '@/src/components/myRecruitment/Form/TextArea';
+import TextInput from '@/src/components/myRecruitment/Form/TextInput';
+import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
 import ImageUploader from '@/src/components/myRecruitment/Form/ImageUploader';
+import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCheckbox';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
+import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
+import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
+import type { PurposeType } from '@/src/types/myRecruitment';
+
+// 카테고리 옵션 (커트, 염색, 펌, 기타)
+const CATEGORY_OPTIONS = [
+  { code: 'CUT', name: '커트' },
+  { code: 'COLOR', name: '염색' },
+  { code: 'PERM', name: '펌' },
+  { code: 'OTHER', name: '기타' },
+] as const;
 
 interface StepContentProps {
   goNext: () => void;
@@ -17,22 +28,26 @@ interface StepContentProps {
 export default function StepContent({ goNext, goPrev }: StepContentProps) {
   // Zustand store
   const {
-    category,
-    setCategory,
-    subCategories,
-    toggleSubCategory,
     content,
     setContent,
+    subCategory,
+    setSubCategory,
+    restrictions,
+    setRestrictions,
     notice,
     setNotice,
-    goals,
-    setGoal,
+    purpose,
+    setPurpose,
+    purposeDetail,
+    setPurposeDetail,
     agreeVideo,
     setAgreeVideo,
     agreeInsta,
     setAgreeInsta,
     agreeMosaic,
     setAgreeMosaic,
+    agreeEtc,
+    setAgreeEtc,
     etc,
     setEtc,
     imageFiles,
@@ -42,19 +57,42 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
     setImagePreviewUrls,
   } = useRecruitmentFormStore();
 
+  // IME 조합 처리 (한글 입력 시 focus 유지)
+  const purposeDetailInput = useIMEInput(purposeDetail, setPurposeDetail);
+  const etcInput = useIMEInput(etc, setEtc);
+
   // 이미지 파일이 추가되면 미리보기 URL 생성
   useEffect(() => {
+    if (imageFiles.length === 0) {
+      if (imagePreviewUrls.length > 0) {
+        setImagePreviewUrls([]);
+      }
+      return;
+    }
+
+    if (imagePreviewUrls.length === imageFiles.length) {
+      return;
+    }
+
     const urls = imageFiles.map((file) => URL.createObjectURL(file));
     setImagePreviewUrls(urls);
 
-    // 클린업: URL 해제
     return () => {
       urls.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [imageFiles, setImagePreviewUrls]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageFiles.length]);
 
-  // 등록 버튼 활성화 조건: 카테고리 + 내용 필수
-  const isSubmitButtonEnabled = category !== null && content.trim().length > 0;
+  // 목적 옵션
+  const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
+
+  // 등록 버튼 활성화 조건
+  const isSubmitButtonEnabled =
+    content.trim().length > 0 &&
+    subCategory !== null &&
+    restrictions.trim().length > 0 &&
+    notice.trim().length > 0 &&
+    imageFiles.length > 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -68,74 +106,123 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
           <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
         </button>
         <h1 className="text-head-4-medium text-black">모집글 등록</h1>
-        <div className="size-6" /> {/* 균형을 위한 빈 공간 */}
+        <div className="size-6" />
       </div>
 
       {/* 컨텐츠 영역 */}
-      <div className="flex-1 space-y-6 p-4 pb-24">
-        {/* 카테고리 선택 */}
-        <CategorySelector
-          selectedCategory={category}
-          selectedSubCategories={subCategories}
-          onCategoryChange={setCategory}
-          onSubCategoryToggle={toggleSubCategory}
-        />
-
-        {/* 내용 입력 */}
-        <ContentInput
-          label="내용"
+      <div className="flex-1 space-y-7 p-4 pb-24">
+        {/* 시술 내용 */}
+        <TextArea
+          label="시술 내용"
           value={content}
           onChange={setContent}
-          placeholder="시술 내용을 입력해 주세요"
-          maxLength={500}
+          placeholder="시술 내용이나 전달사항을 입력해주세요"
           required
-          rows={5}
         />
 
-        {/* 주의사항 입력 */}
-        <ContentInput
-          label="주의사항"
+        {/* 카테고리 선택 */}
+        <Dropdown
+          label="카테고리"
+          required
+          placeholder="시술 카테고리를 선택해주세요"
+          options={[...CATEGORY_OPTIONS]}
+          value={subCategory}
+          onChange={setSubCategory}
+        />
+
+        {/* 제한 사항 */}
+        <TextInput
+          label="제한 사항"
+          value={restrictions}
+          onChange={setRestrictions}
+          placeholder="시술 시 제한 사항을 입력해주세요"
+          required
+        />
+
+        {/* 전달 사항 */}
+        <TextArea
+          label="전달 사항"
           value={notice}
           onChange={setNotice}
-          placeholder="모델에게 전달할 주의사항을 입력해 주세요"
-          maxLength={300}
-          rows={3}
+          placeholder="시술 시 전달 사항을 입력해주세요"
+          required
         />
 
-        {/* 시술 목표 */}
-        <GoalInputs goals={goals} onGoalChange={setGoal} />
+        {/* 목적 */}
+        <div className="flex flex-col gap-2">
+          <Dropdown
+            label="목적"
+            placeholder="시술 목적을 선택하세요"
+            options={purposeOptions}
+            value={purpose}
+            onChange={(value) => setPurpose(value as PurposeType)}
+          />
+          {/* 기타 선택 시 입력 필드 */}
+          {purpose === 'OTHER' && (
+            <input
+              type="text"
+              value={purposeDetailInput.value}
+              onChange={purposeDetailInput.onChange}
+              onCompositionStart={purposeDetailInput.onCompositionStart}
+              onCompositionEnd={purposeDetailInput.onCompositionEnd}
+              placeholder="목적을 작성해주세요"
+              className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-500 focus:outline-none focus:placeholder:text-transparent"
+            />
+          )}
+        </div>
 
-        {/* 동의 항목 */}
-        <AgreementCheckboxes
-          agreeVideo={agreeVideo}
-          agreeInsta={agreeInsta}
-          agreeMosaic={agreeMosaic}
-          onAgreeVideoChange={setAgreeVideo}
-          onAgreeInstaChange={setAgreeInsta}
-          onAgreeMosaicChange={setAgreeMosaic}
-        />
-
-        {/* 기타 입력 */}
-        <ContentInput
-          label="기타"
-          value={etc}
-          onChange={setEtc}
-          placeholder="기타 전달 사항을 입력해 주세요"
-          maxLength={200}
-          rows={2}
-        />
-
-        {/* 이미지 업로드 */}
+        {/* 사진 첨부 */}
         <ImageUploader
           previewUrls={imagePreviewUrls}
           onImagesAdd={addImageFiles}
           onImageRemove={removeImageFile}
-          maxImages={5}
+          maxImages={3}
         />
+
+        {/* 사전 동의 사항 */}
+        <div className="flex flex-col gap-2">
+          <span className="text-body-1-semibold text-gray-900">사전 동의 사항</span>
+          <div className="flex flex-col gap-3">
+            <TickSquareCheckbox
+              label="영상 촬영"
+              checked={agreeVideo}
+              onChange={setAgreeVideo}
+            />
+            <TickSquareCheckbox
+              label="인스타 업로드"
+              checked={agreeInsta}
+              onChange={setAgreeInsta}
+            />
+            <TickSquareCheckbox
+              label="모자이크 가능"
+              checked={agreeMosaic}
+              onChange={setAgreeMosaic}
+            />
+            <div className="flex flex-col gap-2">
+              <TickSquareCheckbox
+                label="그 외(직접 작성)"
+                checked={agreeEtc}
+                onChange={setAgreeEtc}
+              />
+              {/* 그 외 선택 시 입력 필드 */}
+              {agreeEtc && (
+                <input
+                  type="text"
+                  value={etcInput.value}
+                  onChange={etcInput.onChange}
+                  onCompositionStart={etcInput.onCompositionStart}
+                  onCompositionEnd={etcInput.onCompositionEnd}
+                  placeholder="기타 동의 사항을 입력해주세요"
+                  className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-500 focus:outline-none focus:placeholder:text-transparent"
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 하단 등록 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] bg-white px-4 py-3">
+      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pb-2 pt-3">
         <button
           type="button"
           onClick={goNext}
@@ -143,10 +230,10 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
           className={`text-body-1-semibold w-full rounded-full py-4 ${
             isSubmitButtonEnabled
               ? 'cursor-pointer bg-gray-900 text-white'
-              : 'cursor-not-allowed bg-gray-200 text-gray-600'
+              : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
-          등록하기
+          새 모집글 등록
         </button>
       </div>
     </div>

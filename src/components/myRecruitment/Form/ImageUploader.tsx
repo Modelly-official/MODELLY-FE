@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
+import PlusIcon from '@/src/assets/icons/plus.svg';
 
 interface ImageUploaderProps {
   previewUrls: string[];
@@ -14,7 +15,7 @@ export default function ImageUploader({
   previewUrls,
   onImagesAdd,
   onImageRemove,
-  maxImages = 5,
+  maxImages = 3,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -27,7 +28,6 @@ export default function ImageUploader({
         onImagesAdd(filesToAdd);
       }
     }
-    // 같은 파일 재선택 가능하도록 리셋
     e.target.value = '';
   };
 
@@ -36,57 +36,28 @@ export default function ImageUploader({
   return (
     <div className="flex flex-col gap-2">
       {/* 라벨 */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <span className="text-body-1-semibold text-gray-900">사진</span>
-        </div>
-        <span className="text-body-2-regular text-gray-600">
-          {previewUrls.length}/{maxImages}
-        </span>
+      <div className="flex items-center gap-1">
+        <span className="text-body-1-semibold text-gray-900">사진 첨부</span>
+        <span className="text-head-3-semibold text-purple-500">*</span>
       </div>
 
-      {/* 이미지 목록 */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {/* 추가 버튼 */}
-        {canAddMore && (
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex size-20 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-dashed border-gray-400 bg-gray-100"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 5V19M5 12H19"
-                stroke="#8B8D94"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        )}
-
+      {/* 이미지 목록 - 154x154 */}
+      <div className="flex gap-2 overflow-x-auto">
         {/* 이미지 미리보기들 */}
         {previewUrls.map((url, index) => (
-          <div key={index} className="relative size-20 shrink-0">
+          <div key={index} className="relative size-[154px] shrink-0 overflow-hidden rounded-xl">
             <Image
               src={url}
               alt={`업로드 이미지 ${index + 1}`}
               fill
-              className="rounded-xl object-cover"
+              className="object-cover"
               draggable={false}
             />
             {/* 삭제 버튼 */}
             <button
               type="button"
               onClick={() => onImageRemove(index)}
-              className="absolute -top-2 -right-2 flex size-6 cursor-pointer items-center justify-center rounded-full bg-gray-900"
+              className="absolute top-2 right-2 flex size-6 cursor-pointer items-center justify-center rounded-full bg-black/50"
             >
               <svg
                 width="12"
@@ -104,15 +75,25 @@ export default function ImageUploader({
                 />
               </svg>
             </button>
-            {/* 첫 번째 이미지 = 대표 이미지 표시 */}
-            {index === 0 && (
-              <div className="text-caption-2-regular absolute bottom-0 left-0 right-0 rounded-b-xl bg-black/50 py-1 text-center text-white">
-                대표
-              </div>
-            )}
           </div>
         ))}
+
+        {/* 추가 버튼 */}
+        {canAddMore && (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex size-[154px] shrink-0 cursor-pointer items-center justify-center rounded-xl bg-gray-100"
+          >
+            <PlusIcon className="size-6" />
+          </button>
+        )}
       </div>
+
+      {/* 안내 문구 */}
+      <p className="text-body-2-medium text-gray-500">
+        최대 {maxImages}장, 시술과 관련된 사진으로 첨부해주세요
+      </p>
 
       {/* 파일 입력 */}
       <input

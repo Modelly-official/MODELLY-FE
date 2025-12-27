@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { Category, SubCategory } from '@/src/types/recruitment';
-import type { RecruitmentFormState } from '@/src/types/myRecruitment';
+import type { Category } from '@/src/types/recruitment';
+import type { RecruitmentFormState, PurposeType } from '@/src/types/myRecruitment';
 
 const INITIAL_STATE: RecruitmentFormState = {
   // Step 1: 제목 + 날짜/시간
@@ -9,15 +9,20 @@ const INITIAL_STATE: RecruitmentFormState = {
   selectedTimes: {},
   applyTimesToAll: false,
 
-  // Step 2: 카테고리 + 내용 + 동의
-  category: null,
-  subCategories: [],
+  // Step 2: 시술 내용 + 카테고리 + 제한사항 + 전달사항 + 목적 + 동의
   content: '',
+  category: null,
+  subCategory: null,
+  restrictions: '',
   notice: '',
-  goals: ['', '', ''],
+  purpose: null,
+  purposeDetail: '',
+
+  // 사전 동의 사항
   agreeVideo: false,
   agreeInsta: false,
   agreeMosaic: false,
+  agreeEtc: false,
   etc: '',
 
   // 이미지
@@ -32,7 +37,7 @@ interface RecruitmentFormStore extends RecruitmentFormState {
   // Step 1 actions
   setTitle: (title: string) => void;
   setSelectedDates: (dates: string[]) => void;
-  addDates: (dates: string[]) => void; // 드래그로 여러 날짜 추가
+  addDates: (dates: string[]) => void;
   toggleDate: (date: string) => void;
   setSelectedTimes: (times: Record<string, string[]>) => void;
   setTimesForDate: (date: string, times: string[]) => void;
@@ -41,15 +46,19 @@ interface RecruitmentFormStore extends RecruitmentFormState {
   applyFirstDateTimesToAll: () => void;
 
   // Step 2 actions
-  setCategory: (category: Category | null) => void;
-  setSubCategories: (subCategories: SubCategory[]) => void;
-  toggleSubCategory: (subCategory: SubCategory) => void;
   setContent: (content: string) => void;
+  setCategory: (category: Category | null) => void;
+  setSubCategory: (subCategory: string | null) => void;
+  setRestrictions: (restrictions: string) => void;
   setNotice: (notice: string) => void;
-  setGoal: (index: 0 | 1 | 2, value: string) => void;
+  setPurpose: (purpose: PurposeType | null) => void;
+  setPurposeDetail: (detail: string) => void;
+
+  // 동의 actions
   setAgreeVideo: (agree: boolean) => void;
   setAgreeInsta: (agree: boolean) => void;
   setAgreeMosaic: (agree: boolean) => void;
+  setAgreeEtc: (agree: boolean) => void;
   setEtc: (etc: string) => void;
 
   // 이미지 actions
@@ -76,7 +85,6 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
 
   addDates: (dates) =>
     set((state) => {
-      // 기존 선택된 날짜와 합치고 중복 제거 후 정렬
       const combined = [...new Set([...state.selectedDates, ...dates])].sort();
       return { selectedDates: combined };
     }),
@@ -85,7 +93,6 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
     set((state) => {
       const isSelected = state.selectedDates.includes(date);
       if (isSelected) {
-        // 날짜 제거 시 해당 날짜의 시간도 제거
         const newTimes = { ...state.selectedTimes };
         delete newTimes[date];
         return {
@@ -132,40 +139,40 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
     }),
 
   // Step 2 actions
+  setContent: (content) => set({ content }),
+
   setCategory: (category) =>
     set({
       category,
-      subCategories: [], // 카테고리 변경 시 서브카테고리 초기화
+      subCategory: null, // 카테고리 변경 시 서브카테고리 초기화
     }),
 
-  setSubCategories: (subCategories) => set({ subCategories }),
+  setSubCategory: (subCategory) => set({ subCategory }),
 
-  toggleSubCategory: (subCategory) =>
-    set((state) => {
-      const isSelected = state.subCategories.includes(subCategory);
-      return {
-        subCategories: isSelected
-          ? state.subCategories.filter((sc) => sc !== subCategory)
-          : [...state.subCategories, subCategory],
-      };
-    }),
-
-  setContent: (content) => set({ content }),
+  setRestrictions: (restrictions) => set({ restrictions }),
 
   setNotice: (notice) => set({ notice }),
 
-  setGoal: (index, value) =>
-    set((state) => {
-      const newGoals = [...state.goals] as [string, string, string];
-      newGoals[index] = value;
-      return { goals: newGoals };
+  setPurpose: (purpose) =>
+    set({
+      purpose,
+      purposeDetail: purpose === 'OTHER' ? '' : '', // 기타 외 선택 시 상세 초기화
     }),
 
+  setPurposeDetail: (purposeDetail) => set({ purposeDetail }),
+
+  // 동의 actions
   setAgreeVideo: (agree) => set({ agreeVideo: agree }),
 
   setAgreeInsta: (agree) => set({ agreeInsta: agree }),
 
   setAgreeMosaic: (agree) => set({ agreeMosaic: agree }),
+
+  setAgreeEtc: (agree) =>
+    set({
+      agreeEtc: agree,
+      etc: agree ? '' : '', // 체크 해제 시 내용 초기화
+    }),
 
   setEtc: (etc) => set({ etc }),
 
