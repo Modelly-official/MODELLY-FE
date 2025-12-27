@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import MonthCalendar from '@/src/components/myRecruitment/Calendar/MonthCalendar';
 import TimeSelector from '@/src/components/myRecruitment/Calendar/TimeSelector';
+import TitleInput from '@/src/components/myRecruitment/Form/TitleInput';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 
 /**
@@ -10,6 +13,8 @@ import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitme
  * 각 컴포넌트가 완성될 때마다 여기에 추가하여 UI 확인
  */
 export default function CreateRecruitmentPage() {
+  const router = useRouter();
+
   // 현재 표시 중인 월
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
@@ -19,6 +24,8 @@ export default function CreateRecruitmentPage() {
 
   // Zustand store
   const {
+    title,
+    setTitle,
     selectedDates,
     toggleDate,
     addDates,
@@ -69,19 +76,46 @@ export default function CreateRecruitmentPage() {
     }
   };
 
+  // 다음 버튼 활성화 조건: 제목 입력 + 날짜 선택 + 모든 날짜에 시간 선택
+  const isNextButtonEnabled =
+    title.trim().length > 0 &&
+    selectedDates.length > 0 &&
+    selectedDates.every((date) => selectedTimes[date]?.length > 0);
+
+  // 다음 버튼 클릭
+  const handleNext = () => {
+    if (isNextButtonEnabled) {
+      // TODO: 다음 스텝으로 이동
+      console.log('다음 스텝으로 이동');
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 영역 */}
-      <div className="flex h-14 items-center justify-center border-b border-gray-200">
-        <h1 className="text-head-4-semibold text-gray-900">모집글 등록</h1>
+      <div className="flex h-[51px] items-center justify-between px-4 py-3">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex size-6 cursor-pointer items-center justify-center"
+        >
+          <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
+        </button>
+        <h1 className="text-head-4-medium text-black">모집글 등록</h1>
+        <div className="size-6" /> {/* 균형을 위한 빈 공간 */}
       </div>
 
       {/* 컴포넌트 테스트 영역 */}
-      <div className="flex-1 space-y-6 p-4">
-        {/* MonthCalendar 테스트 */}
-        <div>
-          <span className="text-body-1-semibold mb-2 text-gray-900">날짜 및 시간</span>
-          <span className="text-head-3-semibold ml-1 text-purple-500">*</span>
+      <div className="flex-1 space-y-6 p-4 pb-24">
+        {/* TitleInput */}
+        <TitleInput value={title} onChange={setTitle} />
+
+        {/* MonthCalendar */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1">
+            <span className="text-body-1-semibold text-gray-900">날짜 및 시간</span>
+            <span className="text-head-3-semibold text-purple-500">*</span>
+          </div>
           <MonthCalendar
             year={currentYear}
             month={currentMonth}
@@ -127,6 +161,22 @@ export default function CreateRecruitmentPage() {
             {focusedDate && selectedTimes[focusedDate]?.length > 0 ? selectedTimes[focusedDate].join(', ') : '없음'}
           </p>
         </div>
+      </div>
+
+      {/* 하단 다음 버튼 (Fixed) */}
+      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] bg-white px-4 py-3">
+        <button
+          type="button"
+          onClick={handleNext}
+          disabled={!isNextButtonEnabled}
+          className={`text-body-1-semibold w-full rounded-full py-4 ${
+            isNextButtonEnabled
+              ? 'cursor-pointer bg-gray-900 text-white'
+              : 'cursor-not-allowed bg-gray-200 text-gray-600'
+          }`}
+        >
+          다음
+        </button>
       </div>
     </div>
   );
