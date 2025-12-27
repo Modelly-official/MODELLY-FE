@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -82,7 +83,12 @@ const designerNavItems: NavItem[] = [
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const role = getUserRole();
+  const [role, setRole] = useState<string | null>(null);
+
+  // 클라이언트에서만 role 읽기 (hydration mismatch 방지)
+  useEffect(() => {
+    setRole(getUserRole());
+  }, []);
 
   // post 상세 페이지에서는 BottomNav 숨김 (PostActions 사용)
   if (pathname.startsWith('/post/')) {
@@ -94,7 +100,7 @@ export default function BottomNav() {
     return null;
   }
 
-  // role에 따라 네비게이션 아이템 선택
+  // role에 따라 네비게이션 아이템 선택 (초기값은 model)
   const navItems = role === 'designer' ? designerNavItems : modelNavItems;
 
   const isActive = (href: string) => {

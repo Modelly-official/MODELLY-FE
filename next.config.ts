@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'modelly-s3.s3.ap-northeast-2.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
   webpack: (config) => {
