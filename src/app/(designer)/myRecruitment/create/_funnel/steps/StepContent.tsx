@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import TextArea from '@/src/components/myRecruitment/Form/TextArea';
 import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
@@ -65,27 +65,33 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
     }
   }, [etcInput.value]);
 
-  // 이미지 파일이 추가되면 미리보기 URL 생성
+  // 각 파일의 고유 키를 생성하여 파일 변경 감지
+  const imageFilesKey = useMemo(
+    () => imageFiles.map((f) => `${f.name}-${f.size}-${f.lastModified}`).join(','),
+    [imageFiles]
+  );
+
+  // 이미지 파일이 추가/변경되면 미리보기 URL 생성
   useEffect(() => {
+    // 이전 URL들 revoke
+    imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+
     if (imageFiles.length === 0) {
-      if (imagePreviewUrls.length > 0) {
-        setImagePreviewUrls([]);
-      }
+      setImagePreviewUrls([]);
       return;
     }
 
-    if (imagePreviewUrls.length === imageFiles.length) {
-      return;
-    }
+    // 새 URL 생성
+    const newUrls = imageFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviewUrls(newUrls);
 
-    const urls = imageFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviewUrls(urls);
-
+    // cleanup: 컴포넌트 언마운트 시 URL revoke
     return () => {
-      urls.forEach((url) => URL.revokeObjectURL(url));
+      newUrls.forEach((url) => URL.revokeObjectURL(url));
     };
+    // imageFilesKey를 의존성으로 사용하여 파일 교체도 감지
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageFiles.length]);
+  }, [imageFilesKey]);
 
   // 목적 옵션
   const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
