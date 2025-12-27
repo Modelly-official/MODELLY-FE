@@ -121,9 +121,9 @@ export default function MyRecruitmentPage() {
       <button
         type="button"
         onClick={handleCreateClick}
-        className="fixed bottom-24 left-1/2 z-40 flex -translate-x-1/2 cursor-pointer items-center gap-1 rounded-full bg-gray-900 px-[14px] py-3"
+        className="animate-fab-float fixed bottom-24 left-1/2 z-40 flex cursor-pointer items-center gap-1 rounded-full bg-gray-900 px-[14px] py-3"
       >
-        <PlusIcon className="h-5 w-5" />
+        <PlusIcon className="h-3 w-3" />
         <span className="text-body-1-medium text-white">새 모집글</span>
       </button>
 
