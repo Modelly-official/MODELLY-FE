@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import {
   ImageGallery,
   PostTabs,
@@ -17,9 +17,11 @@ import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 
 interface PostDetailContentProps {
   recruitmentId: number;
+  isOwner?: boolean; // 본인 공고 여부 (디자이너가 자기 공고 볼 때)
 }
 
-export default function PostDetailContent({ recruitmentId }: PostDetailContentProps) {
+export default function PostDetailContent({ recruitmentId, isOwner = false }: PostDetailContentProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
 
   // Query hook
@@ -71,49 +73,63 @@ export default function PostDetailContent({ recruitmentId }: PostDetailContentPr
 
       {/* 제목 및 찜하기 */}
       <div className="flex items-start justify-between gap-4 px-4 pt-4">
-        <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
-        <button
-          type="button"
-          onClick={handleFavoriteClick}
-          className="flex size-6 shrink-0 items-center justify-center"
-        >
-          <Image
-            src={detail.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
-            alt="찜하기"
-            width={24}
-            height={24}
-          />
-        </button>
+        <h1 className="flex-1 text-head-2-semibold text-gray-900">{detail.title}</h1>
+        {!isOwner && (
+          <button
+            type="button"
+            onClick={handleFavoriteClick}
+            className="flex size-6 shrink-0 items-center justify-center"
+          >
+            <Image
+              src={detail.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
+              alt="찜하기"
+              width={24}
+              height={24}
+            />
+          </button>
+        )}
       </div>
 
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
-        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-            <span className="text-body-1-medium text-gray-800">디자이너</span>
-            <span className="text-body-2-medium text-gray-800">·</span>
-            <span className="text-body-1-medium mr-1 text-gray-800">{detail.designerProfile.shop}</span>
-            <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
-          </div>
-
+        {isOwner ? (
+          // 본인 공고: 링크 없이 단순 표시
           <div className="flex flex-col gap-1">
-            {/* 위치 */}
+            <span className="text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
             <div className="flex items-center gap-1">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
               <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
             </div>
-
-            {/* 별점 및 리뷰 */}
-            <div className="flex items-center gap-1">
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
-                <span className="text-body-2-medium text-gray-700">5.0</span>
-              </div>
-              <span className="text-body-2-medium text-gray-800">·</span>
-              <span className="text-body-2-medium text-gray-700">리뷰 42</span>
-            </div>
           </div>
-        </Link>
+        ) : (
+          // 다른 사람 공고: 디자이너 페이지 링크
+          <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
+            <div className="flex items-center gap-1">
+              <span className="text-body-1-medium text-gray-800">디자이너</span>
+              <span className="text-body-2-medium text-gray-800">·</span>
+              <span className="mr-1 text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
+              <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              {/* 위치 */}
+              <div className="flex items-center gap-1">
+                <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
+                <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
+              </div>
+
+              {/* 별점 및 리뷰 */}
+              <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1">
+                  <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
+                  <span className="text-body-2-medium text-gray-700">5.0</span>
+                </div>
+                <span className="text-body-2-medium text-gray-800">·</span>
+                <span className="text-body-2-medium text-gray-700">리뷰 42</span>
+              </div>
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* 탭 */}
@@ -217,8 +233,22 @@ export default function PostDetailContent({ recruitmentId }: PostDetailContentPr
         </div>
       )}
 
-      {/* 하단 액션 버튼 (채팅하기 / 예약하기) */}
-      <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
+      {/* 하단 액션 버튼 */}
+      {isOwner ? (
+        // 본인 공고: 수정하기 버튼
+        <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
+          <button
+            type="button"
+            onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
+            className="h-12 w-full rounded-full bg-gray-90 text-body-1-medium text-white"
+          >
+            수정하기
+          </button>
+        </div>
+      ) : (
+        // 다른 사람 공고: 채팅하기 / 예약하기
+        <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
+      )}
     </div>
   );
 }
