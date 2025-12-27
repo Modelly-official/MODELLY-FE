@@ -32,6 +32,7 @@ interface RecruitmentFormStore extends RecruitmentFormState {
   // Step 1 actions
   setTitle: (title: string) => void;
   setSelectedDates: (dates: string[]) => void;
+  addDates: (dates: string[]) => void; // 드래그로 여러 날짜 추가
   toggleDate: (date: string) => void;
   setSelectedTimes: (times: Record<string, string[]>) => void;
   setTimesForDate: (date: string, times: string[]) => void;
@@ -72,6 +73,13 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
   setTitle: (title) => set({ title }),
 
   setSelectedDates: (dates) => set({ selectedDates: dates }),
+
+  addDates: (dates) =>
+    set((state) => {
+      // 기존 선택된 날짜와 합치고 중복 제거 후 정렬
+      const combined = [...new Set([...state.selectedDates, ...dates])].sort();
+      return { selectedDates: combined };
+    }),
 
   toggleDate: (date) =>
     set((state) => {
