@@ -102,7 +102,9 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
     subCategory !== null &&
     restrictions.trim().length > 0 &&
     notice.trim().length > 0 &&
-    imageFiles.length > 0;
+    imageFiles.length > 0 &&
+    // purpose가 OTHER인 경우 purposeDetail 필수
+    (purpose !== 'OTHER' || purposeDetail.trim().length > 0);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
