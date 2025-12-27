@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import ChevronDownIcon from '@/src/assets/icons/chevron-down.svg';
+import CheckIcon from '@/public/icons/myRecruitment/form/check.svg';
 
 interface DropdownOption {
   code: string;
@@ -75,17 +76,7 @@ export default function Dropdown({ label, required = false, placeholder, options
                     <span className={`text-body-2-medium ${isSelected ? 'text-gray-900' : 'text-gray-500'}`}>
                       {option.name}
                     </span>
-                    {isSelected && (
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M5 12L9.667 16.5L19 7.5"
-                          stroke="#2F2E32"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    )}
+                    {isSelected && <CheckIcon />}
                   </button>
                 );
               })}
