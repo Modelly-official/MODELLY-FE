@@ -73,7 +73,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 제목 및 찜하기 */}
       <div className="flex items-start justify-between gap-4 px-4 pt-4">
-        <h1 className="flex-1 text-head-2-semibold text-gray-900">{detail.title}</h1>
+        <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
         {!isOwner && (
           <button
             type="button"
@@ -107,7 +107,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             <div className="flex items-center gap-1">
               <span className="text-body-1-medium text-gray-800">디자이너</span>
               <span className="text-body-2-medium text-gray-800">·</span>
-              <span className="mr-1 text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
+              <span className="text-body-1-medium mr-1 text-gray-800">{detail.designerProfile.shop}</span>
               <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
             </div>
 
@@ -139,7 +139,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 탭 내용 */}
       {activeTab === 'detail' ? (
-        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4">
+        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4 pb-24">
           {/* 시술 내용 */}
           <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
             <div className="flex items-center justify-between">
@@ -228,7 +228,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           )}
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center p-8">
+        <div className="flex flex-1 items-center justify-center p-8 pb-24">
           <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
         </div>
       )}
@@ -240,7 +240,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           <button
             type="button"
             onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
-            className="h-12 w-full rounded-full bg-gray-90 text-body-1-medium text-white"
+            className="text-body-1-semibold h-12 w-full rounded-full bg-gray-900 text-white"
           >
             수정하기
           </button>

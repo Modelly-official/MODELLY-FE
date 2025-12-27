@@ -21,7 +21,7 @@ export default function PostActions({ recruitmentId, designerId }: PostActionsPr
   };
 
   return (
-    <div className="border-t border-gray-100 bg-white px-4 pb-2 pt-3">
+    <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-100 bg-white px-4 pb-2 pt-3 sm:w-[375px]">
       <div className="flex gap-2">
         <button
           type="button"
