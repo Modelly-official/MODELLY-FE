@@ -9,15 +9,8 @@ import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCh
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
+import { RECRUITMENT_CATEGORY_OPTIONS } from '@/src/constants/explore';
 import type { PurposeType } from '@/src/types/myRecruitment';
-
-// 카테고리 옵션 (커트, 염색, 펌, 기타)
-const CATEGORY_OPTIONS = [
-  { code: 'CUT', name: '커트' },
-  { code: 'COLOR', name: '염색' },
-  { code: 'PERM', name: '펌' },
-  { code: 'OTHER', name: '기타' },
-] as const;
 
 interface StepContentProps {
   goNext: () => void;
@@ -136,7 +129,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
           label="카테고리"
           required
           placeholder="시술 카테고리를 선택해주세요"
-          options={[...CATEGORY_OPTIONS]}
+          options={[...RECRUITMENT_CATEGORY_OPTIONS]}
           value={subCategory}
           onChange={setSubCategory}
         />
