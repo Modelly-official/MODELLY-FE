@@ -75,31 +75,40 @@ export const SORT_OPTIONS: SortOption[] = [
   { code: 'MOST_REVIEWS', name: '후기 많은 순' },
 ];
 
-// ===== 카테고리 라벨 (단일 소스) =====
-// 카테고리/서브카테고리 코드를 한글로 변환하는 매핑
-export const CATEGORY_LABELS: Record<string, string> = {
-  // 메인 카테고리
-  HAIR: '헤어',
-  NAIL: '네일',
-  TATTOO: '타투',
-  EYELASH: '속눈썹',
-  // 헤어 서브카테고리
-  HAIR_CUT: '커트',
-  HAIR_PERM: '펌',
-  HAIR_COLORING: '염색',
-  HAIR_MAGIC: '매직',
-  // 네일 서브카테고리
-  ONE_COLOR: '원컬러',
-  ART: '아트',
-  PEDICURE: '페디큐어',
-  // 속눈썹 서브카테고리
-  EYELASH_PERM: '펌',
-  EYELASH_EXTENSION: '연장',
-  // 타투 서브카테고리
-  NORMAL_TATTOO: '일반 디자인',
-  LIP_TATTOO: '입술 문신',
-  EYEBROW_TATTOO: '눈썹 문신',
+// ===== 카테고리 라벨 (단일 소스에서 파생) =====
+// CATEGORIES와 SUB_CATEGORIES에서 자동 생성하여 중복 제거
+const buildCategoryLabels = (): Record<string, string> => {
+  const labels: Record<string, string> = {};
+
+  // 메인 카테고리에서 추출
+  CATEGORIES.forEach((cat) => {
+    labels[cat.code] = cat.name;
+  });
+
+  // 서브 카테고리에서 추출 (ALL 제외)
+  Object.values(SUB_CATEGORIES_BY_CATEGORY).forEach((subCategories) => {
+    subCategories.forEach((sub) => {
+      if (sub.code !== 'ALL') {
+        labels[sub.code] = sub.name;
+      }
+    });
+  });
+
+  return labels;
 };
+
+export const CATEGORY_LABELS: Record<string, string> = buildCategoryLabels();
+
+// ===== 공고 등록용 카테고리 옵션 =====
+export const RECRUITMENT_CATEGORY_OPTIONS = [
+  { code: 'CUT', name: '커트' },
+  { code: 'COLOR', name: '염색' },
+  { code: 'PERM', name: '펌' },
+  { code: 'OTHER', name: '기타' },
+] as const;
+
+export type RecruitmentCategoryCode =
+  (typeof RECRUITMENT_CATEGORY_OPTIONS)[number]['code'];
 
 /**
  * 카테고리 코드를 한글 라벨로 변환
