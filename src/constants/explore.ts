@@ -74,3 +74,36 @@ export const SORT_OPTIONS: SortOption[] = [
   { code: 'DISTANCE', name: '거리순' },
   { code: 'MOST_REVIEWS', name: '후기 많은 순' },
 ];
+
+// ===== 카테고리 라벨 (단일 소스) =====
+// 카테고리/서브카테고리 코드를 한글로 변환하는 매핑
+export const CATEGORY_LABELS: Record<string, string> = {
+  // 메인 카테고리
+  HAIR: '헤어',
+  NAIL: '네일',
+  TATTOO: '타투',
+  EYELASH: '속눈썹',
+  // 헤어 서브카테고리
+  HAIR_CUT: '커트',
+  HAIR_PERM: '펌',
+  HAIR_COLORING: '염색',
+  HAIR_MAGIC: '매직',
+  // 네일 서브카테고리
+  ONE_COLOR: '원컬러',
+  ART: '아트',
+  PEDICURE: '페디큐어',
+  // 속눈썹 서브카테고리
+  EYELASH_PERM: '펌',
+  EYELASH_EXTENSION: '연장',
+  // 타투 서브카테고리
+  NORMAL_TATTOO: '일반 디자인',
+  LIP_TATTOO: '입술 문신',
+  EYEBROW_TATTOO: '눈썹 문신',
+};
+
+/**
+ * 카테고리 코드를 한글 라벨로 변환
+ */
+export function getCategoryLabel(category: string): string {
+  return CATEGORY_LABELS[category] || category;
+}
