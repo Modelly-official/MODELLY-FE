@@ -50,7 +50,7 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
       {/* 썸네일 이미지 */}
       <div className="relative h-[286px] w-[286px] overflow-hidden rounded-t-2xl bg-gray-300">
         {recruitment.thumbnail ? (
-          <Image src={recruitment.thumbnail} alt={recruitment.title} fill className="object-cover" />
+          <Image src={recruitment.thumbnail} alt={recruitment.title} fill className="pointer-events-none select-none object-cover" draggable={false} />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gray-300">
             <span className="text-body-2-medium text-gray-500">이미지 없음</span>
