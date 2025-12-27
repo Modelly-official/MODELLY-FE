@@ -74,3 +74,45 @@ export const SORT_OPTIONS: SortOption[] = [
   { code: 'DISTANCE', name: '거리순' },
   { code: 'MOST_REVIEWS', name: '후기 많은 순' },
 ];
+
+// ===== 카테고리 라벨 (단일 소스에서 파생) =====
+// CATEGORIES와 SUB_CATEGORIES에서 자동 생성하여 중복 제거
+const buildCategoryLabels = (): Record<string, string> => {
+  const labels: Record<string, string> = {};
+
+  // 메인 카테고리에서 추출
+  CATEGORIES.forEach((cat) => {
+    labels[cat.code] = cat.name;
+  });
+
+  // 서브 카테고리에서 추출 (ALL 제외)
+  Object.values(SUB_CATEGORIES_BY_CATEGORY).forEach((subCategories) => {
+    subCategories.forEach((sub) => {
+      if (sub.code !== 'ALL') {
+        labels[sub.code] = sub.name;
+      }
+    });
+  });
+
+  return labels;
+};
+
+export const CATEGORY_LABELS: Record<string, string> = buildCategoryLabels();
+
+// ===== 공고 등록용 카테고리 옵션 =====
+export const RECRUITMENT_CATEGORY_OPTIONS = [
+  { code: 'CUT', name: '커트' },
+  { code: 'COLOR', name: '염색' },
+  { code: 'PERM', name: '펌' },
+  { code: 'OTHER', name: '기타' },
+] as const;
+
+export type RecruitmentCategoryCode =
+  (typeof RECRUITMENT_CATEGORY_OPTIONS)[number]['code'];
+
+/**
+ * 카테고리 코드를 한글 라벨로 변환
+ */
+export function getCategoryLabel(category: string): string {
+  return CATEGORY_LABELS[category] || category;
+}

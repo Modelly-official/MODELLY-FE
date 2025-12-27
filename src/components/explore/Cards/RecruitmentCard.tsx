@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
+import { getCategoryLabel } from '@/src/components/common';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
 
 interface RecruitmentCardProps {
@@ -20,25 +21,6 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
     e.stopPropagation();
     setIsLiked((prev) => !prev);
     onLikeToggle?.();
-  };
-
-  // 서브카테고리를 한글로 변환
-  const getSubCategoryLabel = (subCategory: string) => {
-    const labels: Record<string, string> = {
-      HAIR_CUT: '커트',
-      HAIR_PERM: '펌',
-      HAIR_COLORING: '염색',
-      HAIR_MAGIC: '매직',
-      ONE_COLOR: '원컬러',
-      ART: '아트',
-      PEDICURE: '페디큐어',
-      EYELASH_PERM: '래쉬펌',
-      EYELASH_EXTENSION: '익스텐션',
-      LIP_TATTOO: '입술',
-      EYEBROW_TATTOO: '눈썹',
-      NORMAL_TATTOO: '타투',
-    };
-    return labels[subCategory] || subCategory;
   };
 
   return (
@@ -97,7 +79,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
         <div className="flex flex-wrap gap-1">
           {recruitment.subCategories.slice(0, 2).map((subCategory) => (
             <span key={subCategory} className="text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700">
-              {getSubCategoryLabel(subCategory)}
+              {getCategoryLabel(subCategory)}
             </span>
           ))}
         </div>

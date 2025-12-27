@@ -76,6 +76,21 @@
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s ease-in-out infinite;
   }
+
+  /* FAB Float Animation */
+  @keyframes fab-float {
+    0%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(-6px);
+    }
+  }
+
+  .animate-fab-float {
+    animation: fab-float 2s ease-in-out infinite;
+  }
 }
 
 /* Custom Utilities - Tailwind v4 @utility 디렉티브 사용 */
