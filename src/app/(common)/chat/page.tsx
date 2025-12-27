@@ -1,77 +1,64 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createChatRoom } from '@/src/apis/chat/chat';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import ChatList from '@/src/components/chat/chatlist/ChatList';
-import { getUserRole, useAuthStore } from '@/src/stores';
-import type { Chat } from '@/src/types/chat';
+import ChatSearch from '@/src/components/chat/chatlist/ChatSearch';
+import { useChatRooms } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
+import { getAccessToken } from '@/src/stores';
+import LoginRequiredModal from '@/src/components/common/LoginRequiredModal';
+import BottomNav from '@/src/components/common/BottomNav';
 
-/**
- * 임시 하드코딩: 모델(userId=3) ↔ 디자이너(userId=2) 1:1 방 1개만 리스트로 노출
- */
+// 클라이언트에서만 인증 상태 확인 (hydration mismatch 방지)
+const subscribeToAuth = () => () => {};
+const getAuthSnapshot = () => !!getAccessToken();
+const getServerSnapshot = () => false;
+
 export default function ChatPage() {
-  const router = useRouter();
-  const storeRole = useAuthStore((state) => state.user?.role);
-  const [role, setRole] = useState<'model' | 'designer' | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
+  const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [modalDismissed, setModalDismissed] = useState(false);
 
+  // 비로그인 상태이고 모달을 닫지 않은 경우 표시
+  const showLoginModal = !isAuthenticated && !modalDismissed;
+
+  // 인증된 경우에만 API 호출 (무한 스크롤)
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
+    enabled: isAuthenticated,
+  });
+
+  // 모든 페이지의 채팅방을 하나의 배열로 합침
+  const allChats = useMemo(() => {
+    return data?.pages.flatMap((page) => page.result ?? []) ?? [];
+  }, [data?.pages]);
+
+  // 검색 필터링
+  const filteredChats = useMemo(() => {
+    if (!searchKeyword) return allChats;
+    return allChats.filter((chat) => chat.name.toLowerCase().includes(searchKeyword.toLowerCase()));
+  }, [allChats, searchKeyword]);
+
+  // 에러 처리
   useEffect(() => {
-    const resolved = storeRole ?? getUserRole();
-    setRole(resolved);
-  }, [storeRole]);
-
-  const targetUserId = useMemo(() => {
-    if (role === 'designer') return 3; // 디자이너 -> 모델 userId=3
-    if (role === 'model') return 2; // 모델 -> 디자이너 userId=2
-    return null;
-  }, [role]);
-
-  const counterpartLabel = useMemo(() => {
-    if (role === 'designer') return '모델(userId=3)';
-    if (role === 'model') return '디자이너(userId=2)';
-    return '상대방 정보 없음';
-  }, [role]);
-
-  const chats: Chat[] | undefined = useMemo(() => {
-    if (!role || !targetUserId) return undefined;
-    return [
-      {
-        id: 'hardcoded-test',
-        name: role === 'designer' ? '테스트(모델 userId=3)' : '테스트(디자이너 userId=2)',
-        lastMessage: `${counterpartLabel}과 연결`,
-        lastTime: '',
-        unread: 0,
-      },
-    ];
-  }, [role, targetUserId, counterpartLabel]);
-
-  const handleEnter = async (_chat?: Chat) => {
-    if (!targetUserId) {
-      setError('대상 유저가 설정되지 않았습니다.');
-      return;
+    if (error) {
+      showToast('채팅 목록을 불러오지 못했습니다.');
     }
-    setError(null);
-    void _chat;
-    try {
-      const res = await createChatRoom(targetUserId);
-      if (res.isSuccess && res.result?.chatRoomId) {
-        router.push(`/chat/${res.result.chatRoomId}`);
-        return;
-      }
-      throw new Error(res.message || '채팅방 생성/조회 실패');
-    } catch (err) {
-      console.error('create chat room error', err);
-      setError('채팅방 생성에 실패했습니다.');
-    } finally {
-    }
-  };
+  }, [error, showToast]);
 
   return (
-    <div className="min-h-screen bg-white py-10">
-      <h1 className="text-head-3-semibold mb-4 px-4">채팅</h1>
-      {error && <p className="mb-4 px-4 text-red-500">{error}</p>}
-      {role && chats && <ChatList chats={chats} onSelect={handleEnter} />}
+    <div className="min-h-screen bg-white pb-20">
+      <h1 className="text-head-2-semibold px-5 py-3">채팅</h1>
+      <ChatSearch onSearch={setSearchKeyword} />
+      <ChatList
+        chats={filteredChats}
+        isLoading={isLoading}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        onLoadMore={fetchNextPage}
+      />
+      <BottomNav />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setModalDismissed(true)} callbackUrl="/chat" />
     </div>
   );
 }

@@ -1,12 +1,3 @@
-export type Chat = {
-  id: number | string;
-  name: string;
-  profileImage?: string;
-  lastMessage?: string;
-  lastTime?: string;
-  unread?: number;
-};
-
 export type Message = {
   id: number | string;
   fromMe: boolean;
