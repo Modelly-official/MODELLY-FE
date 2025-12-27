@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import TextArea from '@/src/components/myRecruitment/Form/TextArea';
-import TextInput from '@/src/components/myRecruitment/Form/TextInput';
 import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
 import ImageUploader from '@/src/components/myRecruitment/Form/ImageUploader';
 import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCheckbox';
@@ -60,6 +59,18 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
   // IME 조합 처리 (한글 입력 시 focus 유지)
   const purposeDetailInput = useIMEInput(purposeDetail, setPurposeDetail);
   const etcInput = useIMEInput(etc, setEtc);
+
+  // 그 외 textarea auto-expand ref
+  const etcTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 그 외 textarea auto-expand
+  useEffect(() => {
+    const textarea = etcTextareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [etcInput.value]);
 
   // 이미지 파일이 추가되면 미리보기 URL 생성
   useEffect(() => {
@@ -131,7 +142,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
         />
 
         {/* 제한 사항 */}
-        <TextInput
+        <TextArea
           label="제한 사항"
           value={restrictions}
           onChange={setRestrictions}
@@ -206,14 +217,15 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
               />
               {/* 그 외 선택 시 입력 필드 */}
               {agreeEtc && (
-                <input
-                  type="text"
+                <textarea
+                  ref={etcTextareaRef}
                   value={etcInput.value}
                   onChange={etcInput.onChange}
                   onCompositionStart={etcInput.onCompositionStart}
                   onCompositionEnd={etcInput.onCompositionEnd}
                   placeholder="기타 동의 사항을 입력해주세요"
-                  className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-500 focus:outline-none focus:placeholder:text-transparent"
+                  rows={1}
+                  className="text-body-2-medium min-h-[49px] w-full resize-none overflow-hidden rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-500 focus:outline-none focus:placeholder:text-transparent"
                 />
               )}
             </div>

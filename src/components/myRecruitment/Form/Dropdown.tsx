@@ -53,12 +53,12 @@ export default function Dropdown({ label, required = false, placeholder, options
           <span className={`text-body-2-medium ${selectedOption ? 'text-gray-900' : 'text-gray-500'}`}>
             {selectedOption ? selectedOption.name : placeholder}
           </span>
-          <ChevronDownIcon className={`size-6 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDownIcon className={`h-5 w-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {/* 드롭다운 옵션 목록 */}
         {isOpen && (
-          <div className="absolute top-14 z-10 w-full rounded-xl bg-gray-100 px-4 py-3.5 shadow-lg">
+          <div className="absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-lg">
             <div className="flex flex-col gap-3">
               {options.map((option) => {
                 const isSelected = value === option.code;
