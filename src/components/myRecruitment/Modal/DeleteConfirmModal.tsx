@@ -13,7 +13,7 @@ export default function DeleteConfirmModal({ isOpen, onClose, onConfirm, isLoadi
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]" onClick={onClose}>
+    <div className="fixed inset-0 z-60 flex items-center justify-center bg-[rgba(28,28,30,0.4)]" onClick={onClose}>
       <div className="relative w-[311px] rounded-[20px] bg-white px-5 pt-4 pb-6" onClick={(e) => e.stopPropagation()}>
         {/* X 닫기 버튼 */}
         <div className="flex justify-end pb-1">
