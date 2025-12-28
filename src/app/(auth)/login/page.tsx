@@ -78,7 +78,7 @@ const LoginContent = () => {
               placeholder="아이디를 입력하세요"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
-              className="text-body-2-medium w-full rounded-xl border border-gray-400 bg-white p-4 tracking-tight text-black outline-none placeholder:text-gray-600"
+              className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
             />
           </div>
           <div className="mb-6">
@@ -89,7 +89,7 @@ const LoginContent = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-              className="text-body-2-medium w-full rounded-xl border border-gray-400 bg-white p-4 tracking-tight text-black outline-none placeholder:text-gray-600"
+              className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
             />
           </div>
 
