@@ -35,7 +35,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       <div className="relative">
         <input
           type={showPassword ? 'text' : 'password'}
-          className={`w-full border ${error === 'error' ? 'border-error' : 'border-gray-400'} text-body-2-medium rounded-xl px-4 py-[14px] pr-12 text-gray-900 placeholder:text-gray-600 focus:outline-none`}
+          className={`w-full bg-gray-100 ${error === 'error' ? 'ring-1 ring-error' : ''} text-body-2-medium rounded-xl px-4 py-[14px] pr-12 text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none`}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
