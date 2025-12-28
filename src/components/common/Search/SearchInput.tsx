@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import CloseIcon from '@/public/icons/chat/close.svg';
+import CloseIcon from '@/public/icons/common/close.svg';
 
 interface SearchInputProps {
   placeholder?: string;
@@ -101,7 +101,7 @@ export default function SearchInput({
           onClick={handleClear}
           className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-500"
         >
-          <CloseIcon className="text-white" />
+          <CloseIcon className="h-2.5 w-2.5 text-white" />
         </button>
       )}
     </div>
