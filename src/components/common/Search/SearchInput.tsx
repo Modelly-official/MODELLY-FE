@@ -15,6 +15,7 @@ interface SearchInputProps {
   // Options
   debounceMs?: number; // 0이면 debounce 없음
   searchOnEnter?: boolean; // true면 Enter 키로만 검색
+  className?: string;
 }
 
 export default function SearchInput({
@@ -25,6 +26,7 @@ export default function SearchInput({
   onSearch,
   debounceMs = 0,
   searchOnEnter = false,
+  className = '',
 }: SearchInputProps) {
   // Controlled/Uncontrolled 모드 지원
   const isControlled = controlledValue !== undefined;
@@ -59,7 +61,7 @@ export default function SearchInput({
         onSearch(newValue);
       }
     },
-    [isControlled, onChange, onSearch, searchOnEnter, debounceMs]
+    [isControlled, onChange, onSearch, searchOnEnter, debounceMs],
   );
 
   const handleKeyDown = useCallback(
@@ -68,7 +70,7 @@ export default function SearchInput({
         onSearch(currentValue);
       }
     },
-    [currentValue, onSearch]
+    [currentValue, onSearch],
   );
 
   const handleClear = useCallback(() => {
@@ -81,7 +83,7 @@ export default function SearchInput({
   }, [isControlled, onChange, onSearch]);
 
   return (
-    <div className="flex w-full items-center gap-2 rounded-xl bg-gray-100 px-4 py-3.5">
+    <div className={`flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-3.5 ${className}`}>
       <Image src="/icons/common/search.svg" alt="검색" width={18} height={18} />
       <input
         type="text"
@@ -91,7 +93,7 @@ export default function SearchInput({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={isFocused ? '' : placeholder}
-        className="text-body-2-medium flex-1 bg-transparent text-gray-900 placeholder:text-gray-700 outline-none"
+        className="text-body-2-medium flex-1 bg-transparent text-gray-900 outline-none placeholder:text-gray-700"
       />
       {showClearButton && currentValue && (
         <button

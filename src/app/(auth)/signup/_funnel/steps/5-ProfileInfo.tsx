@@ -5,12 +5,11 @@ import {
   SignupHeader,
   SignupTitle,
   FixedBottomButton,
-  CustomDropdown,
-  TextInput,
   GenderSelect,
   AddressInput,
   ProfileImageUpload,
 } from '@/src/components/signup';
+import { TextInput, Dropdown } from '@/src/components/common';
 import { useSignupStore } from '@/src/stores';
 import { useSignup, useSocialSignup } from '@/src/hooks/queries';
 import { formatBirthDate, formatAddressLines, convertGenderToApi, convertCategoryToApi, showToast } from '@/src/utils';
@@ -208,7 +207,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
             <label className="text-body-1-medium text-gray-900">생년월일</label>
             <input
               type="text"
-              className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
               placeholder="생년월일을 입력해주세요"
               value={birthDate}
               onChange={(e) => handleBirthDateChange(e.target.value)}
@@ -232,7 +231,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
                 onAddressSearch={handleAddressSearch}
                 onDetailAddressChange={(value) => setField('detailAddress', value)}
               />
-              <CustomDropdown
+              <Dropdown
                 label="카테고리"
                 value={category}
                 onChange={(value) => setField('category', value)}

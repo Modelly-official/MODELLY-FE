@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import ChatList from '@/src/components/chat/chatlist/ChatList';
-import ChatSearch from '@/src/components/chat/chatlist/ChatSearch';
+import { SearchInput } from '@/src/components/common';
 import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
 import { getAccessToken } from '@/src/stores';
@@ -49,7 +49,11 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-white pb-20">
       <h1 className="text-head-2-semibold px-5 py-3">채팅</h1>
-      <ChatSearch onSearch={setSearchKeyword} />
+      <SearchInput
+        onSearch={setSearchKeyword}
+        placeholder="검색하기"
+        className="mx-4 mt-2 mb-4"
+      />
       <ChatList
         chats={filteredChats}
         isLoading={isLoading}
