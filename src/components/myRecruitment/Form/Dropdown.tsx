@@ -18,14 +18,7 @@ interface DropdownProps {
   onChange: (value: string) => void;
 }
 
-export default function Dropdown({
-  label,
-  required = false,
-  placeholder,
-  options,
-  value,
-  onChange,
-}: DropdownProps) {
+export default function Dropdown({ label, required = false, placeholder, options, value, onChange }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -97,7 +90,7 @@ export default function Dropdown({
           break;
       }
     },
-    [isOpen, focusedIndex, options, onChange]
+    [isOpen, focusedIndex, options, onChange],
   );
 
   const selectedOption = options.find((opt) => opt.code === value);
@@ -128,9 +121,7 @@ export default function Dropdown({
           <span className={`text-body-2-medium ${selectedOption ? 'text-gray-900' : 'text-gray-500'}`}>
             {selectedOption ? selectedOption.name : placeholder}
           </span>
-          <ChevronDownIcon
-            className={`h-5 w-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          />
+          <ChevronDownIcon className={`h-5 w-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {/* 드롭다운 옵션 목록 */}
@@ -140,7 +131,7 @@ export default function Dropdown({
             role="listbox"
             aria-labelledby={`${listboxId}-label`}
             aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-            className="absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-lg"
+            className="absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-sm"
           >
             <div className="flex flex-col gap-3">
               {options.map((option, index) => {
