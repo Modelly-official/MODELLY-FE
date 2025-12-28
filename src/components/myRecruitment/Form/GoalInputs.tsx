@@ -33,7 +33,7 @@ export default function GoalInputs({ goals, onGoalChange, maxLength = 50 }: Goal
               value={goals[index as 0 | 1 | 2]}
               onChange={handleChange(index as 0 | 1 | 2)}
               placeholder={`목표 ${index + 1}`}
-              className="text-body-2-medium h-12 w-full rounded-xl bg-gray-100 px-4 text-gray-900 placeholder:text-gray-500 focus:placeholder:text-transparent focus:outline-none"
+              className="text-body-2-medium h-12 w-full rounded-xl bg-gray-100 px-4 text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
             />
           </div>
         ))}

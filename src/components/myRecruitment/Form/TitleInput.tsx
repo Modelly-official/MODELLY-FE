@@ -34,7 +34,7 @@ export default function TitleInput({
           onCompositionStart={imeInput.onCompositionStart}
           onCompositionEnd={imeInput.onCompositionEnd}
           placeholder={placeholder}
-          className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] pr-16 text-gray-900 placeholder:text-gray-500 focus:outline-none focus:placeholder:text-transparent"
+          className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] pr-16 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
         />
 
         {/* 글자수 표시 */}
