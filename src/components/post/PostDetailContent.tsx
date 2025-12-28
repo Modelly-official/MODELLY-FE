@@ -12,6 +12,7 @@ import {
   PostActions,
   PostPageSkeleton,
 } from '@/src/components/post';
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 
@@ -46,25 +47,6 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     toggleLike(recruitmentId);
   };
 
-  // 서브카테고리를 한글로 변환
-  const getSubCategoryLabel = (subCategory: string) => {
-    const labels: Record<string, string> = {
-      HAIR_CUT: '커트',
-      HAIR_PERM: '펌',
-      HAIR_COLORING: '염색',
-      HAIR_MAGIC: '매직',
-      ONE_COLOR: '원컬러',
-      ART: '아트',
-      PEDICURE: '페디큐어',
-      EYELASH_PERM: '래쉬펌',
-      EYELASH_EXTENSION: '익스텐션',
-      LIP_TATTOO: '입술',
-      EYEBROW_TATTOO: '눈썹',
-      NORMAL_TATTOO: '타투',
-      ETC: '기타',
-    };
-    return labels[subCategory] || subCategory;
-  };
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -146,12 +128,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
               <h3 className="text-body-2-semibold text-gray-900">시술 내용</h3>
               <div className="flex gap-1">
                 {detail.subCategories.map((subCategory) => (
-                  <span
-                    key={subCategory}
-                    className="text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700"
-                  >
-                    {getSubCategoryLabel(subCategory)}
-                  </span>
+                  <CategoryBadge key={subCategory} category={subCategory} />
                 ))}
               </div>
             </div>
