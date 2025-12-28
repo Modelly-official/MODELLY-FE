@@ -39,6 +39,7 @@ export default function TextInput({
   // 외부 value가 변경되면 로컬 상태 동기화
   useEffect(() => {
     if (!isComposingRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalValue(value);
     }
   }, [value]);
