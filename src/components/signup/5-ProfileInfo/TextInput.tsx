@@ -25,7 +25,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       <div className="relative">
         <input
           type="text"
-          className="text-body-2-medium w-full rounded-xl border border-gray-400 px-4 py-[14px] pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+          className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] pr-10 text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}

@@ -41,7 +41,7 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({ value, onChange,
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`text-body-2-medium flex w-full cursor-pointer appearance-none items-center justify-between rounded-xl border border-gray-400 bg-white px-4 py-[14px] text-left focus:outline-none ${
+          className={`text-body-2-medium flex w-full cursor-pointer appearance-none items-center justify-between rounded-xl bg-gray-100 px-4 py-[14px] text-left focus:outline-none ${
             value ? 'text-gray-900' : 'text-gray-600'
           }`}
         >
