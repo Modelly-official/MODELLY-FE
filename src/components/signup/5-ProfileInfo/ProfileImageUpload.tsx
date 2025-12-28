@@ -3,6 +3,8 @@
 import { useRef } from 'react';
 import Image from 'next/image';
 import CameraIcon from '@/public/icons/signup/camera.svg';
+import { validateImageFile } from '@/src/utils';
+import { useToast } from '@/src/hooks/common/useToast';
 
 interface ProfileImageUploadProps {
   profileImage: string | null;
@@ -11,12 +13,19 @@ interface ProfileImageUploadProps {
 
 export const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ profileImage, onImageUpload }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { showToast } = useToast();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      onImageUpload(file);
+    if (!file) return;
+
+    const { isValid, error } = validateImageFile(file);
+    if (!isValid) {
+      showToast(error!);
+      return;
     }
+
+    onImageUpload(file);
   };
 
   return (
