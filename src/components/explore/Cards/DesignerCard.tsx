@@ -32,11 +32,11 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
 
         {/* 정보 */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-body-1-semibold text-black">{designer.designerName}</h3>
+          <h3 className="text-head-4-semibold text-black">{designer.designerName}</h3>
 
           <div className="flex flex-col gap-0.5">
             {/* 위치 및 샵 이름 */}
-            <div className="text-body-2-medium flex items-center gap-1 text-gray-700">
+            <div className="text-body-2-medium flex items-center gap-1 text-gray-800">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
               <span>{formatDistrict(designer.shopAddress)}</span>
               <span>·</span>

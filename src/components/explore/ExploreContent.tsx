@@ -35,11 +35,15 @@ export default function ExploreContent() {
       showToast(errorMessage);
       setSelectedSort('NEWEST');
     },
-    [showToast]
+    [showToast],
   );
 
   // 위치 정보 훅
-  const { location, isLoading: isLocationLoading, requestLocation } = useUserLocation({
+  const {
+    location,
+    isLoading: isLocationLoading,
+    requestLocation,
+  } = useUserLocation({
     onError: handleLocationError,
   });
 
@@ -128,7 +132,7 @@ export default function ExploreContent() {
       isFetchingNextDesigners,
       fetchNextRecruitments,
       fetchNextDesigners,
-    ]
+    ],
   );
 
   // Setup Intersection Observer
@@ -166,7 +170,7 @@ export default function ExploreContent() {
       />
 
       {/* 검색 및 필터 영역 */}
-      <div className="flex flex-col gap-3 px-4 py-4">
+      <div className="flex flex-col gap-3 px-4 pt-4 pb-2.5">
         {/* 검색바 */}
         <SearchBar value={searchKeyword} onChange={setSearchKeyword} />
 

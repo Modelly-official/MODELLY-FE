@@ -22,7 +22,7 @@ export default function CategoryBadge({ category, label, className = '' }: Categ
   const displayLabel = label ?? (category ? getCategoryLabel(category) : '');
 
   return (
-    <span className={`text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700 ${className}`}>
+    <span className={`text-caption-1-medium rounded-lg bg-purple-200 px-2 py-1 text-purple-700 ${className}`}>
       {displayLabel}
     </span>
   );

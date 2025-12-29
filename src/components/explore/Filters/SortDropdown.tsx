@@ -45,7 +45,7 @@ export default function SortDropdown({ sortOptions, selectedSort, onSortChange }
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 z-10 mt-2 flex min-w-[116px] flex-col gap-1.5 rounded-xl border border-gray-400 bg-white p-3 shadow-dropdown">
+        <div className="shadow-dropdown absolute top-full right-0 z-10 mt-0.5 flex min-w-[116px] flex-col gap-1.5 rounded-xl border border-gray-400 bg-white p-3">
           {sortOptions.map((option) => {
             const isSelected = selectedSort === option.code;
             return (
