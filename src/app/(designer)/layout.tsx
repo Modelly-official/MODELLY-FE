@@ -13,7 +13,7 @@ export default function DesignerLayout({ children }: { children: React.ReactNode
   return (
     <>
       {/* 메인 컨텐츠 */}
-      <main className={isDetailOrFormPage ? '' : 'pb-[60px]'}>{children}</main>
+      <main className={isDetailOrFormPage ? '' : 'pb-[calc(60px+env(safe-area-inset-bottom))]'}>{children}</main>
 
       {/* 하단 네비게이션 */}
       <BottomNav />

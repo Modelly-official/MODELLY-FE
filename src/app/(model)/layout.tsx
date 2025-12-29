@@ -10,7 +10,7 @@ export default function ModelLayout({ children }: { children: React.ReactNode })
   return (
     <>
       {/* 메인 컨텐츠 - post 상세 페이지가 아닐 때만 하단 네비게이션 높이만큼 padding 추가 */}
-      <main className={isPostDetail ? '' : 'pb-[60px]'}>{children}</main>
+      <main className={isPostDetail ? '' : 'pb-[calc(60px+env(safe-area-inset-bottom))]'}>{children}</main>
 
       {/* 하단 네비게이션 */}
       <BottomNav />
