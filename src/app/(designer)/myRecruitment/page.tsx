@@ -121,7 +121,7 @@ export default function MyRecruitmentPage() {
       <button
         type="button"
         onClick={handleCreateClick}
-        className="animate-fab-float fixed bottom-[calc(80px+env(safe-area-inset-bottom))] left-1/2 z-40 flex cursor-pointer items-center gap-1 rounded-full bg-gray-900 px-[14px] py-3"
+        className="animate-fab-float fixed bottom-[calc(107px+env(safe-area-inset-bottom))] left-1/2 z-40 flex cursor-pointer items-center gap-1 rounded-full bg-gray-900 px-[14px] py-3"
       >
         <PlusIcon className="h-3 w-3" />
         <span className="text-body-1-medium text-white">새 모집글</span>
