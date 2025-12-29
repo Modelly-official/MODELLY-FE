@@ -47,7 +47,6 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     toggleLike(recruitmentId);
   };
 
-
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 이미지 갤러리 */}
@@ -121,7 +120,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 탭 내용 */}
       {activeTab === 'detail' ? (
-        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4 pb-24">
+        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4 pb-33">
           {/* 시술 내용 */}
           <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
             <div className="flex items-center justify-between">
@@ -205,7 +204,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           )}
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center p-8 pb-24">
+        <div className="flex flex-1 items-center justify-center p-8 pb-33">
           <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
         </div>
       )}
