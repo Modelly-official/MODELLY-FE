@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'Monde',
   },
 };
@@ -22,6 +22,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   themeColor: '#ffffff',
+  viewportFit: 'cover',
 };
 
 const RootLayout = ({
