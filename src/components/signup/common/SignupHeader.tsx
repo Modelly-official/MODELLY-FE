@@ -8,7 +8,7 @@ interface SignupHeaderProps {
 
 export const SignupHeader: React.FC<SignupHeaderProps> = ({ onBack, totalSteps, currentStep }) => {
   return (
-    <div className="mx-4">
+    <div className="mx-4 safe-area-top">
       <div className="flex h-13 items-center">
         <button type="button" onClick={onBack} className="flex h-6 w-6 cursor-pointer items-center justify-center">
           <LeftArrowIcon />
