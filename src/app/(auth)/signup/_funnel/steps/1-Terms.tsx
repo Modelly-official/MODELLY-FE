@@ -51,7 +51,7 @@ export const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
           </div>
         ))}
       </div>
-      <div className="mx-4 mt-auto mb-[42px]">
+      <div className="mx-4 mt-auto mb-3">
         <FixedBottomButton disabled={!requiredAgreed} onClick={goNext}>
           {SIGNUP_MESSAGES.BUTTON.NEXT}
         </FixedBottomButton>

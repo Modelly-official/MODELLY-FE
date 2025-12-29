@@ -207,7 +207,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
             <label className="text-body-1-medium text-gray-900">생년월일</label>
             <input
               type="text"
-              className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
+              className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
               placeholder="생년월일을 입력해주세요"
               value={birthDate}
               onChange={(e) => handleBirthDateChange(e.target.value)}
@@ -247,7 +247,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           )}
         </div>
 
-        <div className={`mb-[42px] ${isDesigner ? 'mt-[45px]' : 'mt-auto'}`}>
+        <div className={`mb-3 ${isDesigner ? 'mt-[45px]' : 'mt-auto'}`}>
           <FixedBottomButton disabled={!isFormValid || isSubmitting || isUploading} onClick={handleSubmit}>
             {isUploading ? '이미지 업로드 중...' : isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
           </FixedBottomButton>

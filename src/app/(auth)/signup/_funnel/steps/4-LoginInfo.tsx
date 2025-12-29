@@ -99,7 +99,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                className="text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
+                className="text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
@@ -157,7 +157,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
           />
         </div>
 
-        <div className="mt-auto mb-[42px]">
+        <div className="mt-auto mb-3">
           <FixedBottomButton disabled={!isFormValid} onClick={goNext}>
             {SIGNUP_MESSAGES.BUTTON.NEXT}
           </FixedBottomButton>

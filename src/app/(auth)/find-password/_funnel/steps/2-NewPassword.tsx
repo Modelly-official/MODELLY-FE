@@ -95,7 +95,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
         />
 
         {/* 하단 버튼 */}
-        <div className="mt-auto mb-[42px]">
+        <div className="mt-auto mb-3">
           <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
             {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
           </FixedBottomButton>
