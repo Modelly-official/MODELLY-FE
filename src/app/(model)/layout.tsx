@@ -7,12 +7,14 @@ export default function ModelLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const isPostDetail = pathname.startsWith('/post/');
 
+  // 메인 컨텐츠 클래스 결정
+  const mainClassName = isPostDetail
+    ? '' // post 상세: safe-area 불필요 (이미지 갤러리가 상단까지)
+    : 'pt-[env(safe-area-inset-top)] pb-[calc(60px+env(safe-area-inset-bottom))]';
+
   return (
     <>
-      {/* 메인 컨텐츠 - post 상세 페이지가 아닐 때만 하단 네비게이션 높이만큼 padding 추가 */}
-      <main className={isPostDetail ? '' : 'pb-[calc(60px+env(safe-area-inset-bottom))]'}>{children}</main>
-
-      {/* 하단 네비게이션 */}
+      <main className={mainClassName}>{children}</main>
       <BottomNav />
     </>
   );

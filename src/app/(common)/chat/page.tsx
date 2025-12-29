@@ -47,7 +47,7 @@ export default function ChatPage() {
   }, [error, showToast]);
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white pb-20 pt-[env(safe-area-inset-top)]">
       <h1 className="text-head-2-semibold px-5 py-3">채팅</h1>
       <SearchInput
         onSearch={setSearchKeyword}

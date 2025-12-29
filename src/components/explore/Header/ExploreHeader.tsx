@@ -9,7 +9,7 @@ interface ExploreHeaderProps {
 
 export default function ExploreHeader({ view, onViewChange }: ExploreHeaderProps) {
   return (
-    <header className="flex items-center justify-between px-4 py-4 safe-area-top">
+    <header className="flex items-center justify-between px-4 py-4">
       {/* 로고 */}
       <div className="relative h-[25.52px] w-[102.3px]">
         <Image src="/icons/explore/logo.svg" alt="Monde" fill className="object-contain" />

@@ -81,7 +81,7 @@ export default function StepTitleDate({ goNext, goPrev }: StepTitleDateProps) {
     selectedDates.every((date) => selectedTimes[date]?.length > 0);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
       {/* 헤더 영역 */}
       <div className="flex h-[51px] items-center justify-between px-4 py-3">
         <button
