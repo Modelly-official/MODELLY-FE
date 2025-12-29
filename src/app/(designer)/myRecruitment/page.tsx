@@ -7,7 +7,7 @@ import PlusIcon from '@/public/icons/myRecruitment/plus.svg';
 import { CalendarHeader } from '@/src/components/myRecruitment/Calendar';
 import { MyRecruitmentHeader } from '@/src/components/myRecruitment/Header';
 import { RecruitmentList, RecruitmentEmpty } from '@/src/components/myRecruitment/List';
-import { DeleteConfirmModal } from '@/src/components/myRecruitment/Modal';
+import { ConfirmModal } from '@/src/components/common';
 import { useDesignerRecruitments, useDeleteRecruitment } from '@/src/hooks/queries/myRecruitment';
 
 export default function MyRecruitmentPage() {
@@ -128,10 +128,12 @@ export default function MyRecruitmentPage() {
       </button>
 
       {/* 삭제 확인 모달 */}
-      <DeleteConfirmModal
+      <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
+        message="모집글을 삭제하시겠습니까?"
+        confirmText="삭제"
         isLoading={isDeleting}
       />
     </div>

@@ -152,7 +152,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <label className="text-body-1-medium tracking-tight text-gray-900">이름 (실명)</label>
           <input
             type="text"
-            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+            className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:text-gray-700"
             placeholder="이름을 입력해주세요"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -166,7 +166,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <label className="text-body-1-medium tracking-tight text-gray-900">아이디</label>
           <input
             type="text"
-            className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+            className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:text-gray-700"
             placeholder="아이디를 입력해주세요"
             value={loginId}
             onChange={(e) => setLoginId(e.target.value)}
@@ -181,7 +181,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           <div className="flex items-center gap-2">
             <input
               type="email"
-              className="text-body-2-medium min-w-0 flex-1 rounded-xl border border-gray-400 bg-white px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-[14px] tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
               placeholder="이메일을 입력해주세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -226,7 +226,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
         </div>
 
         {/* 하단 버튼 */}
-        <div className="mt-auto mb-[42px]">
+        <div className="mt-auto mb-3">
           <FixedBottomButton disabled={!isVerified || verifyResetMutation.isPending} onClick={handleNextStep}>
             {verifyResetMutation.isPending ? '검증 중...' : '비밀번호 재설정'}
           </FixedBottomButton>

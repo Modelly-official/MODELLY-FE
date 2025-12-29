@@ -44,7 +44,7 @@ const LoginContent = () => {
             // role에 따른 리다이렉트
             // Designer: 항상 Designer 홈으로
             // Model: callbackUrl 또는 루트로
-            const redirectUrl = userRole === 'designer' ? '/designer/home' : (callbackUrl || '/');
+            const redirectUrl = userRole === 'designer' ? '/designer/home' : callbackUrl || '/';
             router.push(redirectUrl);
           } else {
             showToast(response.message || '로그인 실패');
@@ -64,7 +64,7 @@ const LoginContent = () => {
   return (
     <>
       <div className="relative bg-white font-sans">
-        {/* Modelly 로고 */}
+        {/* Monde 로고 */}
         <div className="mx-auto mt-[98px] mb-15 h-[50px] w-[206px]">
           <Image src="/images/monde.svg" alt="Monde Logo" width={212} height={58} className="h-full w-full" priority />
         </div>
@@ -78,7 +78,7 @@ const LoginContent = () => {
               placeholder="아이디를 입력하세요"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
-              className="text-body-2-medium w-full rounded-xl border border-gray-400 bg-white p-4 tracking-tight text-black outline-none placeholder:text-gray-600"
+              className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
             />
           </div>
           <div className="mb-6">
@@ -89,7 +89,7 @@ const LoginContent = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-              className="text-body-2-medium w-full rounded-xl border border-gray-400 bg-white p-4 tracking-tight text-black outline-none placeholder:text-gray-600"
+              className="text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-4 tracking-tight text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
             />
           </div>
 

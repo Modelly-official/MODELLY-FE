@@ -3,19 +3,29 @@
 import { useEffect, useRef, useId } from 'react';
 import CloseIcon from '@/public/icons/common/close.svg';
 
-interface DeleteConfirmModalProps {
+type ConfirmVariant = 'default' | 'danger';
+
+interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
   isLoading?: boolean;
+  variant?: ConfirmVariant;
 }
 
-export default function DeleteConfirmModal({
+export default function ConfirmModal({
   isOpen,
   onClose,
   onConfirm,
+  message,
+  confirmText = '확인',
+  cancelText = '취소',
   isLoading = false,
-}: DeleteConfirmModalProps) {
+  variant = 'default',
+}: ConfirmModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
@@ -69,10 +79,20 @@ export default function DeleteConfirmModal({
 
   if (!isOpen) return null;
 
+  // variant에 따른 확인 버튼 스타일
+  const getConfirmButtonClass = () => {
+    const baseClass =
+      'text-body-2-medium h-12 flex-1 cursor-pointer rounded-full tracking-tight disabled:cursor-not-allowed disabled:opacity-50';
+    if (variant === 'danger') {
+      return `${baseClass} bg-error text-white`;
+    }
+    return `${baseClass} bg-gray-900 text-white`;
+  };
+
   return (
     <div
-      className="fixed inset-0 z-60 flex items-center justify-center bg-[rgba(28,28,30,0.4)]"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]"
+      onClick={() => !isLoading && onClose()}
       role="presentation"
     >
       <div
@@ -99,7 +119,7 @@ export default function DeleteConfirmModal({
         {/* 안내 텍스트 */}
         <div className="mb-6 text-center">
           <p id={titleId} className="text-body-1-medium tracking-tight text-gray-900">
-            모집글을 삭제하시겠습니까?
+            {message}
           </p>
         </div>
 
@@ -113,17 +133,17 @@ export default function DeleteConfirmModal({
             disabled={isLoading}
             className="text-body-2-medium h-12 flex-1 cursor-pointer rounded-full border border-gray-400 bg-white tracking-tight text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            취소
+            {cancelText}
           </button>
 
-          {/* 삭제 버튼 */}
+          {/* 확인 버튼 */}
           <button
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="text-body-2-medium h-12 flex-1 cursor-pointer rounded-full bg-gray-900 tracking-tight text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className={getConfirmButtonClass()}
           >
-            {isLoading ? '삭제 중...' : '삭제'}
+            {isLoading ? '처리 중...' : confirmText}
           </button>
         </div>
       </div>

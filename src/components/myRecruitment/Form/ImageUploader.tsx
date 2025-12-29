@@ -5,11 +5,7 @@ import Image from 'next/image';
 import PlusIcon from '@/src/assets/icons/plus.svg';
 import CloseSmallIcon from '@/public/icons/myRecruitment/form/close-small.svg';
 import { useToast } from '@/src/hooks/common/useToast';
-
-// 허용된 이미지 MIME 타입
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-// 최대 파일 크기 (5MB)
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+import { validateImageFiles } from '@/src/utils';
 
 interface ImageUploaderProps {
   previewUrls: string[];
@@ -31,24 +27,7 @@ export default function ImageUploader({
     const files = e.target.files;
     if (!files) return;
 
-    const validFiles: File[] = [];
-    const errors: string[] = [];
-
-    Array.from(files).forEach((file) => {
-      // MIME 타입 검증
-      if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-        errors.push(`${file.name}: 지원하지 않는 이미지 형식입니다`);
-        return;
-      }
-
-      // 파일 크기 검증
-      if (file.size > MAX_FILE_SIZE) {
-        errors.push(`${file.name}: 파일 크기가 5MB를 초과합니다`);
-        return;
-      }
-
-      validFiles.push(file);
-    });
+    const { validFiles, errors } = validateImageFiles(Array.from(files));
 
     // 에러 메시지 표시 (첫 번째 에러만)
     if (errors.length > 0) {

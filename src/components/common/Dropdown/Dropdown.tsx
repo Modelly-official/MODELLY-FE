@@ -5,20 +5,29 @@ import ChevronDownIcon from '@/src/assets/icons/chevron-down.svg';
 import CheckIcon from '@/public/icons/myRecruitment/form/check.svg';
 
 interface DropdownOption {
-  code: string;
-  name: string;
+  value: string;
+  label: string;
 }
 
 interface DropdownProps {
   label: string;
-  required?: boolean;
-  placeholder: string;
   options: DropdownOption[];
   value: string | null;
   onChange: (value: string) => void;
+  placeholder: string;
+  required?: boolean;
+  disabled?: boolean;
 }
 
-export default function Dropdown({ label, required = false, placeholder, options, value, onChange }: DropdownProps) {
+export default function Dropdown({
+  label,
+  options,
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  disabled = false,
+}: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -40,7 +49,7 @@ export default function Dropdown({ label, required = false, placeholder, options
   // 드롭다운 열릴 때 포커스 인덱스 초기화
   useEffect(() => {
     if (isOpen) {
-      const selectedIndex = options.findIndex((opt) => opt.code === value);
+      const selectedIndex = options.findIndex((opt) => opt.value === value);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0);
     } else {
@@ -51,6 +60,8 @@ export default function Dropdown({ label, required = false, placeholder, options
   // 키보드 내비게이션 핸들러
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (disabled) return;
+
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
@@ -71,7 +82,7 @@ export default function Dropdown({ label, required = false, placeholder, options
         case ' ':
           e.preventDefault();
           if (isOpen && focusedIndex >= 0) {
-            onChange(options[focusedIndex].code);
+            onChange(options[focusedIndex].value);
             setIsOpen(false);
             buttonRef.current?.focus();
           } else {
@@ -90,10 +101,10 @@ export default function Dropdown({ label, required = false, placeholder, options
           break;
       }
     },
-    [isOpen, focusedIndex, options, onChange],
+    [isOpen, focusedIndex, options, onChange, disabled],
   );
 
-  const selectedOption = options.find((opt) => opt.code === value);
+  const selectedOption = options.find((opt) => opt.value === value);
 
   return (
     <div className="flex flex-col gap-2" ref={dropdownRef}>
@@ -110,22 +121,25 @@ export default function Dropdown({ label, required = false, placeholder, options
         <button
           ref={buttonRef}
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
           onKeyDown={handleKeyDown}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-labelledby={`${listboxId}-label`}
           aria-controls={isOpen ? listboxId : undefined}
-          className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-gray-100 px-4 py-[14px]"
+          disabled={disabled}
+          className={`flex w-full items-center justify-between rounded-xl bg-gray-100 px-4 py-[14px] ${
+            disabled ? 'cursor-not-allowed text-gray-700' : 'cursor-pointer'
+          }`}
         >
-          <span className={`text-body-2-medium ${selectedOption ? 'text-gray-900' : 'text-gray-500'}`}>
-            {selectedOption ? selectedOption.name : placeholder}
+          <span className={`text-body-2-medium ${selectedOption ? 'text-gray-900' : 'text-gray-600'}`}>
+            {selectedOption ? selectedOption.label : placeholder}
           </span>
           <ChevronDownIcon className={`h-5 w-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {/* 드롭다운 옵션 목록 */}
-        {isOpen && (
+        {isOpen && !disabled && (
           <div
             id={listboxId}
             role="listbox"
@@ -135,17 +149,17 @@ export default function Dropdown({ label, required = false, placeholder, options
           >
             <div className="flex flex-col gap-3">
               {options.map((option, index) => {
-                const isSelected = value === option.code;
+                const isSelected = value === option.value;
                 const isFocused = focusedIndex === index;
                 return (
                   <button
-                    key={option.code}
+                    key={option.value}
                     id={`${listboxId}-option-${index}`}
                     type="button"
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => {
-                      onChange(option.code);
+                      onChange(option.value);
                       setIsOpen(false);
                       buttonRef.current?.focus();
                     }}
@@ -155,7 +169,7 @@ export default function Dropdown({ label, required = false, placeholder, options
                     }`}
                   >
                     <span className={`text-body-2-medium ${isSelected ? 'text-gray-900' : 'text-gray-500'}`}>
-                      {option.name}
+                      {option.label}
                     </span>
                     {isSelected && <CheckIcon />}
                   </button>

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { FixedBottomButton } from '@/src/components/signup';
-import { PasswordInput } from '@/src/components/signup/4-LoginInfo/PasswordInput';
+import { PasswordInput } from '@/src/components/common';
 import { useResetPassword } from '@/src/hooks/queries';
 import { usePasswordValidation } from '@/src/hooks/auth/find-password';
 import { AuthHeader } from '@/src/components/auth';
@@ -70,10 +70,12 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           value={newPassword}
           onChange={setNewPassword}
           placeholder="비밀번호를 입력해주세요"
-          error={newPasswordError}
-          errorMessage="영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다."
-          hintMessage="영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다."
-          successMessage="사용 가능한 비밀번호입니다."
+          status={newPasswordError === 'success' ? 'success' : newPasswordError ? 'error' : 'default'}
+          message={
+            newPasswordError === 'success'
+              ? '사용 가능한 비밀번호입니다.'
+              : '영문 대소문자, 숫자, 특수문자(~!@#^*) 조합 8자 이상이어야 합니다.'
+          }
         />
 
         {/* 비밀번호 확인 */}
@@ -82,13 +84,18 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           value={confirmPassword}
           onChange={setConfirmPassword}
           placeholder="비밀번호를 입력해주세요"
-          error={confirmPasswordError}
-          errorMessage="비밀번호가 일치하지 않습니다."
-          successMessage="비밀번호가 일치합니다."
+          status={confirmPasswordError === 'success' ? 'success' : confirmPasswordError ? 'error' : 'default'}
+          message={
+            confirmPasswordError === 'success'
+              ? '비밀번호가 일치합니다.'
+              : confirmPasswordError
+                ? '비밀번호가 일치하지 않습니다.'
+                : undefined
+          }
         />
 
         {/* 하단 버튼 */}
-        <div className="mt-auto mb-[42px]">
+        <div className="mt-auto mb-3">
           <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
             {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
           </FixedBottomButton>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
-import { getCategoryLabel } from '@/src/components/common';
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
 
 interface RecruitmentCardProps {
@@ -78,9 +78,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
         {/* 서비스 태그 */}
         <div className="flex flex-wrap gap-1">
           {recruitment.subCategories.slice(0, 2).map((subCategory) => (
-            <span key={subCategory} className="text-caption-1-medium rounded bg-purple-200 px-2 py-1 text-purple-700">
-              {getCategoryLabel(subCategory)}
-            </span>
+            <CategoryBadge key={subCategory} category={subCategory} />
           ))}
         </div>
       </div>

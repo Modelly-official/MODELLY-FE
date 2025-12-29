@@ -41,7 +41,7 @@ export default function ContentInput({
           onChange={handleChange}
           placeholder={placeholder}
           rows={rows}
-          className="text-body-2-medium w-full resize-none rounded-xl bg-gray-100 p-4 text-gray-900 placeholder:text-gray-500 focus:placeholder:text-transparent focus:outline-none"
+          className="text-body-2-medium w-full resize-none rounded-xl bg-gray-100 p-4 text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none"
         />
 
         {/* 글자수 표시 */}

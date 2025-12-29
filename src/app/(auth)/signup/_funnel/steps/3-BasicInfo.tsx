@@ -123,7 +123,7 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
             />
           </div>
         </div>
-        <div className="mt-auto mb-[42px]">
+        <div className="mt-auto mb-3">
           <FixedBottomButton disabled={!name || !email || !phoneNumber || !authCodeValid} onClick={goNext}>
             {SIGNUP_MESSAGES.BUTTON.NEXT}
           </FixedBottomButton>

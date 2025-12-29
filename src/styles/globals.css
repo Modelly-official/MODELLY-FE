@@ -172,6 +172,11 @@
   line-height: var(--leading-150);
 }
 
+/* Dropdown Shadow */
+@utility shadow-dropdown {
+  box-shadow: 0 0 12px 12px rgba(56, 56, 56, 0.1);
+}
+
 /* gradation Colors */
 @utility gradation {
   background:
