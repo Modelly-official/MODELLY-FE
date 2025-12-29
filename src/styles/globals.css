@@ -10,6 +10,12 @@
   font-display: swap;
 }
 
+/* Safe Area CSS Variables */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Base Styles */
 @layer base {
   html,
@@ -175,6 +181,13 @@
 /* Dropdown Shadow */
 @utility shadow-dropdown {
   box-shadow: 0 0 12px 12px rgba(56, 56, 56, 0.1);
+}
+
+/* PWA Safe Area - standalone 모드에서만 상단 safe area 적용 */
+@utility safe-area-top {
+  @media (display-mode: standalone) {
+    padding-top: var(--safe-area-inset-top);
+  }
 }
 
 /* gradation Colors */

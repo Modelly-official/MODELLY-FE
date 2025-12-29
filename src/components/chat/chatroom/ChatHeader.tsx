@@ -14,7 +14,7 @@ export default function ChatHeader({ title, rightLabel = '예약내역', showRes
   const router = useRouter();
 
   return (
-    <header className="relative flex h-[51px] items-center px-4 py-3">
+    <header className="relative flex h-[51px] items-center px-4 py-3 safe-area-top">
       <button
         type="button"
         onClick={() => router.push('/chat')}
