@@ -19,12 +19,12 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
     <div className="flex min-h-screen flex-col">
       <SignupHeader onBack={goPrev} totalSteps={totalSteps} currentStep={2} />
       <SignupTitle line1={SIGNUP_MESSAGES.ROLE.TITLE_1} line2={SIGNUP_MESSAGES.ROLE.TITLE_2} />
-      <div className="mx-4 mt-8 flex w-[calc(100%-2rem)] flex-row justify-center gap-3 sm:w-[343px]">
+      <div className="mx-4 mt-8 flex flex-row gap-3">
         {SIGNUP_ROLES.map((role) => (
           <button
             key={role.key}
             type="button"
-            className={`text-body-1-semibold flex h-[166px] w-[166px] cursor-pointer items-center justify-center rounded-xl border py-5 tracking-tight transition-all ${
+            className={`text-body-1-semibold flex aspect-square flex-1 cursor-pointer items-center justify-center rounded-2xl border tracking-tight transition-all ${
               selectedRole === role.key
                 ? 'border-none bg-purple-500 text-white'
                 : 'border-none bg-gray-100 text-gray-600'
