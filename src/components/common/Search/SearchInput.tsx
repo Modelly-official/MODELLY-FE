@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import CloseIcon from '@/public/icons/common/close.svg';
 
@@ -35,16 +35,22 @@ export default function SearchInput({
 
   const currentValue = isControlled ? controlledValue : internalValue;
 
+  // onSearch를 ref로 캡처하여 debounce 안정성 확보
+  const onSearchRef = useRef(onSearch);
+  useEffect(() => {
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
+
   // Debounce 처리
   useEffect(() => {
-    if (searchOnEnter || debounceMs === 0 || !onSearch) return;
+    if (searchOnEnter || debounceMs === 0 || !onSearchRef.current) return;
 
     const timer = setTimeout(() => {
-      onSearch(currentValue);
+      onSearchRef.current?.(currentValue);
     }, debounceMs);
 
     return () => clearTimeout(timer);
-  }, [currentValue, debounceMs, onSearch, searchOnEnter]);
+  }, [currentValue, debounceMs, searchOnEnter]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +99,7 @@ export default function SearchInput({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={isFocused ? '' : placeholder}
+        aria-label={placeholder}
         className="text-body-2-medium flex-1 bg-transparent text-gray-900 outline-none placeholder:text-gray-700"
       />
       {showClearButton && currentValue && (
