@@ -145,7 +145,7 @@ export default function Dropdown({
             role="listbox"
             aria-labelledby={`${listboxId}-label`}
             aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-            className="absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5"
+            className="absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-dropdown"
           >
             <div className="flex flex-col gap-3">
               {options.map((option, index) => {
