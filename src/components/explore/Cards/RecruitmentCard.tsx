@@ -6,6 +6,8 @@ import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
+import HeartIcon from '@/src/assets/icons/heart.svg';
+import LocationIcon from '@/public/icons/explore/location.svg';
 
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
@@ -34,12 +36,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
           onClick={handleFavoriteClick}
           className="absolute right-4 bottom-4 flex size-6 cursor-pointer items-center justify-center"
         >
-          <Image
-            src={isLiked ? '/icons/explore/heart-active.svg' : '/icons/explore/heart.svg'}
-            alt="찜하기"
-            width={24}
-            height={24}
-          />
+          <HeartIcon className={isLiked ? 'text-white' : 'text-transparent'} />
         </button>
       </div>
 
@@ -51,26 +48,29 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
 
           {/* 디자이너 정보 */}
           <div className="flex flex-col gap-0.5">
-            <p className="text-caption-1-medium text-gray-700">
+            <p className="text-caption-1-medium text-gray-800">
               {recruitment.designerName} · {recruitment.shop}
             </p>
 
-            {/* 위치 */}
-            <div className="flex items-center gap-1">
-              <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-              <span className="text-caption-1-medium text-gray-700">{formatDistrict(recruitment.shopAddress)}</span>
-            </div>
-
-            {/* 별점 및 거리 */}
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
-                <span className="text-caption-1-medium text-gray-700">
-                  5.0 ({(recruitment.reviewCount ?? 0).toLocaleString()})
-                </span>
+            {/* 위치 및 별점/거리 */}
+            <div className="flex flex-col">
+              {/* 위치 */}
+              <div className="flex items-center gap-1 px-px">
+                <LocationIcon />
+                <span className="text-caption-1-medium text-gray-800">{formatDistrict(recruitment.shopAddress)}</span>
               </div>
-              <span className="text-body-2-medium text-gray-700">·</span>
-              <span className="text-caption-1-medium text-gray-700">{formatDistance(recruitment.distance ?? 0)}</span>
+
+              {/* 별점 및 거리 */}
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
+                  <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
+                  <span className="text-caption-1-medium text-gray-800">
+                    5.0 ({(recruitment.reviewCount ?? 0).toLocaleString()})
+                  </span>
+                </div>
+                <span className="text-body-2-medium text-gray-800">·</span>
+                <span className="text-caption-1-medium text-gray-800">{formatDistance(recruitment.distance ?? 0)}</span>
+              </div>
             </div>
           </div>
         </div>

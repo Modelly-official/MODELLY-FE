@@ -11,13 +11,9 @@ interface TickSquareCheckboxProps {
 
 export default function TickSquareCheckbox({ label, checked, onChange }: TickSquareCheckboxProps) {
   return (
-    <button
-      type="button"
-      onClick={() => onChange(!checked)}
-      className="flex cursor-pointer items-center gap-2"
-    >
+    <button type="button" onClick={() => onChange(!checked)} className="flex cursor-pointer items-center gap-2">
       {checked ? <TickSquareCheckedIcon /> : <TickSquareUncheckedIcon />}
-      <span className="text-body-1-medium text-gray-900">{label}</span>
+      <span className="text-body-2-medium text-gray-900">{label}</span>
     </button>
   );
 }

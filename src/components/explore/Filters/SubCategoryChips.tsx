@@ -14,7 +14,7 @@ export default function SubCategoryChips({
   onSubCategoryChange,
 }: SubCategoryChipsProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+    <div className="scrollbar-hide flex gap-2 overflow-x-auto">
       {subCategories.map((subCategory) => {
         const isActive = selectedSubCategory === subCategory.code;
         return (
@@ -22,7 +22,7 @@ export default function SubCategoryChips({
             key={subCategory.code}
             type="button"
             onClick={() => onSubCategoryChange(subCategory.code)}
-            className={`shrink-0 rounded px-3 py-1 text-body-2-medium transition-colors cursor-pointer ${
+            className={`text-body-2-medium shrink-0 cursor-pointer rounded-[99px] px-3 py-1 transition-colors ${
               isActive ? 'bg-gray-900 text-white' : 'border border-gray-300 text-gray-600'
             }`}
           >
@@ -33,4 +33,3 @@ export default function SubCategoryChips({
     </div>
   );
 }
-

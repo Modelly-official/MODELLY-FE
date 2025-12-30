@@ -68,7 +68,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
   // 각 파일의 고유 키를 생성하여 파일 변경 감지
   const imageFilesKey = useMemo(
     () => imageFiles.map((f) => `${f.name}-${f.size}-${f.lastModified}`).join(','),
-    [imageFiles]
+    [imageFiles],
   );
 
   // 이미지 파일이 추가/변경되면 미리보기 URL 생성
@@ -109,12 +109,8 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
       {/* 헤더 영역 */}
-      <div className="flex h-[51px] items-center justify-between px-4 py-3">
-        <button
-          type="button"
-          onClick={goPrev}
-          className="flex size-6 cursor-pointer items-center justify-center"
-        >
+      <div className="flex h-[52px] items-center justify-between px-4 py-3">
+        <button type="button" onClick={goPrev} className="flex size-6 cursor-pointer items-center justify-center">
           <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
         </button>
         <h1 className="text-head-4-medium text-black">모집글 등록</h1>
@@ -192,30 +188,14 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
         />
 
         {/* 사전 동의 사항 */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
           <span className="text-body-1-semibold text-gray-900">사전 동의 사항</span>
           <div className="flex flex-col gap-3">
-            <TickSquareCheckbox
-              label="영상 촬영"
-              checked={agreeVideo}
-              onChange={setAgreeVideo}
-            />
-            <TickSquareCheckbox
-              label="인스타 업로드"
-              checked={agreeInsta}
-              onChange={setAgreeInsta}
-            />
-            <TickSquareCheckbox
-              label="모자이크 가능"
-              checked={agreeMosaic}
-              onChange={setAgreeMosaic}
-            />
+            <TickSquareCheckbox label="영상 촬영" checked={agreeVideo} onChange={setAgreeVideo} />
+            <TickSquareCheckbox label="인스타 업로드" checked={agreeInsta} onChange={setAgreeInsta} />
+            <TickSquareCheckbox label="모자이크 가능" checked={agreeMosaic} onChange={setAgreeMosaic} />
             <div className="flex flex-col gap-2">
-              <TickSquareCheckbox
-                label="그 외(직접 작성)"
-                checked={agreeEtc}
-                onChange={setAgreeEtc}
-              />
+              <TickSquareCheckbox label="그 외(직접 작성)" checked={agreeEtc} onChange={setAgreeEtc} />
               {/* 그 외 선택 시 입력 필드 */}
               {agreeEtc && (
                 <textarea
@@ -235,7 +215,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
       </div>
 
       {/* 하단 등록 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pb-2 pt-3">
+      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pt-3 pb-2">
         <button
           type="button"
           onClick={goNext}

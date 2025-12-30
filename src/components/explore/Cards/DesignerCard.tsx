@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { DesignerListItem } from '@/src/types';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
+import LocationIcon from '@/public/icons/explore/location.svg';
 
 interface DesignerCardProps {
   designer: DesignerListItem;
@@ -32,12 +33,12 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
 
         {/* 정보 */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-body-1-semibold text-black">{designer.designerName}</h3>
+          <h3 className="text-head-4-semibold text-black">{designer.designerName}</h3>
 
           <div className="flex flex-col gap-0.5">
             {/* 위치 및 샵 이름 */}
-            <div className="text-body-2-medium flex items-center gap-1 text-gray-700">
-              <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
+            <div className="text-body-2-medium flex items-center gap-1 px-px text-gray-800">
+              <LocationIcon />
               <span>{formatDistrict(designer.shopAddress)}</span>
               <span>·</span>
               <span>{designer.shop}</span>
@@ -47,12 +48,12 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
             <div className="flex items-center gap-1.5">
               <div className="flex items-center gap-1">
                 <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
-                <span className="text-caption-1-medium text-gray-700">
+                <span className="text-caption-1-medium text-gray-800">
                   5.0 ({(designer.reviewCount ?? 0).toLocaleString()})
                 </span>
               </div>
-              <span className="text-body-2-medium text-gray-700">·</span>
-              <span className="text-caption-1-medium text-gray-700">{formatDistance(designer.distance ?? 0)}</span>
+              <span className="text-body-2-medium text-gray-800">·</span>
+              <span className="text-caption-1-medium text-gray-800">{formatDistance(designer.distance ?? 0)}</span>
             </div>
           </div>
         </div>

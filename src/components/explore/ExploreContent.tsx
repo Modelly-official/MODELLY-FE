@@ -35,11 +35,15 @@ export default function ExploreContent() {
       showToast(errorMessage);
       setSelectedSort('NEWEST');
     },
-    [showToast]
+    [showToast],
   );
 
   // 위치 정보 훅
-  const { location, isLoading: isLocationLoading, requestLocation } = useUserLocation({
+  const {
+    location,
+    isLoading: isLocationLoading,
+    requestLocation,
+  } = useUserLocation({
     onError: handleLocationError,
   });
 
@@ -128,7 +132,7 @@ export default function ExploreContent() {
       isFetchingNextDesigners,
       fetchNextRecruitments,
       fetchNextDesigners,
-    ]
+    ],
   );
 
   // Setup Intersection Observer

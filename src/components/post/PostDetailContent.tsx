@@ -15,6 +15,8 @@ import {
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
+import CheckIcon from '@/public/icons/post/check.svg';
+import CloseIcon from '@/public/icons/common/close.svg';
 
 interface PostDetailContentProps {
   recruitmentId: number;
@@ -47,14 +49,13 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     toggleLike(recruitmentId);
   };
 
-
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 이미지 갤러리 */}
       <ImageGallery images={detail.imageUrls} />
 
       {/* 제목 및 찜하기 */}
-      <div className="flex items-start justify-between gap-4 px-4 pt-4">
+      <div className="flex items-center justify-between gap-4 px-4 pt-4">
         <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
         {!isOwner && (
           <button
@@ -65,8 +66,8 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             <Image
               src={detail.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
               alt="찜하기"
-              width={24}
-              height={24}
+              width={19}
+              height={19}
             />
           </button>
         )}
@@ -74,44 +75,32 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
-        {isOwner ? (
-          // 본인 공고: 링크 없이 단순 표시
+        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
+          <div className="flex w-fit items-center gap-1 rounded-lg border border-gray-400 px-2.5 py-1">
+            <span className="text-body-2-medium text-black">디자이너</span>
+            <span className="text-body-2-medium text-black">·</span>
+            <span className="text-body-2-medium mr-1 text-black">{detail.designerProfile.shop}</span>
+            <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
+          </div>
+
           <div className="flex flex-col gap-1">
-            <span className="text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
+            {/* 위치 */}
             <div className="flex items-center gap-1">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-              <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
+              <span className="text-body-2-medium text-gray-900">{detail.designerProfile.shopAddress}</span>
+            </div>
+
+            {/* 별점 및 리뷰 */}
+            <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1">
+                <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
+                <span className="text-body-2-medium text-gray-900">5.0</span>
+              </div>
+              <span className="text-body-2-medium text-gray-900">·</span>
+              <span className="text-body-2-medium text-gray-900">리뷰 42</span>
             </div>
           </div>
-        ) : (
-          // 다른 사람 공고: 디자이너 페이지 링크
-          <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
-            <div className="flex items-center gap-1">
-              <span className="text-body-1-medium text-gray-800">디자이너</span>
-              <span className="text-body-2-medium text-gray-800">·</span>
-              <span className="text-body-1-medium mr-1 text-gray-800">{detail.designerProfile.shop}</span>
-              <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              {/* 위치 */}
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-                <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
-              </div>
-
-              {/* 별점 및 리뷰 */}
-              <div className="flex items-center gap-1">
-                <div className="flex items-center gap-1">
-                  <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
-                  <span className="text-body-2-medium text-gray-700">5.0</span>
-                </div>
-                <span className="text-body-2-medium text-gray-800">·</span>
-                <span className="text-body-2-medium text-gray-700">리뷰 42</span>
-              </div>
-            </div>
-          </Link>
-        )}
+        </Link>
       </div>
 
       {/* 탭 */}
@@ -121,9 +110,9 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 탭 내용 */}
       {activeTab === 'detail' ? (
-        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4 pb-24">
+        <div className="flex flex-col gap-2 bg-gray-100 px-4 py-4 pb-33">
           {/* 시술 내용 */}
-          <div className="flex flex-col gap-2 rounded-lg bg-white p-4">
+          <div className="flex flex-col gap-2 rounded-2xl bg-white p-4">
             <div className="flex items-center justify-between">
               <h3 className="text-body-2-semibold text-gray-900">시술 내용</h3>
               <div className="flex gap-1">
@@ -138,14 +127,14 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           </div>
 
           {/* 시술 가능한 날짜 */}
-          <div className="flex flex-col gap-2 overflow-hidden rounded-lg bg-white p-4">
+          <div className="flex flex-col gap-2 overflow-hidden rounded-2xl bg-white p-4">
             <h3 className="text-body-2-semibold text-gray-900">시술 가능한 날짜</h3>
             <AvailableDates schedules={detail.recruitmentSchedule} />
           </div>
 
           {/* 모집 목적 */}
           {(detail.goal1 || detail.goal2 || detail.goal3) && (
-            <div className="rounded-lg bg-white p-4">
+            <div className="rounded-2xl bg-white p-4">
               <InfoSection
                 title="모델 모집 목적"
                 content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')}
@@ -155,11 +144,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
           {/* 유의사항 */}
           {detail.notice && (
-            <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
+            <div className="flex flex-col gap-4 rounded-2xl bg-white p-4">
               <h3 className="text-body-2-semibold text-gray-900">유의사항</h3>
               <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                 <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
-                  <span className="text-caption-1-medium text-white">✕</span>
+                  <CloseIcon className="text-white" />
                 </div>
                 <p className="text-body-2-medium flex-1 whitespace-pre-wrap text-black">{detail.notice}</p>
               </div>
@@ -168,28 +157,28 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
           {/* 사전 동의사항 */}
           {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
-            <div className="flex flex-col gap-4 rounded-lg bg-white p-4">
+            <div className="flex flex-col gap-4 rounded-2xl bg-white p-4">
               <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
               {detail.agreeVideo && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
+                    <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">영상 촬영</p>
                 </div>
               )}
               {detail.agreeInsta && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
+                <div className="flex items-start gap-3 rounded-2xl bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
+                    <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">인스타 업로드</p>
                 </div>
               )}
               {detail.agreeMosaic && (
-                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
+                <div className="flex items-start gap-3 rounded-2xl bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
+                    <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">모자이크 가능</p>
                 </div>
@@ -199,13 +188,13 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
           {/* 기타 */}
           {detail.etc && (
-            <div className="rounded-lg bg-white p-4">
+            <div className="rounded-2xl bg-white p-4">
               <InfoSection title="기타" content={detail.etc} hasIcon={false} />
             </div>
           )}
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center p-8 pb-24">
+        <div className="flex flex-1 items-center justify-center p-8 pb-33">
           <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
         </div>
       )}
