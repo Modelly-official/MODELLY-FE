@@ -69,6 +69,7 @@ export default function ImageUploader({
               src={url}
               alt={`업로드 이미지 ${index + 1}`}
               fill
+              sizes="154px"
               className="object-cover"
               draggable={false}
             />

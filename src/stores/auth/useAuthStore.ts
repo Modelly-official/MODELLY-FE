@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { categoryNameToCode } from '@/src/utils/myRecruitment';
 import type { Category } from '@/src/types/recruitment';
 
 interface User {
@@ -128,31 +129,14 @@ export const getUserCategory = (): Category | null => {
   return null;
 };
 
-// 카테고리 한글 -> 영문 코드 매핑
-const CATEGORY_KO_TO_CODE: Record<string, Category> = {
-  '헤어': 'HAIR',
-  '네일': 'NAIL',
-  '타투': 'TATTOO',
-  '속눈썹': 'EYELASH',
-};
-
 // 쿠키에 userCategory 저장하는 헬퍼 함수
 export const setUserCategory = (category: Category | string) => {
   if (typeof document === 'undefined') return;
 
   // 한글이나 대문자가 들어와도 영문 코드로 정규화
-  let normalizedCategory: Category;
+  const normalizedCategory = categoryNameToCode(category);
 
-  // 영문 코드인 경우
-  if (['HAIR', 'NAIL', 'TATTOO', 'EYELASH'].includes(category.toUpperCase())) {
-    normalizedCategory = category.toUpperCase() as Category;
-  }
-  // 한글인 경우
-  else if (CATEGORY_KO_TO_CODE[category]) {
-    normalizedCategory = CATEGORY_KO_TO_CODE[category];
-  }
-  // 유효하지 않은 값
-  else {
+  if (!normalizedCategory) {
     console.error('Invalid category:', category);
     return;
   }

@@ -76,13 +76,17 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
 
   // 이미지 파일이 추가/변경되면 미리보기 URL 생성
   useEffect(() => {
-    // 이전 URL들 revoke
-    imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
-
+    // 새 파일이 없으면 기존 URL 유지 (수정 모드에서 기존 이미지 유지)
     if (imageFiles.length === 0) {
-      setImagePreviewUrls([]);
       return;
     }
+
+    // 이전 blob URL들만 revoke (외부 URL은 제외)
+    imagePreviewUrls.forEach((url) => {
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
 
     // 새 URL 생성
     const newUrls = imageFiles.map((file) => URL.createObjectURL(file));

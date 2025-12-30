@@ -7,8 +7,9 @@ import { StepTitleDate, StepContent } from '@/src/app/(designer)/myRecruitment/c
 import { useUpdateRecruitmentSubmit } from '@/src/hooks/custom/myRecruitment/useUpdateRecruitmentSubmit';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
+import { categoryNameToCode, subCategoryNameToCode } from '@/src/utils/myRecruitment';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
-import type { Category, RecruitmentSchedule } from '@/src/types/recruitment';
+import type { RecruitmentSchedule } from '@/src/types/recruitment';
 import type { PurposeType } from '@/src/types/myRecruitment';
 
 interface EditRecruitmentFunnelProps {
@@ -51,14 +52,24 @@ function convertDetailToFormState(detail: {
     purposeDetail = detail.goal1;
   }
 
+  // 카테고리 변환 (한글 -> 코드)
+  const categoryCode = categoryNameToCode(detail.category);
+
+  // 서브카테고리 변환 (한글 -> 코드, 카테고리별로 다름)
+  const subCategoryName = detail.subCategories?.[0];
+  let subCategoryCode: string | null = null;
+  if (subCategoryName && categoryCode) {
+    subCategoryCode = subCategoryNameToCode(categoryCode, subCategoryName);
+  }
+
   return {
     title: detail.title,
     selectedDates,
     selectedTimes,
     applyTimesToAll: false,
     content: detail.content,
-    category: (detail.category as Category) || null,
-    subCategory: detail.subCategories?.[0] || null,
+    category: categoryCode,
+    subCategory: subCategoryCode,
     restrictions: detail.notice, // notice가 제한사항
     notice: '', // 전달사항은 API에 없음 - 비워둠
     purpose,
@@ -70,9 +81,9 @@ function convertDetailToFormState(detail: {
     etc: detail.etc,
     // 기존 이미지 URL (새 파일 업로드 전까지 유지)
     imageFiles: [],
-    imagePreviewUrls: detail.imageUrls,
-    thumbnail: detail.imageUrls[0] || '',
-    imageUrls: detail.imageUrls,
+    imagePreviewUrls: detail.imageUrls || [],
+    thumbnail: detail.imageUrls?.[0] || '',
+    imageUrls: detail.imageUrls || [],
     imageFolderId: '',
   };
 }
