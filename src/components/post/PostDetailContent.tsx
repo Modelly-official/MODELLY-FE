@@ -75,44 +75,32 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
-        {isOwner ? (
-          // 본인 공고: 링크 없이 단순 표시
+        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
+          <div className="flex w-fit items-center gap-1 rounded-lg border border-gray-400 px-2.5 py-1">
+            <span className="text-body-2-medium text-black">디자이너</span>
+            <span className="text-body-2-medium text-black">·</span>
+            <span className="text-body-2-medium mr-1 text-black">{detail.designerProfile.shop}</span>
+            <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
+          </div>
+
           <div className="flex flex-col gap-1">
-            <span className="text-body-1-medium text-gray-800">{detail.designerProfile.shop}</span>
+            {/* 위치 */}
             <div className="flex items-center gap-1">
               <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-              <span className="text-body-2-medium text-gray-700">{detail.designerProfile.shopAddress}</span>
+              <span className="text-body-2-medium text-gray-900">{detail.designerProfile.shopAddress}</span>
+            </div>
+
+            {/* 별점 및 리뷰 */}
+            <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1">
+                <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
+                <span className="text-body-2-medium text-gray-900">5.0</span>
+              </div>
+              <span className="text-body-2-medium text-gray-900">·</span>
+              <span className="text-body-2-medium text-gray-900">리뷰 42</span>
             </div>
           </div>
-        ) : (
-          // 다른 사람 공고: 디자이너 페이지 링크
-          <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
-            <div className="flex w-fit items-center gap-1 rounded-lg border border-gray-400 px-2.5 py-1">
-              <span className="text-body-2-medium text-black">디자이너</span>
-              <span className="text-body-2-medium text-black">·</span>
-              <span className="text-body-2-medium mr-1 text-black">{detail.designerProfile.shop}</span>
-              <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              {/* 위치 */}
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
-                <span className="text-body-2-medium text-gray-900">{detail.designerProfile.shopAddress}</span>
-              </div>
-
-              {/* 별점 및 리뷰 */}
-              <div className="flex items-center gap-1">
-                <div className="flex items-center gap-1">
-                  <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
-                  <span className="text-body-2-medium text-gray-900">5.0</span>
-                </div>
-                <span className="text-body-2-medium text-gray-900">·</span>
-                <span className="text-body-2-medium text-gray-900">리뷰 42</span>
-              </div>
-            </div>
-          </Link>
-        )}
+        </Link>
       </div>
 
       {/* 탭 */}
