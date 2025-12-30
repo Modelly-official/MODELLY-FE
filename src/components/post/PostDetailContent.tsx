@@ -53,7 +53,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       <ImageGallery images={detail.imageUrls} />
 
       {/* 제목 및 찜하기 */}
-      <div className="flex items-start justify-between gap-4 px-4 pt-4">
+      <div className="flex items-center justify-between gap-4 px-4 pt-4">
         <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
         {!isOwner && (
           <button
@@ -64,8 +64,8 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             <Image
               src={detail.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
               alt="찜하기"
-              width={24}
-              height={24}
+              width={19}
+              height={19}
             />
           </button>
         )}
