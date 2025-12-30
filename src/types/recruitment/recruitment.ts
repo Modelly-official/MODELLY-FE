@@ -35,6 +35,7 @@ export interface RecruitmentListItem {
   distance: number;
   isLiked: boolean;
   createdAt: string;
+  averageRating: number;
 }
 
 // ===== 공고 리스트 조회 쿼리 파라미터 =====

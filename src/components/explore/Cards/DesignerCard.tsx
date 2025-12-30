@@ -56,7 +56,7 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
               <div className="flex items-center gap-1">
                 <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
                 <span className="text-caption-1-medium text-gray-800">
-                  5.0 ({(designer.reviewCount ?? 0).toLocaleString()})
+                  {designer.averageRating?.toFixed(1) ?? '0.0'} ({(designer.reviewCount ?? 0).toLocaleString()})
                 </span>
               </div>
               <span className="text-body-2-medium text-gray-800">·</span>
