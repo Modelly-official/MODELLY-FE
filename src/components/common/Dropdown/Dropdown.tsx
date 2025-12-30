@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useId } from 'react';
-import ChevronDownIcon from '@/src/assets/icons/chevron-down.svg';
+import ChevronDownIcon from '@/public/icons/common/chevron-down.svg';
 import CheckIcon from '@/public/icons/myRecruitment/form/check.svg';
 
 interface DropdownOption {

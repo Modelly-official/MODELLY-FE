@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
-import PlusIcon from '@/src/assets/icons/plus.svg';
+import PlusIcon from '@/public/icons/common/plus.svg';
 import CloseSmallIcon from '@/public/icons/myRecruitment/form/close-small.svg';
 import { useToast } from '@/src/hooks/common/useToast';
 import { validateImageFiles } from '@/src/utils';

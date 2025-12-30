@@ -6,7 +6,7 @@ import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
-import HeartIcon from '@/src/assets/icons/heart.svg';
+import HeartIcon from '@/public/icons/myRecruitment/heart.svg';
 import LocationIcon from '@/public/icons/explore/location.svg';
 
 interface RecruitmentCardProps {
