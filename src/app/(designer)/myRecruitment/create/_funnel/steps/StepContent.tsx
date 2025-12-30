@@ -15,9 +15,10 @@ import type { PurposeType } from '@/src/types/myRecruitment';
 interface StepContentProps {
   goNext: () => void;
   goPrev: () => void;
+  isSubmitting?: boolean;
 }
 
-export default function StepContent({ goNext, goPrev }: StepContentProps) {
+export default function StepContent({ goNext, goPrev, isSubmitting = false }: StepContentProps) {
   // Zustand store
   const {
     content,
@@ -219,14 +220,14 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
         <button
           type="button"
           onClick={goNext}
-          disabled={!isSubmitButtonEnabled}
+          disabled={!isSubmitButtonEnabled || isSubmitting}
           className={`text-body-1-semibold w-full rounded-full py-4 ${
-            isSubmitButtonEnabled
+            isSubmitButtonEnabled && !isSubmitting
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
-          새 모집글 등록
+          {isSubmitting ? '등록 중...' : '새 모집글 등록'}
         </button>
       </div>
     </div>
