@@ -41,6 +41,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                 src={image}
                 alt={`공고 이미지 ${index + 1}`}
                 fill
+                sizes="(max-width: 375px) 100vw, 375px"
                 className="pointer-events-none select-none object-cover"
                 draggable={false}
                 priority={index === 0}

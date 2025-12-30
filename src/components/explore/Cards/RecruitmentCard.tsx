@@ -30,7 +30,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
       {/* 이미지 */}
       <div className="relative h-[210px] w-full overflow-hidden rounded-none bg-gray-200">
         {recruitment.recruitmentThumbnail ? (
-          <Image src={recruitment.recruitmentThumbnail} alt={recruitment.title} fill className="object-cover" />
+          <Image src={recruitment.recruitmentThumbnail} alt={recruitment.title} fill sizes="50vw" className="object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <span className="text-body-2-medium text-gray-500">이미지 없음</span>
