@@ -2,6 +2,28 @@
 
 import type { Category, SubCategory, RecruitmentSchedule } from '@/src/types/recruitment';
 
+// ===== Presigned URL (공고 이미지 업로드용) =====
+
+/** 단일 Presigned URL */
+export interface PresignedUrl {
+  uploadUrl: string; // S3에 PUT 업로드할 Presigned URL (유효시간: 5분)
+  imageUrl: string; // 업로드 완료 후 사용할 S3 객체 접근 URL
+}
+
+/** 공고 이미지용 Presigned URL 응답 */
+export interface RecruitmentPresignedUrlResponse {
+  folderId: string; // 이미지 폴더 ID
+  presignedUrls: PresignedUrl[]; // Presigned URL 리스트
+  thumbnailUrl: string; // 썸네일 URL
+}
+
+/** 이미지 업로드 결과 (공고 생성 시 사용) */
+export interface ImageUploadResult {
+  thumbnail: string;
+  imageUrls: string[];
+  imageFolderId: string;
+}
+
 // ===== 내 공고 리스트 조회 =====
 
 /** 내 공고 리스트 조회 파라미터 */
