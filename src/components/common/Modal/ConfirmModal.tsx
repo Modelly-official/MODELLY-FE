@@ -44,7 +44,7 @@ export default function ConfirmModal({
       // Focus trap
       if (e.key === 'Tab') {
         const focusableElements = modalRef.current?.querySelectorAll(
-          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
         );
 
         if (!focusableElements || focusableElements.length === 0) return;
@@ -91,7 +91,7 @@ export default function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]"
+      className="fixed inset-0 z-60 flex items-center justify-center bg-[rgba(28,28,30,0.4)]"
       onClick={() => !isLoading && onClose()}
       role="presentation"
     >
@@ -137,12 +137,7 @@ export default function ConfirmModal({
           </button>
 
           {/* 확인 버튼 */}
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isLoading}
-            className={getConfirmButtonClass()}
-          >
+          <button type="button" onClick={onConfirm} disabled={isLoading} className={getConfirmButtonClass()}>
             {isLoading ? '처리 중...' : confirmText}
           </button>
         </div>
