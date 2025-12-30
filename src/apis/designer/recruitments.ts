@@ -8,6 +8,7 @@ import type {
   CreateRecruitmentRequest,
   UpdateRecruitmentRequest,
   RecruitmentMutationResponse,
+  RecruitmentPresignedUrlResponse,
 } from '@/src/types/myRecruitment';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -80,6 +81,20 @@ export async function deleteRecruitment(
 
   const { data } = await axiosInstance.delete<ApiResponse<string>>(
     `/designers/recruitments/${recruitmentId}`
+  );
+  return data;
+}
+
+/**
+ * 공고 이미지용 Presigned URL 발급
+ * GET /presigned-url/recruitments
+ */
+export async function getRecruitmentPresignedUrls(
+  imageCount: number
+): Promise<ApiResponse<RecruitmentPresignedUrlResponse>> {
+  const { data } = await axiosInstance.get<ApiResponse<RecruitmentPresignedUrlResponse>>(
+    '/presigned-url/recruitments',
+    { params: { imageCount } }
   );
   return data;
 }
