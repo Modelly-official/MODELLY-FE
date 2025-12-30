@@ -1,4 +1,5 @@
 import { axiosInstance } from '../axios';
+import { uploadImageToS3 } from '../auth/profile';
 import { isMockEnabled } from '@/src/config/api';
 import { mockMyRecruitmentItems } from '@/src/mocks/myRecruitment';
 import type { ApiResponse } from '@/src/types';
@@ -9,6 +10,7 @@ import type {
   UpdateRecruitmentRequest,
   RecruitmentMutationResponse,
   RecruitmentPresignedUrlResponse,
+  ImageUploadResult,
 } from '@/src/types/myRecruitment';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -97,6 +99,39 @@ export async function getRecruitmentPresignedUrls(
     { params: { imageCount } }
   );
   return data;
+}
+
+/**
+ * 공고 이미지 업로드 전체 플로우
+ * 1. Presigned URL 발급
+ * 2. S3에 병렬 업로드
+ * 3. 결과 반환 (thumbnail, imageUrls, imageFolderId)
+ */
+export async function uploadRecruitmentImages(files: File[]): Promise<ImageUploadResult> {
+  if (files.length === 0) {
+    throw new Error('업로드할 이미지가 없습니다.');
+  }
+
+  // 1. Presigned URL 발급
+  const presignedResponse = await getRecruitmentPresignedUrls(files.length);
+
+  if (!presignedResponse.isSuccess || !presignedResponse.result) {
+    throw new Error(presignedResponse.message || 'Presigned URL 발급 실패');
+  }
+
+  const { folderId, presignedUrls, thumbnailUrl } = presignedResponse.result;
+
+  // 2. S3에 병렬 업로드
+  await Promise.all(
+    files.map((file, index) => uploadImageToS3(presignedUrls[index].uploadUrl, file))
+  );
+
+  // 3. 결과 반환
+  return {
+    thumbnail: thumbnailUrl,
+    imageUrls: presignedUrls.map((item) => item.imageUrl),
+    imageFolderId: folderId,
+  };
 }
 
 // ===== Mock 함수 =====
