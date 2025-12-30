@@ -22,7 +22,7 @@ const modelNavItems: NavItem[] = [
     activeIcon: '/icons/nav/home-active.svg',
   },
   {
-    label: '탐색',
+    label: '모아보기',
     href: '/explore',
     icon: '/icons/nav/explore.svg',
     activeIcon: '/icons/nav/explore-active.svg',
