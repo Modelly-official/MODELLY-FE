@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
+import HeartIcon from '@/src/assets/icons/heart.svg';
 
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
@@ -34,12 +35,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
           onClick={handleFavoriteClick}
           className="absolute right-4 bottom-4 flex size-6 cursor-pointer items-center justify-center"
         >
-          <Image
-            src={isLiked ? '/icons/explore/heart-active.svg' : '/icons/explore/heart.svg'}
-            alt="찜하기"
-            width={24}
-            height={24}
-          />
+          <HeartIcon className={isLiked ? 'text-white' : 'text-transparent'} />
         </button>
       </div>
 
