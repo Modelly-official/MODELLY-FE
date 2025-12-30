@@ -206,7 +206,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           <button
             type="button"
             onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
-            className="text-body-1-semibold h-12 w-full rounded-full bg-gray-900 text-white"
+            className="text-body-1-semibold h-14 w-full cursor-pointer rounded-full bg-gray-900 text-white"
           >
             수정하기
           </button>
