@@ -93,6 +93,7 @@ export interface LoginResponse {
   userId: number;
   accessToken: string;
   userRole: 'MODEL' | 'DESIGNER';
+  category?: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH'; // 디자이너 카테고리
 }
 
 export interface LogoutResponse {
@@ -120,5 +121,6 @@ export interface SocialLoginCallbackResponse {
   accessToken: string;
   registered: boolean;
   userRole: 'MODEL' | 'DESIGNER';
+  category?: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH'; // 디자이너 카테고리
 }
 

@@ -1,10 +1,13 @@
 import { create } from 'zustand';
 
+import type { Category } from '@/src/types/recruitment';
+
 interface User {
   userId: number;
   role: 'model' | 'designer';
   username: string;
   loginId: string;
+  category?: Category; // 디자이너 카테고리 (HAIR, NAIL, TATTOO, EYELASH)
 }
 
 interface AuthState {
@@ -25,10 +28,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     }),
 
   clearAuth: () => {
-    // 쿠키 삭제 (accessToken + userRole)
+    // 쿠키 삭제 (accessToken + userRole + userCategory)
     if (typeof document !== 'undefined') {
       document.cookie = 'access_token=; path=/; max-age=0';
       document.cookie = 'user_role=; path=/; max-age=0';
+      document.cookie = 'user_category=; path=/; max-age=0';
     }
     set({ user: null, isAuthenticated: false });
   },
@@ -99,6 +103,61 @@ export const setUserRole = (role: 'model' | 'designer' | string) => {
   }
 
   document.cookie = `user_role=${normalizedRole}; path=/; max-age=3600; SameSite=Lax${
+    process.env.NODE_ENV === 'production' ? '; Secure' : ''
+  }`;
+};
+
+// 쿠키에서 userCategory 읽는 헬퍼 함수
+export const getUserCategory = (): Category | null => {
+  if (typeof document === 'undefined') return null;
+
+  const rawCategory = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('user_category='))
+    ?.split('=')[1];
+
+  if (!rawCategory) return null;
+
+  const category = decodeURIComponent(rawCategory) as Category;
+
+  // 유효한 카테고리인지 확인
+  if (['HAIR', 'NAIL', 'TATTOO', 'EYELASH'].includes(category)) {
+    return category;
+  }
+
+  return null;
+};
+
+// 카테고리 한글 -> 영문 코드 매핑
+const CATEGORY_KO_TO_CODE: Record<string, Category> = {
+  '헤어': 'HAIR',
+  '네일': 'NAIL',
+  '타투': 'TATTOO',
+  '속눈썹': 'EYELASH',
+};
+
+// 쿠키에 userCategory 저장하는 헬퍼 함수
+export const setUserCategory = (category: Category | string) => {
+  if (typeof document === 'undefined') return;
+
+  // 한글이나 대문자가 들어와도 영문 코드로 정규화
+  let normalizedCategory: Category;
+
+  // 영문 코드인 경우
+  if (['HAIR', 'NAIL', 'TATTOO', 'EYELASH'].includes(category.toUpperCase())) {
+    normalizedCategory = category.toUpperCase() as Category;
+  }
+  // 한글인 경우
+  else if (CATEGORY_KO_TO_CODE[category]) {
+    normalizedCategory = CATEGORY_KO_TO_CODE[category];
+  }
+  // 유효하지 않은 값
+  else {
+    console.error('Invalid category:', category);
+    return;
+  }
+
+  document.cookie = `user_category=${normalizedCategory}; path=/; max-age=3600; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };

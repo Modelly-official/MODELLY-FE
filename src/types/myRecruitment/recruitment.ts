@@ -60,13 +60,10 @@ export interface MyRecruitmentListResponse {
 export interface CreateRecruitmentRequest {
   title: string;
   recruitmentSchedule: RecruitmentSchedule[];
-  category: Category;
   subCategoryList: SubCategory[];
   content: string;
   notice: string;
   goal1: string;
-  goal2: string;
-  goal3: string;
   thumbnail: string;
   imageUrls: string[];
   imageFolderId: string;
@@ -84,13 +81,10 @@ export interface RecruitmentMutationResponse {
   recruitmentId: number;
   title: string;
   recruitmentSchedule: RecruitmentSchedule[];
-  category: Category;
   subCategoryList: SubCategory[];
   content: string;
   notice: string;
   goal1: string;
-  goal2: string;
-  goal3: string;
   thumbnail: string;
   imageUrls: string[];
   agreeVideo: boolean;

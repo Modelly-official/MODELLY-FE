@@ -9,7 +9,8 @@ import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCh
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
-import { RECRUITMENT_CATEGORY_OPTIONS } from '@/src/constants/explore';
+import { getSubCategoryOptions } from '@/src/constants/explore';
+import { getUserCategory } from '@/src/stores';
 import type { PurposeType } from '@/src/types/myRecruitment';
 
 interface StepContentProps {
@@ -94,6 +95,10 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false }: St
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageFilesKey]);
 
+  // 디자이너 카테고리에 맞는 서브카테고리 옵션
+  const designerCategory = getUserCategory();
+  const subCategoryOptions = designerCategory ? getSubCategoryOptions(designerCategory) : [];
+
   // 목적 옵션
   const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
 
@@ -134,7 +139,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false }: St
           label="카테고리"
           required
           placeholder="시술 카테고리를 선택해주세요"
-          options={[...RECRUITMENT_CATEGORY_OPTIONS]}
+          options={subCategoryOptions}
           value={subCategory}
           onChange={setSubCategory}
         />

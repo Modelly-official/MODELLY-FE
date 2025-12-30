@@ -99,16 +99,17 @@ const buildCategoryLabels = (): Record<string, string> => {
 
 export const CATEGORY_LABELS: Record<string, string> = buildCategoryLabels();
 
-// ===== 공고 등록용 카테고리 옵션 =====
-export const RECRUITMENT_CATEGORY_OPTIONS = [
-  { code: 'CUT', name: '커트' },
-  { code: 'COLOR', name: '염색' },
-  { code: 'PERM', name: '펌' },
-  { code: 'OTHER', name: '기타' },
-] as const;
+// ===== 공고 등록용 서브카테고리 옵션 (디자이너 카테고리에 따라 동적으로 필터링) =====
 
-export type RecruitmentCategoryCode =
-  (typeof RECRUITMENT_CATEGORY_OPTIONS)[number]['code'];
+/**
+ * 디자이너 카테고리에 맞는 서브카테고리 옵션 반환 (ALL 제외)
+ */
+export function getSubCategoryOptions(category: CategoryType): { code: string; name: string }[] {
+  const subCategories = SUB_CATEGORIES_BY_CATEGORY[category] || [];
+  return subCategories
+    .filter((sub) => sub.code !== 'ALL')
+    .map((sub) => ({ code: sub.code, name: sub.name }));
+}
 
 /**
  * 카테고리 코드를 한글 라벨로 변환

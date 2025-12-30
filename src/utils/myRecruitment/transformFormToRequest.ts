@@ -29,13 +29,10 @@ export function transformFormToRequest(
   return {
     title: formState.title,
     recruitmentSchedule,
-    category: formState.category || 'HAIR',
     subCategoryList: formState.subCategory ? [formState.subCategory as SubCategory] : [],
     content: formState.content,
     notice: formState.restrictions,
     goal1,
-    goal2: '',
-    goal3: '',
     thumbnail: uploadResult.thumbnail,
     imageUrls: uploadResult.imageUrls,
     imageFolderId: uploadResult.imageFolderId,

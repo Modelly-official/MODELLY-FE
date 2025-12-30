@@ -2,7 +2,7 @@
 
 import { use, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setAccessToken, setUserRole } from '@/src/stores';
+import { setAccessToken, setUserRole, setUserCategory } from '@/src/stores';
 import { useSocialLoginCallback } from '@/src/hooks/queries';
 import { showToast } from '@/src/utils';
 import type { SocialProvider } from '@/src/utils/auth/socialLogin';
@@ -73,7 +73,7 @@ const SocialCallbackPage = ({ params }: PageProps) => {
       socialLoginMutation.mutate(mutationPayload, {
         onSuccess: (response) => {
           if (response.isSuccess && response.result) {
-            const { accessToken, registered, userRole } = response.result;
+            const { accessToken, registered, userRole, category } = response.result;
 
             // accessToken을 쿠키에 저장
             if (accessToken) {
@@ -86,6 +86,11 @@ const SocialCallbackPage = ({ params }: PageProps) => {
               if (normalizedRole === 'model' || normalizedRole === 'designer') {
                 setUserRole(normalizedRole);
               }
+            }
+
+            // 디자이너 카테고리 저장
+            if (category) {
+              setUserCategory(category);
             }
 
             // registered 값에 따라 분기
