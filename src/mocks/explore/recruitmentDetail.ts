@@ -46,6 +46,8 @@ export const mockRecruitmentDetail: RecruitmentDetail = {
   agreeMosaic: false,
   etc: '시술 후 홈케어 방법과 스타일링 팁도 자세히 알려드립니다. 궁금한 점이 있으시면 언제든 문의해주세요!',
   isLiked: false,
+  reviewCount: 42,
+  averageRating: 4.8,
 };
 
 // 두 번째 공고 상세 Mock 데이터
@@ -82,4 +84,6 @@ export const mockRecruitmentDetail2: RecruitmentDetail = {
   agreeMosaic: true,
   etc: '염색 후 컬러 유지를 위한 홈케어 제품도 추천해드립니다.',
   isLiked: true,
+  reviewCount: 18,
+  averageRating: 4.5,
 };

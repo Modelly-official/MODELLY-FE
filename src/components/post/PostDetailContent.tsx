@@ -94,10 +94,12 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             <div className="flex items-center gap-1">
               <div className="flex items-center gap-1">
                 <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
-                <span className="text-body-2-medium text-gray-900">5.0</span>
+                <span className="text-body-2-medium text-gray-900">
+                  {detail.averageRating?.toFixed(1) ?? '0.0'}
+                </span>
               </div>
               <span className="text-body-2-medium text-gray-900">·</span>
-              <span className="text-body-2-medium text-gray-900">리뷰 42</span>
+              <span className="text-body-2-medium text-gray-900">리뷰 {detail.reviewCount ?? 0}</span>
             </div>
           </div>
         </Link>

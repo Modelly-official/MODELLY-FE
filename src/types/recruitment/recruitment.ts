@@ -92,5 +92,7 @@ export interface RecruitmentDetail {
   agreeMosaic: boolean;
   etc: string;
   isLiked: boolean;
+  reviewCount: number;
+  averageRating: number;
 }
 
