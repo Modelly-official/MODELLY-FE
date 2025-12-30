@@ -31,10 +31,10 @@ export const StepComplete: React.FC<StepCompleteProps> = ({ name, loginId, login
             <>
               <p className="text-head-3-medium text-center tracking-tight">{name} 님은</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-head-2-semibold tracking-tight">
+                <span className="text-head-3-semibold tracking-tight">
                   {getSocialServiceName(loginType)} 소셜 로그인 사용자
                 </span>
-                <span className="text-head-3-medium tracking-tight">입니다</span>
+                <span className="text-head-3-semibold tracking-tight">입니다</span>
               </div>
             </>
           ) : (
