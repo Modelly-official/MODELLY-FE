@@ -17,9 +17,10 @@ interface StepContentProps {
   goNext: () => void;
   goPrev: () => void;
   isSubmitting?: boolean;
+  isEdit?: boolean;
 }
 
-export default function StepContent({ goNext, goPrev, isSubmitting = false }: StepContentProps) {
+export default function StepContent({ goNext, goPrev, isSubmitting = false, isEdit = false }: StepContentProps) {
   // Zustand store
   const {
     content,
@@ -119,7 +120,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false }: St
         <button type="button" onClick={goPrev} className="flex size-6 cursor-pointer items-center justify-center">
           <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
         </button>
-        <h1 className="text-head-4-medium text-black">모집글 등록</h1>
+        <h1 className="text-head-4-medium text-black">{isEdit ? '모집글 수정' : '모집글 등록'}</h1>
         <div className="size-6" />
       </div>
 
@@ -232,7 +233,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false }: St
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
-          {isSubmitting ? '등록 중...' : '새 모집글 등록'}
+          {isSubmitting ? (isEdit ? '수정 중...' : '등록 중...') : (isEdit ? '모집글 수정' : '새 모집글 등록')}
         </button>
       </div>
     </div>
