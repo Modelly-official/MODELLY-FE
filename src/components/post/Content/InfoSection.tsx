@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import CheckIcon from '@/public/icons/post/check.svg';
 
 interface InfoSectionProps {
   title: string;
@@ -10,7 +11,6 @@ interface InfoSectionProps {
 }
 
 export default function InfoSection({ title, content, hasIcon = true, iconType = 'check' }: InfoSectionProps) {
-  const iconSrc = iconType === 'check' ? '/icons/post/check.svg' : '/icons/common/close.svg';
   const iconBgColor = iconType === 'check' ? 'bg-purple-600' : 'bg-gray-800';
 
   return (
@@ -19,7 +19,11 @@ export default function InfoSection({ title, content, hasIcon = true, iconType =
       <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
         {hasIcon && (
           <div className={`flex size-[22px] shrink-0 items-center justify-center rounded-full ${iconBgColor}`}>
-            <Image src={iconSrc} alt="" width={12} height={12} className="text-white" />
+            {iconType === 'check' ? (
+              <CheckIcon className="text-white" />
+            ) : (
+              <Image src="/icons/common/close.svg" alt="" width={12} height={12} className="text-white" />
+            )}
           </div>
         )}
         <p className="text-body-2-medium flex-1 text-black">{content}</p>

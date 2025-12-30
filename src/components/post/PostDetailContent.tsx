@@ -15,6 +15,8 @@ import {
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
+import CheckIcon from '@/public/icons/post/check.svg';
+import CloseIcon from '@/public/icons/common/close.svg';
 
 interface PostDetailContentProps {
   recruitmentId: number;
@@ -158,7 +160,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
               <h3 className="text-body-2-semibold text-gray-900">유의사항</h3>
               <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                 <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
-                  <span className="text-caption-1-medium text-white">✕</span>
+                  <CloseIcon className="text-white" />
                 </div>
                 <p className="text-body-2-medium flex-1 whitespace-pre-wrap text-black">{detail.notice}</p>
               </div>
@@ -172,7 +174,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
               {detail.agreeVideo && (
                 <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
+                    <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">영상 촬영</p>
                 </div>
@@ -180,7 +182,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
               {detail.agreeInsta && (
                 <div className="flex items-start gap-3 rounded-2xl bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
+                    <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">인스타 업로드</p>
                 </div>
@@ -188,7 +190,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
               {detail.agreeMosaic && (
                 <div className="flex items-start gap-3 rounded-2xl bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
-                    <Image src="/icons/post/check.svg" alt="" width={12} height={12} />
+                    <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">모자이크 가능</p>
                 </div>
