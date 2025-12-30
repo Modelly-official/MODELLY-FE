@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { DesignerListItem } from '@/src/types';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
 import LocationIcon from '@/public/icons/explore/location.svg';
+import ProfileIcon from '@/public/icons/myRecruitment/mypage-active.svg';
 
 interface DesignerCardProps {
   designer: DesignerListItem;
@@ -27,8 +28,14 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
       {/* 왼쪽: 디자이너 정보 */}
       <div className="flex items-center gap-3">
         {/* 프로필 이미지 */}
-        <div className="relative size-[78px] shrink-0 overflow-hidden rounded-full">
-          <Image src={designer.thumbnail} alt={designer.designerName} fill className="object-cover" />
+        <div className="relative size-[78px] shrink-0 overflow-hidden rounded-full bg-gray-200">
+          {designer.thumbnail ? (
+            <Image src={designer.thumbnail} alt={designer.designerName} fill className="object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <ProfileIcon className="h-10 w-8 text-gray-600" />
+            </div>
+          )}
         </div>
 
         {/* 정보 */}

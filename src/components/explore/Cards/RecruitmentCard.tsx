@@ -28,8 +28,14 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
   return (
     <Link href={`/post/${recruitment.recruitmentId}`} className="flex flex-col gap-2.5">
       {/* 이미지 */}
-      <div className="relative h-[210px] w-full overflow-hidden rounded-none">
-        <Image src={recruitment.recruitmentThumbnail} alt={recruitment.title} fill className="object-cover" />
+      <div className="relative h-[210px] w-full overflow-hidden rounded-none bg-gray-200">
+        {recruitment.recruitmentThumbnail ? (
+          <Image src={recruitment.recruitmentThumbnail} alt={recruitment.title} fill className="object-cover" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="text-body-2-medium text-gray-500">이미지 없음</span>
+          </div>
+        )}
         {/* 찜하기 버튼 */}
         <button
           type="button"
