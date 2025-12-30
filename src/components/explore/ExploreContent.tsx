@@ -38,13 +38,14 @@ export default function ExploreContent() {
     [showToast],
   );
 
-  // 위치 정보 훅
+  // 위치 정보 훅 (페이지 로드 시 자동 요청)
   const {
     location,
     isLoading: isLocationLoading,
     requestLocation,
   } = useUserLocation({
     onError: handleLocationError,
+    autoRequest: true,
   });
 
   // Infinite scroll observer ref
@@ -62,22 +63,22 @@ export default function ExploreContent() {
     setSelectedSort(sort);
   };
 
-  // Query params
+  // Query params (위치 정보가 있으면 항상 전송하여 거리 계산)
   const recruitmentParams = {
     category: selectedCategory,
     subCategory: selectedSubCategory === 'ALL' ? undefined : selectedSubCategory,
     keyword: searchKeyword || undefined,
     sortOption: selectedSort,
-    userLatitude: needsLocation ? location?.latitude : undefined,
-    userLongitude: needsLocation ? location?.longitude : undefined,
+    userLatitude: location?.latitude,
+    userLongitude: location?.longitude,
   };
 
   const designerParams = {
     category: selectedCategory,
     keyword: searchKeyword || undefined,
     sortOption: selectedSort,
-    userLatitude: needsLocation ? location?.latitude : undefined,
-    userLongitude: needsLocation ? location?.longitude : undefined,
+    userLatitude: location?.latitude,
+    userLongitude: location?.longitude,
   };
 
   // 거리순 정렬 시 위치 정보가 없으면 쿼리 비활성화
