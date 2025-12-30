@@ -170,7 +170,7 @@ export default function ExploreContent() {
       />
 
       {/* 검색 및 필터 영역 */}
-      <div className="flex flex-col gap-3 px-4 pt-4 pb-2.5">
+      <div className="flex flex-col gap-3 px-4 py-4">
         {/* 검색바 */}
         <SearchBar value={searchKeyword} onChange={setSearchKeyword} />
 
