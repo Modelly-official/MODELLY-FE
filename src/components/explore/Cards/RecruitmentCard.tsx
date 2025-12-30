@@ -7,6 +7,7 @@ import type { RecruitmentListItem } from '@/src/types';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
 import HeartIcon from '@/src/assets/icons/heart.svg';
+import LocationIcon from '@/public/icons/explore/location.svg';
 
 interface RecruitmentCardProps {
   recruitment: RecruitmentListItem;
@@ -54,8 +55,8 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
             {/* 위치 및 별점/거리 */}
             <div className="flex flex-col">
               {/* 위치 */}
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
+              <div className="flex items-center gap-1 px-px">
+                <LocationIcon />
                 <span className="text-caption-1-medium text-gray-800">{formatDistrict(recruitment.shopAddress)}</span>
               </div>
 

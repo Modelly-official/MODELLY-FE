@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { DesignerListItem } from '@/src/types';
 import { formatDistrict, formatDistance } from '@/src/utils/common';
+import LocationIcon from '@/public/icons/explore/location.svg';
 
 interface DesignerCardProps {
   designer: DesignerListItem;
@@ -36,8 +37,8 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
 
           <div className="flex flex-col gap-0.5">
             {/* 위치 및 샵 이름 */}
-            <div className="text-body-2-medium flex items-center gap-1 text-gray-800">
-              <Image src="/icons/common/location.svg" alt="위치" width={12} height={12} />
+            <div className="text-body-2-medium flex items-center gap-1 px-px text-gray-800">
+              <LocationIcon />
               <span>{formatDistrict(designer.shopAddress)}</span>
               <span>·</span>
               <span>{designer.shop}</span>
