@@ -25,7 +25,8 @@ function convertDetailToFormState(detail: {
   category: string;
   subCategories: string[];
   content: string;
-  notice: string;
+  notice: string; // 전달 사항
+  restriction: string; // 유의사항
   goal1: string;
   imageUrls: string[];
   agreeVideo: boolean;
@@ -70,8 +71,8 @@ function convertDetailToFormState(detail: {
     content: detail.content,
     category: categoryCode,
     subCategory: subCategoryCode,
-    restrictions: detail.notice, // notice가 제한사항
-    notice: '', // 전달사항은 API에 없음 - 비워둠
+    restrictions: detail.restriction, // 유의사항
+    notice: detail.notice, // 전달 사항
     purpose,
     purposeDetail,
     agreeVideo: detail.agreeVideo,
