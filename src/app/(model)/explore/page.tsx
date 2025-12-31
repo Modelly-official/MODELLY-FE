@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { getQueryClient } from '@/src/lib/queryClient';
+import { getQueryClient } from '@/src/providers/queryClient';
 import { getRecruitments } from '@/src/apis';
 import { recruitmentKeys } from '@/src/hooks/queries/explore/useRecruitments';
 import { ExploreContent } from '@/src/components/explore';
