@@ -1,4 +1,5 @@
 import { axiosInstance } from '../axios';
+import { uploadImageToS3 } from '../auth/profile';
 import { isMockEnabled } from '@/src/config/api';
 import { mockMyRecruitmentItems } from '@/src/mocks/myRecruitment';
 import type { ApiResponse } from '@/src/types';
@@ -8,6 +9,8 @@ import type {
   CreateRecruitmentRequest,
   UpdateRecruitmentRequest,
   RecruitmentMutationResponse,
+  RecruitmentPresignedUrlResponse,
+  ImageUploadResult,
 } from '@/src/types/myRecruitment';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -84,6 +87,53 @@ export async function deleteRecruitment(
   return data;
 }
 
+/**
+ * 공고 이미지용 Presigned URL 발급
+ * GET /presigned-url/recruitments
+ */
+export async function getRecruitmentPresignedUrls(
+  imageCount: number
+): Promise<ApiResponse<RecruitmentPresignedUrlResponse>> {
+  const { data } = await axiosInstance.get<ApiResponse<RecruitmentPresignedUrlResponse>>(
+    '/presigned-url/recruitments',
+    { params: { imageCount } }
+  );
+  return data;
+}
+
+/**
+ * 공고 이미지 업로드 전체 플로우
+ * 1. Presigned URL 발급
+ * 2. S3에 병렬 업로드
+ * 3. 결과 반환 (thumbnail, imageUrls, imageFolderId)
+ */
+export async function uploadRecruitmentImages(files: File[]): Promise<ImageUploadResult> {
+  if (files.length === 0) {
+    throw new Error('업로드할 이미지가 없습니다.');
+  }
+
+  // 1. Presigned URL 발급
+  const presignedResponse = await getRecruitmentPresignedUrls(files.length);
+
+  if (!presignedResponse.isSuccess || !presignedResponse.result) {
+    throw new Error(presignedResponse.message || 'Presigned URL 발급 실패');
+  }
+
+  const { folderId, presignedUrls, thumbnailUrl } = presignedResponse.result;
+
+  // 2. S3에 병렬 업로드
+  await Promise.all(
+    files.map((file, index) => uploadImageToS3(presignedUrls[index].uploadUrl, file))
+  );
+
+  // 3. 결과 반환
+  return {
+    thumbnail: thumbnailUrl,
+    imageUrls: presignedUrls.map((item) => item.imageUrl),
+    imageFolderId: folderId,
+  };
+}
+
 // ===== Mock 함수 =====
 
 function getMockDesignerRecruitments(
@@ -94,6 +144,7 @@ function getMockDesignerRecruitments(
   // 해당 월에 맞는 공고 필터링 (_month 필드로 필터링 후 제거)
   const filteredItems = mockMyRecruitmentItems
     .filter((item) => item._month === month)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _month, ...rest }) => rest);
 
   // 커서 기반 페이징

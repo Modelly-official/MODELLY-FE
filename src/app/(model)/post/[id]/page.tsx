@@ -2,7 +2,7 @@ import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { getQueryClient } from '@/src/lib/queryClient';
+import { getQueryClient } from '@/src/providers/queryClient';
 import { getRecruitmentDetail } from '@/src/apis';
 import { recruitmentKeys } from '@/src/hooks/queries/explore';
 import { PostDetailContent } from '@/src/components/post';

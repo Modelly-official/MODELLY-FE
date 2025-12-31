@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-
 interface ExploreHeaderProps {
   view: 'designer' | 'recruitment';
   onViewChange: (view: 'designer' | 'recruitment') => void;

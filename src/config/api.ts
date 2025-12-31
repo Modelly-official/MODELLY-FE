@@ -1,10 +1,10 @@
 export const API_CONFIG = {
   USE_MOCK: process.env.NEXT_PUBLIC_USE_MOCK === 'true',
   MOCK_ENDPOINTS: {
-    recruitments: true,
-    recruitmentDetail: true,
-    designers: true,
-    designerRecruitments: true,
+    recruitments: false,
+    recruitmentDetail: false,
+    designers: false,
+    designerRecruitments: false,
   },
 } as const;
 

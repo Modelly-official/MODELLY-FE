@@ -35,6 +35,7 @@ export interface RecruitmentListItem {
   distance: number;
   isLiked: boolean;
   createdAt: string;
+  averageRating: number;
 }
 
 // ===== 공고 리스트 조회 쿼리 파라미터 =====
@@ -65,6 +66,7 @@ export type RecruitmentListResponse = CursorPaginationResponse<RecruitmentListIt
 export interface DesignerProfile {
   userId: number;
   designerId: number;
+  designerName: string;
   shop: string;
   shopAddress: string;
 }
@@ -82,15 +84,16 @@ export interface RecruitmentDetail {
   category: string;
   subCategories: string[];
   content: string;
-  notice: string;
+  notice: string; // 전달 사항
+  restriction: string; // 유의사항
   goal1: string;
-  goal2: string;
-  goal3: string;
   imageUrls: string[];
   agreeVideo: boolean;
   agreeInsta: boolean;
   agreeMosaic: boolean;
   etc: string;
   isLiked: boolean;
+  reviewCount: number;
+  averageRating: number;
 }
 

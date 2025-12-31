@@ -27,11 +27,24 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
 
+  // Optimistic update를 위한 토글 카운트 (홀수면 반전)
+  const [toggleCount, setToggleCount] = useState(0);
+  const [trackedServerValue, setTrackedServerValue] = useState<boolean | null>(null);
+
   // Query hook
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
   // Like mutation
   const { mutate: toggleLike } = useToggleRecruitmentLike();
+
+  // 서버 값이 변경되면 토글 카운트 리셋 (렌더 중 상태 업데이트 - React 권장 패턴)
+  const serverIsLiked = data?.result?.isLiked ?? false;
+  if (trackedServerValue !== null && trackedServerValue !== serverIsLiked) {
+    setToggleCount(0);
+    setTrackedServerValue(serverIsLiked);
+  } else if (trackedServerValue === null && data?.result) {
+    setTrackedServerValue(serverIsLiked);
+  }
 
   // 로딩 중
   if (isLoading) {
@@ -45,7 +58,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   const detail = data.result;
 
+  // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
+  const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
+
   const handleFavoriteClick = () => {
+    setToggleCount((prev) => prev + 1); // Optimistic update
     toggleLike(recruitmentId);
   };
 
@@ -61,13 +78,13 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           <button
             type="button"
             onClick={handleFavoriteClick}
-            className="flex size-6 shrink-0 items-center justify-center"
+            className="flex size-6 shrink-0 cursor-pointer items-center justify-center"
           >
             <Image
-              src={detail.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
+              src={isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
               alt="찜하기"
-              width={19}
-              height={19}
+              width={20}
+              height={20}
             />
           </button>
         )}
@@ -77,7 +94,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       <div className="px-4 pt-2">
         <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
           <div className="flex w-fit items-center gap-1 rounded-lg border border-gray-400 px-2.5 py-1">
-            <span className="text-body-2-medium text-black">디자이너</span>
+            <span className="text-body-2-medium text-black">{detail.designerProfile.designerName} 디자이너</span>
             <span className="text-body-2-medium text-black">·</span>
             <span className="text-body-2-medium mr-1 text-black">{detail.designerProfile.shop}</span>
             <Image src="/icons/common/arrow-right.svg" alt="디자이너 정보" width={6} height={10} />
@@ -94,10 +111,10 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             <div className="flex items-center gap-1">
               <div className="flex items-center gap-1">
                 <Image src="/icons/common/star.svg" alt="별점" width={16} height={16} />
-                <span className="text-body-2-medium text-gray-900">5.0</span>
+                <span className="text-body-2-medium text-gray-900">{detail.averageRating?.toFixed(1) ?? '0.0'}</span>
               </div>
               <span className="text-body-2-medium text-gray-900">·</span>
-              <span className="text-body-2-medium text-gray-900">리뷰 42</span>
+              <span className="text-body-2-medium text-gray-900">리뷰 {detail.reviewCount ?? 0}</span>
             </div>
           </div>
         </Link>
@@ -133,30 +150,34 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           </div>
 
           {/* 모집 목적 */}
-          {(detail.goal1 || detail.goal2 || detail.goal3) && (
+          {detail.goal1 && (
             <div className="rounded-2xl bg-white p-4">
-              <InfoSection
-                title="모델 모집 목적"
-                content={[detail.goal1, detail.goal2, detail.goal3].filter(Boolean).join('\n')}
-              />
+              <InfoSection title="모델 모집 목적" content={detail.goal1} />
+            </div>
+          )}
+
+          {/* 전달 사항 */}
+          {detail.notice && (
+            <div className="rounded-2xl bg-white p-4">
+              <InfoSection title="전달 사항" content={detail.notice} />
             </div>
           )}
 
           {/* 유의사항 */}
-          {detail.notice && (
+          {detail.restriction && (
             <div className="flex flex-col gap-4 rounded-2xl bg-white p-4">
               <h3 className="text-body-2-semibold text-gray-900">유의사항</h3>
               <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                 <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-gray-800">
                   <CloseIcon className="text-white" />
                 </div>
-                <p className="text-body-2-medium flex-1 whitespace-pre-wrap text-black">{detail.notice}</p>
+                <p className="text-body-2-medium flex-1 whitespace-pre-wrap text-black">{detail.restriction}</p>
               </div>
             </div>
           )}
 
           {/* 사전 동의사항 */}
-          {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic) && (
+          {(detail.agreeVideo || detail.agreeInsta || detail.agreeMosaic || detail.etc) && (
             <div className="flex flex-col gap-4 rounded-2xl bg-white p-4">
               <h3 className="text-body-2-semibold text-gray-900">사전 동의사항</h3>
               {detail.agreeVideo && (
@@ -168,7 +189,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
                 </div>
               )}
               {detail.agreeInsta && (
-                <div className="flex items-start gap-3 rounded-2xl bg-gray-100 px-4 py-3">
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <CheckIcon className="text-white" />
                   </div>
@@ -176,20 +197,21 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
                 </div>
               )}
               {detail.agreeMosaic && (
-                <div className="flex items-start gap-3 rounded-2xl bg-gray-100 px-4 py-3">
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
                   <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
                     <CheckIcon className="text-white" />
                   </div>
                   <p className="text-body-2-medium flex-1 text-black">모자이크 가능</p>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* 기타 */}
-          {detail.etc && (
-            <div className="rounded-2xl bg-white p-4">
-              <InfoSection title="기타" content={detail.etc} hasIcon={false} />
+              {detail.etc && (
+                <div className="flex items-start gap-3 rounded-lg bg-gray-100 px-4 py-3">
+                  <div className="flex size-[22px] shrink-0 items-center justify-center rounded-full bg-purple-600">
+                    <CheckIcon className="text-white" />
+                  </div>
+                  <p className="text-body-2-medium flex-1 text-black">{detail.etc}</p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -206,7 +228,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           <button
             type="button"
             onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
-            className="text-body-1-semibold h-12 w-full rounded-full bg-gray-900 text-white"
+            className="text-body-1-semibold h-14 w-full cursor-pointer rounded-full bg-gray-900 text-white"
           >
             수정하기
           </button>

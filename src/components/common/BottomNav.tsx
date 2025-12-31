@@ -87,6 +87,7 @@ export default function BottomNav() {
 
   // 클라이언트에서만 role 읽기 (hydration mismatch 방지)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 클라이언트 전용 상태 초기화 패턴
     setRole(getUserRole());
   }, []);
 

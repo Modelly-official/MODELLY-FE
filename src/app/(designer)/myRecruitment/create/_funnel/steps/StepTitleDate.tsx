@@ -6,13 +6,15 @@ import MonthCalendar from '@/src/components/myRecruitment/Calendar/MonthCalendar
 import TimeSelector from '@/src/components/myRecruitment/Calendar/TimeSelector';
 import TitleInput from '@/src/components/myRecruitment/Form/TitleInput';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
+import { isStep1Valid } from '@/src/utils/myRecruitment';
 
 interface StepTitleDateProps {
   goNext: () => void;
   goPrev: () => void;
+  isEdit?: boolean;
 }
 
-export default function StepTitleDate({ goNext, goPrev }: StepTitleDateProps) {
+export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTitleDateProps) {
   // 현재 표시 중인 월
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
@@ -75,10 +77,7 @@ export default function StepTitleDate({ goNext, goPrev }: StepTitleDateProps) {
   };
 
   // 다음 버튼 활성화 조건: 제목 입력 + 날짜 선택 + 모든 날짜에 시간 선택
-  const isNextButtonEnabled =
-    title.trim().length > 0 &&
-    selectedDates.length > 0 &&
-    selectedDates.every((date) => selectedTimes[date]?.length > 0);
+  const isNextButtonEnabled = isStep1Valid({ title, selectedDates, selectedTimes });
 
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
@@ -91,7 +90,7 @@ export default function StepTitleDate({ goNext, goPrev }: StepTitleDateProps) {
         >
           <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
         </button>
-        <h1 className="text-head-4-medium text-black">모집글 등록</h1>
+        <h1 className="text-head-4-medium text-black">{isEdit ? '모집글 수정' : '모집글 등록'}</h1>
         <div className="size-6" /> {/* 균형을 위한 빈 공간 */}
       </div>
 

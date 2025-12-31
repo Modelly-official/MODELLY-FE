@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/src/apis/axios';
-import { useAuthStore, setAccessToken, setUserRole } from '@/src/stores';
+import { useAuthStore, setAccessToken, setUserRole, setUserCategory } from '@/src/stores';
 import type {
   LoginRequest,
   LoginResponse,
@@ -18,13 +18,14 @@ import type {
  * - accessToken: body로 받아서 쿠키에 저장
  * - refreshToken: Set-Cookie 헤더로 자동 저장 (HttpOnly)
  * - role: body로 받아서 쿠키에 저장
+ * - category: 디자이너인 경우 쿠키에 저장
  */
 export const login = async (payload: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
   const response = await axiosInstance.post<ApiResponse<LoginResponse>>('/auth/login', payload);
 
   // accessToken과 userRole을 쿠키에 저장
   if (response.data.isSuccess && response.data.result) {
-    const { accessToken, userRole } = response.data.result;
+    const { accessToken, userRole, category } = response.data.result;
 
     if (accessToken) {
       setAccessToken(accessToken);
@@ -33,6 +34,11 @@ export const login = async (payload: LoginRequest): Promise<ApiResponse<LoginRes
     if (userRole) {
       // 백엔드는 대문자 "MODEL" | "DESIGNER"로 보내주므로 소문자로 변환
       setUserRole(userRole.toLowerCase() as 'model' | 'designer');
+    }
+
+    // 디자이너 카테고리 저장
+    if (category) {
+      setUserCategory(category);
     }
   }
 

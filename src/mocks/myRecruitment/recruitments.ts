@@ -16,8 +16,7 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     reviewCount: 12,
     averageRating: 4.8,
     thumbnail: '/images/mocks/hair-1.png',
-    category: 'HAIR',
-    subCategories: ['HAIR_CUT', 'HAIR_COLORING'],
+    subCategory: ['커트', '염색'],
     _month: '2025-12',
   },
   {
@@ -27,8 +26,7 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     reviewCount: 8,
     averageRating: 4.5,
     thumbnail: '/images/mocks/hair-2.png',
-    category: 'NAIL',
-    subCategories: ['ART'],
+    subCategory: ['아트'],
     _month: '2025-12',
   },
   {
@@ -38,8 +36,7 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     reviewCount: 5,
     averageRating: 4.9,
     thumbnail: '/images/mocks/hair-3.png',
-    category: 'HAIR',
-    subCategories: ['HAIR_PERM'],
+    subCategory: ['펌'],
     _month: '2026-01',
   },
   {
@@ -49,8 +46,7 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     reviewCount: 3,
     averageRating: 5.0,
     thumbnail: '/images/mocks/hair-4.png',
-    category: 'HAIR',
-    subCategories: ['HAIR_COLORING'],
+    subCategory: ['염색'],
     _month: '2026-01',
   },
   {
@@ -60,8 +56,7 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     reviewCount: 0,
     averageRating: 0,
     thumbnail: '/images/mocks/hair-5.png',
-    category: 'EYELASH',
-    subCategories: ['EYELASH_EXTENSION'],
+    subCategory: ['속눈썹 연장'],
     _month: '2026-01',
   },
 ];
@@ -72,5 +67,6 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
 export function getMyRecruitmentsByMonth(month: string): MyRecruitmentListItem[] {
   return mockMyRecruitmentItems
     .filter((item) => item._month === month)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _month, ...rest }) => rest); // _month 필드 제거하여 반환
 }

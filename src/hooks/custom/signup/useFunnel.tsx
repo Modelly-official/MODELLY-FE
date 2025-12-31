@@ -31,12 +31,13 @@ export function useFunnel<Steps extends readonly string[]>(steps: Steps, options
 
   // FunnelComponent를 useMemo로 메모이제이션
   const FunnelComponent = useMemo(() => {
-    const Funnel = ({ children }: { children: ReactNode }) => (
-      <FunnelWrapper currentStep={currentStep}>{children}</FunnelWrapper>
+    // Step을 정적 속성으로 포함하는 컴포넌트 생성
+    return Object.assign(
+      ({ children }: { children: ReactNode }) => (
+        <FunnelWrapper currentStep={currentStep}>{children}</FunnelWrapper>
+      ),
+      { Step: StepComponent<Steps> },
     );
-    // Step을 Funnel의 정적 속성으로 할당
-    Funnel.Step = StepComponent<Steps>;
-    return Funnel;
   }, [currentStep]);
 
   return [FunnelComponent, setCurrentStep] as const;

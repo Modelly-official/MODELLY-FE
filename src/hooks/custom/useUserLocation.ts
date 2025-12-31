@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export interface UserLocation {
   latitude: number;
@@ -9,6 +9,7 @@ export interface UserLocation {
 
 interface UseUserLocationOptions {
   onError?: (errorMessage: string) => void;
+  autoRequest?: boolean; // 마운트 시 자동으로 위치 요청
 }
 
 interface UseUserLocationReturn {
@@ -23,7 +24,7 @@ interface UseUserLocationReturn {
  * @param options.onError - 위치 획득 실패 시 호출되는 콜백
  */
 export function useUserLocation(options: UseUserLocationOptions = {}): UseUserLocationReturn {
-  const { onError } = options;
+  const { onError, autoRequest = false } = options;
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -80,8 +81,13 @@ export function useUserLocation(options: UseUserLocationOptions = {}): UseUserLo
     tryGetPosition(true);
   }, [onError]);
 
-  // 컴포넌트 마운트 시 자동으로 위치 요청하지 않음
-  // 거리순 정렬 선택 시에만 requestLocation 호출
+  // autoRequest가 true면 마운트 시 자동으로 위치 요청
+  useEffect(() => {
+    if (autoRequest && !location && !isLoading) {
+      requestLocation();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRequest]);
 
   return {
     location,

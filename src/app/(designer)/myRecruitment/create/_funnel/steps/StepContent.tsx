@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import TextArea from '@/src/components/myRecruitment/Form/TextArea';
 import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
@@ -8,16 +8,21 @@ import ImageUploader from '@/src/components/myRecruitment/Form/ImageUploader';
 import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCheckbox';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
+import { useImagePreview } from '@/src/hooks/custom/myRecruitment/useImagePreview';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
-import { RECRUITMENT_CATEGORY_OPTIONS } from '@/src/constants/explore';
+import { getSubCategoryOptions } from '@/src/constants/explore';
+import { getUserCategory } from '@/src/stores';
+import { isStep2Valid } from '@/src/utils/myRecruitment';
 import type { PurposeType } from '@/src/types/myRecruitment';
 
 interface StepContentProps {
   goNext: () => void;
   goPrev: () => void;
+  isSubmitting?: boolean;
+  isEdit?: boolean;
 }
 
-export default function StepContent({ goNext, goPrev }: StepContentProps) {
+export default function StepContent({ goNext, goPrev, isSubmitting = false, isEdit = false }: StepContentProps) {
   // Zustand store
   const {
     content,
@@ -65,46 +70,25 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
     }
   }, [etcInput.value]);
 
-  // 각 파일의 고유 키를 생성하여 파일 변경 감지
-  const imageFilesKey = useMemo(
-    () => imageFiles.map((f) => `${f.name}-${f.size}-${f.lastModified}`).join(','),
-    [imageFiles],
-  );
+  // 이미지 미리보기 URL 관리 (blob URL 생성/정리)
+  useImagePreview({
+    imageFiles,
+    existingUrls: imagePreviewUrls,
+    onUrlsChange: setImagePreviewUrls,
+  });
 
-  // 이미지 파일이 추가/변경되면 미리보기 URL 생성
-  useEffect(() => {
-    // 이전 URL들 revoke
-    imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
-
-    if (imageFiles.length === 0) {
-      setImagePreviewUrls([]);
-      return;
-    }
-
-    // 새 URL 생성
-    const newUrls = imageFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviewUrls(newUrls);
-
-    // cleanup: 컴포넌트 언마운트 시 URL revoke
-    return () => {
-      newUrls.forEach((url) => URL.revokeObjectURL(url));
-    };
-    // imageFilesKey를 의존성으로 사용하여 파일 교체도 감지
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageFilesKey]);
+  // 디자이너 카테고리에 맞는 서브카테고리 옵션
+  const designerCategory = getUserCategory();
+  const subCategoryOptions = designerCategory ? getSubCategoryOptions(designerCategory) : [];
 
   // 목적 옵션
   const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
 
   // 등록 버튼 활성화 조건
-  const isSubmitButtonEnabled =
-    content.trim().length > 0 &&
-    subCategory !== null &&
-    restrictions.trim().length > 0 &&
-    notice.trim().length > 0 &&
-    imageFiles.length > 0 &&
-    // purpose가 OTHER인 경우 purposeDetail 필수
-    (purpose !== 'OTHER' || purposeDetail.trim().length > 0);
+  const isSubmitButtonEnabled = isStep2Valid(
+    { content, subCategory, restrictions, notice, imageFiles, imagePreviewUrls, purpose, purposeDetail },
+    { isEditMode: isEdit },
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
@@ -113,7 +97,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
         <button type="button" onClick={goPrev} className="flex size-6 cursor-pointer items-center justify-center">
           <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
         </button>
-        <h1 className="text-head-4-medium text-black">모집글 등록</h1>
+        <h1 className="text-head-4-medium text-black">{isEdit ? '모집글 수정' : '모집글 등록'}</h1>
         <div className="size-6" />
       </div>
 
@@ -133,7 +117,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
           label="카테고리"
           required
           placeholder="시술 카테고리를 선택해주세요"
-          options={[...RECRUITMENT_CATEGORY_OPTIONS]}
+          options={subCategoryOptions}
           value={subCategory}
           onChange={setSubCategory}
         />
@@ -219,14 +203,14 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
         <button
           type="button"
           onClick={goNext}
-          disabled={!isSubmitButtonEnabled}
+          disabled={!isSubmitButtonEnabled || isSubmitting}
           className={`text-body-1-semibold w-full rounded-full py-4 ${
-            isSubmitButtonEnabled
+            isSubmitButtonEnabled && !isSubmitting
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
-          새 모집글 등록
+          {isSubmitting ? (isEdit ? '수정 중...' : '등록 중...') : (isEdit ? '모집글 수정' : '새 모집글 등록')}
         </button>
       </div>
     </div>

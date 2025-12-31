@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ProfileIcon from '@/public/icons/chat/profile.svg';
 import type { ChatRoomSummary } from '@/src/types/chat';
-import { formatChatListTime } from '@/src/utils/chat/convert';
+import { formatChatListTime } from '@/src/utils/chat';
 
 interface ChatListItemProps {
   chat: ChatRoomSummary;

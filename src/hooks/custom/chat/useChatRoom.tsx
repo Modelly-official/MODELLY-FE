@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { StompSubscription } from '@stomp/stompjs';
 import { getChatMessages } from '@/src/apis/chat/chat';
-import { publishMessage, publishRead, subscribeRoom } from '@/src/lib/chat';
+import { publishMessage, publishRead, subscribeRoom } from '@/src/utils/chat';
 import useStompClient from '@/src/hooks/custom/chat/useStompClient';
 import useChatImage from '@/src/hooks/custom/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';
-import { mapApiMessage, mapStompMessage, formatTime } from '@/src/utils/chat/convert';
+import { mapApiMessage, mapStompMessage, formatMessageTime } from '@/src/utils/chat/messageConverter';
 import { parseUserIdFromToken } from '@/src/utils/auth/token';
 import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
 
@@ -231,7 +231,7 @@ export default function useChatRoom(roomId?: string | number) {
       id: `temp-${Date.now()}`,
       fromMe: true,
       text,
-      time: formatTime(now),
+      time: formatMessageTime(now),
       pending: true,
     };
     setMessages((prev) => [...prev, optimistic]);
@@ -281,7 +281,7 @@ export default function useChatRoom(roomId?: string | number) {
         id: tempId,
         fromMe: true,
         text: '',
-        time: formatTime(now),
+        time: formatMessageTime(now),
         imageUrls: [objectUrl],
       };
       setMessages((prev) => [...prev, optimistic]);

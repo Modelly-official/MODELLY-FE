@@ -1,6 +1,6 @@
 import type { ChatMessageResponse, Message, StompIncomingChatPayload } from '@/src/types/chat';
 
-export const formatTime = (value?: string) => {
+export const formatMessageTime = (value?: string) => {
   if (!value) return '';
   const d = new Date(value);
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -27,7 +27,7 @@ export const formatChatListTime = (isoString?: string): string => {
 
   // 오늘
   if (dateOnly.getTime() === todayOnly.getTime()) {
-    return formatTime(isoString);
+    return formatMessageTime(isoString);
   }
 
   // 어제
@@ -48,7 +48,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
   id: msg.messageId,
   fromMe: currentUserId != null ? msg.senderUserId === currentUserId : false,
   text: msg.messageType === 'IMAGE' ? '' : (msg.message ?? ''),
-  time: msg.createdAt ? formatTime(msg.createdAt) : undefined,
+  time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
   imageUrls: msg.imageUrls,
 });
 
@@ -60,7 +60,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
     id: payload.messageId,
     fromMe: currentUserId != null ? senderId === currentUserId : false,
     text: payload.messageType === 'IMAGE' ? '' : (payload.message ?? ''),
-    time: payload.createdAt ? formatTime(payload.createdAt) : undefined,
+    time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
     imageUrls: payload.imageUrls,
   };
 };

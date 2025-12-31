@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatTime } from '@/src/utils/auth/find-id';
+import { formatTimerDisplay } from '@/src/utils/auth/find-id';
 
 interface AuthCodeInputProps {
   authCode: string;
@@ -37,7 +37,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
           />
           {timer > 0 && !authCodeValid && (
             <span className="text-caption-1-medium absolute top-1/2 right-4 -translate-y-1/2 text-gray-700">
-              {formatTime(timer)}
+              {formatTimerDisplay(timer)}
             </span>
           )}
         </div>

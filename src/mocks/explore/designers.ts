@@ -15,6 +15,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 440,
     isLiked: false,
     createdAt: '2024-12-24T10:00:00Z',
+    averageRating: 4.8,
   },
   {
     designerId: 2,
@@ -27,6 +28,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 440,
     isLiked: true,
     createdAt: '2024-12-23T15:30:00Z',
+    averageRating: 4.5,
   },
   {
     designerId: 3,
@@ -39,6 +41,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 440,
     isLiked: false,
     createdAt: '2024-12-23T09:00:00Z',
+    averageRating: 4.9,
   },
   {
     designerId: 4,
@@ -51,6 +54,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 440,
     isLiked: false,
     createdAt: '2024-12-22T14:00:00Z',
+    averageRating: 4.7,
   },
   {
     designerId: 5,
@@ -63,6 +67,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 440,
     isLiked: true,
     createdAt: '2024-12-22T11:00:00Z',
+    averageRating: 4.6,
   },
   {
     designerId: 6,
@@ -75,6 +80,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 500,
     isLiked: false,
     createdAt: '2024-12-21T16:00:00Z',
+    averageRating: 4.3,
   },
   {
     designerId: 7,
@@ -87,6 +93,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 1200,
     isLiked: false,
     createdAt: '2024-12-21T13:00:00Z',
+    averageRating: 4.4,
   },
   {
     designerId: 8,
@@ -99,6 +106,7 @@ export const mockDesignerItems: DesignerListItem[] = [
     distance: 800,
     isLiked: true,
     createdAt: '2024-12-20T10:30:00Z',
+    averageRating: 4.2,
   },
 ];
 
