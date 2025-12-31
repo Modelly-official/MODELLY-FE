@@ -67,5 +67,6 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
 export function getMyRecruitmentsByMonth(month: string): MyRecruitmentListItem[] {
   return mockMyRecruitmentItems
     .filter((item) => item._month === month)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _month, ...rest }) => rest); // _month 필드 제거하여 반환
 }

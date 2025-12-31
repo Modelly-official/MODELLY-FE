@@ -76,7 +76,7 @@ export default function MyRecruitmentPage() {
             onClick={handleCardClick}
           />
         ) : (
-          <RecruitmentEmpty month={month} />
+          <RecruitmentEmpty />
         )}
       </div>
 

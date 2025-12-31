@@ -144,6 +144,7 @@ function getMockDesignerRecruitments(
   // 해당 월에 맞는 공고 필터링 (_month 필드로 필터링 후 제거)
   const filteredItems = mockMyRecruitmentItems
     .filter((item) => item._month === month)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _month, ...rest }) => rest);
 
   // 커서 기반 페이징
