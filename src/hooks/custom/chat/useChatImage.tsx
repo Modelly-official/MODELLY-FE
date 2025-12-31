@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import type { Client } from '@stomp/stompjs';
 import { getChatImagePresigned } from '@/src/apis/chat/image';
-import { publishMessage } from '@/src/lib/chat';
+import { publishMessage } from '@/src/utils/chat';
 import type { SendChatMessagePayload } from '@/src/types/chat';
 
 // 채팅 이미지 전송 훅

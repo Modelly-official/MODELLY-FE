@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { StompSubscription } from '@stomp/stompjs';
 import { getChatMessages } from '@/src/apis/chat/chat';
-import { publishMessage, publishRead, subscribeRoom } from '@/src/lib/chat';
+import { publishMessage, publishRead, subscribeRoom } from '@/src/utils/chat';
 import useStompClient from '@/src/hooks/custom/chat/useStompClient';
 import useChatImage from '@/src/hooks/custom/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';

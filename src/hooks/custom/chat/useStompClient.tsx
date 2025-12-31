@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { Client } from '@stomp/stompjs';
-import { createChatStompClient } from '@/src/lib/chat/client';
+import { createChatStompClient } from '@/src/utils/chat';
 import { getAccessToken } from '@/src/stores';
 
 /**
