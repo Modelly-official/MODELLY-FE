@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import TextArea from '@/src/components/myRecruitment/Form/TextArea';
 import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
@@ -8,6 +8,7 @@ import ImageUploader from '@/src/components/myRecruitment/Form/ImageUploader';
 import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCheckbox';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
+import { useImagePreview } from '@/src/hooks/custom/myRecruitment/useImagePreview';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
 import { getSubCategoryOptions } from '@/src/constants/explore';
 import { getUserCategory } from '@/src/stores';
@@ -69,37 +70,12 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
     }
   }, [etcInput.value]);
 
-  // 각 파일의 고유 키를 생성하여 파일 변경 감지
-  const imageFilesKey = useMemo(
-    () => imageFiles.map((f) => `${f.name}-${f.size}-${f.lastModified}`).join(','),
-    [imageFiles],
-  );
-
-  // 이미지 파일이 추가/변경되면 미리보기 URL 생성
-  useEffect(() => {
-    // 새 파일이 없으면 기존 URL 유지 (수정 모드에서 기존 이미지 유지)
-    if (imageFiles.length === 0) {
-      return;
-    }
-
-    // 이전 blob URL들만 revoke (외부 URL은 제외)
-    imagePreviewUrls.forEach((url) => {
-      if (url.startsWith('blob:')) {
-        URL.revokeObjectURL(url);
-      }
-    });
-
-    // 새 URL 생성
-    const newUrls = imageFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviewUrls(newUrls);
-
-    // cleanup: 컴포넌트 언마운트 시 URL revoke
-    return () => {
-      newUrls.forEach((url) => URL.revokeObjectURL(url));
-    };
-    // imageFilesKey를 의존성으로 사용하여 파일 교체도 감지
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageFilesKey]);
+  // 이미지 미리보기 URL 관리 (blob URL 생성/정리)
+  useImagePreview({
+    imageFiles,
+    existingUrls: imagePreviewUrls,
+    onUrlsChange: setImagePreviewUrls,
+  });
 
   // 디자이너 카테고리에 맞는 서브카테고리 옵션
   const designerCategory = getUserCategory();
