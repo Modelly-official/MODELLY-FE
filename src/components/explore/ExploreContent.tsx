@@ -38,14 +38,13 @@ export default function ExploreContent() {
     [showToast],
   );
 
-  // 위치 정보 훅 (페이지 로드 시 자동 요청)
+  // 위치 정보 훅 (거리순 정렬 선택 시에만 요청)
   const {
     location,
     isLoading: isLocationLoading,
     requestLocation,
   } = useUserLocation({
     onError: handleLocationError,
-    autoRequest: true,
   });
 
   // Infinite scroll observer ref
