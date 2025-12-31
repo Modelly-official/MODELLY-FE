@@ -9,19 +9,13 @@ import { MyRecruitmentHeader } from '@/src/components/myRecruitment/Header';
 import { RecruitmentList, RecruitmentEmpty } from '@/src/components/myRecruitment/List';
 import { ConfirmModal } from '@/src/components/common';
 import { useDesignerRecruitments, useDeleteRecruitment } from '@/src/hooks/queries/myRecruitment';
+import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment/useMonthNavigation';
 
 export default function MyRecruitmentPage() {
   const router = useRouter();
 
-  // 현재 날짜 기준 년/월 상태
-  const [currentDate, setCurrentDate] = useState(() => new Date());
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
-
-  // API 호출용 월 문자열 (YYYY-MM 형식)
-  const monthString = useMemo(() => {
-    return `${year}-${month.toString().padStart(2, '0')}`;
-  }, [year, month]);
+  // 월 네비게이션 상태
+  const { year, month, monthString, handlePrevMonth, handleNextMonth } = useMonthNavigation();
 
   // 삭제 모달 상태
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -36,23 +30,6 @@ export default function MyRecruitmentPage() {
     if (!data?.pages) return [];
     return data.pages.flatMap((page) => page.result.items);
   }, [data]);
-
-  // 월 네비게이션 핸들러
-  const handlePrevMonth = () => {
-    setCurrentDate((prev) => {
-      const newDate = new Date(prev);
-      newDate.setMonth(newDate.getMonth() - 1);
-      return newDate;
-    });
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate((prev) => {
-      const newDate = new Date(prev);
-      newDate.setMonth(newDate.getMonth() + 1);
-      return newDate;
-    });
-  };
 
   // 카드 클릭 핸들러
   const handleCardClick = (id: number) => {
