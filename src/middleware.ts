@@ -1,6 +1,88 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyAccessToken, refreshAccessToken, isPublicRoute, checkRoleAccess } from '@/src/lib/auth';
+import { isPublicRoute, checkRoleAccess } from '@/src/utils/middleware/routeGuard';
+import { ValidateResponse } from '@/src/types/auth/auth';
+import { ApiResponse } from '@/src/types';
+
+/**
+ * 백엔드 API로 accessToken 유효성 검증
+ * @param accessToken - 검증할 액세스 토큰
+ * @returns 토큰 유효 여부 (true: 유효, false: 무효)
+ */
+async function verifyAccessToken(accessToken: string): Promise<boolean> {
+  try {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (!apiBaseUrl) {
+      console.error('NEXT_PUBLIC_API_BASE_URL is not defined');
+      return false;
+    }
+
+    const response = await fetch(`${apiBaseUrl}/api/auth/validate`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Token validation failed:', response.status);
+      return false;
+    }
+
+    const data: ApiResponse<ValidateResponse> = await response.json();
+
+    return data.isSuccess && data.result.isValid === 'VALID';
+  } catch (error) {
+    console.error('Token validation error:', error);
+    return false;
+  }
+}
+
+/**
+ * refreshToken으로 새로운 accessToken 발급
+ * @param request - NextRequest 객체 (refreshToken 쿠키 포함)
+ * @returns 새로운 accessToken 또는 null
+ */
+async function refreshAccessToken(request: NextRequest): Promise<string | null> {
+  try {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (!apiBaseUrl) {
+      console.error('NEXT_PUBLIC_API_BASE_URL is not defined');
+      return null;
+    }
+
+    const refreshToken = request.cookies.get('refresh_token')?.value;
+
+    if (!refreshToken) {
+      return null;
+    }
+
+    const response = await fetch(`${apiBaseUrl}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        Cookie: `refresh_token=${refreshToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Token refresh failed:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data.isSuccess && data.result?.accessToken) {
+      return data.result.accessToken;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    return null;
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
