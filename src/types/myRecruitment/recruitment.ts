@@ -62,7 +62,8 @@ export interface CreateRecruitmentRequest {
   recruitmentSchedule: RecruitmentSchedule[];
   subCategoryList: SubCategory[];
   content: string;
-  notice: string;
+  restriction: string; // 제한 사항
+  notice: string; // 전달 사항
   goal1: string;
   thumbnail: string;
   imageUrls: string[];
@@ -83,7 +84,8 @@ export interface RecruitmentMutationResponse {
   recruitmentSchedule: RecruitmentSchedule[];
   subCategoryList: SubCategory[];
   content: string;
-  notice: string;
+  restriction: string; // 제한 사항
+  notice: string; // 전달 사항
   goal1: string;
   thumbnail: string;
   imageUrls: string[];
