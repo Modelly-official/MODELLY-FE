@@ -27,11 +27,24 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
 
+  // Optimistic update를 위한 토글 카운트 (홀수면 반전)
+  const [toggleCount, setToggleCount] = useState(0);
+  const [trackedServerValue, setTrackedServerValue] = useState<boolean | null>(null);
+
   // Query hook
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
   // Like mutation
   const { mutate: toggleLike } = useToggleRecruitmentLike();
+
+  // 서버 값이 변경되면 토글 카운트 리셋 (렌더 중 상태 업데이트 - React 권장 패턴)
+  const serverIsLiked = data?.result?.isLiked ?? false;
+  if (trackedServerValue !== null && trackedServerValue !== serverIsLiked) {
+    setToggleCount(0);
+    setTrackedServerValue(serverIsLiked);
+  } else if (trackedServerValue === null && data?.result) {
+    setTrackedServerValue(serverIsLiked);
+  }
 
   // 로딩 중
   if (isLoading) {
@@ -45,7 +58,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   const detail = data.result;
 
+  // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
+  const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
+
   const handleFavoriteClick = () => {
+    setToggleCount((prev) => prev + 1); // Optimistic update
     toggleLike(recruitmentId);
   };
 
@@ -61,13 +78,13 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           <button
             type="button"
             onClick={handleFavoriteClick}
-            className="flex size-6 shrink-0 items-center justify-center"
+            className="flex size-6 shrink-0 cursor-pointer items-center justify-center"
           >
             <Image
-              src={detail.isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
+              src={isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
               alt="찜하기"
-              width={19}
-              height={19}
+              width={20}
+              height={20}
             />
           </button>
         )}

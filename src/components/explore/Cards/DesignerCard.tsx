@@ -16,7 +16,7 @@ interface DesignerCardProps {
 
 export default function DesignerCard({ designer, onLikeToggle }: DesignerCardProps) {
   const { isLiked, handleClick } = useLikeToggle({
-    initialValue: designer.isLiked ?? false,
+    serverValue: designer.isLiked ?? false,
     onToggle: onLikeToggle,
   });
 

@@ -17,7 +17,7 @@ interface RecruitmentCardProps {
 
 export default function RecruitmentCard({ recruitment, isLeftColumn = false, onLikeToggle }: RecruitmentCardProps) {
   const { isLiked, handleClick } = useLikeToggle({
-    initialValue: recruitment.isLiked ?? false,
+    serverValue: recruitment.isLiked ?? false,
     onToggle: onLikeToggle,
   });
 
