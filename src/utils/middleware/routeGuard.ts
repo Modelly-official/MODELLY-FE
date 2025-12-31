@@ -32,5 +32,6 @@ export function checkRoleAccess(pathname: string, role: string): boolean {
   if (AUTHENTICATED_ROUTES.some((route) => pathname.startsWith(route))) {
     return normalizedRole === 'model' || normalizedRole === 'designer';
   }
-  return true;
+  // 미등록 라우트는 기본 차단 (보안 강화)
+  return false;
 }
