@@ -66,6 +66,7 @@ export type RecruitmentListResponse = CursorPaginationResponse<RecruitmentListIt
 export interface DesignerProfile {
   userId: number;
   designerId: number;
+  designerName: string;
   shop: string;
   shopAddress: string;
 }
@@ -83,10 +84,9 @@ export interface RecruitmentDetail {
   category: string;
   subCategories: string[];
   content: string;
-  notice: string;
+  notice: string; // 전달 사항
+  restriction: string; // 유의사항
   goal1: string;
-  goal2: string;
-  goal3: string;
   imageUrls: string[];
   agreeVideo: boolean;
   agreeInsta: boolean;

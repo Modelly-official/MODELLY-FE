@@ -31,7 +31,7 @@ export function transformFormToRequest(
     recruitmentSchedule,
     subCategoryList: formState.subCategory ? [formState.subCategory as SubCategory] : [],
     content: formState.content,
-    restriction: formState.restrictions, // 제한 사항
+    restriction: formState.restrictions, // 유의사항
     notice: formState.notice, // 전달 사항
     goal1,
     thumbnail: uploadResult.thumbnail,
