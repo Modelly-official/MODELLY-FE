@@ -7,86 +7,10 @@ import { StepTitleDate, StepContent } from '@/src/app/(designer)/myRecruitment/c
 import { useUpdateRecruitmentSubmit } from '@/src/hooks/custom/myRecruitment/useUpdateRecruitmentSubmit';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
-import { categoryNameToCode, subCategoryNameToCode } from '@/src/utils/myRecruitment';
-import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
-import type { RecruitmentSchedule } from '@/src/types/recruitment';
-import type { PurposeType } from '@/src/types/myRecruitment';
+import { convertDetailToFormState } from '@/src/utils/myRecruitment';
 
 interface EditRecruitmentFunnelProps {
   recruitmentId: number;
-}
-
-/**
- * RecruitmentDetail -> FormState 변환
- */
-function convertDetailToFormState(detail: {
-  title: string;
-  recruitmentSchedule: RecruitmentSchedule[];
-  category: string;
-  subCategories: string[];
-  content: string;
-  notice: string; // 전달 사항
-  restriction: string; // 유의사항
-  goal1: string;
-  imageUrls: string[];
-  agreeVideo: boolean;
-  agreeInsta: boolean;
-  agreeMosaic: boolean;
-  etc: string;
-}) {
-  // 날짜/시간 변환
-  const selectedDates = detail.recruitmentSchedule.map((s) => s.recruitmentDate);
-  const selectedTimes: Record<string, string[]> = {};
-  detail.recruitmentSchedule.forEach((s) => {
-    selectedTimes[s.recruitmentDate] = s.recruitmentTimes;
-  });
-
-  // 목적 변환 (goal1 -> purpose)
-  let purpose: PurposeType | null = null;
-  let purposeDetail = '';
-
-  const matchedPurpose = PURPOSE_OPTIONS.find((opt) => opt.name === detail.goal1);
-  if (matchedPurpose) {
-    purpose = matchedPurpose.code;
-  } else if (detail.goal1) {
-    purpose = 'OTHER';
-    purposeDetail = detail.goal1;
-  }
-
-  // 카테고리 변환 (한글 -> 코드)
-  const categoryCode = categoryNameToCode(detail.category);
-
-  // 서브카테고리 변환 (한글 -> 코드, 카테고리별로 다름)
-  const subCategoryName = detail.subCategories?.[0];
-  let subCategoryCode: string | null = null;
-  if (subCategoryName && categoryCode) {
-    subCategoryCode = subCategoryNameToCode(categoryCode, subCategoryName);
-  }
-
-  return {
-    title: detail.title,
-    selectedDates,
-    selectedTimes,
-    applyTimesToAll: false,
-    content: detail.content,
-    category: categoryCode,
-    subCategory: subCategoryCode,
-    restrictions: detail.restriction, // 유의사항
-    notice: detail.notice, // 전달 사항
-    purpose,
-    purposeDetail,
-    agreeVideo: detail.agreeVideo,
-    agreeInsta: detail.agreeInsta,
-    agreeMosaic: detail.agreeMosaic,
-    agreeEtc: !!detail.etc,
-    etc: detail.etc,
-    // 기존 이미지 URL (새 파일 업로드 전까지 유지)
-    imageFiles: [],
-    imagePreviewUrls: detail.imageUrls || [],
-    thumbnail: detail.imageUrls?.[0] || '',
-    imageUrls: detail.imageUrls || [],
-    imageFolderId: '',
-  };
 }
 
 export default function EditRecruitmentFunnel({ recruitmentId }: EditRecruitmentFunnelProps) {

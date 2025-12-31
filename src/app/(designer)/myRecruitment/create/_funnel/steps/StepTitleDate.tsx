@@ -6,7 +6,7 @@ import MonthCalendar from '@/src/components/myRecruitment/Calendar/MonthCalendar
 import TimeSelector from '@/src/components/myRecruitment/Calendar/TimeSelector';
 import TitleInput from '@/src/components/myRecruitment/Form/TitleInput';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
-import { isStep1Valid } from '@/src/utils/myRecruitment/recruitmentFormValidation';
+import { isStep1Valid } from '@/src/utils/myRecruitment';
 
 interface StepTitleDateProps {
   goNext: () => void;

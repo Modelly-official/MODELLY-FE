@@ -11,7 +11,7 @@ import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
 import { getSubCategoryOptions } from '@/src/constants/explore';
 import { getUserCategory } from '@/src/stores';
-import { isStep2Valid } from '@/src/utils/myRecruitment/recruitmentFormValidation';
+import { isStep2Valid } from '@/src/utils/myRecruitment';
 import type { PurposeType } from '@/src/types/myRecruitment';
 
 interface StepContentProps {
