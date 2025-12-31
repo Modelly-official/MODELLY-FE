@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 import PlusIcon from '@/public/icons/myRecruitment/plus.svg';
@@ -9,7 +9,7 @@ import { MyRecruitmentHeader } from '@/src/components/myRecruitment/Header';
 import { RecruitmentList, RecruitmentEmpty } from '@/src/components/myRecruitment/List';
 import { ConfirmModal } from '@/src/components/common';
 import { useDesignerRecruitments, useDeleteRecruitment } from '@/src/hooks/queries/myRecruitment';
-import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment/useMonthNavigation';
+import { useMonthNavigation, useDeleteModal } from '@/src/hooks/custom/myRecruitment';
 
 export default function MyRecruitmentPage() {
   const router = useRouter();
@@ -18,8 +18,7 @@ export default function MyRecruitmentPage() {
   const { year, month, monthString, handlePrevMonth, handleNextMonth } = useMonthNavigation();
 
   // 삭제 모달 상태
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedRecruitmentId, setSelectedRecruitmentId] = useState<number | null>(null);
+  const { isOpen: deleteModalOpen, selectedId: selectedRecruitmentId, openModal, closeModal } = useDeleteModal<number>();
 
   // API Hooks
   const { data, isLoading } = useDesignerRecruitments({ month: monthString });
@@ -42,25 +41,12 @@ export default function MyRecruitmentPage() {
   };
 
   // 삭제 핸들러
-  const handleDeleteClick = (id: number) => {
-    setSelectedRecruitmentId(id);
-    setDeleteModalOpen(true);
-  };
-
   const handleDeleteConfirm = () => {
     if (selectedRecruitmentId) {
       deleteRecruitment(selectedRecruitmentId, {
-        onSuccess: () => {
-          setDeleteModalOpen(false);
-          setSelectedRecruitmentId(null);
-        },
+        onSuccess: closeModal,
       });
     }
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteModalOpen(false);
-    setSelectedRecruitmentId(null);
   };
 
   // 새 모집글 생성
@@ -86,7 +72,7 @@ export default function MyRecruitmentPage() {
           <RecruitmentList
             recruitments={recruitments}
             onEdit={handleEdit}
-            onDelete={handleDeleteClick}
+            onDelete={openModal}
             onClick={handleCardClick}
           />
         ) : (
@@ -107,7 +93,7 @@ export default function MyRecruitmentPage() {
       {/* 삭제 확인 모달 */}
       <ConfirmModal
         isOpen={deleteModalOpen}
-        onClose={handleDeleteCancel}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         message="모집글을 삭제하시겠습니까?"
         confirmText="삭제"
