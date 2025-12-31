@@ -6,7 +6,7 @@ import { SearchInput } from '@/src/components/common';
 import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
 import { getAccessToken } from '@/src/stores';
-import LoginRequiredModal from '@/src/components/common/LoginRequiredModal';
+import { LoginRequiredModal } from '@/src/components/common';
 import BottomNav from '@/src/components/common/BottomNav';
 
 // 클라이언트에서만 인증 상태 확인 (hydration mismatch 방지)

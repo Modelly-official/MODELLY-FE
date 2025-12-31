@@ -1,4 +1,4 @@
-export * from '../find-id/validation';
+export * from '../find-id/emailValidation';
 
 /**
  * 비밀번호 유효성 검증
