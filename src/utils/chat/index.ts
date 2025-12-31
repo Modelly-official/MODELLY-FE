@@ -1,1 +1,1 @@
-export * from './convert';
+export * from './messageConverter';

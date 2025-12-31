@@ -1,4 +1,4 @@
 export * from './toast';
-export * from './format';
-export * from './image';
+export * from './locationFormat';
+export * from './imageValidator';
 

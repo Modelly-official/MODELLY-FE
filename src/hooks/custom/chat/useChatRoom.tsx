@@ -7,7 +7,7 @@ import { publishMessage, publishRead, subscribeRoom } from '@/src/lib/chat';
 import useStompClient from '@/src/hooks/custom/chat/useStompClient';
 import useChatImage from '@/src/hooks/custom/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';
-import { mapApiMessage, mapStompMessage, formatMessageTime } from '@/src/utils/chat/convert';
+import { mapApiMessage, mapStompMessage, formatMessageTime } from '@/src/utils/chat/messageConverter';
 import { parseUserIdFromToken } from '@/src/utils/auth/token';
 import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
 
