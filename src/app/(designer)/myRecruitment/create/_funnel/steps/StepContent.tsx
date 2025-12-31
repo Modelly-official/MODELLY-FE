@@ -11,6 +11,7 @@ import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 import { PURPOSE_OPTIONS } from '@/src/types/myRecruitment';
 import { getSubCategoryOptions } from '@/src/constants/explore';
 import { getUserCategory } from '@/src/stores';
+import { isStep2Valid } from '@/src/utils/myRecruitment/recruitmentFormValidation';
 import type { PurposeType } from '@/src/types/myRecruitment';
 
 interface StepContentProps {
@@ -108,17 +109,10 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
   const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
 
   // 등록 버튼 활성화 조건
-  // 수정 모드에서는 기존 이미지(imagePreviewUrls)가 있으면 허용
-  const hasImages = imageFiles.length > 0 || (isEdit && imagePreviewUrls.length > 0);
-
-  const isSubmitButtonEnabled =
-    content.trim().length > 0 &&
-    subCategory !== null &&
-    restrictions.trim().length > 0 &&
-    notice.trim().length > 0 &&
-    hasImages &&
-    // purpose가 OTHER인 경우 purposeDetail 필수
-    (purpose !== 'OTHER' || purposeDetail.trim().length > 0);
+  const isSubmitButtonEnabled = isStep2Valid(
+    { content, subCategory, restrictions, notice, imageFiles, imagePreviewUrls, purpose, purposeDetail },
+    { isEditMode: isEdit },
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">

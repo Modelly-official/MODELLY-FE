@@ -6,6 +6,7 @@ import MonthCalendar from '@/src/components/myRecruitment/Calendar/MonthCalendar
 import TimeSelector from '@/src/components/myRecruitment/Calendar/TimeSelector';
 import TitleInput from '@/src/components/myRecruitment/Form/TitleInput';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
+import { isStep1Valid } from '@/src/utils/myRecruitment/recruitmentFormValidation';
 
 interface StepTitleDateProps {
   goNext: () => void;
@@ -76,10 +77,7 @@ export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTi
   };
 
   // 다음 버튼 활성화 조건: 제목 입력 + 날짜 선택 + 모든 날짜에 시간 선택
-  const isNextButtonEnabled =
-    title.trim().length > 0 &&
-    selectedDates.length > 0 &&
-    selectedDates.every((date) => selectedTimes[date]?.length > 0);
+  const isNextButtonEnabled = isStep1Valid({ title, selectedDates, selectedTimes });
 
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
