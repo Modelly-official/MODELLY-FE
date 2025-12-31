@@ -64,8 +64,12 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
               {/* 별점 및 거리 */}
               <div className="flex items-center gap-1.5">
                 <RatingDisplay rating={recruitment.averageRating} reviewCount={recruitment.reviewCount} />
-                <span className="text-body-2-medium text-gray-800">·</span>
-                <DistanceDisplay distance={recruitment.distance} />
+                {recruitment.distance != null && (
+                  <>
+                    <span className="text-body-2-medium text-gray-800">·</span>
+                    <DistanceDisplay distance={recruitment.distance} />
+                  </>
+                )}
               </div>
             </div>
           </div>

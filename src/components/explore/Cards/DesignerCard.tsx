@@ -51,8 +51,12 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
             {/* 별점 및 거리 */}
             <div className="flex items-center gap-1.5">
               <RatingDisplay rating={designer.averageRating} reviewCount={designer.reviewCount} />
-              <span className="text-body-2-medium text-gray-800">·</span>
-              <DistanceDisplay distance={designer.distance} />
+              {designer.distance != null && (
+                <>
+                  <span className="text-body-2-medium text-gray-800">·</span>
+                  <DistanceDisplay distance={designer.distance} />
+                </>
+              )}
             </div>
           </div>
         </div>
