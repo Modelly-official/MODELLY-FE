@@ -41,10 +41,8 @@ export interface MyRecruitmentListItem {
   period: string; // "12.28 ~ 1.1" 형식
   reviewCount: number;
   averageRating: number;
-  // UI용 추가 필드 (API 응답에 포함되면 사용)
   thumbnail?: string;
-  category?: Category;
-  subCategories?: SubCategory[];
+  subCategory?: string[]; // 서브카테고리 배열 (예: ["커트"])
 }
 
 /** 내 공고 리스트 응답 */

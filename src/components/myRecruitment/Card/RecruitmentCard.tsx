@@ -46,8 +46,8 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
     onClick?.(recruitment.recruitmentId);
   };
 
-  // 카테고리 표시 코드 (서브카테고리 우선, 없으면 메인 카테고리)
-  const categoryCode = recruitment.subCategories?.[0] || recruitment.category || '';
+  // 서브카테고리 배열 (API에서 subCategory로 반환)
+  const subCategories = recruitment.subCategory || [];
 
   // 날짜 표시 (API에서 period 형식으로 제공)
   const dateText = recruitment.period;
@@ -109,9 +109,11 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
       <div className="relative flex items-start justify-between rounded-b-2xl bg-white p-4">
         <div className="flex w-[206px] flex-col gap-[9px]">
           {/* 카테고리 배지 */}
-          {categoryCode && (
-            <div className="flex">
-              <CategoryBadge category={categoryCode} />
+          {subCategories.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {subCategories.map((category) => (
+                <CategoryBadge key={category} category={category} />
+              ))}
             </div>
           )}
 
