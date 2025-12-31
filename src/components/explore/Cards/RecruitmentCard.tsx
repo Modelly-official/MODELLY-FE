@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { RecruitmentListItem } from '@/src/types';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
-import { formatDistrict, formatDistance } from '@/src/utils/common';
-import HeartIcon from '@/public/icons/myRecruitment/heart.svg';
+import { formatDistrict } from '@/src/utils/common';
+import { useLikeToggle } from '@/src/hooks/custom/explore';
+import { LikeButton, RatingDisplay, DistanceDisplay } from './shared';
 import LocationIcon from '@/public/icons/explore/location.svg';
 
 interface RecruitmentCardProps {
@@ -16,14 +16,10 @@ interface RecruitmentCardProps {
 }
 
 export default function RecruitmentCard({ recruitment, isLeftColumn = false, onLikeToggle }: RecruitmentCardProps) {
-  const [isLiked, setIsLiked] = useState(recruitment.isLiked ?? false);
-
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsLiked((prev) => !prev);
-    onLikeToggle?.();
-  };
+  const { isLiked, handleClick } = useLikeToggle({
+    initialValue: recruitment.isLiked ?? false,
+    onToggle: onLikeToggle,
+  });
 
   return (
     <Link href={`/post/${recruitment.recruitmentId}`} className="flex flex-col gap-2.5">
@@ -36,14 +32,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
             <span className="text-body-2-medium text-gray-500">이미지 없음</span>
           </div>
         )}
-        {/* 찜하기 버튼 */}
-        <button
-          type="button"
-          onClick={handleFavoriteClick}
-          className="absolute right-4 bottom-4 flex size-6 cursor-pointer items-center justify-center"
-        >
-          <HeartIcon className={isLiked ? 'text-white' : 'text-transparent'} />
-        </button>
+        <LikeButton isLiked={isLiked} onClick={handleClick} variant="overlay" />
       </div>
 
       {/* 정보 */}
@@ -68,14 +57,9 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
 
               {/* 별점 및 거리 */}
               <div className="flex items-center gap-1.5">
-                <div className="flex items-center gap-1">
-                  <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
-                  <span className="text-caption-1-medium text-gray-800">
-                    {recruitment.averageRating?.toFixed(1) ?? '0.0'} ({(recruitment.reviewCount ?? 0).toLocaleString()})
-                  </span>
-                </div>
+                <RatingDisplay rating={recruitment.averageRating} reviewCount={recruitment.reviewCount} />
                 <span className="text-body-2-medium text-gray-800">·</span>
-                <span className="text-caption-1-medium text-gray-800">{formatDistance(recruitment.distance ?? 0)}</span>
+                <DistanceDisplay distance={recruitment.distance} />
               </div>
             </div>
           </div>

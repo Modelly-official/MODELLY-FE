@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { DesignerListItem } from '@/src/types';
-import { formatDistrict, formatDistance } from '@/src/utils/common';
+import { formatDistrict } from '@/src/utils/common';
+import { useLikeToggle } from '@/src/hooks/custom/explore';
+import { LikeButton, RatingDisplay, DistanceDisplay } from './shared';
 import LocationIcon from '@/public/icons/explore/location.svg';
 import ProfileIcon from '@/public/icons/myRecruitment/mypage-active.svg';
 
@@ -14,14 +15,10 @@ interface DesignerCardProps {
 }
 
 export default function DesignerCard({ designer, onLikeToggle }: DesignerCardProps) {
-  const [isLiked, setIsLiked] = useState(designer.isLiked ?? false);
-
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsLiked((prev) => !prev);
-    onLikeToggle?.();
-  };
+  const { isLiked, handleClick } = useLikeToggle({
+    initialValue: designer.isLiked ?? false,
+    onToggle: onLikeToggle,
+  });
 
   return (
     <Link href={`/designer/${designer.designerId}`} className="flex items-center justify-between">
@@ -53,32 +50,16 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
 
             {/* 별점 및 거리 */}
             <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1">
-                <Image src="/icons/common/star.svg" alt="별점" width={14} height={14} />
-                <span className="text-caption-1-medium text-gray-800">
-                  {designer.averageRating?.toFixed(1) ?? '0.0'} ({(designer.reviewCount ?? 0).toLocaleString()})
-                </span>
-              </div>
+              <RatingDisplay rating={designer.averageRating} reviewCount={designer.reviewCount} />
               <span className="text-body-2-medium text-gray-800">·</span>
-              <span className="text-caption-1-medium text-gray-800">{formatDistance(designer.distance ?? 0)}</span>
+              <DistanceDisplay distance={designer.distance} />
             </div>
           </div>
         </div>
       </div>
 
       {/* 오른쪽: 찜하기 버튼 */}
-      <button
-        type="button"
-        onClick={handleFavoriteClick}
-        className="flex size-5 shrink-0 cursor-pointer items-center justify-center"
-      >
-        <Image
-          src={isLiked ? '/icons/common/heart-active.svg' : '/icons/common/heart.svg'}
-          alt="찜하기"
-          width={20}
-          height={20}
-        />
-      </button>
+      <LikeButton isLiked={isLiked} onClick={handleClick} variant="inline" />
     </Link>
   );
 }
