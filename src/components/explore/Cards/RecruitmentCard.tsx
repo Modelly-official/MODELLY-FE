@@ -26,7 +26,13 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
       {/* 이미지 */}
       <div className="relative h-[210px] w-full overflow-hidden rounded-none bg-gray-200">
         {recruitment.recruitmentThumbnail ? (
-          <Image src={recruitment.recruitmentThumbnail} alt={recruitment.title} fill sizes="50vw" className="object-cover" />
+          <Image
+            src={recruitment.recruitmentThumbnail}
+            alt={recruitment.title}
+            fill
+            sizes="50vw"
+            className="object-cover"
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <span className="text-body-2-medium text-gray-500">이미지 없음</span>
@@ -44,7 +50,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
           {/* 디자이너 정보 */}
           <div className="flex flex-col gap-0.5">
             <p className="text-caption-1-medium text-gray-800">
-              {recruitment.designerName} · {recruitment.shop}
+              {recruitment.designerName} 디자이너 · {recruitment.shop}
             </p>
 
             {/* 위치 및 별점/거리 */}
