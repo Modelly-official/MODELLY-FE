@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ReservationCalendar } from '@/src/components/reservation';
+import { ReservationCalendar, ReservationTimeSelector } from '@/src/components/reservation';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
 import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment';
 import { useAvailableSchedules } from '@/src/hooks/queries/reservation';
@@ -87,31 +87,11 @@ export default function StepDateTime({ recruitmentId, goNext, goPrev }: StepDate
             {selectedDate && (
               <div className="mt-6">
                 <h2 className="mb-4 text-head-3-semibold text-gray-900">시간 선택</h2>
-                {selectedDateTimes.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {selectedDateTimes.map((timeSlot) => (
-                      <button
-                        key={timeSlot.startTime}
-                        type="button"
-                        onClick={() => !timeSlot.isReserved && handleTimeSelect(timeSlot.startTime)}
-                        disabled={timeSlot.isReserved}
-                        className={`rounded-lg px-4 py-2 text-body-2-medium transition-colors ${
-                          selectedTime === timeSlot.startTime
-                            ? 'bg-purple-500 text-white'
-                            : timeSlot.isReserved
-                              ? 'cursor-not-allowed bg-gray-100 text-gray-400'
-                              : 'cursor-pointer bg-gray-100 text-gray-900 hover:bg-gray-200'
-                        }`}
-                      >
-                        {timeSlot.startTime}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-body-2-regular text-gray-500">
-                    해당 날짜에 예약 가능한 시간이 없습니다.
-                  </p>
-                )}
+                <ReservationTimeSelector
+                  timeSlots={selectedDateTimes}
+                  selectedTime={selectedTime}
+                  onTimeSelect={handleTimeSelect}
+                />
               </div>
             )}
           </>
