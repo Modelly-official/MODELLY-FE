@@ -1,2 +1,3 @@
 export { default as StepDateTime } from './1-StepDateTime';
 export { default as StepPhoto } from './2-StepPhoto';
+export { default as StepContent } from './3-StepContent';

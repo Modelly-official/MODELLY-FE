@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useFunnel } from '@/src/hooks/custom/signup/useFunnel';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
-import { StepDateTime, StepPhoto } from './steps';
+import { StepDateTime, StepPhoto, StepContent } from './steps';
 
 interface ReservationFunnelProps {
   recruitmentId: number;
@@ -62,27 +62,12 @@ export default function ReservationFunnel({
           />
         </Funnel.Step>
 
-        {/* TODO: Step 3 - 내용 작성 */}
+        {/* Step 3 - 내용 작성 */}
         <Funnel.Step name="content">
-          <div className="flex min-h-screen flex-col items-center justify-center bg-white">
-            <p className="text-body-2-medium text-gray-500">Step 3: 내용 작성 (구현 예정)</p>
-            <div className="mt-4 flex gap-4">
-              <button
-                type="button"
-                onClick={() => setStep('photo')}
-                className="rounded-lg bg-gray-200 px-4 py-2"
-              >
-                이전
-              </button>
-              <button
-                type="button"
-                onClick={() => setStep('confirm')}
-                className="rounded-lg bg-gray-900 px-4 py-2 text-white"
-              >
-                다음
-              </button>
-            </div>
-          </div>
+          <StepContent
+            goNext={() => setStep('confirm')}
+            goPrev={() => setStep('photo')}
+          />
         </Funnel.Step>
 
         {/* TODO: Step 4 - 예약 확인 */}
