@@ -15,6 +15,7 @@ export const PUBLIC_ROUTES = [
   '/chat', // 채팅 - 비로그인 시 모달 표시
   '/mypage', // 마이페이지 - 비로그인 시 블러+모달 표시
   '/post', // 공고 상세
+  '/reservation', // 예약 테스트
 ];
 
 // ===== 모델 전용 라우트 =====
