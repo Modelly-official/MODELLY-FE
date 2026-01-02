@@ -20,7 +20,8 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
     shopName: '진오헤어',
     branchName: '신촌점',
     designerName: '문원진',
-    category: '헤어',
+    category: 'HAIR',
+    subCategories: ['HAIR_CUT', 'HAIR_PERM'],
   };
 
   return (
@@ -30,6 +31,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
       branchName={mockShopInfo.branchName}
       designerName={mockShopInfo.designerName}
       category={mockShopInfo.category}
+      subCategories={mockShopInfo.subCategories}
     />
   );
 }

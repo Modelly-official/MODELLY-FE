@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useFunnel } from '@/src/hooks/custom/signup/useFunnel';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
-import { StepDateTime, StepPhoto, StepContent } from './steps';
+import { StepDateTime, StepPhoto, StepContent, StepConfirm } from './steps';
 
 interface ReservationFunnelProps {
   recruitmentId: number;
@@ -15,6 +15,8 @@ interface ReservationFunnelProps {
   designerName: string;
   /** 카테고리 (헤어, 네일 등) */
   category: string;
+  /** 세부 카테고리 목록 */
+  subCategories: string[];
 }
 
 const STEPS = ['dateTime', 'photo', 'content', 'confirm', 'complete'] as const;
@@ -25,6 +27,7 @@ export default function ReservationFunnel({
   branchName,
   designerName,
   category,
+  subCategories,
 }: ReservationFunnelProps) {
   const router = useRouter();
   const { reset } = useReservationStore();
@@ -70,27 +73,18 @@ export default function ReservationFunnel({
           />
         </Funnel.Step>
 
-        {/* TODO: Step 4 - 예약 확인 */}
+        {/* Step 4 - 예약 확인 */}
         <Funnel.Step name="confirm">
-          <div className="flex min-h-screen flex-col items-center justify-center bg-white">
-            <p className="text-body-2-medium text-gray-500">Step 4: 예약 확인 (구현 예정)</p>
-            <div className="mt-4 flex gap-4">
-              <button
-                type="button"
-                onClick={() => setStep('content')}
-                className="rounded-lg bg-gray-200 px-4 py-2"
-              >
-                이전
-              </button>
-              <button
-                type="button"
-                onClick={() => setStep('complete')}
-                className="rounded-lg bg-gray-900 px-4 py-2 text-white"
-              >
-                예약하기
-              </button>
-            </div>
-          </div>
+          <StepConfirm
+            recruitmentId={recruitmentId}
+            shopName={shopName}
+            branchName={branchName}
+            designerName={designerName}
+            category={category}
+            subCategories={subCategories}
+            goNext={() => setStep('complete')}
+            goPrev={() => setStep('content')}
+          />
         </Funnel.Step>
 
         {/* TODO: Step 5 - 완료 */}
