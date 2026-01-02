@@ -7,11 +7,22 @@ import { StepDateTime } from './steps';
 
 interface ReservationFunnelProps {
   recruitmentId: number;
+  /** 샵 이름 */
+  shopName: string;
+  /** 지점 이름 (선택사항) */
+  branchName?: string;
+  /** 디자이너 이름 */
+  designerName: string;
 }
 
 const STEPS = ['dateTime', 'photo', 'content', 'confirm', 'complete'] as const;
 
-export default function ReservationFunnel({ recruitmentId }: ReservationFunnelProps) {
+export default function ReservationFunnel({
+  recruitmentId,
+  shopName,
+  branchName,
+  designerName,
+}: ReservationFunnelProps) {
   const router = useRouter();
   const { reset } = useReservationStore();
 
@@ -31,6 +42,9 @@ export default function ReservationFunnel({ recruitmentId }: ReservationFunnelPr
         <Funnel.Step name="dateTime">
           <StepDateTime
             recruitmentId={recruitmentId}
+            shopName={shopName}
+            branchName={branchName}
+            designerName={designerName}
             goNext={() => setStep('photo')}
             goPrev={handleBackFromDateTime}
           />

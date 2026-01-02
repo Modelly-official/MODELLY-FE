@@ -1,18 +1,33 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ReservationCalendar, ReservationTimeSelector } from '@/src/components/reservation';
+import {
+  ReservationCalendar,
+  ReservationTimeSelector,
+  ReservationHeader,
+  ReservationStepInfo,
+} from '@/src/components/reservation';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
 import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment';
 import { useAvailableSchedules } from '@/src/hooks/queries/reservation';
 
 interface StepDateTimeProps {
   recruitmentId: number;
+  shopName: string;
+  branchName?: string;
+  designerName: string;
   goNext: () => void;
   goPrev: () => void;
 }
 
-export default function StepDateTime({ recruitmentId, goNext, goPrev }: StepDateTimeProps) {
+export default function StepDateTime({
+  recruitmentId,
+  shopName,
+  branchName,
+  designerName,
+  goNext,
+  goPrev,
+}: StepDateTimeProps) {
   const { selectedDate, selectedTime, setSelectedDate, setSelectedTime } = useReservationStore();
   const { year, month, monthString, handlePrevMonth, handleNextMonth } = useMonthNavigation();
 
@@ -53,17 +68,19 @@ export default function StepDateTime({ recruitmentId, goNext, goPrev }: StepDate
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* 헤더 (임시) */}
-      <div className="flex h-14 items-center justify-between px-4">
-        <button type="button" onClick={goPrev} className="text-body-2-medium text-gray-900">
-          ← 뒤로
-        </button>
-        <span className="text-body-2-medium text-gray-500">1/4</span>
-      </div>
+      {/* 헤더 */}
+      <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex-1 px-4">
-        <h1 className="mb-6 text-head-1-semibold text-gray-900">방문일 및 시간 선택</h1>
+      <div className="flex flex-1 flex-col gap-6 px-4">
+        {/* 스텝 정보 */}
+        <ReservationStepInfo
+          currentStep={1}
+          totalSteps={4}
+          shopName={shopName}
+          branchName={branchName}
+          designerName={designerName}
+        />
 
         {/* 로딩 상태 */}
         {isLoading ? (
@@ -85,7 +102,7 @@ export default function StepDateTime({ recruitmentId, goNext, goPrev }: StepDate
 
             {/* 시간 선택 (선택된 날짜가 있을 때만 표시) */}
             {selectedDate && (
-              <div className="mt-6">
+              <div>
                 <h2 className="mb-4 text-head-3-semibold text-gray-900">시간 선택</h2>
                 <ReservationTimeSelector
                   timeSlots={selectedDateTimes}
@@ -104,7 +121,7 @@ export default function StepDateTime({ recruitmentId, goNext, goPrev }: StepDate
           type="button"
           onClick={goNext}
           disabled={!canProceed}
-          className={`h-14 w-full rounded-xl text-body-1-semibold transition-colors ${
+          className={`h-14 w-full rounded-full text-body-1-semibold transition-colors ${
             canProceed
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
