@@ -27,9 +27,9 @@ const CATEGORY_INSTRUCTIONS: Record<string, string[]> = {
 };
 
 export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) {
-  const { imageUrl, setImageUrl } = useReservationStore();
+  const { uploadedImageUrl, setUploadedImageUrl } = useReservationStore();
   const { showToast } = useToast();
-  const [previewUrl, setPreviewUrl] = useState<string | null>(imageUrl);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(uploadedImageUrl);
   const [isUploading, setIsUploading] = useState(false);
 
   // 카테고리별 안내 문구 가져오기
@@ -56,17 +56,17 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
         await uploadImageToS3(uploadUrl, file);
 
         // 스토어에 이미지 URL 저장
-        setImageUrl(s3ImageUrl);
+        setUploadedImageUrl(s3ImageUrl);
       } catch (error) {
         console.error('이미지 업로드 실패:', error);
         showToast('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
         setPreviewUrl(null);
-        setImageUrl(null);
+        setUploadedImageUrl(null);
       } finally {
         setIsUploading(false);
       }
     },
-    [setImageUrl, showToast]
+    [setUploadedImageUrl, showToast]
   );
 
   // 이미지 삭제 핸들러
@@ -75,11 +75,11 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       URL.revokeObjectURL(previewUrl);
     }
     setPreviewUrl(null);
-    setImageUrl(null);
-  }, [previewUrl, setImageUrl]);
+    setUploadedImageUrl(null);
+  }, [previewUrl, setUploadedImageUrl]);
 
   // 다음 버튼 활성화 조건
-  const canProceed = imageUrl !== null && !isUploading;
+  const canProceed = uploadedImageUrl !== null && !isUploading;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">

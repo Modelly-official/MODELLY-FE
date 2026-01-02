@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useFunnel } from '@/src/hooks/custom/signup/useFunnel';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
-import { StepDateTime } from './steps';
+import { StepDateTime, StepPhoto } from './steps';
 
 interface ReservationFunnelProps {
   recruitmentId: number;
@@ -13,6 +13,8 @@ interface ReservationFunnelProps {
   branchName?: string;
   /** 디자이너 이름 */
   designerName: string;
+  /** 카테고리 (헤어, 네일 등) */
+  category: string;
 }
 
 const STEPS = ['dateTime', 'photo', 'content', 'confirm', 'complete'] as const;
@@ -22,6 +24,7 @@ export default function ReservationFunnel({
   shopName,
   branchName,
   designerName,
+  category,
 }: ReservationFunnelProps) {
   const router = useRouter();
   const { reset } = useReservationStore();
@@ -50,27 +53,13 @@ export default function ReservationFunnel({
           />
         </Funnel.Step>
 
-        {/* TODO: Step 2 - 사진 첨부 */}
+        {/* Step 2 - 사진 첨부 */}
         <Funnel.Step name="photo">
-          <div className="flex min-h-screen flex-col items-center justify-center bg-white">
-            <p className="text-body-2-medium text-gray-500">Step 2: 사진 첨부 (구현 예정)</p>
-            <div className="mt-4 flex gap-4">
-              <button
-                type="button"
-                onClick={() => setStep('dateTime')}
-                className="rounded-lg bg-gray-200 px-4 py-2"
-              >
-                이전
-              </button>
-              <button
-                type="button"
-                onClick={() => setStep('content')}
-                className="rounded-lg bg-gray-900 px-4 py-2 text-white"
-              >
-                다음
-              </button>
-            </div>
-          </div>
+          <StepPhoto
+            category={category}
+            goNext={() => setStep('content')}
+            goPrev={() => setStep('dateTime')}
+          />
         </Funnel.Step>
 
         {/* TODO: Step 3 - 내용 작성 */}

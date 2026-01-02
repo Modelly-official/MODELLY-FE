@@ -53,7 +53,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   // 에러 또는 데이터 없음
   if (isError || !data?.result) {
-    notFound();
+    return notFound();
   }
 
   const detail = data.result;
