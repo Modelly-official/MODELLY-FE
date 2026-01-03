@@ -25,6 +25,7 @@ export const MODEL_ONLY_ROUTES: string[] = [
 // ===== 디자이너 전용 라우트 =====
 export const DESIGNER_ONLY_ROUTES = [
   '/myRecruitment', // 내 공고 관리 (목록, 생성, 수정, 상세)
+  '/calendar', // 캘린더
 ];
 
 // ===== 인증된 사용자 공통 라우트 =====
