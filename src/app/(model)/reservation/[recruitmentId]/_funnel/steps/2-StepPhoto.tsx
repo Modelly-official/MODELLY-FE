@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   ReservationHeader,
   ReservationImageUpload,
@@ -33,6 +33,11 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
   const { showToast } = useToast();
   const [previewUrl, setPreviewUrl] = useState<string | null>(uploadedImageUrl);
   const [isUploading, setIsUploading] = useState(false);
+
+  // 스토어의 uploadedImageUrl 변경 시 previewUrl 동기화
+  useEffect(() => {
+    setPreviewUrl(uploadedImageUrl);
+  }, [uploadedImageUrl]);
 
   // 카테고리별 안내 문구 가져오기
   const instructions = CATEGORY_INSTRUCTIONS[category] || CATEGORY_INSTRUCTIONS.default;
