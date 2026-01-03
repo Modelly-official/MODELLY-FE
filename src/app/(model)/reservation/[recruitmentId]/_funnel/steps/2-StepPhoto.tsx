@@ -1,10 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import {
-  ReservationHeader,
-  ReservationImageUpload,
-} from '@/src/components/reservation';
+import { ReservationHeader, ReservationImageUpload } from '@/src/components/reservation';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
 import { getReservationPresignedUrl } from '@/src/apis/reservation/model';
 import { uploadImageToS3 } from '@/src/apis/auth/profile';
@@ -18,14 +15,12 @@ interface StepPhotoProps {
 
 // 카테고리별 안내 문구
 const CATEGORY_INSTRUCTIONS: Record<string, string[]> = {
-  HAIR: ['헤어: 머리 전체 길이가 보이도록 촬영해주세요.'],
-  NAIL: ['네일: 현재 손톱 상태가 보이도록 촬영해주세요.'],
-  EYELASH: ['속눈썹: 눈을 감은 상태로 정면 촬영해주세요.'],
-  TATTOO: ['타투: 시술 부위가 잘 보이도록 촬영해주세요.'],
-  default: [
-    '헤어: 머리 전체 길이가 보이도록 촬영해주세요.',
-    '네일: 현재 손톱 상태가 보이도록 촬영해주세요.',
-  ],
+  // 한글
+  헤어: ['헤어: 머리 전체 길이가 보이도록 촬영해주세요.'],
+  네일: ['네일: 현재 손톱 상태가 보이도록 촬영해주세요.'],
+  속눈썹: ['속눈썹: 눈을 감은 상태로 정면 촬영해주세요.'],
+  타투: ['타투: 시술 부위가 잘 보이도록 촬영해주세요.'],
+  default: ['시술 부위가 잘 보이도록 촬영해주세요.'],
 };
 
 export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) {
@@ -73,7 +68,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
         setIsUploading(false);
       }
     },
-    [setUploadedImageUrl, showToast]
+    [setUploadedImageUrl, showToast],
   );
 
   // 이미지 삭제 핸들러
@@ -97,7 +92,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       <div className="flex flex-1 flex-col gap-6 px-4">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
-          <p className="text-[20px] font-normal leading-[1.4] tracking-[-0.4px]">
+          <p className="text-[20px] leading-[1.4] font-normal tracking-[-0.4px]">
             <span className="text-gray-900">2</span>
             <span className="text-gray-600">/4</span>
           </p>
@@ -129,11 +124,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
         />
 
         {/* 업로드 중 표시 */}
-        {isUploading && (
-          <p className="text-center text-body-2-regular text-gray-500">
-            이미지 업로드 중...
-          </p>
-        )}
+        {isUploading && <p className="text-body-2-regular text-center text-gray-500">이미지 업로드 중...</p>}
       </div>
 
       {/* 하단 버튼 */}
@@ -142,10 +133,8 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
           type="button"
           onClick={goNext}
           disabled={!canProceed}
-          className={`h-14 w-full rounded-full text-body-1-semibold transition-colors ${
-            canProceed
-              ? 'cursor-pointer bg-gray-900 text-white'
-              : 'cursor-not-allowed bg-gray-200 text-gray-500'
+          className={`text-body-1-semibold h-14 w-full rounded-full transition-colors ${
+            canProceed ? 'cursor-pointer bg-gray-900 text-white' : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
           다음
