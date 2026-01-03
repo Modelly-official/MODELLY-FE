@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getQueryClient } from '@/src/providers/queryClient';
@@ -8,7 +9,9 @@ import { recruitmentKeys } from '@/src/hooks/queries/explore';
 import { PostDetailContent } from '@/src/components/post';
 
 // React cache로 래핑하여 동일 요청 중복 방지
-const getCachedRecruitmentDetail = cache((id: number) => getRecruitmentDetail(id));
+const getCachedRecruitmentDetail = cache((id: number, accessToken?: string) =>
+  getRecruitmentDetail(id, accessToken)
+);
 
 interface PostDetailPageProps {
   params: Promise<{ id: string }>;
@@ -26,7 +29,10 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
   }
 
   try {
-    const response = await getCachedRecruitmentDetail(recruitmentId);
+    // SSR에서 쿠키로 토큰 전달 (isLiked 등 인증 필요 데이터용)
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get('access_token')?.value;
+    const response = await getCachedRecruitmentDetail(recruitmentId, accessToken);
     const detail = response.result;
 
     // Null safety 처리
@@ -66,12 +72,16 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     notFound();
   }
 
+  // SSR에서 쿠키로 토큰 전달 (isLiked 등 인증 필요 데이터용)
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('access_token')?.value;
+
   const queryClient = getQueryClient();
 
   // SSR에서 데이터 프리페치 (캐시된 함수 사용으로 중복 요청 방지)
   await queryClient.prefetchQuery({
     queryKey: recruitmentKeys.detail(recruitmentId),
-    queryFn: () => getCachedRecruitmentDetail(recruitmentId),
+    queryFn: () => getCachedRecruitmentDetail(recruitmentId, accessToken),
   });
 
   return (
