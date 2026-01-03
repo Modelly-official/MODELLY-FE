@@ -17,3 +17,6 @@ export * from './designer';
 
 // My Recruitment types (Designer)
 export * from './myRecruitment';
+
+// Reservation types (Model)
+export * from './reservation';

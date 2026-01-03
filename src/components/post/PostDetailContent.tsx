@@ -53,7 +53,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   // 에러 또는 데이터 없음
   if (isError || !data?.result) {
-    notFound();
+    return notFound();
   }
 
   const detail = data.result;
@@ -144,7 +144,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           </div>
 
           {/* 시술 가능한 날짜 */}
-          <div className="flex flex-col gap-2 overflow-hidden rounded-2xl bg-white p-4">
+          <div className="flex flex-col gap-2 rounded-2xl bg-white p-4">
             <h3 className="text-body-2-semibold text-gray-900">시술 가능한 날짜</h3>
             <AvailableDates schedules={detail.recruitmentSchedule} />
           </div>

@@ -4,10 +4,10 @@ import type { Category } from '@/src/types/recruitment';
  * 카테고리 한글 -> 영문 코드 매핑
  */
 export const CATEGORY_KO_TO_CODE: Record<string, Category> = {
-  '헤어': 'HAIR',
-  '네일': 'NAIL',
-  '타투': 'TATTOO',
-  '속눈썹': 'EYELASH',
+  헤어: 'HAIR',
+  네일: 'NAIL',
+  타투: 'TATTOO',
+  속눈썹: 'EYELASH',
 };
 
 /**
@@ -25,19 +25,20 @@ export const CATEGORY_CODE_TO_KO: Record<Category, string> = {
  */
 export const SUBCATEGORY_KO_TO_CODE_BY_CATEGORY: Record<string, Record<string, string>> = {
   HAIR: {
-    '커트': 'HAIR_CUT',
-    '펌': 'HAIR_PERM',
-    '염색': 'HAIR_COLORING',
-    '매직': 'HAIR_MAGIC',
+    커트: 'HAIR_CUT',
+    펌: 'HAIR_PERM',
+    파마: 'HAIR_PERM',
+    염색: 'HAIR_COLORING',
+    매직: 'HAIR_MAGIC',
   },
   NAIL: {
-    '원컬러': 'ONE_COLOR',
-    '아트': 'ART',
-    '페디큐어': 'PEDICURE',
+    원컬러: 'ONE_COLOR',
+    아트: 'ART',
+    페디큐어: 'PEDICURE',
   },
   EYELASH: {
-    '펌': 'EYELASH_PERM',
-    '연장': 'EYELASH_EXTENSION',
+    펌: 'EYELASH_PERM',
+    연장: 'EYELASH_EXTENSION',
   },
   TATTOO: {
     '일반 디자인': 'NORMAL_TATTOO',

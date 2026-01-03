@@ -35,16 +35,25 @@ export async function getRecruitments(
 /**
  * 공고 상세 조회
  * GET /recruitments/{recruitmentId}
+ * @param recruitmentId - 공고 ID
+ * @param accessToken - SSR에서 쿠키로 전달받은 토큰 (선택)
  */
 export async function getRecruitmentDetail(
-  recruitmentId: number
+  recruitmentId: number,
+  accessToken?: string
 ): Promise<ApiResponse<RecruitmentDetail>> {
   if (isMockEnabled('recruitmentDetail')) {
     return getMockRecruitmentDetail(recruitmentId);
   }
 
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
   const { data } = await axiosInstance.get<ApiResponse<RecruitmentDetail>>(
-    `/recruitments/${recruitmentId}`
+    `/recruitments/${recruitmentId}`,
+    { headers }
   );
   return data;
 }
