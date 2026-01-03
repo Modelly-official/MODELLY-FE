@@ -3,7 +3,12 @@
 import { ReservationHeader } from '@/src/components/reservation';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
 import { useCreateReservation } from '@/src/hooks/queries/reservation';
-import type { Category } from '@/src/types';
+import {
+  categoryNameToCode,
+  categoryCodeToName,
+  subCategoryNameToCode,
+  subCategoryCodeToName,
+} from '@/src/utils/myRecruitment/category/categoryMapping';
 
 interface StepConfirmProps {
   recruitmentId: number;
@@ -15,30 +20,6 @@ interface StepConfirmProps {
   goNext: () => void;
   goPrev: () => void;
 }
-
-// 카테고리 한글 변환
-const CATEGORY_KOREAN: Record<string, string> = {
-  HAIR: '헤어',
-  NAIL: '네일',
-  EYELASH: '속눈썹',
-  TATTOO: '타투',
-};
-
-// 서브카테고리 한글 변환
-const SUB_CATEGORY_KOREAN: Record<string, string> = {
-  HAIR_CUT: '커트',
-  HAIR_PERM: '펌',
-  HAIR_COLORING: '염색',
-  HAIR_MAGIC: '매직',
-  ONE_COLOR: '원컬러',
-  ART: '아트',
-  PEDICURE: '페디큐어',
-  EYELASH_PERM: '속눈썹펌',
-  EYELASH_EXTENSION: '속눈썹연장',
-  LIP_TATTOO: '입술타투',
-  EYEBROW_TATTOO: '눈썹타투',
-  NORMAL_TATTOO: '타투',
-};
 
 // 날짜 포맷팅 (yyyy-MM-dd → yyyy년 M월 d일)
 function formatDate(dateStr: string): string {
@@ -69,19 +50,27 @@ export default function StepConfirm({
   const { selectedDate, selectedTime, uploadedImageUrl, comment } = useReservationStore();
   const { mutate: createReservation, isPending } = useCreateReservation();
 
+  // 카테고리 enum 변환 (한글/영문 모두 처리)
+  const categoryEnum = categoryNameToCode(category);
+
   // 예약하기 버튼 클릭
   const handleReservation = () => {
-    if (!selectedDate || !selectedTime || !uploadedImageUrl) return;
+    if (!selectedDate || !selectedTime || !uploadedImageUrl || !categoryEnum) return;
 
     const shop = branchName ? `${shopName} ${branchName}` : shopName;
+
+    // 서브카테고리 한글 → enum 변환
+    const subCategoriesEnum = subCategories.map((sub) =>
+      subCategoryNameToCode(categoryEnum, sub)
+    );
 
     createReservation(
       {
         recruitmentId,
         date: selectedDate,
         startTime: selectedTime,
-        category: category as Category,
-        subCategories,
+        category: categoryEnum,
+        subCategories: subCategoriesEnum,
         comment,
         designerName,
         shop,
@@ -95,11 +84,11 @@ export default function StepConfirm({
     );
   };
 
-  // 카테고리 & 서브카테고리 한글 변환
-  const categoryKorean = CATEGORY_KOREAN[category] || category;
-  const subCategoriesKorean = subCategories
-    .map((sub) => SUB_CATEGORY_KOREAN[sub] || sub)
-    .join('/');
+  // 카테고리 & 서브카테고리 한글 변환 (디스플레이용)
+  const categoryKorean = categoryEnum ? (categoryCodeToName(categoryEnum) ?? category) : category;
+  const subCategoriesKorean = categoryEnum
+    ? subCategories.map((sub) => subCategoryCodeToName(categoryEnum, sub)).join('/')
+    : subCategories.join('/');
 
   // 시술 위치 표시
   const locationDisplay = branchName ? `${branchName}` : shopName;

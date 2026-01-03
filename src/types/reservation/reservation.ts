@@ -28,7 +28,7 @@ export interface ReservationCreateRequest {
   startTime: string; // HH:mm
   category: Category;
   subCategories: string[];
-  comment: string;
+  comment: string; // 요청 사항 (시술내역/현재상태)
   designerName: string;
   shop: string;
   imageUrls: string;
