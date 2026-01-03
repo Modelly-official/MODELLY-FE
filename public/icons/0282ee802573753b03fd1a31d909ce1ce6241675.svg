@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 13 14.3333" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Calendar">
+<path id="Line_200" d="M0.5625 5.4363H12.4451" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_201" d="M9.46196 8.03982H9.46814" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_202" d="M6.50493 8.03982H6.51111" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_203" d="M3.54009 8.03982H3.54626" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_204" d="M9.46196 10.6306H9.46814" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_205" d="M6.50493 10.6306H6.51111" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_206" d="M3.54009 10.6306H3.54626" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_207" d="M9.19552 0.5V2.69385" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Line_208" d="M3.8088 0.5V2.69385" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M9.32551 1.5528H3.68064C1.72285 1.5528 0.5 2.64342 0.5 4.64815V10.6812C0.5 12.7175 1.72285 13.8333 3.68064 13.8333H9.31933C11.2833 13.8333 12.5 12.7364 12.5 10.7317V4.64815C12.5062 2.64342 11.2895 1.5528 9.32551 1.5528Z" stroke="var(--stroke-0, #54555E)" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

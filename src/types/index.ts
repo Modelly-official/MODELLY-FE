@@ -20,3 +20,6 @@ export * from './myRecruitment';
 
 // Reservation types (Model)
 export * from './reservation';
+
+// Calendar types (Designer)
+export * from './calendar';
