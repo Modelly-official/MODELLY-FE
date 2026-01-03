@@ -22,11 +22,9 @@ interface StepConfirmProps {
 }
 
 // 날짜 포맷팅 (yyyy-MM-dd → yyyy년 M월 d일)
+// 타임존 이슈 방지를 위해 문자열 직접 파싱
 function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
+  const [year, month, day] = dateStr.split('-').map(Number);
   return `${year}년 ${month}월 ${day}일`;
 }
 
