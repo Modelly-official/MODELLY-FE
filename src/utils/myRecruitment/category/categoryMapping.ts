@@ -27,6 +27,7 @@ export const SUBCATEGORY_KO_TO_CODE_BY_CATEGORY: Record<string, Record<string, s
   HAIR: {
     커트: 'HAIR_CUT',
     펌: 'HAIR_PERM',
+    파마: 'HAIR_PERM',
     염색: 'HAIR_COLORING',
     매직: 'HAIR_MAGIC',
   },
