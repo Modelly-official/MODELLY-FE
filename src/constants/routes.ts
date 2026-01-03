@@ -15,12 +15,11 @@ export const PUBLIC_ROUTES = [
   '/chat', // 채팅 - 비로그인 시 모달 표시
   '/mypage', // 마이페이지 - 비로그인 시 블러+모달 표시
   '/post', // 공고 상세
-  '/reservation', // 예약 테스트
 ];
 
 // ===== 모델 전용 라우트 =====
 export const MODEL_ONLY_ROUTES: string[] = [
-  // 추후 모델 전용 페이지 추가 시 사용
+  '/reservation', // 예약
 ];
 
 // ===== 디자이너 전용 라우트 =====
