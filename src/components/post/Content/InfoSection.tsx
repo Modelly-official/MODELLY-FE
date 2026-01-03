@@ -22,7 +22,7 @@ export default function InfoSection({ title, content, hasIcon = true, iconType =
             {iconType === 'check' ? (
               <CheckIcon className="text-white" />
             ) : (
-              <Image src="/icons/common/close.svg" alt="" width={12} height={12} className="text-white" />
+              <Image src="/icons/common/close.svg" alt="" className="size-3 text-white" />
             )}
           </div>
         )}
