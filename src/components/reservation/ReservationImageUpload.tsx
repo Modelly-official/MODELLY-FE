@@ -59,7 +59,7 @@ export default function ReservationImageUpload({
             src={previewUrl}
             alt="업로드된 이미지"
             fill
-            sizes="100vw"
+            sizes="(max-width: 768px) calc(100vw - 32px), 400px"
             className="object-cover"
             draggable={false}
           />
