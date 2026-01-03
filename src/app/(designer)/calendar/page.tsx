@@ -23,8 +23,10 @@ export default function CalendarPage() {
   // 월 네비게이션
   const { year, month, monthString, handlePrevMonth, handleNextMonth } = useMonthNavigation();
 
-  // 예약 도트 조회
-  const { data: dotsData } = useReservationDots({ month: monthString });
+  // 예약 도트 조회 (CONFIRMED만)
+  const { data: dotsData } = useReservationDots({
+    month: monthString,
+  });
 
   // 예약 목록 조회 (selectedDate가 null이면 전체, 있으면 해당 날짜)
   const { data: reservationsData, isLoading: isReservationsLoading } = useCalendarReservations({
@@ -34,10 +36,8 @@ export default function CalendarPage() {
 
   // 예약 있는 날짜 배열 (yyyy-MM-dd)
   const reservationDots = useMemo(() => {
-    if (!dotsData?.result?.reservationDots) return [];
-    return dotsData.result.reservationDots
-      .filter((dot) => dot.hasReserved)
-      .map((dot) => dot.date);
+    if (!dotsData?.result?.days) return [];
+    return dotsData.result.days.filter((dot) => dot.hasReserved).map((dot) => dot.date);
   }, [dotsData]);
 
   // 예약 목록
@@ -68,7 +68,7 @@ export default function CalendarPage() {
       />
 
       {/* 하단 예약 리스트 영역 */}
-      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pb-4 pt-3">
+      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pt-3 pb-4">
         {/* 상단 핸들 */}
         <div className="mb-4 flex justify-center">
           <div className="h-1 w-[49px] rounded-full bg-gray-300" />

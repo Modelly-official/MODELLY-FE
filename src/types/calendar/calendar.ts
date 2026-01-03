@@ -9,7 +9,7 @@ export interface ReservationDot {
 // 월간 예약 도트 조회 응답
 export interface ReservationDotsResult {
   month: string; // yyyy-MM
-  reservationDots: ReservationDot[];
+  days: ReservationDot[];
 }
 
 // 캘린더 예약 아이템
@@ -40,4 +40,5 @@ export interface GetReservationDotsParams {
 export interface GetCalendarReservationsParams {
   month: string; // yyyy-MM
   date?: string; // yyyy-MM-dd (특정 날짜 필터)
+  includePending?: boolean; // PENDING 상태 예약 포함 여부 (문서에 없지만 시도)
 }

@@ -8,8 +8,8 @@ export const calendarKeys = {
   all: ['calendar'] as const,
   reservationDots: (month: string, includePending?: boolean) =>
     [...calendarKeys.all, 'dots', month, includePending] as const,
-  reservations: (month: string, date?: string) =>
-    [...calendarKeys.all, 'reservations', month, date] as const,
+  reservations: (month: string, date?: string, includePending?: boolean) =>
+    [...calendarKeys.all, 'reservations', month, date, includePending] as const,
 };
 
 interface UseReservationDotsParams {
@@ -20,6 +20,7 @@ interface UseReservationDotsParams {
 interface UseCalendarReservationsParams {
   month: string; // yyyy-MM
   date?: string; // yyyy-MM-dd (특정 날짜 필터)
+  includePending?: boolean; // PENDING 상태 예약 포함 여부
 }
 
 interface UseQueryOptions {
@@ -53,12 +54,12 @@ export function useCalendarReservations(
   params: UseCalendarReservationsParams,
   options: UseQueryOptions = {}
 ) {
-  const { month, date } = params;
+  const { month, date, includePending } = params;
   const { enabled = true } = options;
 
   return useQuery<ApiResponse<CalendarReservationsResult>, Error>({
-    queryKey: calendarKeys.reservations(month, date),
-    queryFn: () => getCalendarReservations({ month, date }),
+    queryKey: calendarKeys.reservations(month, date, includePending),
+    queryFn: () => getCalendarReservations({ month, date, includePending }),
     enabled: enabled && !!month,
     staleTime: 1000 * 60 * 2, // 2분 (예약 데이터는 자주 변경될 수 있음)
   });
