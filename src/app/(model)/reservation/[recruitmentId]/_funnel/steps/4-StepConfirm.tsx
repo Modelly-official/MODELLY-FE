@@ -13,7 +13,7 @@ import {
 interface StepConfirmProps {
   recruitmentId: number;
   shopName: string;
-  branchName?: string;
+  shopAddress: string;
   designerName: string;
   category: string;
   subCategories: string[];
@@ -35,10 +35,17 @@ function formatTime(timeStr: string): string {
   return `${period} ${timeStr}`;
 }
 
+// 주소에서 구 이름 추출 (예: "서울 서대문구 창천동 57-13" → "서대문구")
+function extractDistrict(address: string): string {
+  const parts = address.split(' ');
+  const district = parts.find((part) => part.endsWith('구'));
+  return district || parts[1] || '';
+}
+
 export default function StepConfirm({
   recruitmentId,
   shopName,
-  branchName,
+  shopAddress,
   designerName,
   category,
   subCategories,
@@ -55,7 +62,7 @@ export default function StepConfirm({
   const handleReservation = () => {
     if (!selectedDate || !selectedTime || !uploadedImageUrl || !categoryEnum) return;
 
-    const shop = branchName ? `${shopName} ${branchName}` : shopName;
+    const shop = shopName;
 
     // 서브카테고리 한글 → enum 변환
     const subCategoriesEnum = subCategories.map((sub) =>
@@ -88,15 +95,16 @@ export default function StepConfirm({
     ? subCategories.map((sub) => subCategoryCodeToName(categoryEnum, sub)).join('/')
     : subCategories.join('/');
 
-  // 시술 위치 표시
-  const locationDisplay = branchName ? `${branchName}` : shopName;
+  // 시술 위치 표시 (주소에서 구 이름 추출)
+  const district = extractDistrict(shopAddress);
+  const locationDisplay = district ? `${district} · ${shopName}` : shopName;
 
   // 정보 항목들
   const infoItems = [
     { label: '예약일', value: selectedDate ? formatDate(selectedDate) : '-' },
     { label: '예약시간', value: selectedTime ? formatTime(selectedTime) : '-' },
     { label: '디자이너명', value: `${designerName} 디자이너` },
-    { label: '시술위치', value: `${locationDisplay} · ${shopName}` },
+    { label: '시술위치', value: locationDisplay },
     { label: '시술내용', value: `${categoryKorean} · ${subCategoriesKorean}` },
   ];
 

@@ -5,12 +5,19 @@ import LocationIcon from '@/public/icons/reservation/location.svg';
 interface ReservationStepInfoProps {
   currentStep: number;
   totalSteps: number;
-  /** 샵 이름 (예: "진오헤어") */
+  /** 샵 이름 (예: "아트시월") */
   shopName: string;
-  /** 지점 이름 (예: "신촌점") */
-  branchName?: string;
-  /** 디자이너 이름 (예: "문원진") */
+  /** 샵 주소 (예: "서울 서대문구 창천동 57-13") */
+  shopAddress: string;
+  /** 디자이너 이름 (예: "시월") */
   designerName: string;
+}
+
+// 주소에서 구 이름 추출 (예: "서울 서대문구 창천동 57-13" → "서대문구")
+function extractDistrict(address: string): string {
+  const parts = address.split(' ');
+  const district = parts.find((part) => part.endsWith('구'));
+  return district || parts[1] || '';
 }
 
 /**
@@ -23,12 +30,14 @@ export default function ReservationStepInfo({
   currentStep,
   totalSteps,
   shopName,
-  branchName,
+  shopAddress,
   designerName,
 }: ReservationStepInfoProps) {
-  // 위치 텍스트 조합: "신촌점 진오헤어 문원진 디자이너" 또는 "진오헤어 문원진 디자이너"
-  const locationText = branchName
-    ? `${branchName} ${shopName} ${designerName} 디자이너`
+  // 주소에서 구 이름 추출
+  const district = extractDistrict(shopAddress);
+  // 위치 텍스트 조합: "서대문구 아트시월 시월 디자이너"
+  const locationText = district
+    ? `${district} ${shopName} ${designerName} 디자이너`
     : `${shopName} ${designerName} 디자이너`;
 
   return (

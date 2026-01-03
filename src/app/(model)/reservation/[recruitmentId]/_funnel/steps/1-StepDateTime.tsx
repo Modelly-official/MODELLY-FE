@@ -14,7 +14,7 @@ import { useAvailableSchedules } from '@/src/hooks/queries/reservation';
 interface StepDateTimeProps {
   recruitmentId: number;
   shopName: string;
-  branchName?: string;
+  shopAddress: string;
   designerName: string;
   goNext: () => void;
   goPrev: () => void;
@@ -23,7 +23,7 @@ interface StepDateTimeProps {
 export default function StepDateTime({
   recruitmentId,
   shopName,
-  branchName,
+  shopAddress,
   designerName,
   goNext,
   goPrev,
@@ -78,7 +78,7 @@ export default function StepDateTime({
           currentStep={1}
           totalSteps={4}
           shopName={shopName}
-          branchName={branchName}
+          shopAddress={shopAddress}
           designerName={designerName}
         />
 

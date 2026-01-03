@@ -9,8 +9,8 @@ interface ReservationFunnelProps {
   recruitmentId: number;
   /** 샵 이름 */
   shopName: string;
-  /** 지점 이름 (선택사항) */
-  branchName?: string;
+  /** 샵 주소 */
+  shopAddress: string;
   /** 디자이너 이름 */
   designerName: string;
   /** 카테고리 (헤어, 네일 등) */
@@ -24,7 +24,7 @@ const STEPS = ['dateTime', 'photo', 'content', 'confirm', 'complete'] as const;
 export default function ReservationFunnel({
   recruitmentId,
   shopName,
-  branchName,
+  shopAddress,
   designerName,
   category,
   subCategories,
@@ -49,7 +49,7 @@ export default function ReservationFunnel({
           <StepDateTime
             recruitmentId={recruitmentId}
             shopName={shopName}
-            branchName={branchName}
+            shopAddress={shopAddress}
             designerName={designerName}
             goNext={() => setStep('photo')}
             goPrev={handleBackFromDateTime}
@@ -78,7 +78,7 @@ export default function ReservationFunnel({
           <StepConfirm
             recruitmentId={recruitmentId}
             shopName={shopName}
-            branchName={branchName}
+            shopAddress={shopAddress}
             designerName={designerName}
             category={category}
             subCategories={subCategories}

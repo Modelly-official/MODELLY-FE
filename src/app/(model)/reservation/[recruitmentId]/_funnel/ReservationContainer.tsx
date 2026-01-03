@@ -30,16 +30,11 @@ export default function ReservationContainer({ recruitmentId }: ReservationConta
 
   const { designerProfile, category, subCategories } = data.result;
 
-  // shop에서 지점명과 샵 이름 분리 (예: "진오헤어 신촌점" → shopName: "진오헤어", branchName: "신촌점")
-  const shopParts = designerProfile.shop.split(' ');
-  const shopName = shopParts[0] || designerProfile.shop;
-  const branchName = shopParts.length > 1 ? shopParts.slice(1).join(' ') : undefined;
-
   return (
     <ReservationFunnel
       recruitmentId={recruitmentId}
-      shopName={shopName}
-      branchName={branchName}
+      shopName={designerProfile.shop}
+      shopAddress={designerProfile.shopAddress}
       designerName={designerProfile.designerName}
       category={category}
       subCategories={subCategories}
