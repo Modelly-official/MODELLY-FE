@@ -100,8 +100,8 @@ export default function StepConfirm({
     { label: '시술내용', value: `${categoryKorean} · ${subCategoriesKorean}` },
   ];
 
-  // 데이터 유효성 검사
-  const isValid = selectedDate && selectedTime && uploadedImageUrl;
+  // 데이터 유효성 검사 (handleReservation과 동일한 조건)
+  const isValid = selectedDate && selectedTime && uploadedImageUrl && categoryEnum;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
