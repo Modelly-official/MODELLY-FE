@@ -124,29 +124,29 @@ export default function DesignerCalendar({
       </div>
 
       {/* 요일 헤더 */}
-      <div className="mb-4 flex items-center justify-between px-[10px]">
+      <div className="mb-2 flex items-center justify-between">
         {WEEKDAYS.map((weekday) => (
-          <div key={weekday} className="flex w-8 items-center justify-center">
+          <div key={weekday} className="flex size-8 items-center justify-center">
             <span className="text-body-2-regular text-gray-600">{weekday}</span>
           </div>
         ))}
       </div>
 
       {/* 날짜 그리드 */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         {Array.from({ length: Math.ceil(calendarDays.length / 7) }).map((_, weekIndex) => {
           const weekDays = calendarDays.slice(weekIndex * 7, weekIndex * 7 + 7);
 
           return (
             <div key={weekIndex} className="flex items-center justify-between">
               {weekDays.map((day, dayIndex) => (
-                <div key={dayIndex} className="flex w-8 flex-col items-center gap-1">
+                <div key={dayIndex} className="flex h-[42px] w-8 flex-col items-center">
                   {day !== null ? (
                     <>
                       <button
                         type="button"
                         onClick={() => handleDateClick(day)}
-                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-[16px] leading-[1.4] tracking-[-0.32px] transition-colors ${
+                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-body-1 leading-140 tracking-[-0.32px] transition-colors ${
                           isSelected(day)
                             ? 'bg-purple-600 text-white'
                             : isToday(day)
@@ -156,10 +156,10 @@ export default function DesignerCalendar({
                       >
                         {day}
                       </button>
-                      {/* 예약 도트 */}
-                      {hasReservation(day) && (
-                        <div className="size-2 rounded-full bg-purple-600" />
-                      )}
+                      {/* 예약 도트 - 항상 공간 차지, 없으면 투명 */}
+                      <div
+                        className={`mt-1 size-2 rounded-full ${hasReservation(day) ? 'bg-purple-600' : 'bg-transparent'}`}
+                      />
                     </>
                   ) : (
                     <div className="size-8" />
@@ -169,7 +169,7 @@ export default function DesignerCalendar({
               {/* 마지막 주가 7일 미만일 경우 빈 칸 채우기 */}
               {weekDays.length < 7 &&
                 Array.from({ length: 7 - weekDays.length }).map((_, i) => (
-                  <div key={`empty-${i}`} className="w-8" />
+                  <div key={`empty-${i}`} className="size-8" />
                 ))}
             </div>
           );

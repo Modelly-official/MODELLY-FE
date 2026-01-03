@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import ArrowUpIcon from '@/public/icons/calendar/arrow-up.svg';
 import { DesignerCalendar, CalendarReservationCard } from '@/src/components/calendar';
 import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment';
 import { useReservationDots, useCalendarReservations } from '@/src/hooks/queries/calendar';
@@ -68,14 +69,14 @@ export default function CalendarPage() {
       />
 
       {/* 하단 예약 리스트 영역 */}
-      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pt-3 pb-4">
-        {/* 상단 핸들 */}
+      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pb-4 pt-3">
+        {/* 상단 화살표 */}
         <div className="mb-4 flex justify-center">
-          <div className="h-1 w-[49px] rounded-full bg-gray-300" />
+          <ArrowUpIcon className="size-6 text-gray-400" />
         </div>
 
         {/* 타이틀 영역 */}
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center gap-2">
           <h2 className="text-head-2-semibold text-gray-950">
             {selectedDate ? formatSelectedDateTitle(selectedDate) : '전체'}
           </h2>
