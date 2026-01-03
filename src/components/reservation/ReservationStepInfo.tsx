@@ -52,7 +52,7 @@ export default function ReservationStepInfo({
           <LocationIcon className="size-5 shrink-0 text-gray-950" />
           <p className="text-body-2-medium leading-[1.5] text-gray-700">
             <span className="font-semibold text-purple-500">{locationText}</span>
-            <span>의 예약 진행 중이예요</span>
+            <span>의 예약 진행 중이에요</span>
           </p>
         </div>
       </div>
