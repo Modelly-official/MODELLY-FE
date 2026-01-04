@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
 import ChatIcon from '@/public/icons/calendar/chat.svg';
@@ -12,6 +13,8 @@ import {
   ReservationSuccessModal,
 } from '@/src/components/reservation';
 import { MOCK_TIME_SLOTS } from '@/src/mocks/calendar';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
 import type { CalendarReservationItem } from '@/src/types/calendar';
 import type { ReservationChangeRequest, ReservationCancelRequest, ReservationInfo } from '@/src/types/reservation';
 
@@ -46,6 +49,10 @@ function formatSubCategories(subCategories: string[]): string {
 }
 
 export default function CalendarReservationCard({ reservation }: CalendarReservationCardProps) {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const createChatRoom = useCreateChatRoom();
+
   // 모달 상태 관리
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -61,8 +68,17 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
     startTime: reservation.startTime,
   };
 
+  // 채팅방 생성 및 이동
   const handleChatClick = () => {
-    // TODO: 채팅방 생성 API 호출 후 /chat/[roomId]로 이동
+    createChatRoom.mutate(reservation.modelUserId, {
+      onSuccess: (response) => {
+        const chatRoomId = response.result.chatRoomId;
+        router.push(`/chat/${chatRoomId}`);
+      },
+      onError: () => {
+        showToast('채팅방 생성에 실패했습니다');
+      },
+    });
   };
 
   const handleChangeClick = () => {
@@ -126,9 +142,16 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleChatClick}
-          className="flex h-[42px] cursor-pointer items-center gap-1 whitespace-nowrap rounded-full bg-gray-900 px-3 py-[10px]"
+          disabled={createChatRoom.isPending}
+          className={`flex h-[42px] items-center gap-1 whitespace-nowrap rounded-full px-3 py-[10px] ${
+            createChatRoom.isPending ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-gray-900'
+          }`}
         >
-          <ChatIcon className="size-5 text-white" />
+          {createChatRoom.isPending ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <ChatIcon className="size-5 text-white" />
+          )}
           <span className="text-body-2-medium text-white">채팅 보내기</span>
         </button>
 

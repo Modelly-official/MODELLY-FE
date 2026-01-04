@@ -1,6 +1,6 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { getChatRooms } from '@/src/apis/chat/chat';
-import type { ApiResponse, ChatRoomListResponse } from '@/src/types';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getChatRooms, createChatRoom } from '@/src/apis/chat/chat';
+import type { ApiResponse, ChatRoomListResponse, CreateChatRoomResponse } from '@/src/types';
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -31,5 +31,22 @@ export function useChatRooms(params?: { size?: number; enabled?: boolean }) {
     staleTime: 1000 * 30, // 30초
     refetchInterval: 1000 * 60, // 1분마다 자동 refetch
     enabled,
+  });
+}
+
+/**
+ * 채팅방 생성 또는 기존 채팅방 조회 mutation hook
+ * - 성공 시 chatRoomId 반환
+ * - 채팅방 목록 캐시 무효화
+ */
+export function useCreateChatRoom() {
+  const queryClient = useQueryClient();
+
+  return useMutation<ApiResponse<CreateChatRoomResponse>, Error, number>({
+    mutationFn: (targetUserId: number) => createChatRoom(targetUserId),
+    onSuccess: () => {
+      // 채팅방 목록 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: chatRoomKeys.all });
+    },
   });
 }
