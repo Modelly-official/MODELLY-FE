@@ -33,7 +33,7 @@ function TodayReservationItemRow({ item }: { item: TodayReservationItem }) {
       <span className="text-body-2-medium text-gray-900">·</span>
       <span className="text-body-2-medium text-gray-900">{item.modelName} 님</span>
       <span className="text-body-2-medium text-gray-900">·</span>
-      <span className="text-body-2-medium text-gray-900">{item.subCategories[0]}</span>
+      <span className="text-body-2-medium text-gray-900">{item.subCategories?.[0] ?? '기타'}</span>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import {
   ReservationInfoCard,
@@ -22,6 +22,11 @@ export default function ReservationDetailPage() {
   const router = useRouter();
   const params = useParams();
   const reservationId = Number(params.reservationId);
+
+  // 잘못된 reservationId 처리
+  if (Number.isNaN(reservationId)) {
+    notFound();
+  }
 
   const { data, isLoading } = useReservationDetail(reservationId);
   const confirmMutation = useConfirmReservation();
@@ -101,7 +106,7 @@ export default function ReservationDetailPage() {
           <ReservationInfoCard
             date={reservation.date}
             startTime={reservation.startTime}
-            category={reservation.subCategories[reservation.subCategories.length - 1]}
+            category={reservation.subCategories?.length > 0 ? reservation.subCategories[reservation.subCategories.length - 1] : '기타'}
           />
 
           {/* 신청자 정보 카드 */}

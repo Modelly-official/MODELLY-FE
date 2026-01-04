@@ -48,7 +48,7 @@ export function PendingReservationListItem({ item }: PendingReservationListItemP
           {day}일 {formatTime(item.time)}
         </p>
         <div className="flex items-center gap-2 text-body-2-medium text-gray-700">
-          <span>{item.subCategories[0]}</span>
+          <span>{item.subCategories?.[0] ?? '기타'}</span>
           <span>·</span>
           <span>{item.modelName} 님</span>
         </div>

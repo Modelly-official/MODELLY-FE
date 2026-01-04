@@ -34,7 +34,7 @@ function PendingReservationCard({ item }: { item: PendingReservationItem }) {
     >
       {/* 카테고리 배지 */}
       <div className="flex">
-        <CategoryBadge label={item.subCategories[0]} />
+        <CategoryBadge label={item.subCategories?.[0] ?? '기타'} />
       </div>
 
       {/* 시간 */}
