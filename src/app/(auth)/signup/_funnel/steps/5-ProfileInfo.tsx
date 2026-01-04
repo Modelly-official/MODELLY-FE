@@ -102,17 +102,17 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         ...(isDesigner
           ? {
               designer: {
-                shop: storeName,
-                intro: intro,
+                shop: storeNameTrimmed,
+                intro: introTrimmed,
                 addressLine1: addressLine1,
                 addressLine2: addressLine2 || '',
                 category: convertCategoryToApi(category),
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }
           : {
               model: {
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }),
       };
@@ -151,17 +151,17 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         ...(isDesigner
           ? {
               designer: {
-                shop: storeName,
-                intro: intro,
+                shop: storeNameTrimmed,
+                intro: introTrimmed,
                 addressLine1: addressLine1,
                 addressLine2: addressLine2 || '',
                 category: convertCategoryToApi(category),
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }
           : {
               model: {
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }),
       };
