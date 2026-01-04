@@ -72,7 +72,7 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
             type="email"
             className={`min-w-0 flex-1 bg-gray-100 ${
               emailStatus === 'invalid' ? 'ring-error ring-1' : ''
-            } text-body-2-medium py-3.5xt-gray-900 rounded-xl px-4 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent`}
+            } text-body-2-medium rounded-xl px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent`}
             placeholder="이메일을 입력해주세요"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleEmailChange(e.target.value)}
@@ -81,7 +81,11 @@ export const BasicInfoInput: React.FC<BasicInfoInputProps> = ({ name, email, set
           />
           <button
             type="button"
-            className={`text-body-2-medium email && isValidEmailFormat(email) ? 'cursor-pointer text-purple-700' : 'cursor-not-allowed text-gray-600' } w-20 shrink-0 rounded-xl bg-gray-200 bg-purple-200 px-4 py-3.5`}
+            className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
+              email && isValidEmailFormat(email)
+                ? 'cursor-pointer bg-purple-200 text-purple-700'
+                : 'cursor-not-allowed bg-gray-200 text-gray-600'
+            }`}
             onClick={handleCheckEmail}
             disabled={!email || !isValidEmailFormat(email) || emailStatus === 'checking'}
           >
