@@ -17,6 +17,8 @@ import {
   useConfirmReservation,
   useRejectReservation,
 } from '@/src/hooks/queries/designerHome';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
 
 export default function ReservationDetailPage() {
   const router = useRouter();
@@ -31,16 +33,24 @@ export default function ReservationDetailPage() {
   const { data, isLoading } = useReservationDetail(reservationId);
   const confirmMutation = useConfirmReservation();
   const rejectMutation = useRejectReservation();
+  const createChatRoom = useCreateChatRoom();
+  const { showToast } = useToast();
 
   const reservation = data?.result;
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const handleChatClick = () => {
-    // TODO: 채팅방으로 이동
-    if (reservation) {
-      console.log('채팅방 이동:', reservation.modelUserId);
-    }
+    if (!reservation) return;
+
+    createChatRoom.mutate(reservation.modelUserId, {
+      onSuccess: (response) => {
+        router.push(`/chat/${response.result.chatRoomId}`);
+      },
+      onError: () => {
+        showToast('채팅방 생성에 실패했습니다');
+      },
+    });
   };
 
   const handleReject = () => {

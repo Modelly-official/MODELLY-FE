@@ -1,32 +1,25 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
 import ChatIcon from '@/public/icons/calendar/chat.svg';
 import { subCategoryCodeToName } from '@/src/utils/myRecruitment/category';
+import { formatDateToShort, formatTimeWithPeriod } from '@/src/utils/common';
+import {
+  ReservationChangeModal,
+  ReservationCancelModal,
+  ReservationSuccessModal,
+} from '@/src/components/reservation';
+import { MOCK_TIME_SLOTS } from '@/src/mocks/calendar';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
 import type { CalendarReservationItem } from '@/src/types/calendar';
+import type { ReservationChangeRequest, ReservationCancelRequest, ReservationInfo } from '@/src/types/reservation';
 
 interface CalendarReservationCardProps {
   reservation: CalendarReservationItem;
-}
-
-/**
- * 날짜를 YY.MM.DD 형식으로 포맷
- */
-function formatDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-');
-  return `${year.slice(2)}.${month}.${day}`;
-}
-
-/**
- * 시간을 12시간 형식 (h:mm am/pm)으로 포맷
- */
-function formatTime(timeStr: string): string {
-  const [hour, minute] = timeStr.split(':');
-  const hourNum = parseInt(hour, 10);
-  const period = hourNum >= 12 ? 'pm' : 'am';
-  const displayHour = hourNum % 12 === 0 ? 12 : hourNum % 12;
-  return `${displayHour}:${minute} ${period}`;
 }
 
 /**
@@ -56,16 +49,66 @@ function formatSubCategories(subCategories: string[]): string {
 }
 
 export default function CalendarReservationCard({ reservation }: CalendarReservationCardProps) {
+  const router = useRouter();
+  const { showToast } = useToast();
+  const createChatRoom = useCreateChatRoom();
+
+  // 모달 상태 관리
+  const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // 예약 정보를 모달에 전달할 형식으로 변환
+  const reservationInfo: ReservationInfo = {
+    reservationId: reservation.reservationId,
+    modelUserId: reservation.modelUserId,
+    modelName: reservation.modelName,
+    date: reservation.date,
+    startTime: reservation.startTime,
+  };
+
+  // 채팅방 생성 및 이동
   const handleChatClick = () => {
-    // TODO: 채팅방 생성 API 호출 후 /chat/[roomId]로 이동
+    createChatRoom.mutate(reservation.modelUserId, {
+      onSuccess: (response) => {
+        const chatRoomId = response.result.chatRoomId;
+        router.push(`/chat/${chatRoomId}`);
+      },
+      onError: () => {
+        showToast('채팅방 생성에 실패했습니다');
+      },
+    });
   };
 
   const handleChangeClick = () => {
-    // TODO: 예약 변경 기능 연결
+    setIsChangeModalOpen(true);
   };
 
   const handleCancelClick = () => {
-    // TODO: 예약 취소 기능 연결
+    setIsCancelModalOpen(true);
+  };
+
+  // Mock: 예약 변경 요청 처리
+  const handleChangeSubmit = (data: ReservationChangeRequest) => {
+    console.log('예약 변경 요청:', data);
+    setIsChangeModalOpen(false);
+    setSuccessMessage('예약 변경이 요청되었습니다');
+    setIsSuccessModalOpen(true);
+  };
+
+  // Mock: 예약 취소 요청 처리
+  const handleCancelSubmit = (data: ReservationCancelRequest) => {
+    console.log('예약 취소 요청:', data);
+    setIsCancelModalOpen(false);
+    setSuccessMessage('예약 취소가 요청되었습니다');
+    setIsSuccessModalOpen(true);
+  };
+
+  // 성공 모달 확인 버튼 처리
+  const handleSuccessConfirm = () => {
+    setIsSuccessModalOpen(false);
+    setSuccessMessage('');
   };
 
   return (
@@ -78,14 +121,14 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <CalendarIcon className="size-4 text-gray-800" />
-            <span className="text-body-2-medium text-gray-800">{formatDate(reservation.date)}</span>
+            <span className="text-body-2-medium text-gray-800">{formatDateToShort(reservation.date)}</span>
           </div>
 
           <span className="text-body-2-medium text-gray-800">·</span>
 
           <div className="flex items-center gap-1">
             <TimeCircleIcon className="size-4" />
-            <span className="text-body-2-medium text-gray-800">{formatTime(reservation.startTime)}</span>
+            <span className="text-body-2-medium text-gray-800">{formatTimeWithPeriod(reservation.startTime)}</span>
           </div>
 
           <span className="text-body-2-medium text-gray-800">·</span>
@@ -99,9 +142,16 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleChatClick}
-          className="flex h-[42px] cursor-pointer items-center gap-1 whitespace-nowrap rounded-full bg-gray-900 px-3 py-[10px]"
+          disabled={createChatRoom.isPending}
+          className={`flex h-[42px] items-center gap-1 whitespace-nowrap rounded-full px-3 py-[10px] ${
+            createChatRoom.isPending ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-gray-900'
+          }`}
         >
-          <ChatIcon className="size-5 text-white" />
+          {createChatRoom.isPending ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <ChatIcon className="size-5 text-white" />
+          )}
           <span className="text-body-2-medium text-white">채팅 보내기</span>
         </button>
 
@@ -121,6 +171,31 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
           <span className="text-body-2-medium text-gray-900">예약 취소</span>
         </button>
       </div>
+
+      {/* 예약 변경 모달 */}
+      <ReservationChangeModal
+        isOpen={isChangeModalOpen}
+        onClose={() => setIsChangeModalOpen(false)}
+        reservation={reservationInfo}
+        timeSlots={MOCK_TIME_SLOTS}
+        onSubmit={handleChangeSubmit}
+      />
+
+      {/* 예약 취소 모달 */}
+      <ReservationCancelModal
+        isOpen={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        reservation={reservationInfo}
+        onSubmit={handleCancelSubmit}
+      />
+
+      {/* 성공 모달 */}
+      <ReservationSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        message={successMessage}
+        onConfirm={handleSuccessConfirm}
+      />
     </div>
   );
 }
