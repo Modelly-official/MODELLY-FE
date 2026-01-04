@@ -76,7 +76,7 @@ export function TodayReservationSection({ data, isLoading }: TodayReservationSec
           <div className="mt-4 flex items-center gap-1">
             <span className="text-body-1-medium text-gray-900">오늘의 예약</span>
             <span className="text-body-1-medium text-purple-700">
-              {data.reservations?.length ?? 0}
+              {data.totalCount ?? 0}
             </span>
           </div>
 

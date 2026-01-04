@@ -15,6 +15,7 @@ export interface TodayReservationItem {
 /** 오늘의 예약 목록 응답 */
 export interface TodayReservationsResult {
   date: string; // yyyy-MM-dd
+  totalCount: number;
   reservations: TodayReservationItem[];
 }
 

@@ -23,7 +23,7 @@ export function DesignerHomeContent() {
   const { data: todayData, isLoading: isTodayLoading } = useTodayReservations(todayDate);
   const { data: pendingData, isLoading: isPendingLoading } = usePendingReservations();
 
-  const todayReservations = todayData?.result ?? { date: todayDate, reservations: [] };
+  const todayReservations = todayData?.result ?? { date: todayDate, totalCount: 0, reservations: [] };
   const pendingReservations = pendingData?.result ?? {
     reservations: [],
     totalCount: 0,
