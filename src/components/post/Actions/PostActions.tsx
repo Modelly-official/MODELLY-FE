@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
 
 interface PostActionsProps {
   recruitmentId: number;
@@ -9,10 +11,18 @@ interface PostActionsProps {
 
 export default function PostActions({ recruitmentId, designerId }: PostActionsProps) {
   const router = useRouter();
+  const createChatRoom = useCreateChatRoom();
+  const { showToast } = useToast();
 
   const handleChat = () => {
-    // TODO: 채팅 페이지로 이동 (추후 구현)
-    router.push(`/chat/${designerId}`);
+    createChatRoom.mutate(designerId, {
+      onSuccess: (response) => {
+        router.push(`/chat/${response.result.chatRoomId}`);
+      },
+      onError: () => {
+        showToast('채팅방 생성에 실패했습니다');
+      },
+    });
   };
 
   const handleReservation = () => {
@@ -26,9 +36,14 @@ export default function PostActions({ recruitmentId, designerId }: PostActionsPr
         <button
           type="button"
           onClick={handleChat}
-          className="text-body-1-semibold flex-1 cursor-pointer rounded-full border border-gray-400 py-4 text-gray-900"
+          disabled={createChatRoom.isPending}
+          className={`text-body-1-semibold flex-1 rounded-full border py-4 ${
+            createChatRoom.isPending
+              ? 'cursor-not-allowed border-gray-300 text-gray-400'
+              : 'cursor-pointer border-gray-400 text-gray-900'
+          }`}
         >
-          채팅하기
+          {createChatRoom.isPending ? '연결 중...' : '채팅하기'}
         </button>
         <button
           type="button"
