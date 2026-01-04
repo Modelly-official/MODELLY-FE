@@ -99,7 +99,7 @@ export default function ReservationChangeModal({
               <span className={`text-body-2-medium ${selectedDate ? 'text-gray-900' : 'text-gray-600'}`}>
                 {selectedDate ? formatDateToShort(selectedDate) : '날짜를 선택하세요'}
               </span>
-              <CalendarIcon className="size-5 text-gray-700" />
+              <CalendarIcon className="size-5 text-gray-900" />
             </button>
           </div>
 

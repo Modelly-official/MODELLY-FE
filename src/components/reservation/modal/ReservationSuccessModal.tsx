@@ -19,14 +19,14 @@ export default function ReservationSuccessModal({
 }: ReservationSuccessModalProps) {
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} showCloseButton>
-      <div className="flex flex-col items-center gap-[25px]">
+      <div className="flex flex-col items-center gap-6">
         {/* 텍스트 영역 */}
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-center text-head-4-medium text-gray-90">
+        <div className="flex w-full flex-col items-center">
+          <p className="text-center text-body-1-medium text-gray-900">
             {message}
           </p>
           {subMessage && (
-            <p className="text-center text-body-2-medium text-gray-60">
+            <p className="mt-2 text-center text-body-2-medium text-gray-600">
               {subMessage}
             </p>
           )}
@@ -36,7 +36,7 @@ export default function ReservationSuccessModal({
         <button
           type="button"
           onClick={onConfirm}
-          className="w-full cursor-pointer rounded-full bg-gray-90 px-4 py-3.5 text-body-1-semibold text-white"
+          className="h-12 w-full cursor-pointer rounded-full bg-gray-900 px-4 text-body-2-medium text-white"
         >
           확인
         </button>

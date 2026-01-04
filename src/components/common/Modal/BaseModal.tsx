@@ -122,7 +122,9 @@ export default function BaseModal({
       >
         {/* 헤더 영역 */}
         {(showCloseButton || title) && (
-          <div className="relative flex items-center justify-center pb-1">
+          <div
+            className={`flex items-center ${title ? 'relative justify-center pb-1' : 'h-6 justify-end'}`}
+          >
             {title && (
               <h2 id={titleId} className="text-head-4-medium text-gray-900">
                 {title}
@@ -134,7 +136,7 @@ export default function BaseModal({
                 onClick={onClose}
                 disabled={disableClose}
                 aria-label="모달 닫기"
-                className="absolute right-0 cursor-pointer p-1 disabled:cursor-not-allowed"
+                className={`flex size-6 cursor-pointer items-center justify-center disabled:cursor-not-allowed ${title ? 'absolute right-0' : ''}`}
               >
                 <CloseIcon className="h-3 w-3" />
               </button>
