@@ -73,11 +73,14 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
   };
 
   const isDesigner = role === 'designer';
+  const nicknameTrimmed = nickname.trim();
+  const introTrimmed = intro.trim();
+  const storeNameTrimmed = storeName.trim();
 
   // 폼 유효성 검사
   const isFormValid = isDesigner
-    ? nickname && gender && birthDate && intro && storeName && address && category
-    : nickname && gender && birthDate;
+    ? nicknameTrimmed && gender && birthDate && introTrimmed && storeNameTrimmed && address && category
+    : nicknameTrimmed && gender && birthDate;
 
   const isSubmitting = isSocial ? socialSignupMutation.isPending : signupMutation.isPending;
 
