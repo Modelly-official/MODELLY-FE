@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
 import ChatIcon from '@/public/icons/nav/chat.svg';
@@ -57,11 +56,8 @@ function formatSubCategories(subCategories: string[]): string {
 }
 
 export default function CalendarReservationCard({ reservation }: CalendarReservationCardProps) {
-  const router = useRouter();
-
   const handleChatClick = () => {
-    // 채팅 페이지로 이동 (modelUserId 활용)
-    router.push(`/chat?userId=${reservation.modelUserId}`);
+    // TODO: 채팅방 생성 API 호출 후 /chat/[roomId]로 이동
   };
 
   const handleChangeClick = () => {
