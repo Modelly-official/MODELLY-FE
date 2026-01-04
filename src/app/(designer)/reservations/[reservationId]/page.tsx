@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import {
@@ -7,12 +8,16 @@ import {
   ApplicantInfoCard,
   RequestContentCard,
   AttachedPhotosCard,
+  ReservationConfirmModal,
+  ReservationRejectModal,
 } from '@/src/components/designerHome';
 import { mockReservationDetail } from '@/src/mocks/designerHome';
 
 export default function ReservationDetailPage() {
   const router = useRouter();
   const reservation = mockReservationDetail;
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const handleChatClick = () => {
     // TODO: 채팅방으로 이동
@@ -20,13 +25,27 @@ export default function ReservationDetailPage() {
   };
 
   const handleReject = () => {
-    // TODO: 예약 거절 처리
+    setIsRejectModalOpen(true);
+  };
+
+  const handleRejectConfirm = () => {
+    // TODO: 예약 거절 API 호출 후 Toast 표시
     console.log('예약 거절:', reservation.reservationId);
+    setIsRejectModalOpen(false);
+    // 거절 후 목록으로 이동
+    router.push('/reservations/pending');
   };
 
   const handleConfirm = () => {
-    // TODO: 예약 확정 처리 (모달 표시)
+    // TODO: 예약 확정 API 호출 후 모달 표시
     console.log('예약 확정:', reservation.reservationId);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmModalClose = () => {
+    setIsConfirmModalOpen(false);
+    // 확정 후 목록으로 이동
+    router.push('/reservations/pending');
   };
 
   return (
@@ -75,19 +94,33 @@ export default function ReservationDetailPage() {
           <button
             type="button"
             onClick={handleReject}
-            className="flex-1 rounded-full border border-gray-400 bg-white py-4 text-body-1-semibold text-gray-900"
+            className="flex-1 cursor-pointer rounded-full border border-gray-400 bg-white py-4 text-body-1-semibold text-gray-900"
           >
             예약 거절
           </button>
           <button
             type="button"
             onClick={handleConfirm}
-            className="flex-1 rounded-full bg-gray-900 py-4 text-body-1-semibold text-white"
+            className="flex-1 cursor-pointer rounded-full bg-gray-900 py-4 text-body-1-semibold text-white"
           >
             예약 확정
           </button>
         </div>
       )}
+
+      {/* 예약 확정 완료 모달 */}
+      <ReservationConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleConfirmModalClose}
+        onConfirm={handleConfirmModalClose}
+      />
+
+      {/* 예약 거절 확인 모달 */}
+      <ReservationRejectModal
+        isOpen={isRejectModalOpen}
+        onClose={() => setIsRejectModalOpen(false)}
+        onConfirm={handleRejectConfirm}
+      />
     </div>
   );
 }
