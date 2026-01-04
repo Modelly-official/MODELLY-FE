@@ -168,7 +168,11 @@ export default function Dropdown({
                       isFocused ? 'bg-gray-50' : ''
                     }`}
                   >
-                    <span className={`text-body-2-medium ${isSelected ? 'text-gray-900' : 'text-gray-500'}`}>
+                    <span
+                      className={`text-body-2-medium ${
+                        value ? (isSelected ? 'text-gray-900' : 'text-gray-500') : 'text-gray-900'
+                      }`}
+                    >
                       {option.label}
                     </span>
                     {isSelected && <CheckIcon />}
