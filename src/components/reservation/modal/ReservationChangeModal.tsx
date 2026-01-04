@@ -92,13 +92,17 @@ export default function ReservationChangeModal({
           type="button"
           onClick={handleSubmit}
           disabled={!isFormValid || isLoading}
-          className={`w-full cursor-pointer rounded-full px-4 py-3.5 text-body-1-semibold ${
+          className={`flex w-full items-center justify-center rounded-full px-4 py-3.5 text-body-1-semibold ${
             isFormValid && !isLoading
-              ? 'bg-gray-90 text-white'
+              ? 'cursor-pointer bg-gray-90 text-white'
               : 'cursor-not-allowed bg-gray-20 text-gray-70'
           }`}
         >
-          {isLoading ? '요청 중...' : '변경 요청하기'}
+          {isLoading ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            '변경 요청하기'
+          )}
         </button>
       </div>
     </BaseModal>
