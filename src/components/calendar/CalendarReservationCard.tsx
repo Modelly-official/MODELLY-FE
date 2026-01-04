@@ -4,29 +4,11 @@ import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
 import ChatIcon from '@/public/icons/calendar/chat.svg';
 import { subCategoryCodeToName } from '@/src/utils/myRecruitment/category';
+import { formatDateToShort, formatTimeWithPeriod } from '@/src/utils/common';
 import type { CalendarReservationItem } from '@/src/types/calendar';
 
 interface CalendarReservationCardProps {
   reservation: CalendarReservationItem;
-}
-
-/**
- * 날짜를 YY.MM.DD 형식으로 포맷
- */
-function formatDate(dateStr: string): string {
-  const [year, month, day] = dateStr.split('-');
-  return `${year.slice(2)}.${month}.${day}`;
-}
-
-/**
- * 시간을 12시간 형식 (h:mm am/pm)으로 포맷
- */
-function formatTime(timeStr: string): string {
-  const [hour, minute] = timeStr.split(':');
-  const hourNum = parseInt(hour, 10);
-  const period = hourNum >= 12 ? 'pm' : 'am';
-  const displayHour = hourNum % 12 === 0 ? 12 : hourNum % 12;
-  return `${displayHour}:${minute} ${period}`;
 }
 
 /**
@@ -78,14 +60,14 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <CalendarIcon className="size-4 text-gray-800" />
-            <span className="text-body-2-medium text-gray-800">{formatDate(reservation.date)}</span>
+            <span className="text-body-2-medium text-gray-800">{formatDateToShort(reservation.date)}</span>
           </div>
 
           <span className="text-body-2-medium text-gray-800">·</span>
 
           <div className="flex items-center gap-1">
             <TimeCircleIcon className="size-4" />
-            <span className="text-body-2-medium text-gray-800">{formatTime(reservation.startTime)}</span>
+            <span className="text-body-2-medium text-gray-800">{formatTimeWithPeriod(reservation.startTime)}</span>
           </div>
 
           <span className="text-body-2-medium text-gray-800">·</span>
