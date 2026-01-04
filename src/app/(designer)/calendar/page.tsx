@@ -93,7 +93,7 @@ export default function CalendarPage() {
       />
 
       {/* 하단 예약 리스트 영역 */}
-      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pb-4 pt-3">
+      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pt-3 pb-16">
         {/* 상단 화살표 */}
         <div className="mb-4 flex justify-center">
           <ArrowUpIcon className="size-6 text-gray-400" />
@@ -115,9 +115,7 @@ export default function CalendarPage() {
             </div>
           ) : isReservationsError ? (
             <div className="flex flex-1 flex-col items-center justify-center py-10">
-              <p className="text-body-1-medium text-gray-500">
-                예약 목록을 불러오지 못했습니다
-              </p>
+              <p className="text-body-1-medium text-gray-500">예약 목록을 불러오지 못했습니다</p>
             </div>
           ) : reservations.length > 0 ? (
             reservations.map((reservation) => (

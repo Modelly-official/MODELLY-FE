@@ -2,7 +2,7 @@
 
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
-import ChatIcon from '@/public/icons/nav/chat.svg';
+import ChatIcon from '@/public/icons/calendar/chat.svg';
 import { subCategoryCodeToName } from '@/src/utils/myRecruitment/category';
 import type { CalendarReservationItem } from '@/src/types/calendar';
 
@@ -78,25 +78,19 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <CalendarIcon className="size-4 text-gray-800" />
-            <span className="text-body-2-medium text-gray-800">
-              {formatDate(reservation.date)}
-            </span>
+            <span className="text-body-2-medium text-gray-800">{formatDate(reservation.date)}</span>
           </div>
 
           <span className="text-body-2-medium text-gray-800">·</span>
 
           <div className="flex items-center gap-1">
             <TimeCircleIcon className="size-4" />
-            <span className="text-body-2-medium text-gray-800">
-              {formatTime(reservation.startTime)}
-            </span>
+            <span className="text-body-2-medium text-gray-800">{formatTime(reservation.startTime)}</span>
           </div>
 
           <span className="text-body-2-medium text-gray-800">·</span>
 
-          <span className="text-body-2-medium text-gray-800">
-            {formatSubCategories(reservation.subCategories)}
-          </span>
+          <span className="text-body-2-medium text-gray-800">{formatSubCategories(reservation.subCategories)}</span>
         </div>
       </div>
 
@@ -105,7 +99,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleChatClick}
-          className="flex h-[42px] items-center gap-1 rounded-full bg-gray-900 px-4 py-[10px]"
+          className="flex h-[42px] cursor-pointer items-center gap-1 whitespace-nowrap rounded-full bg-gray-900 px-3 py-[10px]"
         >
           <ChatIcon className="size-5 text-white" />
           <span className="text-body-2-medium text-white">채팅 보내기</span>
@@ -114,7 +108,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleChangeClick}
-          className="flex h-[42px] items-center justify-center rounded-full border border-gray-400 bg-white px-4 py-[10px]"
+          className="flex h-[42px] cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-gray-400 bg-white px-3 py-[10px]"
         >
           <span className="text-body-2-medium text-gray-900">예약 변경</span>
         </button>
@@ -122,7 +116,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleCancelClick}
-          className="flex h-[42px] items-center justify-center rounded-full border border-gray-400 bg-white px-4 py-[10px]"
+          className="flex h-[42px] cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-gray-400 bg-white px-3 py-[10px]"
         >
           <span className="text-body-2-medium text-gray-900">예약 취소</span>
         </button>

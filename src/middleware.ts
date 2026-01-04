@@ -150,8 +150,8 @@ export async function middleware(request: NextRequest) {
 
   // 역할 기반 접근 제어
   if (!checkRoleAccess(pathname, userRole)) {
-    // 권한 없음 - 역할에 맞는 홈으로 리다이렉트
-    const homeUrl = userRole === 'model' ? new URL('/', request.url) : new URL('/designer/home', request.url);
+    // 권한 없음 - 홈으로 리다이렉트 (홈에서 역할에 따라 다른 콘텐츠 표시)
+    const homeUrl = new URL('/', request.url);
     return NextResponse.redirect(homeUrl);
   }
 

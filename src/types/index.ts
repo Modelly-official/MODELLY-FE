@@ -23,3 +23,6 @@ export * from './reservation';
 
 // Calendar types (Designer)
 export * from './calendar';
+
+// Designer Home types
+export * from './designerHome';

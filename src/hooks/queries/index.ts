@@ -6,3 +6,4 @@ export * from './myRecruitment';
 export * from './chat';
 export * from './reservation';
 export * from './calendar';
+export * from './designerHome';
