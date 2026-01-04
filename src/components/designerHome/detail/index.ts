@@ -3,3 +3,4 @@ export { ReservationInfoCard } from './ReservationInfoCard';
 export { ApplicantInfoCard } from './ApplicantInfoCard';
 export { RequestContentCard } from './RequestContentCard';
 export { AttachedPhotosCard } from './AttachedPhotosCard';
+export { ReservationDetailSkeleton } from './ReservationDetailSkeleton';
