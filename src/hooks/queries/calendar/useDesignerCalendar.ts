@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { getReservationDots, getCalendarReservations } from '@/src/apis/designer';
 import type { ApiResponse } from '@/src/types';
-import type { ReservationDotsResult, CalendarReservationsResult } from '@/src/types/calendar';
+import type {
+  ReservationDotsResult,
+  CalendarReservationsResult,
+  GetReservationDotsParams,
+  GetCalendarReservationsParams,
+} from '@/src/types/calendar';
 
 // Query Keys
 export const calendarKeys = {
@@ -12,17 +17,6 @@ export const calendarKeys = {
     [...calendarKeys.all, 'reservations', month, date, includePending] as const,
 };
 
-interface UseReservationDotsParams {
-  month: string; // yyyy-MM
-  includePending?: boolean;
-}
-
-interface UseCalendarReservationsParams {
-  month: string; // yyyy-MM
-  date?: string; // yyyy-MM-dd (특정 날짜 필터)
-  includePending?: boolean; // PENDING 상태 예약 포함 여부
-}
-
 interface UseQueryOptions {
   enabled?: boolean;
 }
@@ -32,7 +26,7 @@ interface UseQueryOptions {
  * 캘린더에서 예약이 있는 날짜에 도트를 표시하기 위한 데이터 조회
  */
 export function useReservationDots(
-  params: UseReservationDotsParams,
+  params: GetReservationDotsParams,
   options: UseQueryOptions = {}
 ) {
   const { month, includePending } = params;
@@ -51,7 +45,7 @@ export function useReservationDots(
  * 월별 또는 특정 날짜의 예약 목록 조회
  */
 export function useCalendarReservations(
-  params: UseCalendarReservationsParams,
+  params: GetCalendarReservationsParams,
   options: UseQueryOptions = {}
 ) {
   const { month, date, includePending } = params;
