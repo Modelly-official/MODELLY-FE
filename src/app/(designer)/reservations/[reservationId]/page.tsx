@@ -111,15 +111,18 @@ export default function ReservationDetailPage() {
           />
 
           {/* 신청 내용 카드 */}
-          <RequestContentCard categories={reservation.subCategories} />
+          <RequestContentCard
+            category={reservation.category}
+            subCategories={reservation.subCategories}
+          />
 
           {/* 첨부 사진 카드 */}
-          <AttachedPhotosCard photos={reservation.photos} />
+          <AttachedPhotosCard imageUrl={reservation.imageUrl} />
         </div>
       </div>
 
-      {/* 하단 버튼 (PENDING 상태에서만 표시) */}
-      {reservation.status === 'PENDING' && (
+      {/* 하단 버튼 (예약대기 상태에서만 표시) */}
+      {reservation.status === '예약대기' && (
         <div className="fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 gap-3 border-t border-gray-300 bg-white px-4 py-3 sm:w-[375px]">
           <button
             type="button"

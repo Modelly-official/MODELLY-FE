@@ -43,19 +43,22 @@ export interface PendingReservationsResult {
 
 // ===== 예약 상세 =====
 
-/** 예약 상태 */
-export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'REJECTED' | 'CANCELLED';
+/** 예약 상태 (API 응답값) */
+export type ReservationStatus = '예약대기' | '예약확정' | '예약거절' | '예약취소';
 
 /** 예약 상세 정보 */
 export interface ReservationDetailResult {
   reservationId: number;
   modelUserId: number;
   modelName: string;
+  category: string;
   subCategories: string[];
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
   endTime: string; // HH:mm
-  photos: string[];
+  imageUrl: string | null;
+  comment: string | null;
+  cancelReason: string | null;
   status: ReservationStatus;
 }
 
