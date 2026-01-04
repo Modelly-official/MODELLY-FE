@@ -22,19 +22,51 @@ export default function BaseModal({
 }: BaseModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
+  const onCloseRef = useRef(onClose);
   const titleId = useId();
 
-  // ESC 키 처리 + Focus trap + 초기 포커스
+  // onClose ref 업데이트 (effect 재실행 방지)
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // 초기 포커스 + body 스크롤 방지 (모달 열릴 때만 실행)
   useEffect(() => {
     if (!isOpen) return;
 
     // 현재 포커스된 요소 저장
     previousActiveElement.current = document.activeElement;
 
+    // 모달 내 첫 번째 포커스 가능한 요소에 포커스
+    const focusableElements = modalRef.current?.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusableElements && focusableElements.length > 0) {
+      (focusableElements[0] as HTMLElement).focus();
+    }
+
+    // body 스크롤 방지
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+
+      // 모달 닫힐 때 이전 포커스 복원
+      if (previousActiveElement.current instanceof HTMLElement) {
+        previousActiveElement.current.focus();
+      }
+    };
+  }, [isOpen]);
+
+  // ESC 키 처리 + Focus trap
+  useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       // ESC 키로 모달 닫기
       if (e.key === 'Escape' && !disableClose) {
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -61,28 +93,10 @@ export default function BaseModal({
 
     document.addEventListener('keydown', handleKeyDown);
 
-    // 모달 내 첫 번째 포커스 가능한 요소에 포커스
-    const focusableElements = modalRef.current?.querySelectorAll(
-      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    );
-    if (focusableElements && focusableElements.length > 0) {
-      (focusableElements[0] as HTMLElement).focus();
-    }
-
-    // body 스크롤 방지
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = originalOverflow;
-
-      // 모달 닫힐 때 이전 포커스 복원
-      if (previousActiveElement.current instanceof HTMLElement) {
-        previousActiveElement.current.focus();
-      }
     };
-  }, [isOpen, onClose, disableClose]);
+  }, [isOpen, disableClose]);
 
   if (!isOpen) return null;
 
@@ -94,7 +108,7 @@ export default function BaseModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]"
+      className="fixed inset-0 z-60 flex items-center justify-center bg-[rgba(28,28,30,0.4)]"
       onClick={handleOverlayClick}
       role="presentation"
     >
@@ -108,9 +122,9 @@ export default function BaseModal({
       >
         {/* 헤더 영역 */}
         {(showCloseButton || title) && (
-          <div className={`flex ${title ? 'justify-between' : 'justify-end'} pb-1`}>
+          <div className="relative flex items-center justify-center pb-1">
             {title && (
-              <h2 id={titleId} className="text-body-1-medium tracking-tight text-gray-900">
+              <h2 id={titleId} className="text-head-4-medium text-gray-900">
                 {title}
               </h2>
             )}
@@ -120,7 +134,7 @@ export default function BaseModal({
                 onClick={onClose}
                 disabled={disableClose}
                 aria-label="모달 닫기"
-                className="cursor-pointer p-1 disabled:cursor-not-allowed"
+                className="absolute right-0 cursor-pointer p-1 disabled:cursor-not-allowed"
               >
                 <CloseIcon className="h-3 w-3" />
               </button>
