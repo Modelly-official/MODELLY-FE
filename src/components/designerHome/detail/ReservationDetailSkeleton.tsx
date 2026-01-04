@@ -21,9 +21,9 @@ export function ReservationDetailSkeleton() {
       </header>
       <div className="flex-1 px-4">
         <div className="flex flex-col gap-4">
-          <div className="animate-skeleton h-[120px] rounded-[12px] bg-gray-300" />
-          <div className="animate-skeleton h-[80px] rounded-[12px] bg-gray-300" />
-          <div className="animate-skeleton h-[100px] rounded-[12px] bg-gray-300" />
+          <div className="animate-skeleton h-[120px] rounded-[12px] bg-gray-500" />
+          <div className="animate-skeleton h-[80px] rounded-[12px] bg-gray-500" />
+          <div className="animate-skeleton h-[100px] rounded-[12px] bg-gray-500" />
         </div>
       </div>
     </div>

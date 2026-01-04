@@ -9,14 +9,13 @@ export interface TodayReservationItem {
   reservationId: number;
   modelName: string;
   subCategories: string[];
-  startTime: string; // HH:mm
+  time: string; // HH:mm
 }
 
 /** 오늘의 예약 목록 응답 */
 export interface TodayReservationsResult {
   date: string; // yyyy-MM-dd
-  items: TodayReservationItem[];
-  totalCount: number;
+  reservations: TodayReservationItem[];
 }
 
 // ===== 신규 예약 신청 =====

@@ -29,7 +29,7 @@ function TodayReservationItemRow({ item }: { item: TodayReservationItem }) {
   return (
     <div className="flex items-center gap-2 rounded-[12px] bg-purple-100 p-3">
       <ClockIcon className="size-4 text-gray-900" />
-      <span className="text-body-2-medium text-gray-900">{formatTime(item.startTime)}</span>
+      <span className="text-body-2-medium text-gray-900">{formatTime(item.time)}</span>
       <span className="text-body-2-medium text-gray-900">·</span>
       <span className="text-body-2-medium text-gray-900">{item.modelName} 님</span>
       <span className="text-body-2-medium text-gray-900">·</span>
@@ -75,15 +75,17 @@ export function TodayReservationSection({ data, isLoading }: TodayReservationSec
           {/* 오늘의 예약 타이틀 */}
           <div className="mt-4 flex items-center gap-1">
             <span className="text-body-1-medium text-gray-900">오늘의 예약</span>
-            <span className="text-body-1-medium text-purple-700">{data.totalCount ?? 0}</span>
+            <span className="text-body-1-medium text-purple-700">
+              {data.reservations?.length ?? 0}
+            </span>
           </div>
 
           {/* 예약 리스트 */}
           <div className="mt-2 flex flex-col gap-2">
             {isLoading ? (
               <div className="animate-skeleton h-10 rounded-[12px] bg-gray-200" />
-            ) : data.items && data.items.length > 0 ? (
-              data.items.map((item) => (
+            ) : data.reservations && data.reservations.length > 0 ? (
+              data.reservations.map((item) => (
                 <TodayReservationItemRow key={item.reservationId} item={item} />
               ))
             ) : (

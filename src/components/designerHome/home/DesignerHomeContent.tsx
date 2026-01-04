@@ -23,7 +23,7 @@ export function DesignerHomeContent() {
   const { data: todayData, isLoading: isTodayLoading } = useTodayReservations(todayDate);
   const { data: pendingData, isLoading: isPendingLoading } = usePendingReservations();
 
-  const todayReservations = todayData?.result ?? { date: todayDate, items: [], totalCount: 0 };
+  const todayReservations = todayData?.result ?? { date: todayDate, reservations: [] };
   const pendingReservations = pendingData?.result ?? {
     reservations: [],
     totalCount: 0,
@@ -40,7 +40,7 @@ export function DesignerHomeContent() {
         <header className="flex h-14 items-center justify-between px-5">
           <span className="text-head-1-semibold text-gray-900">Monde</span>
           <button type="button" aria-label="알림">
-            <BellIcon className="size-6" />
+            <BellIcon className="size-6 cursor-pointer" />
           </button>
         </header>
 
