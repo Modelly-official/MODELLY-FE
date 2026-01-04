@@ -10,13 +10,9 @@ interface ReservationInfoCardProps {
   startTime: string; // HH:mm
 }
 
-export default function ReservationInfoCard({
-  modelName,
-  date,
-  startTime,
-}: ReservationInfoCardProps) {
+export default function ReservationInfoCard({ modelName, date, startTime }: ReservationInfoCardProps) {
   return (
-    <div className="flex w-full flex-col items-center justify-center rounded-[20px] border border-gray-40 px-[52px] py-[23px]">
+    <div className="border-gray-40 flex w-full flex-col items-center justify-center rounded-[20px] border px-12 py-[23px]">
       <div className="flex flex-col items-center gap-1">
         {/* 모델명 */}
         <p className="text-head-4-medium text-gray-90">
@@ -27,20 +23,16 @@ export default function ReservationInfoCard({
         <div className="flex items-center gap-2">
           {/* 날짜 */}
           <div className="flex items-center gap-1">
-            <CalendarIcon className="size-4 text-gray-70" />
-            <span className="text-body-2-medium text-gray-70">
-              {formatDateToShort(date)}
-            </span>
+            <CalendarIcon className="size-4 text-gray-700" />
+            <span className="text-body-2-medium text-gray-700">{formatDateToShort(date)}</span>
           </div>
 
-          <span className="text-body-2-medium text-gray-70">·</span>
+          <span className="text-body-2-medium text-gray-700">·</span>
 
           {/* 시간 */}
           <div className="flex items-center gap-1">
-            <TimeCircleIcon className="size-4 text-gray-70" />
-            <span className="text-body-2-medium text-gray-70">
-              {formatTimeWithPeriod(startTime)}
-            </span>
+            <TimeCircleIcon className="size-4 text-gray-700" />
+            <span className="text-body-2-medium text-gray-700">{formatTimeWithPeriod(startTime)}</span>
           </div>
         </div>
       </div>

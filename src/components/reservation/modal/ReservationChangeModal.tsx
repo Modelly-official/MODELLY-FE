@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import BaseModal from '@/src/components/common/Modal/BaseModal';
-import Dropdown from '@/src/components/common/Dropdown/Dropdown';
-import TextArea from '@/src/components/myRecruitment/Form/TextArea';
+import CalendarIcon from '@/public/icons/reservationModal/calendar.svg';
+import ArrowDownIcon from '@/public/icons/reservationModal/arrow-down.svg';
 import ReservationInfoCard from './ReservationInfoCard';
+import { formatDateToShort } from '@/src/utils/common';
+import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 import type { ReservationInfo, ReservationChangeRequest, AvailableTimeSlot } from '@/src/types/reservation';
 
 interface ReservationChangeModalProps {
@@ -27,6 +29,8 @@ export default function ReservationChangeModal({
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [reason, setReason] = useState('');
+  const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
+  const reasonInput = useIMEInput(reason, setReason);
 
   // 모든 필드가 입력되었는지 확인
   const isFormValid = selectedDate && selectedTime && reason.trim();
@@ -46,12 +50,33 @@ export default function ReservationChangeModal({
     setSelectedDate('');
     setSelectedTime(null);
     setReason('');
+    setIsTimeDropdownOpen(false);
     onClose();
+  };
+
+  // 시간 선택 핸들러
+  const handleTimeSelect = (time: string) => {
+    setSelectedTime(time);
+    setIsTimeDropdownOpen(false);
+  };
+
+  // 날짜 선택 핸들러 (TODO: 캘린더 바텀시트 연결)
+  const handleDateClick = () => {
+    // 임시로 native date picker 사용
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.value) {
+        setSelectedDate(target.value);
+      }
+    };
+    input.click();
   };
 
   return (
     <BaseModal isOpen={isOpen} onClose={handleClose} title="예약 변경" showCloseButton>
-      <div className="flex flex-col gap-5 pt-4">
+      <div className="flex flex-col gap-7 pt-5">
         {/* 현재 예약 정보 */}
         <ReservationInfoCard
           modelName={reservation.modelName}
@@ -59,43 +84,84 @@ export default function ReservationChangeModal({
           startTime={reservation.startTime}
         />
 
-        {/* 변경 일자 */}
-        <div className="flex flex-col gap-2">
-          <span className="text-body-1-medium text-gray-90">변경 일자</span>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="text-body-2-medium w-full rounded-xl bg-gray-10 px-4 py-3.5 text-gray-90 focus:outline-none"
-          />
+        {/* 입력 필드들 */}
+        <div className="flex flex-col gap-4">
+          {/* 변경 일자 */}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-start gap-1">
+              <span className="text-body-2-medium text-gray-900">변경 일자</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleDateClick}
+              className="flex w-full cursor-pointer items-center justify-between rounded-[10px] bg-gray-100 px-4 py-3.5"
+            >
+              <span className={`text-body-2-medium ${selectedDate ? 'text-gray-900' : 'text-gray-600'}`}>
+                {selectedDate ? formatDateToShort(selectedDate) : '날짜를 선택하세요'}
+              </span>
+              <CalendarIcon className="size-5 text-gray-700" />
+            </button>
+          </div>
+
+          {/* 변경 시간 */}
+          <div className="relative flex flex-col gap-1">
+            <span className="text-body-2-medium text-gray-900">변경 시간</span>
+            <button
+              type="button"
+              onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
+              className="flex w-full cursor-pointer items-center justify-between rounded-[10px] bg-gray-100 px-4 py-3.5"
+            >
+              <span className={`text-body-2-medium ${selectedTime ? 'text-gray-900' : 'text-gray-600'}`}>
+                {selectedTime || '시간을 선택하세요'}
+              </span>
+              <ArrowDownIcon
+                className={`size-5 text-gray-700 transition-transform ${isTimeDropdownOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {/* 시간 드롭다운 */}
+            {isTimeDropdownOpen && (
+              <div className="absolute top-full z-10 mt-1 max-h-[200px] w-full overflow-y-auto rounded-[10px] border border-gray-400 bg-white shadow-lg">
+                {timeSlots.map((slot) => (
+                  <button
+                    key={slot.value}
+                    type="button"
+                    onClick={() => handleTimeSelect(slot.value)}
+                    className={`text-body-2-medium w-full cursor-pointer px-4 py-3 text-left hover:bg-gray-100 ${
+                      selectedTime === slot.value ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                    }`}
+                  >
+                    {slot.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 변경 사유 */}
+          <div className="flex flex-col gap-1">
+            <span className="text-body-2-medium text-gray-900">변경 사유</span>
+            <textarea
+              value={reasonInput.value}
+              onChange={reasonInput.onChange}
+              onCompositionStart={reasonInput.onCompositionStart}
+              onCompositionEnd={reasonInput.onCompositionEnd}
+              placeholder="사유를 입력하세요"
+              className="text-body-2-medium min-h-[49px] w-full resize-none rounded-[10px] bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              rows={1}
+            />
+          </div>
         </div>
-
-        {/* 변경 시간 */}
-        <Dropdown
-          label="변경 시간"
-          options={timeSlots}
-          value={selectedTime}
-          onChange={setSelectedTime}
-          placeholder="시간을 선택해 주세요"
-        />
-
-        {/* 변경 사유 */}
-        <TextArea
-          label="변경 사유"
-          value={reason}
-          onChange={setReason}
-          placeholder="변경 사유를 입력해 주세요"
-        />
 
         {/* 변경 요청하기 버튼 */}
         <button
           type="button"
           onClick={handleSubmit}
           disabled={!isFormValid || isLoading}
-          className={`flex w-full items-center justify-center rounded-full px-4 py-3.5 text-body-1-semibold ${
+          className={`text-body-2-medium flex h-[49px] w-full items-center justify-center rounded-full ${
             isFormValid && !isLoading
-              ? 'cursor-pointer bg-gray-90 text-white'
-              : 'cursor-not-allowed bg-gray-20 text-gray-70'
+              ? 'cursor-pointer bg-gray-900 text-white'
+              : 'cursor-not-allowed bg-gray-100 text-gray-700'
           }`}
         >
           {isLoading ? (
