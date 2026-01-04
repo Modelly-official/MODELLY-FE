@@ -1,6 +1,9 @@
 'use client';
 
+import 'swiper/css';
+
 import Link from 'next/link';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import CalendarIcon from '@/public/icons/designer-home/calendar.svg';
 import RightArrowIcon from '@/public/icons/designer-home/right-arrow.svg';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
@@ -27,7 +30,7 @@ function PendingReservationCard({ item }: { item: PendingReservationItem }) {
   return (
     <Link
       href={`/reservations/${item.reservationId}`}
-      className="flex w-[150px] shrink-0 flex-col rounded-[12px] bg-white p-4"
+      className="flex flex-col rounded-[12px] bg-white p-4"
     >
       {/* 카테고리 배지 */}
       <div className="flex">
@@ -66,17 +69,21 @@ export function PendingReservationSection({ data, isLoading }: PendingReservatio
         </div>
       </Link>
 
-      {/* 가로 스크롤 카드 리스트 */}
+      {/* 캐러셀 카드 리스트 */}
       {isLoading ? (
-        <div className="scrollbar-hide mt-3 flex gap-3 overflow-x-auto px-4">
+        <div className="mt-3 flex gap-3 px-4">
           <div className="animate-skeleton h-[100px] w-[150px] shrink-0 rounded-[12px] bg-gray-300" />
           <div className="animate-skeleton h-[100px] w-[150px] shrink-0 rounded-[12px] bg-gray-300" />
         </div>
       ) : data.reservations && data.reservations.length > 0 ? (
-        <div className="scrollbar-hide mt-3 flex gap-3 overflow-x-auto px-4">
-          {data.reservations.map((item) => (
-            <PendingReservationCard key={item.reservationId} item={item} />
-          ))}
+        <div className="mt-3">
+          <Swiper spaceBetween={12} slidesPerView="auto" className="px-4!">
+            {data.reservations.map((item) => (
+              <SwiperSlide key={item.reservationId} className="w-[150px]!">
+                <PendingReservationCard item={item} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       ) : (
         <p className="text-body-2-medium mt-3 px-4 text-gray-700">새로운 예약 신청이 없습니다</p>
