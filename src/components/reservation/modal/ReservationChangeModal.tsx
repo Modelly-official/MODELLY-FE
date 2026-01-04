@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import BaseModal from '@/src/components/common/Modal/BaseModal';
+import { CalendarBottomSheet } from '@/src/components/common/BottomSheet';
 import CalendarIcon from '@/public/icons/reservationModal/calendar.svg';
 import ArrowDownIcon from '@/public/icons/reservationModal/arrow-down.svg';
 import ReservationInfoCard from './ReservationInfoCard';
@@ -30,6 +31,7 @@ export default function ReservationChangeModal({
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [reason, setReason] = useState('');
   const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const reasonInput = useIMEInput(reason, setReason);
 
   // 모든 필드가 입력되었는지 확인
@@ -51,6 +53,7 @@ export default function ReservationChangeModal({
     setSelectedTime(null);
     setReason('');
     setIsTimeDropdownOpen(false);
+    setIsCalendarOpen(false);
     onClose();
   };
 
@@ -60,18 +63,14 @@ export default function ReservationChangeModal({
     setIsTimeDropdownOpen(false);
   };
 
-  // 날짜 선택 핸들러 (TODO: 캘린더 바텀시트 연결)
+  // 날짜 선택 핸들러
   const handleDateClick = () => {
-    // 임시로 native date picker 사용
-    const input = document.createElement('input');
-    input.type = 'date';
-    input.onchange = (e) => {
-      const target = e.target as HTMLInputElement;
-      if (target.value) {
-        setSelectedDate(target.value);
-      }
-    };
-    input.click();
+    setIsCalendarOpen(true);
+  };
+
+  // 날짜 선택 완료 핸들러
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
   };
 
   return (
@@ -171,6 +170,15 @@ export default function ReservationChangeModal({
           )}
         </button>
       </div>
+
+      {/* 캘린더 바텀시트 */}
+      <CalendarBottomSheet
+        isOpen={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        selectedDate={selectedDate || null}
+        onDateSelect={handleDateSelect}
+        title="변경 일자 선택"
+      />
     </BaseModal>
   );
 }

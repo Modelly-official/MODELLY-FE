@@ -97,6 +97,20 @@
   .animate-fab-float {
     animation: fab-float 2s ease-in-out infinite;
   }
+
+  /* BottomSheet Slide Up Animation */
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
 }
 
 /* Custom Utilities - Tailwind v4 @utility 디렉티브 사용 */
