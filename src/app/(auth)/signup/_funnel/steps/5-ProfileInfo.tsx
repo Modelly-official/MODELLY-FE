@@ -225,7 +225,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           {isDesigner && (
             <>
               <div className="relative flex flex-col gap-2">
-                <label className="text-body-1-semibold text-gray-900">한 줄 소개</label>
+                <label className="text-body-1-medium text-gray-900">한 줄 소개</label>
                 <textarea
                   value={intro}
                   onChange={(e) => setField('intro', e.target.value.slice(0, 100))}
@@ -233,9 +233,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
                   maxLength={100}
                   className="text-body-2-medium h-[120px] w-full resize-none overflow-y-auto rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
                 />
-                <span className="text-body-2-medium absolute right-4 bottom-3 text-gray-600">
-                  {intro.length}/100
-                </span>
+                <span className="text-body-2-medium absolute right-4 bottom-3 text-gray-600">{intro.length}/100</span>
               </div>
               <TextInput
                 label="매장 이름"

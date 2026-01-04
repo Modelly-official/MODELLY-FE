@@ -96,7 +96,7 @@ export default function TextInput({
     <div className="flex flex-col gap-2">
       {/* 라벨 */}
       <div className="flex items-center gap-1">
-        <span className="text-body-1-semibold text-gray-900">{label}</span>
+        <span className="text-body-1-medium text-gray-900">{label}</span>
         {required && <span className="text-head-3-semibold text-purple-500">*</span>}
       </div>
 
@@ -110,7 +110,7 @@ export default function TextInput({
           onCompositionEnd={handleCompositionEnd}
           placeholder={placeholder}
           disabled={disabled}
-          className={`text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none disabled:text-gray-700 disabled:cursor-not-allowed ${
+          className={`text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:cursor-not-allowed disabled:text-gray-700 ${
             showClearButton && localValue ? 'pr-10' : ''
           } ${getStatusRingClass()}`}
         />

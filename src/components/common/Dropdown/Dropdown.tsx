@@ -110,7 +110,7 @@ export default function Dropdown({
     <div className="flex flex-col gap-2" ref={dropdownRef}>
       {/* 라벨 */}
       <div className="flex items-center gap-1">
-        <span id={`${listboxId}-label`} className="text-body-1-semibold text-gray-900">
+        <span id={`${listboxId}-label`} className="text-body-1-medium text-gray-900">
           {label}
         </span>
         {required && <span className="text-head-3-semibold text-purple-500">*</span>}
@@ -145,7 +145,7 @@ export default function Dropdown({
             role="listbox"
             aria-labelledby={`${listboxId}-label`}
             aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-            className="absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-dropdown"
+            className="shadow-dropdown absolute top-14 z-10 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5"
           >
             <div className="flex flex-col gap-3">
               {options.map((option, index) => {
