@@ -38,8 +38,13 @@ function TodayReservationItemRow({ item }: { item: TodayReservationItem }) {
   );
 }
 
+interface TodayReservationSectionProps {
+  data: TodayReservationsResult;
+  isLoading?: boolean;
+}
+
 // ===== 오늘의 예약 섹션 =====
-export function TodayReservationSection({ data }: { data: TodayReservationsResult }) {
+export function TodayReservationSection({ data, isLoading }: TodayReservationSectionProps) {
   const { month, day, weekday } = formatDateCard(data.date);
 
   return (
@@ -70,12 +75,14 @@ export function TodayReservationSection({ data }: { data: TodayReservationsResul
           {/* 오늘의 예약 타이틀 */}
           <div className="mt-4 flex items-center gap-1">
             <span className="text-body-1-medium text-gray-900">오늘의 예약</span>
-            <span className="text-body-1-medium text-purple-700">{data.totalCount}</span>
+            <span className="text-body-1-medium text-purple-700">{data.totalCount ?? 0}</span>
           </div>
 
           {/* 예약 리스트 */}
           <div className="mt-2 flex flex-col gap-2">
-            {data.items.length > 0 ? (
+            {isLoading ? (
+              <div className="animate-skeleton h-10 rounded-[12px] bg-gray-200" />
+            ) : data.items && data.items.length > 0 ? (
               data.items.map((item) => (
                 <TodayReservationItemRow key={item.reservationId} item={item} />
               ))

@@ -35,7 +35,7 @@ function PendingReservationCard({ item }: { item: PendingReservationItem }) {
       </div>
 
       {/* 시간 */}
-      <p className="text-body-1-medium mt-2 text-gray-900">{formatTime(item.startTime)}</p>
+      <p className="text-body-1-medium mt-2 text-gray-900">{formatTime(item.time)}</p>
 
       {/* 날짜 */}
       <div className="mt-0.5 flex items-center gap-1">
@@ -46,15 +46,20 @@ function PendingReservationCard({ item }: { item: PendingReservationItem }) {
   );
 }
 
+interface PendingReservationSectionProps {
+  data: PendingReservationsResult;
+  isLoading?: boolean;
+}
+
 // ===== 신규 예약 신청 섹션 =====
-export function PendingReservationSection({ data }: { data: PendingReservationsResult }) {
+export function PendingReservationSection({ data, isLoading }: PendingReservationSectionProps) {
   return (
     <section className="mt-6">
       {/* 헤더 */}
       <Link href="/reservations/pending" className="flex items-center justify-between px-4">
         <div className="flex items-center gap-1.5">
           <span className="text-body-1-medium text-gray-900">새로운 예약 신청</span>
-          <span className="text-body-1-medium text-purple-700">{data.totalCount}</span>
+          <span className="text-body-1-medium text-purple-700">{data.totalCount ?? 0}</span>
         </div>
         <div className="flex items-center justify-center text-gray-700">
           <RightArrowIcon className="size-3 text-gray-700" />
@@ -62,9 +67,14 @@ export function PendingReservationSection({ data }: { data: PendingReservationsR
       </Link>
 
       {/* 가로 스크롤 카드 리스트 */}
-      {data.items.length > 0 ? (
+      {isLoading ? (
         <div className="scrollbar-hide mt-3 flex gap-3 overflow-x-auto px-4">
-          {data.items.map((item) => (
+          <div className="animate-skeleton h-[100px] w-[150px] shrink-0 rounded-[12px] bg-gray-300" />
+          <div className="animate-skeleton h-[100px] w-[150px] shrink-0 rounded-[12px] bg-gray-300" />
+        </div>
+      ) : data.reservations && data.reservations.length > 0 ? (
+        <div className="scrollbar-hide mt-3 flex gap-3 overflow-x-auto px-4">
+          {data.reservations.map((item) => (
             <PendingReservationCard key={item.reservationId} item={item} />
           ))}
         </div>

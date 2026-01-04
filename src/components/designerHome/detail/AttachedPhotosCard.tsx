@@ -7,7 +7,7 @@ interface AttachedPhotosCardProps {
 }
 
 export function AttachedPhotosCard({ photos }: AttachedPhotosCardProps) {
-  if (photos.length === 0) {
+  if (!photos || photos.length === 0) {
     return null;
   }
 

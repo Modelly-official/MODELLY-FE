@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import {
   ReservationInfoCard,
@@ -11,17 +11,30 @@ import {
   ReservationConfirmModal,
   ReservationRejectModal,
 } from '@/src/components/designerHome';
-import { mockReservationDetail } from '@/src/mocks/designerHome';
+import {
+  useReservationDetail,
+  useConfirmReservation,
+  useRejectReservation,
+} from '@/src/hooks/queries/designerHome';
 
 export default function ReservationDetailPage() {
   const router = useRouter();
-  const reservation = mockReservationDetail;
+  const params = useParams();
+  const reservationId = Number(params.reservationId);
+
+  const { data, isLoading } = useReservationDetail(reservationId);
+  const confirmMutation = useConfirmReservation();
+  const rejectMutation = useRejectReservation();
+
+  const reservation = data?.result;
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const handleChatClick = () => {
     // TODO: 채팅방으로 이동
-    console.log('채팅방 이동:', reservation.modelUserId);
+    if (reservation) {
+      console.log('채팅방 이동:', reservation.modelUserId);
+    }
   };
 
   const handleReject = () => {
@@ -29,24 +42,61 @@ export default function ReservationDetailPage() {
   };
 
   const handleRejectConfirm = () => {
-    // TODO: 예약 거절 API 호출 후 Toast 표시
-    console.log('예약 거절:', reservation.reservationId);
-    setIsRejectModalOpen(false);
-    // 거절 후 목록으로 이동
-    router.push('/reservations/pending');
+    rejectMutation.mutate(reservationId, {
+      onSuccess: () => {
+        setIsRejectModalOpen(false);
+        router.push('/reservations/pending');
+      },
+    });
   };
 
   const handleConfirm = () => {
-    // TODO: 예약 확정 API 호출 후 모달 표시
-    console.log('예약 확정:', reservation.reservationId);
-    setIsConfirmModalOpen(true);
+    confirmMutation.mutate(reservationId, {
+      onSuccess: () => {
+        setIsConfirmModalOpen(true);
+      },
+    });
   };
 
   const handleConfirmModalClose = () => {
     setIsConfirmModalOpen(false);
-    // 확정 후 목록으로 이동
     router.push('/reservations/pending');
   };
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-gray-200">
+        <header className="flex items-center justify-between px-4 py-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex size-6 cursor-pointer items-center justify-center"
+            aria-label="뒤로가기"
+          >
+            <ArrowLeftIcon className="h-4 text-black" />
+          </button>
+          <div className="size-6 opacity-0" />
+        </header>
+        <div className="flex-1 px-4">
+          <div className="flex flex-col gap-4">
+            <div className="animate-skeleton h-[120px] rounded-[12px] bg-gray-300" />
+            <div className="animate-skeleton h-[80px] rounded-[12px] bg-gray-300" />
+            <div className="animate-skeleton h-[100px] rounded-[12px] bg-gray-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 데이터 없음
+  if (!reservation) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-200">
+        <p className="text-body-1-medium text-gray-700">예약 정보를 찾을 수 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-200">

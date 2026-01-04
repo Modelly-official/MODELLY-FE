@@ -5,10 +5,33 @@ import { BottomNav } from '@/src/components/common';
 import { TodayReservationSection } from './TodayReservationSection';
 import { PendingReservationSection } from './PendingReservationSection';
 import { QuickActionButtons } from './QuickActionButtons';
-import { mockTodayReservations, mockPendingReservations } from '@/src/mocks/designerHome';
+import { useTodayReservations, usePendingReservations } from '@/src/hooks/queries/designerHome';
+
+// 오늘 날짜를 yyyy-MM-dd 형식으로 반환
+function getTodayDate(): string {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export function DesignerHomeContent() {
   const userName = '유디'; // TODO: useAuthStore에서 가져옴
+  const todayDate = getTodayDate();
+
+  const { data: todayData, isLoading: isTodayLoading } = useTodayReservations(todayDate);
+  const { data: pendingData, isLoading: isPendingLoading } = usePendingReservations();
+
+  const todayReservations = todayData?.result ?? { date: todayDate, items: [], totalCount: 0 };
+  const pendingReservations = pendingData?.result ?? {
+    reservations: [],
+    totalCount: 0,
+    cursorId: null,
+    cursorDate: null,
+    cursorTime: null,
+    hasNext: false,
+  };
 
   return (
     <>
@@ -29,11 +52,11 @@ export function DesignerHomeContent() {
 
         {/* 오늘의 예약 섹션 */}
         <div className="mt-4">
-          <TodayReservationSection data={mockTodayReservations} />
+          <TodayReservationSection data={todayReservations} isLoading={isTodayLoading} />
         </div>
 
         {/* 새로운 예약 신청 섹션 */}
-        <PendingReservationSection data={mockPendingReservations} />
+        <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
 
         {/* 퀵 액션 버튼 */}
         <QuickActionButtons />

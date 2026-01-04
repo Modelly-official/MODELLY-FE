@@ -45,7 +45,7 @@ export function PendingReservationListItem({ item }: PendingReservationListItemP
       {/* 일 + 시간, 카테고리 + 모델명 */}
       <div className="flex flex-col gap-0.5">
         <p className="text-head-4-medium text-gray-900">
-          {day}일 {formatTime(item.startTime)}
+          {day}일 {formatTime(item.time)}
         </p>
         <div className="flex items-center gap-2 text-body-2-medium text-gray-700">
           <span>{item.subCategories[0]}</span>

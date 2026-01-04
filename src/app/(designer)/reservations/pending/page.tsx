@@ -3,11 +3,14 @@
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { PendingReservationListItem } from '@/src/components/designerHome';
-import { mockPendingReservations } from '@/src/mocks/designerHome';
+import { usePendingReservations } from '@/src/hooks/queries/designerHome';
 
 export default function PendingReservationsPage() {
   const router = useRouter();
-  const { items, totalCount } = mockPendingReservations;
+  const { data, isLoading } = usePendingReservations();
+
+  const items = data?.result?.reservations ?? [];
+  const totalCount = data?.result?.totalCount ?? 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-200">
@@ -33,9 +36,18 @@ export default function PendingReservationsPage() {
 
         {/* 리스트 */}
         <div className="mt-[10px] flex flex-col gap-4">
-          {items.map((item) => (
-            <PendingReservationListItem key={item.reservationId} item={item} />
-          ))}
+          {isLoading ? (
+            <>
+              <div className="animate-skeleton h-[88px] rounded-[12px] bg-gray-300" />
+              <div className="animate-skeleton h-[88px] rounded-[12px] bg-gray-300" />
+            </>
+          ) : items.length > 0 ? (
+            items.map((item) => (
+              <PendingReservationListItem key={item.reservationId} item={item} />
+            ))
+          ) : (
+            <p className="text-body-2-medium text-gray-700">새로운 예약 신청이 없습니다</p>
+          )}
         </div>
       </div>
     </div>

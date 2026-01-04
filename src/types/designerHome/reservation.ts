@@ -24,17 +24,21 @@ export interface TodayReservationsResult {
 /** 신규 예약 신청 아이템 */
 export interface PendingReservationItem {
   reservationId: number;
-  modelUserId: number;
+  modelUserId?: number;
   modelName: string;
   subCategories: string[];
   date: string; // yyyy-MM-dd
-  startTime: string; // HH:mm
+  time: string; // HH:mm
 }
 
 /** 신규 예약 신청 목록 응답 */
 export interface PendingReservationsResult {
-  items: PendingReservationItem[];
+  reservations: PendingReservationItem[];
   totalCount: number;
+  cursorId: number | null;
+  cursorDate: string | null;
+  cursorTime: string | null;
+  hasNext: boolean;
 }
 
 // ===== 예약 상세 =====
