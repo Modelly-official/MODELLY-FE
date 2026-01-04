@@ -99,7 +99,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
             <div className="flex items-center gap-2">
               <input
                 type="text"
-                className="text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
+                className="text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
@@ -107,7 +107,7 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
               />
               <button
                 type="button"
-                className={`text-body-2-medium w-20 shrink-0 rounded-xl py-[14px] ${
+                className={`text-body-2-medium w-20 shrink-0 rounded-xl py-3.5 ${
                   username && username.length >= 1 ? 'bg-purple-200 text-purple-700' : 'bg-gray-200 text-gray-600'
                 } cursor-pointer`}
                 onClick={checkUsername}
@@ -117,12 +117,12 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
               </button>
             </div>
             {isUsernameAvailable === true && (
-              <div className="px-[6px] pt-[6px]">
+              <div className="px-1.5 pt-1.5">
                 <p className="text-caption-1-medium text-purple-700">사용 가능한 아이디입니다.</p>
               </div>
             )}
             {isUsernameAvailable === false && (
-              <div className="px-[6px] pt-[6px]">
+              <div className="px-1.5 pt-1.5">
                 <p className="text-caption-1-medium text-error">이미 사용 중인 아이디입니다.</p>
               </div>
             )}

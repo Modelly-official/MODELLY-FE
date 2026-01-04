@@ -27,7 +27,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         <div className="relative min-w-0 flex-1">
           <input
             type="text"
-            className={`w-full bg-gray-100 ${authCodeValid === false ? 'ring-1 ring-error' : ''} text-body-2-medium rounded-xl px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none disabled:text-gray-700`}
+            className={`w-full bg-gray-100 ${authCodeValid === false ? 'ring-error ring-1' : ''} text-body-2-medium rounded-xl px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:text-gray-700`}
             placeholder="인증번호 입력"
             value={authCode}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAuthCode(e.target.value)}
@@ -43,7 +43,7 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         </div>
         <button
           type="button"
-          className={`text-body-2-medium w-20 shrink-0 rounded-xl py-[14px] ${
+          className={`text-body-2-medium w-20 shrink-0 rounded-xl py-3.5 ${
             authCodeValid === true
               ? 'cursor-not-allowed bg-gray-200 text-gray-600'
               : authCode.length >= 4
@@ -57,12 +57,12 @@ export const AuthCodeInput: React.FC<AuthCodeInputProps> = ({
         </button>
       </div>
       {authCodeError && (
-        <div className="px-[6px] pt-[6px]">
+        <div className="px-1.5 pt-1.5">
           <p className="text-caption-1-medium text-error">{authCodeError}</p>
         </div>
       )}
       {authCodeValid === true && (
-        <div className="px-[6px] pt-[6px]">
+        <div className="px-1.5 pt-1.5">
           <p className="text-caption-1-medium text-purple-700">인증번호가 확인되었습니다.</p>
         </div>
       )}

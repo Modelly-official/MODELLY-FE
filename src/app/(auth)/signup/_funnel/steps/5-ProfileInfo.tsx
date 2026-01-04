@@ -28,6 +28,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
     nickname,
     gender,
     birthDate,
+    intro,
     storeName,
     address,
     detailAddress,
@@ -72,11 +73,14 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
   };
 
   const isDesigner = role === 'designer';
+  const nicknameTrimmed = nickname.trim();
+  const introTrimmed = intro.trim();
+  const storeNameTrimmed = storeName.trim();
 
   // 폼 유효성 검사
   const isFormValid = isDesigner
-    ? nickname && gender && birthDate && storeName && address && category
-    : nickname && gender && birthDate;
+    ? nicknameTrimmed && gender && birthDate && introTrimmed && storeNameTrimmed && address && category
+    : nicknameTrimmed && gender && birthDate;
 
   const isSubmitting = isSocial ? socialSignupMutation.isPending : signupMutation.isPending;
 
@@ -98,16 +102,17 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         ...(isDesigner
           ? {
               designer: {
-                shop: storeName,
+                shop: storeNameTrimmed,
+                intro: introTrimmed,
                 addressLine1: addressLine1,
                 addressLine2: addressLine2 || '',
                 category: convertCategoryToApi(category),
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }
           : {
               model: {
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }),
       };
@@ -146,16 +151,17 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         ...(isDesigner
           ? {
               designer: {
-                shop: storeName,
+                shop: storeNameTrimmed,
+                intro: introTrimmed,
                 addressLine1: addressLine1,
                 addressLine2: addressLine2 || '',
                 category: convertCategoryToApi(category),
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }
           : {
               model: {
-                nickname: nickname,
+                nickname: nicknameTrimmed,
               },
             }),
       };
@@ -207,7 +213,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
             <label className="text-body-1-medium text-gray-900">생년월일</label>
             <input
               type="text"
-              className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
+              className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
               placeholder="생년월일을 입력해주세요"
               value={birthDate}
               onChange={(e) => handleBirthDateChange(e.target.value)}
@@ -218,6 +224,17 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           {/* 디자이너 용 필드들 */}
           {isDesigner && (
             <>
+              <div className="relative flex flex-col gap-2">
+                <label className="text-body-1-medium text-gray-900">한 줄 소개</label>
+                <textarea
+                  value={intro}
+                  onChange={(e) => setField('intro', e.target.value.slice(0, 100))}
+                  placeholder="디자이너 서비스를 소개해주세요"
+                  maxLength={100}
+                  className="text-body-2-medium h-[120px] w-full resize-none overflow-y-auto rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
+                />
+                <span className="text-body-2-medium absolute right-4 bottom-3 text-gray-600">{intro.length}/100</span>
+              </div>
               <TextInput
                 label="매장 이름"
                 value={storeName}

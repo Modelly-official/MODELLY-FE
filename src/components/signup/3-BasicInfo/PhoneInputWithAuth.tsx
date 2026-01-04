@@ -39,7 +39,7 @@ export const PhoneInputWithAuth: React.FC<PhoneInputWithAuthProps> = ({
       <div className="flex min-w-0 items-center gap-2">
         <input
           type="tel"
-          className={`text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-[14px] placeholder:text-gray-600 focus:placeholder:text-transparent focus:outline-none ${
+          className={`text-body-2-medium min-w-0 flex-1 rounded-xl bg-gray-100 px-4 py-3.5 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent ${
             requestSent ? 'text-gray-700' : 'text-gray-900'
           }`}
           placeholder="휴대폰 번호 (숫자만 입력)"
@@ -51,7 +51,7 @@ export const PhoneInputWithAuth: React.FC<PhoneInputWithAuthProps> = ({
         />
         <button
           type="button"
-          className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-[14px] ${
+          className={`text-body-2-medium w-20 shrink-0 rounded-xl px-4 py-3.5 ${
             requestSent
               ? 'border border-purple-400 bg-white text-purple-700'
               : isValidPhone
