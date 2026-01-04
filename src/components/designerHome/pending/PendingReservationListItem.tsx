@@ -3,15 +3,8 @@
 import Link from 'next/link';
 import CalendarIcon from '@/public/icons/designer-home/calendar.svg';
 import RightArrowIcon from '@/public/icons/designer-home/right-arrow.svg';
+import { formatTimeWithPeriod } from '@/src/utils/common';
 import type { PendingReservationItem } from '@/src/types/designerHome';
-
-// ===== 시간 포맷 함수 =====
-function formatTime(timeStr: string) {
-  const [hour] = timeStr.split(':');
-  const hourNum = parseInt(hour, 10);
-  const period = hourNum >= 12 ? 'pm' : 'am';
-  return `${timeStr} ${period}`;
-}
 
 // ===== 날짜 파싱 함수 =====
 function parseDate(dateStr: string) {
@@ -45,7 +38,7 @@ export function PendingReservationListItem({ item }: PendingReservationListItemP
       {/* 일 + 시간, 카테고리 + 모델명 */}
       <div className="flex flex-col gap-0.5">
         <p className="text-head-4-medium text-gray-900">
-          {day}일 {formatTime(item.time)}
+          {day}일 {formatTimeWithPeriod(item.time)}
         </p>
         <div className="flex items-center gap-2 text-body-2-medium text-gray-700">
           <span>{item.subCategories?.[0] ?? '기타'}</span>

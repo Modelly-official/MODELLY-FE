@@ -2,6 +2,7 @@
 
 import ClockIcon from '@/public/icons/designer-home/clock.svg';
 import RectangleIcon from '@/public/icons/designer-home/rectangle.svg';
+import { formatTimeWithPeriod } from '@/src/utils/common';
 import type { TodayReservationItem, TodayReservationsResult } from '@/src/types/designerHome';
 
 // ===== 요일 상수 =====
@@ -16,20 +17,12 @@ function formatDateCard(dateStr: string) {
   return { month, day, weekday };
 }
 
-// ===== 시간 포맷 함수 =====
-function formatTime(timeStr: string) {
-  const [hour] = timeStr.split(':');
-  const hourNum = parseInt(hour, 10);
-  const period = hourNum >= 12 ? 'pm' : 'am';
-  return `${timeStr} ${period}`;
-}
-
 // ===== 오늘의 예약 아이템 =====
 function TodayReservationItemRow({ item }: { item: TodayReservationItem }) {
   return (
     <div className="flex items-center gap-2 rounded-[12px] bg-purple-100 p-3">
       <ClockIcon className="size-4 text-gray-900" />
-      <span className="text-body-2-medium text-gray-900">{formatTime(item.time)}</span>
+      <span className="text-body-2-medium text-gray-900">{formatTimeWithPeriod(item.time)}</span>
       <span className="text-body-2-medium text-gray-900">·</span>
       <span className="text-body-2-medium text-gray-900">{item.modelName} 님</span>
       <span className="text-body-2-medium text-gray-900">·</span>

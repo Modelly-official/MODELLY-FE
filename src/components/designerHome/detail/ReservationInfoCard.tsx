@@ -1,14 +1,7 @@
 'use client';
 
 import CalendarIcon from '@/public/icons/designer-home/calendar.svg';
-
-// ===== 시간 포맷 함수 =====
-function formatTime(timeStr: string) {
-  const [hour] = timeStr.split(':');
-  const hourNum = parseInt(hour, 10);
-  const period = hourNum >= 12 ? 'pm' : 'am';
-  return `${timeStr}${period}`;
-}
+import { formatTimeWithPeriod } from '@/src/utils/common';
 
 // ===== 날짜 파싱 함수 =====
 function parseDate(dateStr: string) {
@@ -38,7 +31,7 @@ export function ReservationInfoCard({ date, startTime, category }: ReservationIn
 
         {/* 날짜 + 시간 */}
         <p className="text-[24px] font-medium leading-[1.5] tracking-[-0.48px] text-gray-900">
-          {day}일 {formatTime(startTime)}
+          {day}일 {formatTimeWithPeriod(startTime)}
         </p>
 
         {/* 카테고리 */}

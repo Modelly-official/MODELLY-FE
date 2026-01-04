@@ -7,6 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import CalendarIcon from '@/public/icons/designer-home/calendar.svg';
 import RightArrowIcon from '@/public/icons/designer-home/right-arrow.svg';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
+import { formatTimeWithPeriod } from '@/src/utils/common';
 import type { PendingReservationItem, PendingReservationsResult } from '@/src/types/designerHome';
 
 // ===== 날짜 포맷 함수 =====
@@ -15,14 +16,6 @@ function formatReservationDate(dateStr: string) {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   return `${month}월 ${day}일`;
-}
-
-// ===== 시간 포맷 함수 =====
-function formatTime(timeStr: string) {
-  const [hour] = timeStr.split(':');
-  const hourNum = parseInt(hour, 10);
-  const period = hourNum >= 12 ? 'pm' : 'am';
-  return `${timeStr} ${period}`;
 }
 
 // ===== 신규 예약 카드 =====
@@ -38,7 +31,7 @@ function PendingReservationCard({ item }: { item: PendingReservationItem }) {
       </div>
 
       {/* 시간 */}
-      <p className="text-body-1-medium mt-2 text-gray-900">{formatTime(item.time)}</p>
+      <p className="text-body-1-medium mt-2 text-gray-900">{formatTimeWithPeriod(item.time)}</p>
 
       {/* 날짜 */}
       <div className="mt-0.5 flex items-center gap-1">
