@@ -1,13 +1,22 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { PendingReservationListItem } from '@/src/components/designerHome';
 import { usePendingReservations } from '@/src/hooks/queries/designerHome';
+import { useToast } from '@/src/hooks/common/useToast';
 
 export default function PendingReservationsPage() {
   const router = useRouter();
-  const { data, isLoading } = usePendingReservations();
+  const { showToast } = useToast();
+  const { data, isLoading, isError } = usePendingReservations();
+
+  useEffect(() => {
+    if (isError) {
+      showToast('데이터를 불러오지 못했습니다');
+    }
+  }, [isError, showToast]);
 
   const items = data?.result?.reservations ?? [];
   const totalCount = data?.result?.totalCount ?? 0;
