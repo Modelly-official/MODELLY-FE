@@ -40,5 +40,5 @@ export interface GetReservationDotsParams {
 export interface GetCalendarReservationsParams {
   month: string; // yyyy-MM
   date?: string; // yyyy-MM-dd (특정 날짜 필터)
-  includePending?: boolean; // PENDING 상태 예약 포함 여부 (문서에 없지만 시도)
+  includePending?: boolean; // PENDING 상태 예약 포함 여부
 }

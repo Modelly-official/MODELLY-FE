@@ -20,13 +20,14 @@ function formatDate(dateStr: string): string {
 }
 
 /**
- * 시간을 HH:mm am/pm 형식으로 포맷
+ * 시간을 12시간 형식 (h:mm am/pm)으로 포맷
  */
 function formatTime(timeStr: string): string {
   const [hour, minute] = timeStr.split(':');
   const hourNum = parseInt(hour, 10);
   const period = hourNum >= 12 ? 'pm' : 'am';
-  return `${hour}:${minute} ${period}`;
+  const displayHour = hourNum % 12 === 0 ? 12 : hourNum % 12;
+  return `${displayHour}:${minute} ${period}`;
 }
 
 /**
