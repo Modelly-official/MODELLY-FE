@@ -6,12 +6,23 @@ import {
 } from '@/src/constants/routes';
 
 /**
+ * 경로 매칭 함수 (정확한 prefix 매칭)
+ * /reservation은 /reservation, /reservation/123 등과 매칭
+ * /reservation은 /reservations와 매칭되지 않음
+ */
+function matchRoute(pathname: string, route: string): boolean {
+  if (pathname === route) return true;
+  // route + '/'로 시작하는지 확인 (하위 경로 매칭)
+  return pathname.startsWith(route + '/');
+}
+
+/**
  * 공개 라우트 확인
  */
 export function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => {
     if (route === '/') return pathname === '/';
-    return pathname.startsWith(route);
+    return matchRoute(pathname, route);
   });
 }
 
@@ -22,14 +33,14 @@ export function checkRoleAccess(pathname: string, role: string): boolean {
   // role을 소문자로 정규화 (대소문자 혼용 방지)
   const normalizedRole = role?.toLowerCase();
 
-  if (MODEL_ONLY_ROUTES.some((route) => pathname.startsWith(route))) {
+  if (MODEL_ONLY_ROUTES.some((route) => matchRoute(pathname, route))) {
     return normalizedRole === 'model';
   }
-  if (DESIGNER_ONLY_ROUTES.some((route) => pathname.startsWith(route))) {
+  if (DESIGNER_ONLY_ROUTES.some((route) => matchRoute(pathname, route))) {
     return normalizedRole === 'designer';
   }
   // 인증된 사용자만 접근 가능한 라우트 (모델/디자이너 모두 접근 가능)
-  if (AUTHENTICATED_ROUTES.some((route) => pathname.startsWith(route))) {
+  if (AUTHENTICATED_ROUTES.some((route) => matchRoute(pathname, route))) {
     return normalizedRole === 'model' || normalizedRole === 'designer';
   }
   // 미등록 라우트는 기본 차단 (보안 강화)
