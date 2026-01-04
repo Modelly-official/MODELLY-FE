@@ -1,6 +1,7 @@
 import type {
   TodayReservationsResult,
   PendingReservationsResult,
+  ReservationDetailResult,
 } from '@/src/types/designerHome';
 
 // ===== 오늘의 예약 Mock 데이터 =====
@@ -58,4 +59,17 @@ export const mockPendingReservations: PendingReservationsResult = {
     },
   ],
   totalCount: 5,
+};
+
+// ===== 예약 상세 Mock 데이터 =====
+export const mockReservationDetail: ReservationDetailResult = {
+  reservationId: 3,
+  modelUserId: 101,
+  modelName: '김나영',
+  subCategories: ['모델 시술', '커트'],
+  date: '2025-01-15',
+  startTime: '21:00',
+  endTime: '22:00',
+  photos: ['/images/sample-hair.jpg'],
+  status: 'PENDING',
 };
