@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { ReactNode, useMemo } from 'react';
 import { BottomNav } from '@/src/components/common';
-import { ActionList, MyPageMenu, ProfileCard } from '@/src/components/mypage';
+import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { getUserRole, useAuthStore } from '@/src/stores';
 
 type Role = 'model' | 'designer';
@@ -15,7 +15,7 @@ const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as 
 export default function MypagePage() {
   const user = useAuthStore((state) => state.user);
   const role: Role = user?.role ?? getUserRole() ?? 'model';
-  const isProfileLoading = user;
+  const isProfileLoading = !user; // 로그인 정보 없을 때만 스켈레톤 노출
   const notificationCount = 2; // 알림 API 연동 시 실제 값으로 교체
 
   const { profileImage, fallbackName, quickActions, ctaButton } = useMemo((): {
@@ -65,7 +65,11 @@ export default function MypagePage() {
       <div className="flex flex-col gap-3 px-4 pt-3 pb-4">
         <header className="mb-3 flex items-center justify-between">
           <h1 className="text-head-3-semibold text-gray-900">마이페이지</h1>
-          <button type="button" aria-label="알림" className="relative flex h-10 w-10 items-center justify-center">
+          <button
+            type="button"
+            aria-label="알림"
+            className="relative flex h-10 w-10 cursor-pointer items-center justify-center"
+          >
             <Image src="/icons/myPage/alert.svg" alt="알림" width={24} height={24} />
             {notificationCount > 0 && (
               <span className="text-caption-1-medium absolute -top-1 -right-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-purple-500 px-1 text-white">
@@ -81,10 +85,10 @@ export default function MypagePage() {
           ctaButton={ctaButton}
           isLoading={isProfileLoading}
         />
-        <MyPageMenu actions={quickActions} />
-        <ActionList items={settingLinks.map((label) => ({ label }))} />
+        <MyMenuCard actions={quickActions} />
+        <MenuList items={settingLinks.map((label) => ({ label }))} />
         <div className="-mx-4 h-2 bg-gray-200" />
-        <ActionList items={accountLinks.map((label) => ({ label }))} />
+        <MenuList items={accountLinks.map((label) => ({ label }))} />
       </div>
       <BottomNav />
     </div>

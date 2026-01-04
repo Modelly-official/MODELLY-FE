@@ -1,4 +1,4 @@
-type ActionListProps = {
+type MenuListProps = {
   items: {
     label: string;
     onClick?: () => void;
@@ -6,7 +6,7 @@ type ActionListProps = {
   className?: string;
 };
 
-export const ActionList = ({ items }: ActionListProps) => {
+export const MenuList = ({ items }: MenuListProps) => {
   if (items.length === 0) return null;
 
   return (
@@ -17,7 +17,7 @@ export const ActionList = ({ items }: ActionListProps) => {
             key={label}
             type="button"
             onClick={onClick}
-            className="text-body-1-medium w-full py-3 text-left text-gray-900"
+            className="text-body-1-medium w-full cursor-pointer py-3 text-left text-gray-900"
           >
             {label}
           </button>

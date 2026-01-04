@@ -1,3 +1,3 @@
 export * from './ProfileCard';
-export * from './MyPageMenu';
-export * from './ActionList';
+export * from './MyMenuCard';
+export * from './MenuList';
