@@ -13,7 +13,7 @@ export const GenderSelect: React.FC<GenderSelectProps> = ({ value, onChange }) =
         <button
           type="button"
           onClick={() => onChange('남자')}
-          className={`text-body-2-medium flex-1 cursor-pointer rounded-xl py-[14px] ${
+          className={`text-body-2-medium flex-1 cursor-pointer rounded-xl py-3.5 ${
             value === '남자' ? 'border-none bg-purple-600 text-white' : 'border border-gray-400 bg-white text-gray-600'
           }`}
         >
@@ -22,7 +22,7 @@ export const GenderSelect: React.FC<GenderSelectProps> = ({ value, onChange }) =
         <button
           type="button"
           onClick={() => onChange('여자')}
-          className={`text-body-2-medium flex-1 cursor-pointer rounded-xl py-[14px] ${
+          className={`text-body-2-medium flex-1 cursor-pointer rounded-xl py-3.5 ${
             value === '여자' ? 'border-none bg-purple-600 text-white' : 'border border-gray-400 bg-white text-gray-600'
           }`}
         >

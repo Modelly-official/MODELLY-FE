@@ -129,7 +129,7 @@ const LoginContent = () => {
             {/* 카카오 로그인 */}
             <button
               onClick={() => (window.location.href = SOCIAL_LOGIN_URLS.kakao)}
-              className="flex h-[60px] w-[60px] cursor-pointer justify-center rounded-full bg-[#FFE812] pt-[14px] pb-[10px]"
+              className="flex h-[60px] w-[60px] cursor-pointer justify-center rounded-full bg-[#FFE812] pt-3.5 pb-2.5"
             >
               <Image src="/icons/login/kakao.svg" alt="카카오 로그인" width={36} height={36} />
             </button>

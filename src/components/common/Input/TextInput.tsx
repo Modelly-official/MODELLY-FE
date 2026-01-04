@@ -110,7 +110,7 @@ export default function TextInput({
           onCompositionEnd={handleCompositionEnd}
           placeholder={placeholder}
           disabled={disabled}
-          className={`text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:cursor-not-allowed disabled:text-gray-700 ${
+          className={`text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:cursor-not-allowed disabled:text-gray-700 ${
             showClearButton && localValue ? 'pr-10' : ''
           } ${getStatusRingClass()}`}
         />
@@ -127,7 +127,7 @@ export default function TextInput({
 
       {/* 하단 메시지 */}
       {message && (
-        <div className="px-[6px]">
+        <div className="px-1.5">
           <p className={`text-caption-1-medium ${getMessageColorClass()}`}>{message}</p>
         </div>
       )}

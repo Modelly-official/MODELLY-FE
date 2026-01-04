@@ -128,7 +128,7 @@ export default function Dropdown({
           aria-labelledby={`${listboxId}-label`}
           aria-controls={isOpen ? listboxId : undefined}
           disabled={disabled}
-          className={`flex w-full items-center justify-between rounded-xl bg-gray-100 px-4 py-[14px] ${
+          className={`flex w-full items-center justify-between rounded-xl bg-gray-100 px-4 py-3.5 ${
             disabled ? 'cursor-not-allowed text-gray-700' : 'cursor-pointer'
           }`}
         >

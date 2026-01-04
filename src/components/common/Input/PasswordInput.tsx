@@ -57,7 +57,7 @@ export default function PasswordInput({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
-          className={`text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-[14px] pr-12 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:cursor-not-allowed disabled:text-gray-700 ${getStatusRingClass()}`}
+          className={`text-body-2-medium w-full rounded-xl bg-gray-100 px-4 py-3.5 pr-12 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent disabled:cursor-not-allowed disabled:text-gray-700 ${getStatusRingClass()}`}
         />
         {value && !disabled && (
           <button
@@ -72,7 +72,7 @@ export default function PasswordInput({
 
       {/* 하단 메시지 */}
       {message && (
-        <div className="px-[6px]">
+        <div className="px-1.5">
           <p className={`text-caption-1-medium ${getMessageColorClass()}`}>{message}</p>
         </div>
       )}

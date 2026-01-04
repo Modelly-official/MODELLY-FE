@@ -33,7 +33,7 @@ export const StepTerms: React.FC<StepTermsProps> = ({ goNext, isSocial }) => {
       <SignupHeader onBack={() => router.push('/login')} totalSteps={totalSteps} currentStep={1} />
       <SignupTitle line1={SIGNUP_MESSAGES.TERMS.TITLE_1} line2={SIGNUP_MESSAGES.TERMS.TITLE_2} />
       <div
-        className="mx-4 mt-8 flex w-[calc(100%-2rem)] cursor-pointer items-center gap-4 rounded-xl bg-gray-100 p-[16px] sm:w-[343px]"
+        className="mx-4 mt-8 flex w-[calc(100%-2rem)] cursor-pointer items-center gap-4 rounded-xl bg-gray-100 p-4 sm:w-[343px]"
         onClick={handleAllAgree}
       >
         {allAgreed ? <SelectedIcon /> : <SelectIcon />}
