@@ -17,6 +17,7 @@ export type SignupStoreField =
   | 'nickname'
   | 'gender'
   | 'birthDate'
+  | 'intro'
   | 'storeName'
   | 'address'
   | 'detailAddress'
@@ -38,6 +39,7 @@ interface SignupStore {
   nickname: string;
   gender: string;
   birthDate: string;
+  intro: string;
   storeName: string;
   address: string;
   detailAddress: string;
@@ -84,6 +86,7 @@ export const useSignupStore = create<SignupStore>((set) => ({
   nickname: '',
   gender: '',
   birthDate: '',
+  intro: '',
   storeName: '',
   address: '',
   detailAddress: '',
@@ -128,6 +131,7 @@ export const useSignupStore = create<SignupStore>((set) => ({
       nickname: '',
       gender: '',
       birthDate: '',
+      intro: '',
       storeName: '',
       address: '',
       detailAddress: '',

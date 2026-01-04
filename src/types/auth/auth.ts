@@ -14,6 +14,7 @@ export interface SignupRequest {
   };
   designer?: {
     shop: string;
+    intro: string;
     addressLine1: string;
     addressLine2: string;
     category: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
@@ -35,6 +36,7 @@ export interface SocialSignupRequest {
   };
   designer?: {
     shop: string;
+    intro: string;
     addressLine1: string;
     addressLine2: string;
     category: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
@@ -123,4 +125,3 @@ export interface SocialLoginCallbackResponse {
   userRole: 'MODEL' | 'DESIGNER';
   category?: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH'; // 디자이너 카테고리
 }
-
