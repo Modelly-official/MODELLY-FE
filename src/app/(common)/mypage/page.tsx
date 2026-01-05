@@ -15,7 +15,7 @@ const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as 
 export default function MypagePage() {
   const user = useAuthStore((state) => state.user);
   const role: Role = user?.role ?? getUserRole() ?? 'model';
-  const isProfileLoading = !user; // 로그인 정보 없을 때만 스켈레톤 노출
+  const isProfileLoading = false; // API 연동 전까지 기본 문구 노출 (추후에 !user로 교체)
   const notificationCount = 2; // 알림 API 연동 시 실제 값으로 교체
 
   const { profileImage, fallbackName, quickActions, ctaButton } = useMemo((): {
@@ -27,7 +27,7 @@ export default function MypagePage() {
     if (role === 'designer') {
       return {
         profileImage: '/images/mocks/profile-2.png',
-        fallbackName: '유디 디자이너',
+        fallbackName: '유디 디자이너(디자이너)',
         quickActions: [
           {
             label: '예약 내역',
@@ -44,7 +44,7 @@ export default function MypagePage() {
     }
     return {
       profileImage: '/images/mocks/profile-1.png',
-      fallbackName: '성유디',
+      fallbackName: '성유디(모델)',
       quickActions: [
         {
           label: '예약 내역',
