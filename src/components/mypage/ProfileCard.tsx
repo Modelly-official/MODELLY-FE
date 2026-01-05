@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { Skeleton } from '@/src/components/common';
 
@@ -9,10 +10,20 @@ type ProfileCardProps = {
     label: string;
     onClick?: () => void;
   };
+  editHref?: string;
+  onEdit?: () => void;
   isLoading?: boolean;
 };
 
-export const ProfileCard = ({ name, email, profileImageSrc, ctaButton, isLoading = false }: ProfileCardProps) => {
+export const ProfileCard = ({
+  name,
+  email,
+  profileImageSrc,
+  ctaButton,
+  editHref,
+  onEdit,
+  isLoading = false,
+}: ProfileCardProps) => {
   return (
     <section className="rounded-2xl bg-white py-6">
       <div className="flex items-center justify-between gap-4">
@@ -31,7 +42,26 @@ export const ProfileCard = ({ name, email, profileImageSrc, ctaButton, isLoading
               ) : (
                 <>
                   <span className="text-head-3-semibold text-gray-900">{name}</span>
-                  <Image src="/icons/myPage/edit.svg" alt="프로필 수정" width={24} height={24} />
+                  {editHref ? (
+                    <Link
+                      href={editHref}
+                      aria-label="프로필 수정"
+                      className="flex h-6 w-6 cursor-pointer items-center justify-center"
+                    >
+                      <Image src="/icons/myPage/edit.svg" alt="프로필 수정" width={24} height={24} />
+                    </Link>
+                  ) : (
+                    onEdit && (
+                      <button
+                        type="button"
+                        onClick={onEdit}
+                        aria-label="프로필 수정"
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center"
+                      >
+                        <Image src="/icons/myPage/edit.svg" alt="프로필 수정" width={24} height={24} />
+                      </button>
+                    )
+                  )}
                 </>
               )}
             </div>

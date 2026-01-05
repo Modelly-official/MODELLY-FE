@@ -15,7 +15,7 @@ const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as 
 export default function MypagePage() {
   const user = useAuthStore((state) => state.user);
   const role: Role = user?.role ?? getUserRole() ?? 'model';
-  const isProfileLoading = !user; // 로그인 정보 없을 때만 스켈레톤 노출
+  const isProfileLoading = user; // 로그인 정보 없을 때만 스켈레톤 노출
   const notificationCount = 2; // 알림 API 연동 시 실제 값으로 교체
 
   const { profileImage, fallbackName, quickActions, ctaButton } = useMemo((): {
@@ -83,6 +83,7 @@ export default function MypagePage() {
           email={email}
           profileImageSrc={profileImage}
           ctaButton={ctaButton}
+          editHref="/mypage/profile/edit"
           isLoading={isProfileLoading}
         />
         <MyMenuCard actions={quickActions} />
