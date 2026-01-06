@@ -12,7 +12,7 @@ import type {
   RecruitmentDetail,
 } from '@/src/types';
 
-const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 6;
 
 /**
  * 공고 목록 조회

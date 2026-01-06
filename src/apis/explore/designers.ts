@@ -3,7 +3,7 @@ import { isMockEnabled } from '@/src/config/api';
 import { mockDesignerItems } from '@/src/mocks/explore';
 import type { ApiResponse, DesignerListParams, DesignerListResponse } from '@/src/types';
 
-const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 8;
 
 /**
  * 디자이너 목록 조회
