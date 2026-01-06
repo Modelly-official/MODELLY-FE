@@ -10,7 +10,7 @@ import { useDesignerProfile, useModelProfile, useUpdateDesignerProfile, useUpdat
 import { formatBirthDate, showToast } from '@/src/utils';
 import { convertCategoryToApi, convertGenderToApi } from '@/src/utils/signup/apiConverter';
 import { convertGenderToDisplay } from '@/src/utils/signup/profileFormat';
-import { getUserCategory, getUserRole, useAuthStore } from '@/src/stores';
+import { getAccessToken, getUserCategory, getUserRole, useAuthStore } from '@/src/stores';
 import type { Category } from '@/src/types/recruitment';
 
 type ProfileFormState = {
@@ -47,10 +47,10 @@ const mapCategoryToLabel = (category?: Category | null) => {
 export default function ProfileEditPage() {
   const router = useRouter();
   const authUser = useAuthStore((state) => state.user);
-  const [role, setRole] = useState<'model' | 'designer'>('model');
+  const [resolvedRole, setResolvedRole] = useState<'model' | 'designer' | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
-  const isDesigner = role === 'designer';
+  const isDesigner = resolvedRole === 'designer';
 
   const [form, setForm] = useState<ProfileFormState>({
     nickname: authUser?.username ?? '',
@@ -65,9 +65,9 @@ export default function ProfileEditPage() {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { data: modelProfile, isLoading: isModelLoading } = useModelProfile(authChecked && isLoggedIn && !isDesigner);
+  const { data: modelProfile, isLoading: isModelLoading } = useModelProfile(isLoggedIn && resolvedRole === 'model');
   const { data: designerProfile, isLoading: isDesignerLoading } = useDesignerProfile(
-    authChecked && isLoggedIn && isDesigner,
+    isLoggedIn && resolvedRole === 'designer',
   );
   const isProfileLoading = isModelLoading || isDesignerLoading;
   const updateModelProfileMutation = useUpdateModelProfile();
@@ -75,8 +75,11 @@ export default function ProfileEditPage() {
 
   useEffect(() => {
     const cookieRole = getUserRole();
-    setRole((authUser?.role ?? cookieRole ?? 'model') as 'model' | 'designer');
-    setIsLoggedIn(!!(authUser ?? cookieRole));
+    const token = getAccessToken();
+    const nextRole = (authUser?.role ?? cookieRole ?? null) as 'model' | 'designer' | null;
+
+    setResolvedRole(nextRole);
+    setIsLoggedIn(!!(authUser ?? cookieRole ?? token));
     setAuthChecked(true);
   }, [authUser]);
 
@@ -153,7 +156,7 @@ export default function ProfileEditPage() {
   const addressTrimmed = form.address.trim();
 
   if (!authChecked) return null;
-  if (!isLoggedIn) return null;
+  if (!isLoggedIn || !resolvedRole) return null;
 
   const isFormValid = isDesigner
     ? nicknameTrimmed &&
