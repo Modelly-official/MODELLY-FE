@@ -64,9 +64,16 @@ const LoginContent = () => {
   return (
     <>
       <div className="relative bg-white font-sans">
-        {/* Monde 로고 */}
+        {/* Moandi 로고 */}
         <div className="mx-auto mt-[98px] mb-15 h-[50px] w-[206px]">
-          <Image src="/images/monde.svg" alt="Monde Logo" width={212} height={58} className="h-full w-full" priority />
+          <Image
+            src="/images/moandi.svg"
+            alt="Moandi Logo"
+            width={212}
+            height={58}
+            className="h-full w-full"
+            priority
+          />
         </div>
 
         {/* 입력 폼 */}

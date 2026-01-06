@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useMemo, useState, useSyncExternalStore } from 'react';
+import { ReactNode, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { useDesignerProfile, useModelProfile } from '@/src/hooks/queries';
@@ -24,11 +24,20 @@ export default function MypagePage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
-  const cookieRole = getUserRole();
-  const role = (user?.role ?? cookieRole ?? 'model') as Role;
-  const isLoggedIn = !!(user ?? cookieRole);
+  const [role, setRole] = useState<Role>('model');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [loginModalDismissed, setLoginModalDismissed] = useState(false);
   const notificationCount = 1; // 알림 API 연동 시 실제 값으로 교체
+
+  // 쿠키/스토어 기반으로 클라이언트에서 로그인 상태와 역할을 동기화
+  useEffect(() => {
+    const cookieRole = getUserRole();
+    setRole((user?.role ?? cookieRole ?? 'model') as Role);
+    setIsLoggedIn(!!(user ?? cookieRole));
+    setAuthReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const isModel = role === 'model';
   const isDesigner = role === 'designer';
@@ -75,10 +84,10 @@ export default function MypagePage() {
   const profileData = isModel ? modelProfile?.result : designerProfile?.result;
   const name = isLoggedIn ? (profileData?.nickname ?? user?.username ?? fallbackName) : '로그인하세요';
   const email = isLoggedIn
-    ? profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.'
+    ? (profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.')
     : '로그인 후 확인할 수 있습니다.';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
-  const isProfileLoading = isLoggedIn && (isModelLoading || isDesignerLoading);
+  const isProfileLoading = !authReady || (isLoggedIn && (isModelLoading || isDesignerLoading));
 
   const ctaButton = useMemo(() => {
     if (!isLoggedIn) return undefined;
