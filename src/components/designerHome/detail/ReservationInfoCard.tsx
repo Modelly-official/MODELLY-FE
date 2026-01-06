@@ -1,42 +1,31 @@
 'use client';
 
-import CalendarIcon from '@/public/icons/designer-home/calendar.svg';
-import { formatTimeWithPeriod } from '@/src/utils/common';
+const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
-// ===== 날짜 파싱 함수 =====
-function parseDate(dateStr: string) {
+// ===== 날짜 포맷 함수 =====
+function formatDateWithDay(dateStr: string, startTime: string) {
   const date = new Date(dateStr);
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return { month, day };
+  const dayOfWeek = DAY_NAMES[date.getDay()];
+  const time = startTime.slice(0, 5); // "09:00" 형식
+
+  return `${month}월 ${day}일(${dayOfWeek}) ${time}`;
 }
 
 interface ReservationInfoCardProps {
   date: string;
   startTime: string;
-  category: string;
 }
 
-export function ReservationInfoCard({ date, startTime, category }: ReservationInfoCardProps) {
-  const { month, day } = parseDate(date);
-
+export function ReservationInfoCard({ date, startTime }: ReservationInfoCardProps) {
   return (
-    <div className="flex flex-col items-center rounded-[12px] bg-white px-8 py-6">
-      <div className="flex flex-col items-center gap-1">
-        {/* 월 */}
-        <div className="flex items-center gap-1">
-          <CalendarIcon className="size-4 text-gray-700" />
-          <span className="text-body-1-medium text-gray-700">{month}월</span>
-        </div>
+    <div className="flex flex-col gap-2 rounded-[12px] bg-white p-5">
+      {/* 라벨 */}
+      <span className="text-body-2-medium text-gray-700">신청 일시</span>
 
-        {/* 날짜 + 시간 */}
-        <p className="text-[24px] font-medium leading-[1.5] tracking-[-0.48px] text-gray-900">
-          {day}일 {formatTimeWithPeriod(startTime)}
-        </p>
-
-        {/* 카테고리 */}
-        <p className="text-body-1-medium text-gray-700">{category}</p>
-      </div>
+      {/* 날짜 + 시간 */}
+      <p className="text-head-4-medium text-gray-900">{formatDateWithDay(date, startTime)}</p>
     </div>
   );
 }

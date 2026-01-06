@@ -12,11 +12,7 @@ import {
   ReservationRejectModal,
   ReservationDetailSkeleton,
 } from '@/src/components/designerHome';
-import {
-  useReservationDetail,
-  useConfirmReservation,
-  useRejectReservation,
-} from '@/src/hooks/queries/designerHome';
+import { useReservationDetail, useConfirmReservation, useRejectReservation } from '@/src/hooks/queries/designerHome';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
 
@@ -111,25 +107,24 @@ export default function ReservationDetailPage() {
 
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto px-4 pb-24">
+        {/* 카테고리 배지 */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {[reservation.category, ...reservation.subCategories].map((cat) => (
+            <span key={cat} className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
+              {cat}
+            </span>
+          ))}
+        </div>
+
         <div className="flex flex-col gap-4">
           {/* 예약 정보 카드 */}
-          <ReservationInfoCard
-            date={reservation.date}
-            startTime={reservation.startTime}
-            category={reservation.subCategories?.length > 0 ? reservation.subCategories[reservation.subCategories.length - 1] : '기타'}
-          />
+          <ReservationInfoCard date={reservation.date} startTime={reservation.startTime} />
 
           {/* 신청자 정보 카드 */}
-          <ApplicantInfoCard
-            modelName={reservation.modelName}
-            onChatClick={handleChatClick}
-          />
+          <ApplicantInfoCard modelName={reservation.modelName} onChatClick={handleChatClick} />
 
-          {/* 신청 내용 카드 */}
-          <RequestContentCard
-            category={reservation.category}
-            subCategories={reservation.subCategories}
-          />
+          {/* 작성 내용 카드 */}
+          <RequestContentCard comment={reservation.comment} />
 
           {/* 첨부 사진 카드 */}
           <AttachedPhotosCard imageUrl={reservation.imageUrl} />
@@ -142,14 +137,14 @@ export default function ReservationDetailPage() {
           <button
             type="button"
             onClick={handleReject}
-            className="flex-1 cursor-pointer rounded-full border border-gray-400 bg-white py-4 text-body-1-semibold text-gray-900"
+            className="text-body-1-semibold flex-1 cursor-pointer rounded-full border border-gray-400 bg-white py-4 text-gray-900"
           >
             예약 거절
           </button>
           <button
             type="button"
             onClick={handleConfirm}
-            className="flex-1 cursor-pointer rounded-full bg-gray-900 py-4 text-body-1-semibold text-white"
+            className="text-body-1-semibold flex-1 cursor-pointer rounded-full bg-gray-900 py-4 text-white"
           >
             예약 확정
           </button>
