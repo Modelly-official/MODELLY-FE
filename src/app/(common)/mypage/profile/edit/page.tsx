@@ -44,7 +44,9 @@ const mapCategoryToLabel = (category?: Category | null) => {
 export default function ProfileEditPage() {
   const router = useRouter();
   const authUser = useAuthStore((state) => state.user);
-  const role = authUser?.role ?? getUserRole() ?? 'designer';
+  const [role, setRole] = useState<'model' | 'designer'>('model');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const isDesigner = role === 'designer';
 
   const [form, setForm] = useState<ProfileFormState>({
@@ -60,6 +62,19 @@ export default function ProfileEditPage() {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const cookieRole = getUserRole();
+    setRole((authUser?.role ?? cookieRole ?? 'model') as 'model' | 'designer');
+    setIsLoggedIn(!!(authUser ?? cookieRole));
+    setAuthChecked(true);
+  }, [authUser]);
+
+  useEffect(() => {
+    if (authChecked && !isLoggedIn) {
+      router.replace('/login');
+    }
+  }, [authChecked, isLoggedIn, router]);
 
   useEffect(() => {
     setForm((prev) => ({
@@ -95,6 +110,14 @@ export default function ProfileEditPage() {
   const introTrimmed = form.intro.trim();
   const storeNameTrimmed = form.storeName.trim();
   const addressTrimmed = form.address.trim();
+
+  if (!authChecked) {
+    return null;
+  }
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   const isFormValid = isDesigner
     ? nicknameTrimmed &&

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { getUserRole, useAuthStore } from '@/src/stores';
@@ -14,20 +14,26 @@ const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as 
 
 export default function MypagePage() {
   const user = useAuthStore((state) => state.user);
-  const role: Role = user?.role ?? getUserRole() ?? 'model';
+  const [role, setRole] = useState<Role>('model');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isProfileLoading = false; // API 연동 전까지 기본 문구 노출 (추후에 !user로 교체)
-  const notificationCount = 2; // 알림 API 연동 시 실제 값으로 교체
+  const notificationCount = 1; // 알림 API 연동 시 실제 값으로 교체
 
-  const { profileImage, fallbackName, quickActions, ctaButton } = useMemo((): {
+  useEffect(() => {
+    const cookieRole = getUserRole();
+    setRole((user?.role ?? cookieRole ?? 'model') as Role);
+    setIsLoggedIn(!!(user ?? cookieRole));
+  }, [user]);
+
+  const { profileImage, fallbackName, quickActions } = useMemo((): {
     profileImage: string;
     fallbackName: string;
     quickActions: QuickAction[];
-    ctaButton?: { label: string; onClick?: () => void };
   } => {
     if (role === 'designer') {
       return {
-        profileImage: '/images/mocks/profile-2.png',
-        fallbackName: '유디 디자이너(디자이너)',
+        profileImage: '',
+        fallbackName: '디자이너',
         quickActions: [
           {
             label: '예약 내역',
@@ -39,12 +45,11 @@ export default function MypagePage() {
             icon: <Image src="/icons/myPage/portfolio.svg" alt="포트폴리오" width={24} height={24} />,
           },
         ],
-        ctaButton: { label: '프로필 보기', onClick: () => {} },
       };
     }
     return {
-      profileImage: '/images/mocks/profile-1.png',
-      fallbackName: '성유디(모델)',
+      profileImage: '',
+      fallbackName: '모델',
       quickActions: [
         {
           label: '예약 내역',
@@ -53,12 +58,17 @@ export default function MypagePage() {
         { label: '나의 리뷰', icon: <Image src="/icons/myPage/review.svg" alt="나의 리뷰" width={24} height={24} /> },
         { label: '찜', icon: <Image src="/icons/myPage/heart.svg" alt="찜" width={24} height={24} /> },
       ],
-      ctaButton: undefined,
     };
   }, [role]);
 
-  const name = user?.username ?? fallbackName;
-  const email = user?.loginId ?? 'modelly@gmail.com';
+  const name = isLoggedIn ? (user?.username ?? fallbackName) : '로그인하세요';
+  const email = isLoggedIn ? (user?.loginId ?? '') : '로그인 후 확인할 수 있습니다.';
+
+  const ctaButton = useMemo(() => {
+    if (!isLoggedIn) return undefined;
+    if (role === 'designer') return { label: '프로필 보기', onClick: () => {} };
+    return undefined;
+  }, [isLoggedIn, role]);
 
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
@@ -83,7 +93,7 @@ export default function MypagePage() {
           email={email}
           profileImageSrc={profileImage}
           ctaButton={ctaButton}
-          editHref="/mypage/profile/edit"
+          editHref={isLoggedIn ? '/mypage/profile/edit' : undefined}
           isLoading={isProfileLoading}
         />
         <MyMenuCard actions={quickActions} />

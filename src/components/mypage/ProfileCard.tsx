@@ -24,6 +24,8 @@ export const ProfileCard = ({
   onEdit,
   isLoading = false,
 }: ProfileCardProps) => {
+  const hasProfileImage = Boolean(profileImageSrc);
+
   return (
     <section className="rounded-2xl bg-white py-6">
       <div className="flex items-center justify-between gap-4">
@@ -31,6 +33,8 @@ export const ProfileCard = ({
           <div className="relative h-[66px] w-[66px] overflow-hidden rounded-full">
             {isLoading ? (
               <Skeleton variant="circular" className="h-full w-full" />
+            ) : !hasProfileImage ? (
+              <div className="h-full w-full bg-gray-300" />
             ) : (
               <Image src={profileImageSrc} alt="프로필 이미지" fill className="object-cover" sizes="64px" priority />
             )}
