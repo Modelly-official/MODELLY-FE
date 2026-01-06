@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { isAxiosError } from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { getDesignerProfile, getModelProfile } from '@/src/apis';
@@ -21,23 +21,33 @@ const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as 
 export default function MypagePage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
+  const [role, setRole] = useState<Role>('model');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [loginModalDismissed, setLoginModalDismissed] = useState(false);
   const notificationCount = 1; // 알림 API 연동 시 실제 값으로 교체
-  const cookieRole = getUserRole();
-  const token = getAccessToken();
-  const derivedRole = (user?.role ?? cookieRole ?? 'model') as Role;
-  const isLoggedIn = !!(user ?? token);
+
+  // 쿠키/스토어 기반으로 인증 상태 동기화 (초기 렌더와 일치하도록 마운트 후 업데이트)
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    const cookieRole = getUserRole();
+    const token = getAccessToken();
+    setRole((user?.role ?? cookieRole ?? 'model') as Role);
+    setIsLoggedIn(!!(user ?? token ?? cookieRole));
+    setAuthReady(true);
+  }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const {
     data: profileResponse,
     isLoading: profileQueryLoading,
   } = useQuery<ProfileResult>({
-    queryKey: ['mypage', 'profile', derivedRole],
-    enabled: isLoggedIn,
+    queryKey: ['mypage', 'profile', role],
+    enabled: authReady && isLoggedIn,
     retry: false,
     queryFn: async () => {
       const cookieRole = getUserRole();
-      const effectiveRole = (user?.role ?? cookieRole ?? derivedRole) as Role;
+      const effectiveRole = (user?.role ?? cookieRole ?? role) as Role;
 
       const fetchDesigner = async (): Promise<ProfileResult> => {
         const res = await getDesignerProfile();
@@ -82,7 +92,7 @@ export default function MypagePage() {
     },
   });
 
-  const resolvedRole = (profileResponse?.role ?? derivedRole) as Role;
+  const resolvedRole = (profileResponse?.role ?? role) as Role;
 
   const { profileImage, fallbackName, quickActions } = useMemo((): {
     profileImage: string;
@@ -127,7 +137,7 @@ export default function MypagePage() {
     ? profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.'
     : '로그인 후 확인할 수 있습니다.';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
-  const isProfileLoading = isLoggedIn && !hasProfileData && profileQueryLoading;
+  const isProfileLoading = !authReady || (isLoggedIn && !hasProfileData && profileQueryLoading);
 
   const ctaButton = useMemo(() => {
     if (!isLoggedIn) return undefined;
@@ -168,7 +178,7 @@ export default function MypagePage() {
       </div>
       <BottomNav />
       <LoginRequiredModal
-        isOpen={!isLoggedIn && !loginModalDismissed}
+        isOpen={authReady && !isLoggedIn && !loginModalDismissed}
         onClose={() => setLoginModalDismissed(true)}
         callbackUrl="/mypage"
       />
