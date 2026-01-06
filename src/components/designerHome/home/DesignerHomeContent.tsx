@@ -1,6 +1,7 @@
 'use client';
 
 import BellIcon from '@/public/icons/designer-home/bell.svg';
+import MoandiLogo from '@/public/icons/designer-home/moandiLogo.svg';
 import { BottomNav } from '@/src/components/common';
 import { TodayReservationSection } from './TodayReservationSection';
 import { PendingReservationSection } from './PendingReservationSection';
@@ -38,7 +39,7 @@ export function DesignerHomeContent() {
       <div className="flex min-h-screen flex-col bg-gray-200 pb-[calc(60px+env(safe-area-inset-bottom)+16px)]">
         {/* 헤더 */}
         <header className="flex h-14 items-center justify-between px-5">
-          <span className="text-head-1-semibold text-gray-900">Monde</span>
+          <MoandiLogo />
           <button type="button" aria-label="알림">
             <BellIcon className="size-6 cursor-pointer" />
           </button>
