@@ -2,11 +2,12 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState, useSyncExternalStore } from 'react';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { useDesignerProfile, useModelProfile } from '@/src/hooks/queries';
-import { getUserRole, useAuthStore } from '@/src/stores';
+import { getAccessToken, getUserRole, useAuthStore } from '@/src/stores';
+import { LoginRequiredModal } from '@/src/components/common';
 
 type Role = 'model' | 'designer';
 type QuickAction = { label: string; icon?: ReactNode };
@@ -14,18 +15,20 @@ type QuickAction = { label: string; icon?: ReactNode };
 const settingLinks = ['알람설정', '고객센터/FAQ'] as const;
 const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as const;
 
+// 클라이언트에서만 인증 상태 확인 (hydration mismatch 방지)
+const subscribeToAuth = () => () => {};
+const getAuthSnapshot = () => !!getAccessToken();
+const getServerSnapshot = () => false;
+
 export default function MypagePage() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
-  const [role, setRole] = useState<Role>('model');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
+  const cookieRole = getUserRole();
+  const role = (user?.role ?? cookieRole ?? 'model') as Role;
+  const isLoggedIn = !!(user ?? cookieRole);
+  const [loginModalDismissed, setLoginModalDismissed] = useState(false);
   const notificationCount = 1; // 알림 API 연동 시 실제 값으로 교체
-
-  useEffect(() => {
-    const cookieRole = getUserRole();
-    setRole((user?.role ?? cookieRole ?? 'model') as Role);
-    setIsLoggedIn(!!(user ?? cookieRole));
-  }, [user]);
 
   const isModel = role === 'model';
   const isDesigner = role === 'designer';
@@ -70,22 +73,21 @@ export default function MypagePage() {
   }, [role]);
 
   const profileData = isModel ? modelProfile?.result : designerProfile?.result;
-  const name = isLoggedIn ? profileData?.nickname ?? user?.username ?? fallbackName : '로그인하세요';
-  const email = isLoggedIn ? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.' : '로그인 후 확인할 수 있습니다.';
+  const name = isLoggedIn ? (profileData?.nickname ?? user?.username ?? fallbackName) : '로그인하세요';
+  const email = isLoggedIn ? (user?.loginId ?? '이메일 정보를 불러올 수 없습니다.') : '로그인 후 확인할 수 있습니다.';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
   const isProfileLoading = isLoggedIn && (isModelLoading || isDesignerLoading);
 
   const ctaButton = useMemo(() => {
     if (!isLoggedIn) return undefined;
-    if (role === 'designer')
-      return { label: '프로필 보기', onClick: () => router.push('/designer/profile') };
+    if (role === 'designer') return { label: '프로필 보기', onClick: () => router.push('/designer/profile') };
     return undefined;
   }, [isLoggedIn, role, router]);
 
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
       <div className="flex flex-col gap-3 px-4 pt-3 pb-4">
-        <header className="mb-3 flex items-center justify-between">
+        <header className="mb-3 flex items-center justify-between pl-1">
           <h1 className="text-head-3-semibold text-gray-900">마이페이지</h1>
           <button
             type="button"
@@ -114,6 +116,11 @@ export default function MypagePage() {
         <MenuList items={accountLinks.map((label) => ({ label }))} />
       </div>
       <BottomNav />
+      <LoginRequiredModal
+        isOpen={!isAuthenticated && !loginModalDismissed}
+        onClose={() => setLoginModalDismissed(true)}
+        callbackUrl="/mypage"
+      />
     </div>
   );
 }
