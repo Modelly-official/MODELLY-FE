@@ -54,7 +54,7 @@ export function TodayReservationSection({ data, isLoading }: TodayReservationSec
         </div>
 
         {/* 카드 */}
-        <div className="rounded-[20px] border border-gray-300 bg-white px-5 pb-5 pt-8">
+        <div className="rounded-[20px] border border-gray-300 bg-white px-5 pb-5 pt-7">
           {/* 날짜 */}
           <div className="flex items-end gap-2 text-gray-900">
             <span className="text-[38px] font-medium leading-[1.2] tracking-[-0.76px]">
