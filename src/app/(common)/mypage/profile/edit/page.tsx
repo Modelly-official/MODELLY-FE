@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/common/left-arrow.svg';
 import { AddressInput, FixedBottomButton, GenderSelect, ProfileImageUpload } from '@/src/components/signup';
 import { Dropdown, TextInput } from '@/src/components/common';
-import { uploadProfileImage } from '@/src/apis';
-import { useDesignerProfile, useModelProfile, useUpdateDesignerProfile, useUpdateModelProfile } from '@/src/hooks/queries';
+import { uploadProfileImage, getDesignerProfile, getModelProfile } from '@/src/apis';
+import { useUpdateDesignerProfile, useUpdateModelProfile } from '@/src/hooks/queries';
 import { formatBirthDate, showToast } from '@/src/utils';
 import { convertCategoryToApi, convertGenderToApi } from '@/src/utils/signup/apiConverter';
 import { convertGenderToDisplay } from '@/src/utils/signup/profileFormat';
 import { getAccessToken, getUserCategory, getUserRole, useAuthStore } from '@/src/stores';
 import type { Category } from '@/src/types/recruitment';
+import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 
 type ProfileFormState = {
   nickname: string;
@@ -24,6 +26,16 @@ type ProfileFormState = {
   category: string;
   profileImage: string | null;
 };
+
+type ProfileResult =
+  | {
+      role: 'designer';
+      data: Awaited<ReturnType<typeof getDesignerProfile>>['result'];
+    }
+  | {
+      role: 'model';
+      data: Awaited<ReturnType<typeof getModelProfile>>['result'];
+    };
 
 const CATEGORY_CODE_TO_LABEL: Record<Category, string> = {
   HAIR: '헤어',
@@ -47,10 +59,14 @@ const mapCategoryToLabel = (category?: Category | null) => {
 export default function ProfileEditPage() {
   const router = useRouter();
   const authUser = useAuthStore((state) => state.user);
-  const [resolvedRole, setResolvedRole] = useState<'model' | 'designer' | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
-  const isDesigner = resolvedRole === 'designer';
+  const cookieRole = getUserRole();
+  const token = getAccessToken();
+  const cookieCategory = getUserCategory();
+  const roleHint = (authUser?.role ?? cookieRole ?? (cookieCategory ? 'designer' : null)) as
+    | 'model'
+    | 'designer'
+    | null;
+  const isLoggedIn = !!(authUser ?? token ?? cookieRole ?? cookieCategory);
 
   const [form, setForm] = useState<ProfileFormState>({
     nickname: authUser?.username ?? '',
@@ -65,29 +81,48 @@ export default function ProfileEditPage() {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { data: modelProfile, isLoading: isModelLoading } = useModelProfile(isLoggedIn && resolvedRole === 'model');
-  const { data: designerProfile, isLoading: isDesignerLoading } = useDesignerProfile(
-    isLoggedIn && resolvedRole === 'designer',
-  );
-  const isProfileLoading = isModelLoading || isDesignerLoading;
   const updateModelProfileMutation = useUpdateModelProfile();
   const updateDesignerProfileMutation = useUpdateDesignerProfile();
+  const {
+    data: profileResponse,
+    isLoading: isProfileLoading,
+    error: profileError,
+  } = useQuery<ProfileResult>({
+    queryKey: ['mypage', 'profile', 'edit', roleHint],
+    enabled: isLoggedIn,
+    retry: false,
+    queryFn: async () => {
+      const fetchDesigner = async () => {
+        const res = await getDesignerProfile();
+        return { role: 'designer' as const, data: res.result };
+      };
+      const fetchModel = async () => {
+        const res = await getModelProfile();
+        return { role: 'model' as const, data: res.result };
+      };
+
+      try {
+        if (roleHint === 'designer') return await fetchDesigner();
+        if (roleHint === 'model') return await fetchModel();
+        // 역할 불명확 시 모델 먼저 시도, 403/404면 디자이너 시도
+        return await fetchModel();
+      } catch (error) {
+        const shouldFallback =
+          isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404);
+        if (shouldFallback) {
+          // 모델 403/404 시 디자이너로 재시도
+          return fetchDesigner();
+        }
+        throw error;
+      }
+    },
+  });
 
   useEffect(() => {
-    const cookieRole = getUserRole();
-    const token = getAccessToken();
-    const nextRole = (authUser?.role ?? cookieRole ?? null) as 'model' | 'designer' | null;
-
-    setResolvedRole(nextRole);
-    setIsLoggedIn(!!(authUser ?? cookieRole ?? token));
-    setAuthChecked(true);
-  }, [authUser]);
-
-  useEffect(() => {
-    if (authChecked && !isLoggedIn) {
+    if (!isLoggedIn) {
       router.replace('/login');
     }
-  }, [authChecked, isLoggedIn, router]);
+  }, [isLoggedIn, router]);
 
   useEffect(() => {
     setForm((prev) => ({
@@ -98,10 +133,10 @@ export default function ProfileEditPage() {
   }, [authUser]);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !profileResponse) return;
 
-    if (!isDesigner && modelProfile?.result) {
-      const { nickname, gender, birth, profileImageUrl } = modelProfile.result;
+    if (profileResponse.role === 'model') {
+      const { nickname, gender, birth, profileImageUrl } = profileResponse.data;
       setForm((prev) => ({
         ...prev,
         nickname: nickname ?? prev.nickname,
@@ -111,8 +146,8 @@ export default function ProfileEditPage() {
       }));
     }
 
-    if (isDesigner && designerProfile?.result) {
-      const { nickname, gender, birth, intro, shop, address, category, profileImageUrl } = designerProfile.result;
+    if (profileResponse.role === 'designer') {
+      const { nickname, gender, birth, intro, shop, address, category, profileImageUrl } = profileResponse.data;
       setForm((prev) => ({
         ...prev,
         nickname: nickname ?? prev.nickname,
@@ -126,7 +161,7 @@ export default function ProfileEditPage() {
         profileImage: profileImageUrl || null,
       }));
     }
-  }, [designerProfile, isDesigner, isLoggedIn, modelProfile]);
+  }, [isLoggedIn, profileResponse]);
 
   const handleFieldChange = (key: keyof ProfileFormState, value: string | null) => {
     setForm((prev) => ({ ...prev, [key]: value ?? '' }));
@@ -155,10 +190,9 @@ export default function ProfileEditPage() {
   const storeNameTrimmed = form.storeName.trim();
   const addressTrimmed = form.address.trim();
 
-  if (!authChecked) return null;
-  if (!isLoggedIn || !resolvedRole) return null;
+  if (!isLoggedIn) return null;
 
-  const isFormValid = isDesigner
+  const isFormValid = (profileResponse?.role === 'designer')
     ? nicknameTrimmed &&
       form.gender &&
       form.birthDate &&
@@ -176,7 +210,7 @@ export default function ProfileEditPage() {
 
     setIsSaving(true);
     try {
-      if (isDesigner) {
+      if (profileResponse?.role === 'designer') {
         const payload = {
           nickname: nicknameTrimmed,
           gender: genderApi,
@@ -228,7 +262,7 @@ export default function ProfileEditPage() {
 
         <div className="flex flex-col gap-6">
           <TextInput
-            label={isDesigner ? '디자이너 활동명' : '닉네임'}
+          label={profileResponse?.role === 'designer' ? '디자이너 활동명' : '닉네임'}
             value={form.nickname}
             onChange={(value) => handleFieldChange('nickname', value)}
             placeholder="활동명을 입력해주세요"
@@ -250,7 +284,7 @@ export default function ProfileEditPage() {
             />
           </div>
 
-          {isDesigner && (
+          {profileResponse?.role === 'designer' && (
             <>
               <div className="relative flex flex-col gap-2">
                 <label className="text-body-1-medium text-gray-900">한 줄 소개</label>
