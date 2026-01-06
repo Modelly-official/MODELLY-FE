@@ -83,7 +83,7 @@ export const ProfileCard = ({
             <button
               type="button"
               onClick={ctaButton.onClick}
-              className="text-body-2-medium shrink-0 rounded-xl border border-gray-400 px-3 py-2 text-gray-900"
+              className="text-body-2-medium shrink-0 rounded-xl border border-gray-400 px-3 py-2 text-gray-900 cursor-pointer"
             >
               {ctaButton.label}
             </button>
