@@ -7,3 +7,4 @@ export * from './chat';
 export * from './reservation';
 export * from './calendar';
 export * from './designerHome';
+export * from './mypage';

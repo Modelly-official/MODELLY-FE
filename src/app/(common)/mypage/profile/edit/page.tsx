@@ -6,7 +6,10 @@ import LeftArrowIcon from '@/public/icons/common/left-arrow.svg';
 import { AddressInput, FixedBottomButton, GenderSelect, ProfileImageUpload } from '@/src/components/signup';
 import { Dropdown, TextInput } from '@/src/components/common';
 import { uploadProfileImage } from '@/src/apis';
+import { useDesignerProfile, useModelProfile, useUpdateDesignerProfile, useUpdateModelProfile } from '@/src/hooks/queries';
 import { formatBirthDate, showToast } from '@/src/utils';
+import { convertCategoryToApi, convertGenderToApi } from '@/src/utils/signup/apiConverter';
+import { convertGenderToDisplay } from '@/src/utils/signup/profileFormat';
 import { getUserCategory, getUserRole, useAuthStore } from '@/src/stores';
 import type { Category } from '@/src/types/recruitment';
 
@@ -62,6 +65,13 @@ export default function ProfileEditPage() {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { data: modelProfile, isLoading: isModelLoading } = useModelProfile(authChecked && isLoggedIn && !isDesigner);
+  const { data: designerProfile, isLoading: isDesignerLoading } = useDesignerProfile(
+    authChecked && isLoggedIn && isDesigner,
+  );
+  const isProfileLoading = isModelLoading || isDesignerLoading;
+  const updateModelProfileMutation = useUpdateModelProfile();
+  const updateDesignerProfileMutation = useUpdateDesignerProfile();
 
   useEffect(() => {
     const cookieRole = getUserRole();
@@ -83,6 +93,37 @@ export default function ProfileEditPage() {
       category: mapCategoryToLabel(authUser?.category ?? getUserCategory()) || prev.category,
     }));
   }, [authUser]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    if (!isDesigner && modelProfile?.result) {
+      const { nickname, gender, birth, profileImageUrl } = modelProfile.result;
+      setForm((prev) => ({
+        ...prev,
+        nickname: nickname ?? prev.nickname,
+        gender: convertGenderToDisplay(gender) || prev.gender,
+        birthDate: birth ? birth.replace(/-/g, '.') : prev.birthDate,
+        profileImage: profileImageUrl || null,
+      }));
+    }
+
+    if (isDesigner && designerProfile?.result) {
+      const { nickname, gender, birth, intro, shop, address, category, profileImageUrl } = designerProfile.result;
+      setForm((prev) => ({
+        ...prev,
+        nickname: nickname ?? prev.nickname,
+        gender: convertGenderToDisplay(gender) || prev.gender,
+        birthDate: birth ? birth.replace(/-/g, '.') : prev.birthDate,
+        intro: intro ?? prev.intro,
+        storeName: shop ?? prev.storeName,
+        address: address?.line1 ?? prev.address,
+        detailAddress: address?.line2 ?? prev.detailAddress,
+        category: category ?? prev.category,
+        profileImage: profileImageUrl || null,
+      }));
+    }
+  }, [designerProfile, isDesigner, isLoggedIn, modelProfile]);
 
   const handleFieldChange = (key: keyof ProfileFormState, value: string | null) => {
     setForm((prev) => ({ ...prev, [key]: value ?? '' }));
@@ -111,13 +152,8 @@ export default function ProfileEditPage() {
   const storeNameTrimmed = form.storeName.trim();
   const addressTrimmed = form.address.trim();
 
-  if (!authChecked) {
-    return null;
-  }
-
-  if (!isLoggedIn) {
-    return null;
-  }
+  if (!authChecked) return null;
+  if (!isLoggedIn) return null;
 
   const isFormValid = isDesigner
     ? nicknameTrimmed &&
@@ -130,16 +166,38 @@ export default function ProfileEditPage() {
     : nicknameTrimmed && form.gender && form.birthDate;
 
   const handleSubmit = async () => {
-    if (!isFormValid || isSaving || isUploading) return;
+    if (!isFormValid || isSaving || isUploading || isProfileLoading) return;
+
+    const birthApi = form.birthDate.replace(/\./g, '-');
+    const genderApi = convertGenderToApi(form.gender);
 
     setIsSaving(true);
     try {
-      //const payload = { ...trimmed values with gender/category formatting };
-      showToast('프로필이 저장되었습니다.');
+      if (isDesigner) {
+        const payload = {
+          nickname: nicknameTrimmed,
+          gender: genderApi,
+          birth: birthApi,
+          intro: introTrimmed,
+          shop: storeNameTrimmed,
+          addressLine1: addressTrimmed,
+          addressLine2: form.detailAddress.trim(),
+          category: convertCategoryToApi(form.category),
+          profileImageUrl: form.profileImage,
+        };
+        await updateDesignerProfileMutation.mutateAsync(payload);
+      } else {
+        const payload = {
+          nickname: nicknameTrimmed,
+          gender: genderApi,
+          birth: birthApi,
+          profileImageUrl: form.profileImage,
+        };
+        await updateModelProfileMutation.mutateAsync(payload);
+      }
       router.back();
     } catch (error) {
       console.error('프로필 저장 에러:', error);
-      showToast('프로필 저장에 실패했습니다.');
     } finally {
       setIsSaving(false);
     }
@@ -232,8 +290,11 @@ export default function ProfileEditPage() {
         </div>
 
         <div className="mt-auto mb-3">
-          <FixedBottomButton disabled={!isFormValid || isSaving || isUploading} onClick={handleSubmit}>
-            {isUploading ? '이미지 업로드 중...' : isSaving ? '저장 중...' : '완료'}
+          <FixedBottomButton
+            disabled={!isFormValid || isSaving || isUploading || isProfileLoading}
+            onClick={handleSubmit}
+          >
+            {isUploading ? '이미지 업로드 중...' : isSaving || isProfileLoading ? '저장 중...' : '완료'}
           </FixedBottomButton>
         </div>
       </form>
