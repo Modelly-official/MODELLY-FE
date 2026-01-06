@@ -31,7 +31,7 @@ export function useUpdateModelProfile() {
   return useMutation<MypageModelProfileResponse, Error, MypageModelProfileUpdateRequest>({
     mutationFn: (payload) => updateModelProfile(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mypageKeys.model });
+      queryClient.invalidateQueries({ queryKey: mypageKeys.all });
       showToast('프로필이 저장되었습니다.');
     },
     onError: () => {
@@ -57,7 +57,7 @@ export function useUpdateDesignerProfile() {
   return useMutation<MypageDesignerProfileResponse, Error, MypageDesignerProfileUpdateRequest>({
     mutationFn: (payload) => updateDesignerProfile(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mypageKeys.designer });
+      queryClient.invalidateQueries({ queryKey: mypageKeys.all });
       showToast('프로필이 저장되었습니다.');
     },
     onError: () => {

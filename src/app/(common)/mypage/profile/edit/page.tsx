@@ -232,7 +232,6 @@ export default function ProfileEditPage() {
         };
         await updateModelProfileMutation.mutateAsync(payload);
       }
-      router.back();
     } catch (error) {
       console.error('프로필 저장 에러:', error);
     } finally {
