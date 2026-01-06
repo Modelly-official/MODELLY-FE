@@ -47,8 +47,8 @@ export function DesignerHomeContent() {
 
         {/* 환영 메시지 */}
         <div className="px-4 py-2">
-          <h1 className="text-head-3-semibold text-gray-900">안녕하세요 {userName}님!</h1>
-          <p className="text-head-3-semibold text-gray-900">오늘의 예약을 확인해보세요!</p>
+          <h1 className="text-head-3-semibold text-gray-900">{userName} 디자이너님</h1>
+          <p className="text-head-3-semibold text-gray-900">오늘도 좋은 하루 되세요!</p>
         </div>
 
         {/* 오늘의 예약 섹션 */}
