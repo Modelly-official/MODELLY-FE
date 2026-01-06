@@ -39,9 +39,9 @@ export default function PendingReservationsPage() {
       </header>
 
       {/* 콘텐츠 */}
-      <div className="flex-1 px-4 pt-[8px]">
+      <div className="flex-1 px-4 pt-4">
         {/* 서브 타이틀 */}
-        <p className="text-body-1-medium text-gray-800">신규 예약 신청 {totalCount}개</p>
+        <p className="text-body-2-medium text-gray-700">신규 예약 신청 ({totalCount})</p>
 
         {/* 리스트 */}
         <div className="mt-[10px] flex flex-col gap-4">
