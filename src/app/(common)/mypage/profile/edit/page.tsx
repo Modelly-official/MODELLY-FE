@@ -59,14 +59,18 @@ const mapCategoryToLabel = (category?: Category | null) => {
 export default function ProfileEditPage() {
   const router = useRouter();
   const authUser = useAuthStore((state) => state.user);
-  const cookieRole = getUserRole();
-  const token = getAccessToken();
-  const cookieCategory = getUserCategory();
+  const [mounted, setMounted] = useState(false);
+  const cookieRole = mounted ? getUserRole() : null;
+  const token = mounted ? getAccessToken() : null;
+  const cookieCategory = mounted ? getUserCategory() : null;
   const roleHint = (authUser?.role ?? cookieRole ?? (cookieCategory ? 'designer' : null)) as
     | 'model'
     | 'designer'
     | null;
   const isLoggedIn = !!(authUser ?? token);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [form, setForm] = useState<ProfileFormState>({
     nickname: authUser?.username ?? '',
@@ -86,10 +90,9 @@ export default function ProfileEditPage() {
   const {
     data: profileResponse,
     isLoading: isProfileLoading,
-    error: profileError,
   } = useQuery<ProfileResult>({
     queryKey: ['mypage', 'profile', 'edit', roleHint],
-    enabled: isLoggedIn,
+    enabled: mounted && isLoggedIn,
     retry: false,
     queryFn: async () => {
       const fetchDesigner = async () => {
@@ -119,10 +122,10 @@ export default function ProfileEditPage() {
   });
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (mounted && !isLoggedIn) {
       router.replace('/login');
     }
-  }, [isLoggedIn, router]);
+  }, [isLoggedIn, mounted, router]);
 
   useEffect(() => {
     setForm((prev) => ({
@@ -190,6 +193,7 @@ export default function ProfileEditPage() {
   const storeNameTrimmed = form.storeName.trim();
   const addressTrimmed = form.address.trim();
 
+  if (!mounted) return null;
   if (!isLoggedIn) return null;
 
   const isFormValid = (profileResponse?.role === 'designer')
