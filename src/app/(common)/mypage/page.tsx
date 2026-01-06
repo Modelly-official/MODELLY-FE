@@ -74,7 +74,9 @@ export default function MypagePage() {
 
   const profileData = isModel ? modelProfile?.result : designerProfile?.result;
   const name = isLoggedIn ? (profileData?.nickname ?? user?.username ?? fallbackName) : '로그인하세요';
-  const email = isLoggedIn ? (user?.loginId ?? '이메일 정보를 불러올 수 없습니다.') : '로그인 후 확인할 수 있습니다.';
+  const email = isLoggedIn
+    ? profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.'
+    : '로그인 후 확인할 수 있습니다.';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
   const isProfileLoading = isLoggedIn && (isModelLoading || isDesignerLoading);
 

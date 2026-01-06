@@ -8,6 +8,7 @@ export interface MypageModelProfile {
   nickname: string;
   gender: string; // 예: "여자"
   birth: string; // YYYY-MM-DD
+  email: string;
   profileImageUrl: string | null;
 }
 
@@ -17,6 +18,7 @@ export interface MypageDesignerProfile {
   nickname: string;
   gender: string; // 예: "여자"
   birth: string; // YYYY-MM-DD
+  email: string;
   intro: string;
   shop: string;
   address: {
