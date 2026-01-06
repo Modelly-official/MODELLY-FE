@@ -16,8 +16,9 @@ export async function getDesigners(
     return getMockDesigners(params);
   }
 
+  const { size = DEFAULT_PAGE_SIZE, ...restParams } = params;
   const { data } = await axiosInstance.get<ApiResponse<DesignerListResponse>>('/designers', {
-    params,
+    params: { ...restParams, size },
   });
   return data;
 }
