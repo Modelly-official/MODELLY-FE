@@ -33,7 +33,7 @@ export default function MypagePage() {
     const cookieRole = getUserRole();
     const token = getAccessToken();
     setRole((user?.role ?? cookieRole ?? 'model') as Role);
-    setIsLoggedIn(!!(user ?? token ?? cookieRole));
+    setIsLoggedIn(!!(user ?? token));
     setAuthReady(true);
   }, [user]);
   /* eslint-enable react-hooks/set-state-in-effect */

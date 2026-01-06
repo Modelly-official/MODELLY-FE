@@ -66,7 +66,7 @@ export default function ProfileEditPage() {
     | 'model'
     | 'designer'
     | null;
-  const isLoggedIn = !!(authUser ?? token ?? cookieRole ?? cookieCategory);
+  const isLoggedIn = !!(authUser ?? token);
 
   const [form, setForm] = useState<ProfileFormState>({
     nickname: authUser?.username ?? '',
