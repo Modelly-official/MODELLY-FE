@@ -124,13 +124,18 @@ export default function ProfileEditPage() {
     }
   }, [isLoggedIn, mounted, router]);
 
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      nickname: authUser?.username ?? prev.nickname,
-      category: mapCategoryToLabel(authUser?.category ?? getUserCategory()) || prev.category,
-    }));
-  }, [authUser]);
+    if (!isInitialized && authUser) {
+      setForm((prev) => ({
+        ...prev,
+        nickname: authUser?.username ?? prev.nickname,
+        category: mapCategoryToLabel(authUser?.category ?? getUserCategory()) || prev.category,
+      }));
+      setIsInitialized(true);
+    }
+  }, [authUser, isInitialized]);
 
   useEffect(() => {
     if (!isLoggedIn || !profileResponse) return;
@@ -164,6 +169,10 @@ export default function ProfileEditPage() {
   }, [isLoggedIn, profileResponse]);
 
   const handleFieldChange = (key: keyof ProfileFormState, value: string | null) => {
+    if (key === 'profileImage') {
+      setForm((prev) => ({ ...prev, [key]: value }));
+      return;
+    }
     setForm((prev) => ({ ...prev, [key]: value ?? '' }));
   };
 

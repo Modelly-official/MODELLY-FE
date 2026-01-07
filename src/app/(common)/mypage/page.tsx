@@ -41,6 +41,7 @@ export default function MypagePage() {
   const {
     data: profileResponse,
     isLoading: profileQueryLoading,
+    isError: profileQueryError,
   } = useQuery<ProfileResult>({
     queryKey: ['mypage', 'profile', role],
     enabled: authReady && isLoggedIn,
@@ -137,7 +138,8 @@ export default function MypagePage() {
     ? profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.'
     : '로그인 후 확인할 수 있습니다.';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
-  const isProfileLoading = !authReady || (isLoggedIn && !hasProfileData && profileQueryLoading);
+  const isProfileLoading =
+    !authReady || (isLoggedIn && (profileQueryError || (!hasProfileData && profileQueryLoading)));
 
   const ctaButton = useMemo(() => {
     if (!isLoggedIn) return undefined;
