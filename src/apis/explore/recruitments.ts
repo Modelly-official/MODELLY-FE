@@ -25,9 +25,10 @@ export async function getRecruitments(
     return getMockRecruitments(params);
   }
 
+  const { size = DEFAULT_PAGE_SIZE, ...restParams } = params;
   const { data } = await axiosInstance.get<ApiResponse<RecruitmentListResponse>>(
     '/recruitments',
-    { params }
+    { params: { ...restParams, size } }
   );
   return data;
 }

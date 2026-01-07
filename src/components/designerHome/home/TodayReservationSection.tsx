@@ -21,12 +21,12 @@ function formatDateCard(dateStr: string) {
 function TodayReservationItemRow({ item }: { item: TodayReservationItem }) {
   return (
     <div className="flex items-center gap-2 rounded-[12px] bg-purple-100 p-3">
-      <ClockIcon className="size-4 text-gray-900" />
-      <span className="text-body-2-medium text-gray-900">{formatTimeWithPeriod(item.time)}</span>
-      <span className="text-body-2-medium text-gray-900">·</span>
-      <span className="text-body-2-medium text-gray-900">{item.modelName} 님</span>
-      <span className="text-body-2-medium text-gray-900">·</span>
-      <span className="text-body-2-medium text-gray-900">{item.subCategories?.[0] ?? '기타'}</span>
+      <ClockIcon className="size-4 text-purple-700" />
+      <span className="text-body-1-medium text-purple-700">{formatTimeWithPeriod(item.time)}</span>
+      <span className="text-body-1-medium text-purple-700">·</span>
+      <span className="text-body-1-medium text-purple-700">{item.modelName} 님</span>
+      <span className="text-body-1-medium text-purple-700">·</span>
+      <span className="text-body-1-medium text-purple-700">{item.subCategories?.[0] ?? '기타'}</span>
     </div>
   );
 }
@@ -54,10 +54,10 @@ export function TodayReservationSection({ data, isLoading }: TodayReservationSec
         </div>
 
         {/* 카드 */}
-        <div className="rounded-[20px] border border-gray-300 bg-white px-5 pb-5 pt-8">
+        <div className="rounded-[20px] border border-gray-300 bg-white px-5 pb-5 pt-7">
           {/* 날짜 */}
           <div className="flex items-end gap-2 text-gray-900">
-            <span className="text-[38px] font-normal leading-[1.2] tracking-[-0.76px]">
+            <span className="text-[38px] font-medium leading-[1.2] tracking-[-0.76px]">
               {month}/{day}
             </span>
             <span className="text-[23px] font-medium leading-[1.5] tracking-[-0.46px]">
@@ -65,16 +65,8 @@ export function TodayReservationSection({ data, isLoading }: TodayReservationSec
             </span>
           </div>
 
-          {/* 오늘의 예약 타이틀 */}
-          <div className="mt-4 flex items-center gap-1">
-            <span className="text-body-1-medium text-gray-900">오늘의 예약</span>
-            <span className="text-body-1-medium text-purple-700">
-              {data.totalCount ?? 0}
-            </span>
-          </div>
-
           {/* 예약 리스트 */}
-          <div className="mt-2 flex flex-col gap-2">
+          <div className="mt-4 flex flex-col gap-2">
             {isLoading ? (
               <div className="animate-skeleton h-10 rounded-[12px] bg-gray-200" />
             ) : data.reservations && data.reservations.length > 0 ? (

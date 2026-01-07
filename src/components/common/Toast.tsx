@@ -34,7 +34,7 @@ export default function Toast({ message, onClose }: ToastProps) {
   }
 
   return createPortal(
-    <div className="fixed bottom-[42px] left-1/2 z-9999 -translate-x-1/2">
+    <div className="fixed bottom-[90px] left-1/2 z-9999 -translate-x-1/2">
       <div
         className={`text-body-2-medium rounded-full bg-gray-900 px-6 py-3 whitespace-nowrap text-white ${isExiting ? 'animate-toast-exit' : 'animate-toast-enter'} `}
       >

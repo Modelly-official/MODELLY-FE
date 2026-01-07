@@ -4,25 +4,25 @@ import Link from 'next/link';
 
 export function QuickActionButtons() {
   return (
-    <section className="mt-6 flex gap-2 px-4">
+    <section className="mt-4 flex gap-2 px-4">
       <Link
         href="/mypage"
-        className="rounded-[12px] border border-gray-400 px-4 py-3"
+        className="flex flex-1 items-center justify-center rounded-[12px] bg-white py-3 shadow-[0px_0px_11px_0px_rgba(34,34,34,0.04)]"
       >
-        <span className="text-body-2-medium text-gray-900">프로필 보기</span>
+        <span className="text-body-2-semibold text-gray-900">프로필 보기</span>
       </Link>
       <Link
         href="/mypage/portfolio"
-        className="rounded-[12px] border border-gray-400 px-4 py-3"
+        className="flex flex-1 items-center justify-center rounded-[12px] bg-white py-3 shadow-[0px_0px_11px_0px_rgba(34,34,34,0.04)]"
       >
-        <span className="text-body-2-medium text-gray-900">포트폴리오 관리</span>
+        <span className="text-body-2-semibold text-gray-900">포트폴리오 관리</span>
       </Link>
       <Link
         href="/mypage/reviews"
-        className="flex items-center gap-1 rounded-[12px] border border-gray-400 py-3 pl-4 pr-3"
+        className="flex flex-1 items-center justify-center gap-1 rounded-[12px] bg-white py-3 shadow-[0px_0px_11px_0px_rgba(34,34,34,0.04)]"
       >
-        <span className="text-body-2-medium text-gray-900">리뷰 관리</span>
-        <span className="flex size-6 items-center justify-center rounded-full bg-gray-100 text-[13px] font-medium text-gray-700">
+        <span className="text-body-2-semibold text-gray-900">리뷰 관리</span>
+        <span className="flex size-5 items-center justify-center rounded-full bg-purple-600 text-caption-1-medium text-white">
           7
         </span>
       </Link>

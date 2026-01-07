@@ -25,10 +25,10 @@ export function ApplicantInfoCard({ modelName, onChatClick }: ApplicantInfoCardP
       <button
         type="button"
         onClick={onChatClick}
-        className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-gray-200"
+        className="flex size-12 cursor-pointer items-center justify-center rounded-full bg-purple-100"
         aria-label="채팅하기"
       >
-        <ChatIcon className="size-5 text-gray-900" />
+        <ChatIcon className="size-5 text-purple-700" />
       </button>
     </div>
   );
