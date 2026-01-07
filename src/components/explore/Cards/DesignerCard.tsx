@@ -37,7 +37,7 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
 
         {/* 정보 */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-head-4-semibold text-black">{designer.designerName} 디자이너</h3>
+          <h3 className="text-body-1-semibold text-black">{designer.designerName} 디자이너</h3>
 
           <div className="flex flex-col gap-0.5">
             {/* 위치 및 샵 이름 */}

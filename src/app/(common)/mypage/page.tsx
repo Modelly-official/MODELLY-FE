@@ -5,11 +5,11 @@ import Image from 'next/image';
 import { isAxiosError } from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
+import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { getDesignerProfile, getModelProfile } from '@/src/apis';
 import { getAccessToken, getUserRole, useAuthStore } from '@/src/stores';
-import { LoginRequiredModal } from '@/src/components/common';
 
 type Role = 'model' | 'designer';
 type QuickAction = { label: string; icon?: ReactNode };
@@ -24,7 +24,6 @@ export default function MypagePage() {
   const [role, setRole] = useState<Role>('model');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authReady, setAuthReady] = useState(false);
-  const [loginModalDismissed, setLoginModalDismissed] = useState(false);
   const notificationCount = 1; // 알림 API 연동 시 실제 값으로 교체
 
   // 쿠키/스토어 기반으로 인증 상태 동기화 (초기 렌더와 일치하도록 마운트 후 업데이트)
@@ -133,10 +132,10 @@ export default function MypagePage() {
 
   const profileData = profileResponse?.profile;
   const hasProfileData = Boolean(profileData);
-  const name = isLoggedIn ? profileData?.nickname ?? fallbackName : '로그인하세요';
+  const name = isLoggedIn ? (profileData?.nickname ?? fallbackName) : '로그인 및 회원가입';
   const email = isLoggedIn
-    ? profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.'
-    : '로그인 후 확인할 수 있습니다.';
+    ? (profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.')
+    : '더 편리하게 모앤디를 경험해보세요';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
   const isProfileLoading =
     !authReady || (isLoggedIn && (profileQueryError || (!hasProfileData && profileQueryLoading)));
@@ -147,10 +146,13 @@ export default function MypagePage() {
     return undefined;
   }, [isLoggedIn, resolvedRole, router]);
 
+  const shouldShowLoginCta = authReady && !isLoggedIn;
+  const loginNameIcon = shouldShowLoginCta ? <ArrowRightIcon className="h-4 text-gray-400 ml-2" /> : undefined;
+
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
-      <div className="flex flex-col gap-3 px-4 pt-3 pb-4">
-        <header className="mb-3 flex items-center justify-between pl-1">
+      <div className="flex flex-col">
+        <header className="flex h-[52px] items-center justify-between py-3 pr-3 pl-5">
           <h1 className="text-head-3-semibold text-gray-900">마이페이지</h1>
           <button
             type="button"
@@ -165,25 +167,24 @@ export default function MypagePage() {
             )}
           </button>
         </header>
-        <ProfileCard
-          name={name}
-          email={email}
-          profileImageSrc={profileImageSrc}
-          ctaButton={ctaButton}
-          editHref={isLoggedIn ? '/mypage/profile/edit' : undefined}
-          isLoading={isProfileLoading}
-        />
-        <MyMenuCard actions={quickActions} />
-        <MenuList items={settingLinks.map((label) => ({ label }))} />
-        <div className="-mx-4 h-2 bg-gray-200" />
-        <MenuList items={accountLinks.map((label) => ({ label }))} />
+        <div className="flex flex-col gap-3 px-4">
+          <ProfileCard
+            name={name}
+            email={email}
+            profileImageSrc={profileImageSrc}
+            ctaButton={ctaButton}
+            editHref={isLoggedIn ? '/mypage/profile/edit' : undefined}
+            nameIcon={loginNameIcon}
+            onCardClick={shouldShowLoginCta ? () => router.push('/login') : undefined}
+            isLoading={isProfileLoading}
+          />
+          <MyMenuCard actions={quickActions} />
+          <MenuList items={settingLinks.map((label) => ({ label }))} />
+          <div className="-mx-4 h-2 bg-gray-200" />
+          <MenuList items={accountLinks.map((label) => ({ label }))} />
+        </div>
       </div>
       <BottomNav />
-      <LoginRequiredModal
-        isOpen={authReady && !isLoggedIn && !loginModalDismissed}
-        onClose={() => setLoginModalDismissed(true)}
-        callbackUrl="/mypage"
-      />
     </div>
   );
 }
