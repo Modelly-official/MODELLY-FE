@@ -26,3 +26,6 @@ export * from './calendar';
 
 // Designer Home types
 export * from './designerHome';
+
+// MyPage types
+export * from './mypage';

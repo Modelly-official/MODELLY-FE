@@ -39,3 +39,11 @@ export function formatAddressLines(
     addressLine2: line2Parts.join(' '),
   };
 }
+
+// DB 성별 값을 화면용 텍스트로 변환 (남성, 여성 -> 남자, 여자)
+export function convertGenderToDisplay(value?: string): '남자' | '여자' | '' {
+  const normalized = value?.trim().toUpperCase();
+  if (normalized === 'MALE' || normalized === '남자' || normalized === '남성') return '남자';
+  if (normalized === 'FEMALE' || normalized === '여자' || normalized === '여성') return '여자';
+  return '';
+}

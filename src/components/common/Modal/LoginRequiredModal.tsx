@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface LoginRequiredModalProps {
@@ -14,24 +13,20 @@ export default function LoginRequiredModal({ isOpen, onClose, callbackUrl }: Log
 
   if (!isOpen) return null;
 
+  const handleGoHome = () => {
+    onClose();
+    router.push('/');
+  };
+
   const handleLogin = () => {
+    onClose();
     const loginPath = callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/login';
     router.push(loginPath);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]" onClick={onClose}>
-      <div
-        className="relative w-[311px] rounded-[20px] bg-white px-5 pb-6 pt-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* X 닫기 버튼 */}
-        <div className="flex justify-end pb-1">
-          <button onClick={onClose} className="cursor-pointer p-1">
-            <Image src="/icons/common/close.svg" alt="닫기" width={12} height={12} />
-          </button>
-        </div>
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]">
+      <div className="relative w-[311px] rounded-[20px] bg-white px-5 py-6">
         {/* 안내 텍스트 */}
         <div className="mb-6 text-center">
           <p className="text-body-1-medium tracking-tight text-gray-900">로그인 후 이용 가능합니다</p>
@@ -39,12 +34,12 @@ export default function LoginRequiredModal({ isOpen, onClose, callbackUrl }: Log
 
         {/* 버튼 영역 */}
         <div className="flex gap-2">
-          {/* 계속하기 버튼 */}
+          {/* 홈으로 이동 */}
           <button
-            onClick={onClose}
+            onClick={handleGoHome}
             className="text-body-2-medium h-12 flex-1 cursor-pointer rounded-full border border-gray-400 bg-white tracking-tight text-gray-900"
           >
-            계속하기
+            홈으로
           </button>
 
           {/* 로그인하기 버튼 */}

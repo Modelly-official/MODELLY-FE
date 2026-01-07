@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   SignupHeader,
   SignupTitle,
@@ -8,11 +8,20 @@ import {
   GenderSelect,
   AddressInput,
   ProfileImageUpload,
+  PhoneInputWithAuth,
+  AuthCodeInput,
 } from '@/src/components/signup';
 import { TextInput, Dropdown } from '@/src/components/common';
 import { useSignupStore } from '@/src/stores';
-import { useSignup, useSocialSignup } from '@/src/hooks/queries';
-import { formatBirthDate, formatAddressLines, convertGenderToApi, convertCategoryToApi, showToast } from '@/src/utils';
+import { useSignup, useSocialSignup, useSendSmsCode, useVerifySmsCode } from '@/src/hooks/queries';
+import {
+  formatBirthDate,
+  formatAddressLines,
+  convertGenderToApi,
+  convertCategoryToApi,
+  showToast,
+  validatePhoneNumber,
+} from '@/src/utils';
 import { uploadProfileImage } from '@/src/apis';
 import { SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
 import type { SignupStepProps } from '@/src/types';
@@ -45,7 +54,23 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
 
   const signupMutation = useSignup();
   const socialSignupMutation = useSocialSignup();
+  const sendSmsMutation = useSendSmsCode();
+  const verifySmsMutation = useVerifySmsCode();
   const [isUploading, setIsUploading] = useState(false);
+  const [authCode, setAuthCode] = useState('');
+  const [authCodeError, setAuthCodeError] = useState('');
+  const [authCodeValid, setAuthCodeValid] = useState<boolean | null>(null);
+  const [requestSent, setRequestSent] = useState(false);
+  const [timer, setTimer] = useState(0);
+
+  useEffect(() => {
+    if (timer > 0 && !authCodeValid) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer, authCodeValid]);
 
   // 프로필 이미지 업로드
   const handleImageUpload = async (file: File) => {
@@ -72,15 +97,70 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
     setField('birthDate', formatBirthDate(value));
   };
 
+  const handleRequestPhoneAuth = () => {
+    if (!validatePhoneNumber(phoneNumber)) {
+      setAuthCodeError('올바른 전화번호를 입력해주세요.');
+      return;
+    }
+
+    sendSmsMutation.mutate(phoneNumber, {
+      onSuccess: (response) => {
+        if (response.isSuccess) {
+          setRequestSent(true);
+          setAuthCode('');
+          setAuthCodeValid(null);
+          setAuthCodeError('');
+          setTimer(180);
+        } else {
+          setAuthCodeError(response.message || '인증번호 발송에 실패했습니다.');
+        }
+      },
+      onError: (error) => {
+        setAuthCodeError('인증번호 발송 중 오류가 발생했습니다.');
+        console.error('SMS 발송 에러:', error);
+      },
+    });
+  };
+
+  const handleVerifyAuthCode = () => {
+    if (!authCode) {
+      setAuthCodeError('인증번호를 입력해주세요.');
+      return;
+    }
+
+    verifySmsMutation.mutate(
+      { phoneNumber, authCode },
+      {
+        onSuccess: (response) => {
+          if (response.isSuccess) {
+            setAuthCodeValid(true);
+            setAuthCodeError('');
+          } else {
+            setAuthCodeValid(false);
+            setAuthCodeError(response.message || '인증번호가 일치하지 않습니다.');
+          }
+        },
+        onError: (error) => {
+          setAuthCodeValid(false);
+          setAuthCodeError('인증번호 검증 중 오류가 발생했습니다.');
+          console.error('SMS 검증 에러:', error);
+        },
+      },
+    );
+  };
+
   const isDesigner = role === 'designer';
   const nicknameTrimmed = nickname.trim();
   const introTrimmed = intro.trim();
   const storeNameTrimmed = storeName.trim();
+  const isSocialPhoneValid = !isSocial || (phoneNumber && authCodeValid === true);
 
   // 폼 유효성 검사
-  const isFormValid = isDesigner
-    ? nicknameTrimmed && gender && birthDate && introTrimmed && storeNameTrimmed && address && category
-    : nicknameTrimmed && gender && birthDate;
+  const isFormValid =
+    isSocialPhoneValid &&
+    (isDesigner
+      ? nicknameTrimmed && gender && birthDate && introTrimmed && storeNameTrimmed && address && category
+      : nicknameTrimmed && gender && birthDate);
 
   const isSubmitting = isSocial ? socialSignupMutation.isPending : signupMutation.isPending;
 
@@ -220,6 +300,26 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
               maxLength={10}
             />
           </div>
+          {isSocial && (
+            <div className="flex flex-col gap-2">
+              <PhoneInputWithAuth
+                phoneNumber={phoneNumber}
+                setField={setField}
+                handleRequestPhoneAuth={handleRequestPhoneAuth}
+                requestSent={requestSent}
+                isLoading={sendSmsMutation.isPending}
+              />
+              <AuthCodeInput
+                authCode={authCode}
+                setAuthCode={setAuthCode}
+                handleVerifyAuthCode={handleVerifyAuthCode}
+                authCodeError={authCodeError}
+                authCodeValid={authCodeValid}
+                requestSent={requestSent}
+                timer={timer}
+              />
+            </div>
+          )}
 
           {/* 디자이너 용 필드들 */}
           {isDesigner && (
