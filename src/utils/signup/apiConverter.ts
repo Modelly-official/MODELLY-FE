@@ -13,5 +13,9 @@ export function convertCategoryToApi(category: string): 'HAIR' | 'NAIL' | 'TATTO
     타투: 'TATTOO',
     속눈썹: 'EYELASH',
   };
+  const upper = category?.trim().toUpperCase();
+  if (upper === 'HAIR' || upper === 'NAIL' || upper === 'TATTOO' || upper === 'EYELASH') {
+    return upper as 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
+  }
   return categoryMap[category] || 'HAIR';
 }

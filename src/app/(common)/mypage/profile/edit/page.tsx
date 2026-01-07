@@ -8,6 +8,7 @@ import { Dropdown, TextInput } from '@/src/components/common';
 import { uploadProfileImage, getDesignerProfile, getModelProfile } from '@/src/apis';
 import { useUpdateDesignerProfile, useUpdateModelProfile } from '@/src/hooks/queries';
 import { formatBirthDate, showToast } from '@/src/utils';
+import { isValidBirthDate, isValidCategory, isValidGender } from '@/src/utils/mypage/validation';
 import { convertCategoryToApi, convertGenderToApi } from '@/src/utils/signup/apiConverter';
 import { convertGenderToDisplay } from '@/src/utils/signup/profileFormat';
 import { getAccessToken, getUserCategory, getUserRole, useAuthStore } from '@/src/stores';
@@ -51,9 +52,18 @@ const CATEGORY_OPTIONS = [
   { value: '속눈썹', label: '속눈썹' },
 ];
 
-const mapCategoryToLabel = (category?: Category | null) => {
+const mapCategoryToLabel = (category?: string | null) => {
   if (!category) return '';
-  return CATEGORY_CODE_TO_LABEL[category] ?? '';
+  const trimmed = category.trim();
+  const upper = trimmed.toUpperCase();
+  if (CATEGORY_CODE_TO_LABEL[upper as Category]) {
+    return CATEGORY_CODE_TO_LABEL[upper as Category];
+  }
+  // 이미 한글 라벨이면 그대로 반환
+  if (Object.values(CATEGORY_CODE_TO_LABEL).includes(trimmed as (typeof CATEGORY_CODE_TO_LABEL)[keyof typeof CATEGORY_CODE_TO_LABEL])) {
+    return trimmed;
+  }
+  return trimmed;
 };
 
 export default function ProfileEditPage() {
@@ -162,7 +172,7 @@ export default function ProfileEditPage() {
         storeName: shop ?? prev.storeName,
         address: address?.line1 ?? prev.address,
         detailAddress: address?.line2 ?? prev.detailAddress,
-        category: category ?? prev.category,
+        category: mapCategoryToLabel(category as Category) || prev.category,
         profileImage: profileImageUrl || null,
       }));
     }
@@ -205,13 +215,13 @@ export default function ProfileEditPage() {
   const isFormValid =
     profileResponse?.role === 'designer'
       ? nicknameTrimmed &&
-        form.gender &&
-        form.birthDate &&
+        isValidGender(form.gender) &&
+        isValidBirthDate(form.birthDate) &&
         introTrimmed &&
         storeNameTrimmed &&
         addressTrimmed &&
-        form.category
-      : nicknameTrimmed && form.gender && form.birthDate;
+        isValidCategory(form.category, CATEGORY_OPTIONS)
+      : nicknameTrimmed && isValidGender(form.gender) && isValidBirthDate(form.birthDate);
 
   const handleSubmit = async () => {
     if (!isFormValid || isSaving || isUploading || isProfileLoading) return;
@@ -245,7 +255,6 @@ export default function ProfileEditPage() {
       }
     } catch (error) {
       console.error('프로필 저장 에러:', error);
-      showToast('프로필 저장에 실패했습니다.');
     } finally {
       setIsSaving(false);
     }
