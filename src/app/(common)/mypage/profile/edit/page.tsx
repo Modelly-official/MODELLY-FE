@@ -87,10 +87,7 @@ export default function ProfileEditPage() {
   const [isSaving, setIsSaving] = useState(false);
   const updateModelProfileMutation = useUpdateModelProfile();
   const updateDesignerProfileMutation = useUpdateDesignerProfile();
-  const {
-    data: profileResponse,
-    isLoading: isProfileLoading,
-  } = useQuery<ProfileResult>({
+  const { data: profileResponse, isLoading: isProfileLoading } = useQuery<ProfileResult>({
     queryKey: ['mypage', 'profile', 'edit', roleHint],
     enabled: mounted && isLoggedIn,
     retry: false,
@@ -196,15 +193,16 @@ export default function ProfileEditPage() {
   if (!mounted) return null;
   if (!isLoggedIn) return null;
 
-  const isFormValid = (profileResponse?.role === 'designer')
-    ? nicknameTrimmed &&
-      form.gender &&
-      form.birthDate &&
-      introTrimmed &&
-      storeNameTrimmed &&
-      addressTrimmed &&
-      form.category
-    : nicknameTrimmed && form.gender && form.birthDate;
+  const isFormValid =
+    profileResponse?.role === 'designer'
+      ? nicknameTrimmed &&
+        form.gender &&
+        form.birthDate &&
+        introTrimmed &&
+        storeNameTrimmed &&
+        addressTrimmed &&
+        form.category
+      : nicknameTrimmed && form.gender && form.birthDate;
 
   const handleSubmit = async () => {
     if (!isFormValid || isSaving || isUploading || isProfileLoading) return;
@@ -238,6 +236,7 @@ export default function ProfileEditPage() {
       }
     } catch (error) {
       console.error('프로필 저장 에러:', error);
+      showToast('프로필 저장에 실패했습니다.');
     } finally {
       setIsSaving(false);
     }
@@ -265,7 +264,7 @@ export default function ProfileEditPage() {
 
         <div className="flex flex-col gap-6">
           <TextInput
-          label={profileResponse?.role === 'designer' ? '디자이너 활동명' : '닉네임'}
+            label={profileResponse?.role === 'designer' ? '디자이너 활동명' : '닉네임'}
             value={form.nickname}
             onChange={(value) => handleFieldChange('nickname', value)}
             placeholder="활동명을 입력해주세요"
