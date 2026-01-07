@@ -133,9 +133,9 @@ export default function MypagePage() {
 
   const profileData = profileResponse?.profile;
   const hasProfileData = Boolean(profileData);
-  const name = isLoggedIn ? profileData?.nickname ?? fallbackName : '로그인하세요';
+  const name = isLoggedIn ? (profileData?.nickname ?? fallbackName) : '로그인하세요';
   const email = isLoggedIn
-    ? profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.'
+    ? (profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.')
     : '로그인 후 확인할 수 있습니다.';
   const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
   const isProfileLoading =
@@ -149,8 +149,8 @@ export default function MypagePage() {
 
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
-      <div className="flex flex-col gap-3 px-4 pt-3 pb-4">
-        <header className="mb-3 flex items-center justify-between pl-1">
+      <div className="flex flex-col">
+        <header className="flex h-[52px] items-center justify-between py-3 pr-3 pl-5">
           <h1 className="text-head-3-semibold text-gray-900">마이페이지</h1>
           <button
             type="button"
@@ -165,18 +165,20 @@ export default function MypagePage() {
             )}
           </button>
         </header>
-        <ProfileCard
-          name={name}
-          email={email}
-          profileImageSrc={profileImageSrc}
-          ctaButton={ctaButton}
-          editHref={isLoggedIn ? '/mypage/profile/edit' : undefined}
-          isLoading={isProfileLoading}
-        />
-        <MyMenuCard actions={quickActions} />
-        <MenuList items={settingLinks.map((label) => ({ label }))} />
-        <div className="-mx-4 h-2 bg-gray-200" />
-        <MenuList items={accountLinks.map((label) => ({ label }))} />
+        <div className="flex flex-col gap-3 px-4">
+          <ProfileCard
+            name={name}
+            email={email}
+            profileImageSrc={profileImageSrc}
+            ctaButton={ctaButton}
+            editHref={isLoggedIn ? '/mypage/profile/edit' : undefined}
+            isLoading={isProfileLoading}
+          />
+          <MyMenuCard actions={quickActions} />
+          <MenuList items={settingLinks.map((label) => ({ label }))} />
+          <div className="-mx-4 h-2 bg-gray-200" />
+          <MenuList items={accountLinks.map((label) => ({ label }))} />
+        </div>
       </div>
       <BottomNav />
       <LoginRequiredModal

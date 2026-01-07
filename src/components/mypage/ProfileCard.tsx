@@ -27,7 +27,7 @@ export const ProfileCard = ({
   const hasProfileImage = Boolean(profileImageSrc);
 
   return (
-    <section className="rounded-2xl bg-white py-6">
+    <section className="rounded-2xl bg-white pt-3 pb-2">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="relative h-[66px] w-[66px] overflow-hidden rounded-full">
@@ -83,7 +83,7 @@ export const ProfileCard = ({
             <button
               type="button"
               onClick={ctaButton.onClick}
-              className="text-body-2-medium shrink-0 rounded-xl border border-gray-400 px-3 py-2 text-gray-900 cursor-pointer"
+              className="text-body-2-medium shrink-0 cursor-pointer rounded-xl border border-gray-400 px-3 py-2 text-gray-900"
             >
               {ctaButton.label}
             </button>
