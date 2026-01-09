@@ -38,8 +38,9 @@ export default function MypagePage() {
     return actions.map((action) => ({
       label: action.label,
       icon: <Image src={action.iconPath} alt={action.label} width={24} height={24} />,
+      onClick: action.href ? () => router.push(action.href!) : undefined,
     }));
-  }, [currentRole]);
+  }, [currentRole, router]);
 
   // 프로필 데이터
   const profile = profileResponse?.profile;

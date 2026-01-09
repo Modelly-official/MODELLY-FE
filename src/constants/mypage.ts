@@ -23,14 +23,14 @@ export type QuickActionConfig = {
 
 /** 모델 퀵 액션 */
 export const MODEL_QUICK_ACTIONS: QuickActionConfig[] = [
-  { label: '예약 내역', iconPath: '/icons/myPage/reservationList.svg' },
+  { label: '예약 내역', iconPath: '/icons/myPage/reservationList.svg', href: '/mypage/reservations' },
   { label: '나의 리뷰', iconPath: '/icons/myPage/review.svg' },
   { label: '찜', iconPath: '/icons/myPage/heart.svg' },
 ];
 
 /** 디자이너 퀵 액션 */
 export const DESIGNER_QUICK_ACTIONS: QuickActionConfig[] = [
-  { label: '예약 내역', iconPath: '/icons/myPage/reservationList.svg' },
+  { label: '예약 내역', iconPath: '/icons/myPage/reservationList.svg', href: '/mypage/reservations' },
   { label: '리뷰 관리', iconPath: '/icons/myPage/review.svg' },
   { label: '포트폴리오', iconPath: '/icons/myPage/portfolio.svg' },
 ];
