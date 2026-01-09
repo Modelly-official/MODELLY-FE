@@ -38,7 +38,7 @@ export interface MyRecruitmentListParams {
 export interface MyRecruitmentListItem {
   recruitmentId: number;
   title: string;
-  period: string; // "12.28 ~ 1.1" 형식
+  period: string; // "2026-01-03 ~ 2026-01-17" 형식 (YYYY-MM-DD ~ YYYY-MM-DD)
   reviewCount: number;
   averageRating: number;
   thumbnail?: string;
