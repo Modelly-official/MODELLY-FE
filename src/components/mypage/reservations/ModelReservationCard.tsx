@@ -1,0 +1,130 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import type { ModelReservationItem, ReservationListType } from '@/src/types';
+import { subCategoryCodeToName, categoryCodeToName } from '@/src/utils/myRecruitment';
+import { formatDateToKorean, formatTimeToKorean } from '@/src/utils/common';
+
+interface ModelReservationCardProps {
+  reservation: ModelReservationItem;
+  tabType: ReservationListType;
+  onChangeClick?: (reservation: ModelReservationItem) => void;
+  onCancelClick?: (reservation: ModelReservationItem) => void;
+}
+
+export default function ModelReservationCard({
+  reservation,
+  tabType,
+  onChangeClick,
+  onCancelClick,
+}: ModelReservationCardProps) {
+  const router = useRouter();
+  const isUpcoming = tabType === 'UPCOMING';
+  const isCompleted = reservation.status === 'RESERVATION_CANCELLED' || tabType === 'COMPLETED';
+
+  // 카드 클릭 시 공고 상세로 이동
+  const handleCardClick = () => {
+    router.push(`/post/${reservation.recruitmentId}`);
+  };
+
+  // 서브카테고리 한글 변환
+  const subCategoryLabels = reservation.subCategories.map((code) =>
+    subCategoryCodeToName(reservation.category, code)
+  );
+
+  // 카테고리 한글 변환
+  const categoryLabel = categoryCodeToName(reservation.category as 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH') ?? reservation.category;
+
+  return (
+    <div className="flex w-full flex-col gap-5 rounded-[20px] bg-white px-5 py-4">
+      {/* 카테고리 뱃지 */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1">
+          {/* 메인 카테고리 뱃지 */}
+          <span className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
+            {categoryLabel}
+          </span>
+          {/* 서브카테고리 뱃지 */}
+          {subCategoryLabels.map((label) => (
+            <span
+              key={label}
+              className="text-caption-1-medium rounded-lg bg-purple-200 px-2 py-1 text-purple-700"
+            >
+              {label}
+            </span>
+          ))}
+          {/* 완료 상태 뱃지 */}
+          {isCompleted && (
+            <span className="text-caption-1-medium rounded-lg border border-gray-400 px-2 py-1 text-gray-800">
+              완료
+            </span>
+          )}
+        </div>
+
+        {/* 공고 제목 */}
+        <div className="flex flex-col gap-4">
+          <button
+            type="button"
+            onClick={handleCardClick}
+            className="flex cursor-pointer items-center gap-0.5"
+          >
+            <p className="text-head-4-semibold text-gray-900">{reservation.recruitmentTitle}</p>
+            <Image
+              src="/icons/common/chevron-right.svg"
+              alt="상세보기"
+              width={20}
+              height={20}
+              className="text-gray-800"
+            />
+          </button>
+
+          {/* 예약 정보 */}
+          <div className="flex flex-col gap-1">
+            <div className="text-body-2-medium flex items-center gap-4">
+              <span className="w-[51px] text-gray-600">예약 일시</span>
+              <span className="text-gray-900">
+                {formatDateToKorean(reservation.date)} {formatTimeToKorean(reservation.startTime)}
+              </span>
+            </div>
+            <div className="text-body-2-medium flex items-center gap-4">
+              <span className="w-[51px] text-gray-600">디자이너</span>
+              <span className="text-gray-900">{reservation.designerNickname}</span>
+            </div>
+            <div className="text-body-2-medium flex items-center gap-4">
+              <span className="w-[51px] text-gray-600">매장명</span>
+              <span className="text-gray-900">{reservation.shop}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 액션 버튼 (다가오는 일정만) */}
+      {isUpcoming && !isCompleted && (
+        <div className="flex w-full items-center gap-2">
+          <button
+            type="button"
+            onClick={handleCardClick}
+            className="text-body-2-medium flex h-[41px] cursor-pointer items-center justify-center rounded-full bg-gray-900 px-5 py-2.5 text-white"
+          >
+            프로필 보기
+          </button>
+          <button
+            type="button"
+            onClick={() => onChangeClick?.(reservation)}
+            className="text-body-2-medium flex h-[41px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-5 py-2.5 text-gray-900"
+          >
+            예약 변경
+          </button>
+          <button
+            type="button"
+            onClick={() => onCancelClick?.(reservation)}
+            className="text-body-2-medium flex h-[41px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-5 py-2.5 text-gray-900"
+          >
+            예약 취소
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
