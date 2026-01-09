@@ -7,3 +7,6 @@ export * from './explore';
 // Signup
 export * from './signup';
 
+// Mypage
+export * from './mypage';
+
