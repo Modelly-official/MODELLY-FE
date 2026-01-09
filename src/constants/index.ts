@@ -10,3 +10,6 @@ export * from './signup';
 // Mypage
 export * from './mypage';
 
+// Reservation
+export * from './reservation';
+
