@@ -1,6 +1,6 @@
 // 예약 관련 상수
 
-import type { ReservationListType, ReservationStatus } from '@/src/types';
+import type { ReservationListType, MyReservationStatus } from '@/src/types';
 
 /** 예약 내역 탭 옵션 */
 export const RESERVATION_TABS: { value: ReservationListType; label: string }[] = [
@@ -9,7 +9,7 @@ export const RESERVATION_TABS: { value: ReservationListType; label: string }[] =
 ];
 
 /** 예약 상태 한글 매핑 */
-export const RESERVATION_STATUS_LABEL: Record<ReservationStatus, string> = {
+export const RESERVATION_STATUS_LABEL: Record<MyReservationStatus, string> = {
   RESERVATION_CONFIRMED: '예약확정',
   RESERVATION_PENDING: '예약대기',
   RESERVATION_CANCELLED: '예약취소',

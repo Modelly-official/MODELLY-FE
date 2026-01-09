@@ -1,7 +1,7 @@
 // 예약 내역 페이지 관련 타입 정의
 
-// 예약 상태
-export type ReservationStatus =
+// 예약 상태 (마이페이지 예약 목록 API 응답 코드)
+export type MyReservationStatus =
   | 'RESERVATION_CONFIRMED'
   | 'RESERVATION_PENDING'
   | 'RESERVATION_CANCELLED';
@@ -23,7 +23,7 @@ export interface ModelReservationItem {
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
   endTime: string; // HH:mm
-  status: ReservationStatus;
+  status: MyReservationStatus;
 }
 
 // 디자이너 예약 목록 아이템
@@ -37,7 +37,7 @@ export interface DesignerReservationItem {
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
   endTime: string; // HH:mm
-  status: ReservationStatus;
+  status: MyReservationStatus;
   comment?: string;
   imageUrls?: string[];
 }
