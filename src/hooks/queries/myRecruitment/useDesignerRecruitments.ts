@@ -21,25 +21,45 @@ interface UseDesignerRecruitmentsParams {
 export function useDesignerRecruitments(params: UseDesignerRecruitmentsParams) {
   const { month, size = 10, enabled = true } = params;
 
+  type CursorParam = { cursorId?: number; cursorEarliestDate?: string } | undefined;
+
   return useInfiniteQuery<
     ApiResponse<MyRecruitmentListResponse>,
     Error,
-    { pages: ApiResponse<MyRecruitmentListResponse>[]; pageParams: (number | undefined)[] },
+    { pages: ApiResponse<MyRecruitmentListResponse>[]; pageParams: CursorParam[] },
     ReturnType<typeof myRecruitmentKeys.list>,
-    number | undefined
+    CursorParam
   >({
     queryKey: myRecruitmentKeys.list(month),
     queryFn: async ({ pageParam }) => {
       return getDesignerRecruitments({
         month,
         size,
-        cursorId: pageParam,
+        cursorId: pageParam?.cursorId,
+        cursorEarliestDate: pageParam?.cursorEarliestDate,
       });
     },
-    initialPageParam: undefined,
-    getNextPageParam: (lastPage) => {
+    initialPageParam: undefined as { cursorId?: number; cursorEarliestDate?: string } | undefined,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (!lastPage.result.hasNext) return undefined;
-      return lastPage.result.nextCursor;
+
+      const items = lastPage.result.items;
+      if (items.length === 0) return undefined;
+
+      // 마지막 아이템에서 커서 정보 추출
+      const lastItem = items[items.length - 1];
+      const nextCursorId = lastItem.recruitmentId;
+
+      // period에서 시작 날짜 추출 ("2026-01-03 ~ 2026-01-17" → "2026-01-03")
+      const periodMatch = lastItem.period?.match(/^(\d{4}-\d{2}-\d{2})/);
+      const nextCursorEarliestDate = periodMatch ? periodMatch[1] : undefined;
+
+      // 무한 루프 방지
+      if (nextCursorId === lastPageParam?.cursorId) {
+        return undefined;
+      }
+
+      return { cursorId: nextCursorId, cursorEarliestDate: nextCursorEarliestDate };
     },
     enabled,
     staleTime: 1000 * 60 * 5, // 5분

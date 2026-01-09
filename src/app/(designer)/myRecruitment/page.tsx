@@ -21,13 +21,22 @@ export default function MyRecruitmentPage() {
   const { isOpen: deleteModalOpen, selectedId: selectedRecruitmentId, openModal, closeModal } = useDeleteModal<number>();
 
   // API Hooks
-  const { data, isLoading } = useDesignerRecruitments({ month: monthString });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useDesignerRecruitments({
+    month: monthString,
+  });
   const { mutate: deleteRecruitment, isPending: isDeleting } = useDeleteRecruitment();
 
-  // 모든 페이지의 아이템을 평탄화
+  // 모든 페이지의 아이템을 평탄화 + 중복 제거
   const recruitments = useMemo(() => {
     if (!data?.pages) return [];
-    return data.pages.flatMap((page) => page.result.items);
+    const allItems = data.pages.flatMap((page) => page.result.items);
+    // recruitmentId 기준 중복 제거
+    const seen = new Set<number>();
+    return allItems.filter((item) => {
+      if (seen.has(item.recruitmentId)) return false;
+      seen.add(item.recruitmentId);
+      return true;
+    });
   }, [data]);
 
   // 카드 클릭 핸들러
@@ -74,6 +83,9 @@ export default function MyRecruitmentPage() {
             onEdit={handleEdit}
             onDelete={openModal}
             onClick={handleCardClick}
+            onLoadMore={fetchNextPage}
+            hasMore={hasNextPage}
+            isLoadingMore={isFetchingNextPage}
           />
         ) : (
           <RecruitmentEmpty />
