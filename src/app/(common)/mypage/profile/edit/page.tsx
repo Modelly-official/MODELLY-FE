@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import LeftArrowIcon from '@/public/icons/common/left-arrow.svg';
+import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { AddressInput, FixedBottomButton, GenderSelect, ProfileImageUpload } from '@/src/components/signup';
 import { Dropdown, TextInput } from '@/src/components/common';
 import { useProfileEditForm } from '@/src/hooks/custom/mypage';
@@ -45,16 +45,18 @@ export default function ProfileEditPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
       {/* 헤더 */}
-      <header className="relative flex items-center justify-center px-4 py-3">
+      <header className="flex items-center justify-between px-4 py-3">
         <button
           type="button"
           aria-label="이전으로"
           onClick={() => router.back()}
-          className="absolute left-4 flex h-10 w-10 cursor-pointer items-center justify-center"
+          className="flex size-6 cursor-pointer items-center justify-center"
         >
-          <LeftArrowIcon />
+          <ArrowLeftIcon className="text-black" />
         </button>
-        <h1 className="text-head-4-medium text-gray-900">프로필 수정</h1>
+        <h1 className="text-head-4-medium text-black">프로필 수정</h1>
+        {/* 균형을 위한 빈 공간 */}
+        <div className="size-6" />
       </header>
 
       {/* 폼 */}

@@ -9,6 +9,9 @@ export type MyReservationStatus =
 // 예약 목록 타입 (탭)
 export type ReservationListType = 'UPCOMING' | 'COMPLETED';
 
+// 예약 카테고리 필터
+export type ReservationCategoryFilter = 'ALL' | 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
+
 // 모델 예약 목록 아이템
 export interface ModelReservationItem {
   reservationId: number;
@@ -55,6 +58,8 @@ export interface ReservationsResponse<T> {
 // 예약 목록 조회 파라미터
 export interface ReservationsParams {
   type: ReservationListType;
+  category?: ReservationCategoryFilter;
+  month?: string; // yyyy-MM 형식
   cursorId?: number;
   cursorDate?: string;
   cursorTime?: string;

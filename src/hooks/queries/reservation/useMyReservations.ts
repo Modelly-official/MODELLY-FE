@@ -3,6 +3,7 @@ import { getModelReservations, getDesignerReservations } from '@/src/apis';
 import type {
   ApiResponse,
   ReservationListType,
+  ReservationCategoryFilter,
   ReservationsResponse,
   ModelReservationItem,
   DesignerReservationItem,
@@ -15,11 +16,19 @@ interface ReservationCursor {
   cursorTime?: string;
 }
 
+// 필터 타입
+interface ReservationFilters {
+  category?: ReservationCategoryFilter;
+  month?: string; // yyyy-MM 형식
+}
+
 // Query Keys
 export const myReservationKeys = {
   all: ['myReservations'] as const,
-  model: (type: ReservationListType) => [...myReservationKeys.all, 'model', type] as const,
-  designer: (type: ReservationListType) => [...myReservationKeys.all, 'designer', type] as const,
+  model: (type: ReservationListType, filters?: ReservationFilters) =>
+    [...myReservationKeys.all, 'model', type, filters] as const,
+  designer: (type: ReservationListType, filters?: ReservationFilters) =>
+    [...myReservationKeys.all, 'designer', type, filters] as const,
 };
 
 interface UseMyReservationsOptions {
@@ -31,6 +40,7 @@ interface UseMyReservationsOptions {
  */
 export function useModelReservations(
   type: ReservationListType,
+  filters: ReservationFilters = {},
   options: UseMyReservationsOptions = {}
 ) {
   const { enabled = true } = options;
@@ -42,10 +52,12 @@ export function useModelReservations(
     ReturnType<typeof myReservationKeys.model>,
     ReservationCursor
   >({
-    queryKey: myReservationKeys.model(type),
+    queryKey: myReservationKeys.model(type, filters),
     queryFn: async ({ pageParam }) => {
       return getModelReservations({
         type,
+        category: filters.category,
+        month: filters.month,
         cursorId: pageParam?.cursorId,
         cursorDate: pageParam?.cursorDate,
         cursorTime: pageParam?.cursorTime,
@@ -70,6 +82,7 @@ export function useModelReservations(
  */
 export function useDesignerMyReservations(
   type: ReservationListType,
+  filters: ReservationFilters = {},
   options: UseMyReservationsOptions = {}
 ) {
   const { enabled = true } = options;
@@ -81,10 +94,12 @@ export function useDesignerMyReservations(
     ReturnType<typeof myReservationKeys.designer>,
     ReservationCursor
   >({
-    queryKey: myReservationKeys.designer(type),
+    queryKey: myReservationKeys.designer(type, filters),
     queryFn: async ({ pageParam }) => {
       return getDesignerReservations({
         type,
+        category: filters.category,
+        month: filters.month,
         cursorId: pageParam?.cursorId,
         cursorDate: pageParam?.cursorDate,
         cursorTime: pageParam?.cursorTime,

@@ -16,7 +16,6 @@ interface ReservationListProps {
   items: ReservationItem[];
   role: 'model' | 'designer';
   tabType: ReservationListType;
-  totalCount: number;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   isLoading: boolean;
@@ -30,7 +29,6 @@ export default function ReservationList({
   items,
   role,
   tabType,
-  totalCount,
   hasNextPage,
   isFetchingNextPage,
   isLoading,
@@ -60,33 +58,27 @@ export default function ReservationList({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* 전체 개수 */}
-      <p className="text-body-2-medium text-gray-700">전체 ({totalCount})</p>
-
-      {/* 카드 리스트 */}
-      <div className="flex flex-col gap-4">
-        {items.map((item) =>
-          role === 'model' ? (
-            <ModelReservationCard
-              key={item.reservationId}
-              reservation={item as ModelReservationItem}
-              tabType={tabType}
-              onChangeClick={onChangeClick as (r: ModelReservationItem) => void}
-              onCancelClick={onCancelClick as (r: ModelReservationItem) => void}
-            />
-          ) : (
-            <DesignerReservationCard
-              key={item.reservationId}
-              reservation={item as DesignerReservationItem}
-              tabType={tabType}
-              onChatClick={onChatClick}
-              onChangeClick={onChangeClick as (r: DesignerReservationItem) => void}
-              onCancelClick={onCancelClick as (r: DesignerReservationItem) => void}
-            />
-          )
-        )}
-      </div>
+    <div className="flex flex-col gap-4">
+      {items.map((item) =>
+        role === 'model' ? (
+          <ModelReservationCard
+            key={item.reservationId}
+            reservation={item as ModelReservationItem}
+            tabType={tabType}
+            onChangeClick={onChangeClick as (r: ModelReservationItem) => void}
+            onCancelClick={onCancelClick as (r: ModelReservationItem) => void}
+          />
+        ) : (
+          <DesignerReservationCard
+            key={item.reservationId}
+            reservation={item as DesignerReservationItem}
+            tabType={tabType}
+            onChatClick={onChatClick}
+            onChangeClick={onChangeClick as (r: DesignerReservationItem) => void}
+            onCancelClick={onCancelClick as (r: DesignerReservationItem) => void}
+          />
+        )
+      )}
 
       {/* 무한 스크롤 트리거 */}
       <div ref={loadMoreRef} className="h-4" />

@@ -2,16 +2,15 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { useModelReservations, useDesignerMyReservations } from '@/src/hooks/queries/reservation';
 import { useToast } from '@/src/hooks/common';
-import {
-  ReservationTabs,
-  ReservationList,
-} from '@/src/components/mypage/reservations';
+import { ReservationTabs, CategoryChips, MonthDropdown, ReservationList } from '@/src/components/mypage/reservations';
+import { generateMonthOptions } from '@/src/constants';
 import type {
   ReservationListType,
+  ReservationCategoryFilter,
   ModelReservationItem,
   DesignerReservationItem,
 } from '@/src/types';
@@ -26,17 +25,36 @@ export default function MyReservationsPage() {
   // 탭 상태
   const [activeTab, setActiveTab] = useState<ReservationListType>('UPCOMING');
 
-  // 현재 역할에 따라 API 호출
-  const isModel = role === 'model';
+  // 카테고리 필터 상태
+  const [selectedCategory, setSelectedCategory] = useState<ReservationCategoryFilter>('ALL');
 
-  // 모델 예약 목록 조회
-  const modelQuery = useModelReservations(activeTab, {
-    enabled: authReady && isLoggedIn && isModel,
+  // 월 선택 상태 (현재 월로 초기화, yyyy-MM 형식)
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = `${currentYear}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+
+  // 월 옵션 생성
+  const monthOptions = useMemo(() => generateMonthOptions(currentYear), [currentYear]);
+
+  // 현재 역할에 따라 API 호출 (authReady 후에만 정확한 role 사용)
+  const isModel = authReady && role === 'model';
+  const isDesigner = authReady && role === 'designer';
+
+  // 필터 파라미터
+  const filterParams = {
+    category: selectedCategory !== 'ALL' ? selectedCategory : undefined,
+    month: selectedMonth,
+  };
+
+  // 모델 예약 목록 조회 (모델만)
+  const modelQuery = useModelReservations(activeTab, filterParams, {
+    enabled: isLoggedIn && isModel,
   });
 
-  // 디자이너 예약 목록 조회
-  const designerQuery = useDesignerMyReservations(activeTab, {
-    enabled: authReady && isLoggedIn && !isModel,
+  // 디자이너 예약 목록 조회 (디자이너만)
+  const designerQuery = useDesignerMyReservations(activeTab, filterParams, {
+    enabled: isLoggedIn && isDesigner,
   });
 
   // 모델 데이터 가공
@@ -92,19 +110,14 @@ export default function MyReservationsPage() {
   return (
     <div className="flex min-h-screen flex-col bg-gray-200">
       {/* 헤더 */}
-      <header className="flex h-[52px] items-center justify-between bg-white px-4 py-3">
+      <header className="flex items-center justify-between bg-white px-4 py-3">
         <button
           type="button"
           onClick={() => router.back()}
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <Image
-            src="/icons/common/arrow-left.svg"
-            alt="뒤로가기"
-            width={24}
-            height={24}
-          />
+          <ArrowLeftIcon className="text-black" />
         </button>
         <h1 className="text-head-4-medium text-center text-black">예약 목록</h1>
         {/* 균형을 위한 빈 공간 */}
@@ -115,13 +128,31 @@ export default function MyReservationsPage() {
       <ReservationTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+      <div className="flex flex-1 flex-col gap-4 px-4 py-4">
+        {/* 카테고리 필터 */}
+        <CategoryChips
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
+        {/* 월 선택 및 전체 개수 */}
+        <div className="flex items-center justify-between">
+          <MonthDropdown
+            options={monthOptions}
+            selectedMonth={selectedMonth}
+            onMonthChange={setSelectedMonth}
+          />
+          <div className="flex items-center gap-1">
+            <span className="text-body-2-medium text-black">전체</span>
+            <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+          </div>
+        </div>
+
         {/* 예약 목록 */}
         <ReservationList
           items={items}
           role={role}
           tabType={activeTab}
-          totalCount={totalCount}
           hasNextPage={hasNextPage ?? false}
           isFetchingNextPage={isFetchingNextPage}
           isLoading={isLoading}
