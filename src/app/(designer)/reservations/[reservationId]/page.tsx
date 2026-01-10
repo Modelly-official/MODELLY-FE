@@ -99,7 +99,7 @@ export default function ReservationDetailPage() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="h-4 text-black" />
+          <ArrowLeftIcon className="size-6 text-black" />
         </button>
         {/* 우측 여백용 (오른쪽 아이콘 없음) */}
         <div className="size-6 opacity-0" />

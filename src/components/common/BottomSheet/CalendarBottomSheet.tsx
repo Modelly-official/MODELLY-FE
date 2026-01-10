@@ -143,7 +143,7 @@ export default function CalendarBottomSheet({
             className="flex size-8 cursor-pointer items-center justify-center"
             aria-label="이전 달"
           >
-            <ArrowLeftIcon className="h-4 w-[9px]" />
+            <ArrowLeftIcon className="size-5" />
           </button>
 
           <span className="text-head-2-semibold text-gray-900">
@@ -156,7 +156,7 @@ export default function CalendarBottomSheet({
             className="flex size-8 cursor-pointer items-center justify-center"
             aria-label="다음 달"
           >
-            <ArrowRightIcon className="h-4 w-[9px]" />
+            <ArrowRightIcon className="size-5" />
           </button>
         </div>
 

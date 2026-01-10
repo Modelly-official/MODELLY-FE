@@ -103,10 +103,10 @@ export default function DesignerCalendar({
         <button
           type="button"
           onClick={onPrevMonth}
-          className="flex size-5 items-center justify-center"
+          className="flex size-6 items-center justify-center"
           aria-label="이전 달"
         >
-          <ArrowLeftIcon className="h-4 w-[9px] cursor-pointer text-gray-800" />
+          <ArrowLeftIcon className="size-5 cursor-pointer text-gray-800" />
         </button>
 
         <span className="text-[26px] font-normal leading-[1.4] tracking-[-0.52px] text-gray-900">
@@ -116,10 +116,10 @@ export default function DesignerCalendar({
         <button
           type="button"
           onClick={onNextMonth}
-          className="flex size-5 items-center justify-center"
+          className="flex size-6 items-center justify-center"
           aria-label="다음 달"
         >
-          <ArrowRightIcon className="h-4 w-[9px] cursor-pointer text-gray-800" />
+          <ArrowRightIcon className="size-5 cursor-pointer text-gray-800" />
         </button>
       </div>
 

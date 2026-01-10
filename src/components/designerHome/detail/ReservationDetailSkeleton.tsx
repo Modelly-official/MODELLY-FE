@@ -15,7 +15,7 @@ export function ReservationDetailSkeleton() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="h-4 text-black" />
+          <ArrowLeftIcon className="size-6 text-black" />
         </button>
         <div className="size-6 opacity-0" />
       </header>
