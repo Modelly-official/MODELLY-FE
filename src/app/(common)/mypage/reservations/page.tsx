@@ -41,19 +41,24 @@ export default function MyReservationsPage() {
   const isModel = authReady && role === 'model';
   const isDesigner = authReady && role === 'designer';
 
-  // 필터 파라미터
-  const filterParams = {
+  // 모델 필터 파라미터 (카테고리 포함)
+  const modelFilterParams = {
     category: selectedCategory !== 'ALL' ? selectedCategory : undefined,
     month: selectedMonth,
   };
 
+  // 디자이너 필터 파라미터 (카테고리 없음)
+  const designerFilterParams = {
+    month: selectedMonth,
+  };
+
   // 모델 예약 목록 조회 (모델만)
-  const modelQuery = useModelReservations(activeTab, filterParams, {
+  const modelQuery = useModelReservations(activeTab, modelFilterParams, {
     enabled: isLoggedIn && isModel,
   });
 
   // 디자이너 예약 목록 조회 (디자이너만)
-  const designerQuery = useDesignerMyReservations(activeTab, filterParams, {
+  const designerQuery = useDesignerMyReservations(activeTab, designerFilterParams, {
     enabled: isLoggedIn && isDesigner,
   });
 
@@ -129,11 +134,13 @@ export default function MyReservationsPage() {
 
       {/* 콘텐츠 */}
       <div className="flex flex-1 flex-col gap-4 px-4 py-4">
-        {/* 카테고리 필터 */}
-        <CategoryChips
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
+        {/* 카테고리 필터 (모델만) */}
+        {isModel && (
+          <CategoryChips
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        )}
 
         {/* 월 선택 및 전체 개수 */}
         <div className="flex items-center justify-between">

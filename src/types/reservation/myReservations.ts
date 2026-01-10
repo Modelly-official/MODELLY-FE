@@ -32,10 +32,13 @@ export interface ModelReservationItem {
 // 디자이너 예약 목록 아이템
 export interface DesignerReservationItem {
   reservationId: number;
+  recruitmentId: number;
+  recruitmentTitle: string;
+  modelId: number;
   modelUserId: number;
   modelName: string;
   modelProfileImageUrl?: string;
-  category: string;
+  category?: string;
   subCategories: string[];
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
