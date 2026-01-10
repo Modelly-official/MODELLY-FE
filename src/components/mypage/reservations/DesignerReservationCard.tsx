@@ -1,32 +1,96 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import type { DesignerReservationItem, ReservationListType } from '@/src/types';
+import type { DesignerReservationItem, ReservationListType, ReservationInfo, ReservationChangeRequest, ReservationCancelRequest } from '@/src/types';
 import { formatDateToKorean, formatTimeToKorean } from '@/src/utils/common';
+import {
+  ReservationChangeModal,
+  ReservationCancelModal,
+  ReservationSuccessModal,
+} from '@/src/components/reservation';
+import { MOCK_TIME_SLOTS } from '@/src/mocks/calendar';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
 
 interface DesignerReservationCardProps {
   reservation: DesignerReservationItem;
   tabType: ReservationListType;
-  onChatClick?: (reservation: DesignerReservationItem) => void;
-  onChangeClick?: (reservation: DesignerReservationItem) => void;
-  onCancelClick?: (reservation: DesignerReservationItem) => void;
 }
 
 export default function DesignerReservationCard({
   reservation,
   tabType,
-  onChatClick,
-  onChangeClick,
-  onCancelClick,
 }: DesignerReservationCardProps) {
   const router = useRouter();
+  const { showToast } = useToast();
+  const createChatRoom = useCreateChatRoom();
+
+  // 모달 상태 관리
+  const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
   const isUpcoming = tabType === 'UPCOMING';
   const isCompleted = reservation.status === 'RESERVATION_CANCELLED' || tabType === 'COMPLETED';
+
+  // 예약 정보를 모달에 전달할 형식으로 변환
+  const reservationInfo: ReservationInfo = {
+    reservationId: reservation.reservationId,
+    modelUserId: reservation.modelUserId,
+    modelName: reservation.modelName,
+    date: reservation.date,
+    startTime: reservation.startTime,
+  };
 
   // 카드 클릭 시 공고 상세로 이동
   const handleCardClick = () => {
     router.push(`/post/${reservation.recruitmentId}`);
+  };
+
+  // 채팅방 생성 및 이동
+  const handleChatClick = () => {
+    createChatRoom.mutate(reservation.modelUserId, {
+      onSuccess: (response) => {
+        const chatRoomId = response.result.chatRoomId;
+        router.push(`/chat/${chatRoomId}`);
+      },
+      onError: () => {
+        showToast('채팅방 생성에 실패했습니다');
+      },
+    });
+  };
+
+  const handleChangeClick = () => {
+    setIsChangeModalOpen(true);
+  };
+
+  const handleCancelClick = () => {
+    setIsCancelModalOpen(true);
+  };
+
+  // Mock: 예약 변경 요청 처리
+  const handleChangeSubmit = (data: ReservationChangeRequest) => {
+    console.log('예약 변경 요청:', data);
+    setIsChangeModalOpen(false);
+    setSuccessMessage('예약 변경이 요청되었습니다');
+    setIsSuccessModalOpen(true);
+  };
+
+  // Mock: 예약 취소 요청 처리
+  const handleCancelSubmit = (data: ReservationCancelRequest) => {
+    console.log('예약 취소 요청:', data);
+    setIsCancelModalOpen(false);
+    setSuccessMessage('예약 취소가 요청되었습니다');
+    setIsSuccessModalOpen(true);
+  };
+
+  // 성공 모달 확인 버튼 처리
+  const handleSuccessConfirm = () => {
+    setIsSuccessModalOpen(false);
+    setSuccessMessage('');
   };
 
   return (
@@ -84,28 +148,60 @@ export default function DesignerReservationCard({
         <div className="flex w-full items-center gap-2">
           <button
             type="button"
-            onClick={() => onChatClick?.(reservation)}
-            className="text-body-2-medium flex h-[42px] shrink-0 cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-full bg-gray-900 px-4 py-2.5 text-white"
+            onClick={handleChatClick}
+            disabled={createChatRoom.isPending}
+            className={`text-body-2-medium flex h-[42px] shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-full px-4 py-2.5 text-white ${
+              createChatRoom.isPending ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-gray-900'
+            }`}
           >
-            <Image src="/icons/calendar/chat.svg" alt="채팅" width={20} height={20} />
+            {createChatRoom.isPending ? (
+              <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <Image src="/icons/calendar/chat.svg" alt="채팅" width={20} height={20} />
+            )}
             채팅 보내기
           </button>
           <button
             type="button"
-            onClick={() => onChangeClick?.(reservation)}
+            onClick={handleChangeClick}
             className="text-body-2-medium flex h-[42px] shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-gray-400 bg-white px-4 py-2.5 text-gray-900"
           >
             예약 변경
           </button>
           <button
             type="button"
-            onClick={() => onCancelClick?.(reservation)}
+            onClick={handleCancelClick}
             className="text-body-2-medium flex h-[42px] shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-gray-400 bg-white px-4 py-2.5 text-gray-900"
           >
             예약 취소
           </button>
         </div>
       )}
+
+      {/* 예약 변경 모달 */}
+      <ReservationChangeModal
+        isOpen={isChangeModalOpen}
+        onClose={() => setIsChangeModalOpen(false)}
+        reservation={reservationInfo}
+        timeSlots={MOCK_TIME_SLOTS}
+        onSubmit={handleChangeSubmit}
+      />
+
+      {/* 예약 취소 모달 */}
+      <ReservationCancelModal
+        isOpen={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        reservation={reservationInfo}
+        onSubmit={handleCancelSubmit}
+      />
+
+      {/* 성공 모달 */}
+      <ReservationSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        message={successMessage}
+        onConfirm={handleSuccessConfirm}
+      />
     </div>
   );
 }

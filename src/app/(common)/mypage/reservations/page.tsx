@@ -106,24 +106,6 @@ export default function MyReservationsPage() {
     }
   }, [error, showToast]);
 
-  // 예약 변경 핸들러
-  const handleChangeClick = (reservation: ReservationItem) => {
-    // TODO: 예약 변경 모달 연결
-    console.log('예약 변경:', reservation);
-  };
-
-  // 예약 취소 핸들러
-  const handleCancelClick = (reservation: ReservationItem) => {
-    // TODO: 예약 취소 모달 연결
-    console.log('예약 취소:', reservation);
-  };
-
-  // 채팅 보내기 핸들러 (디자이너만)
-  const handleChatClick = (reservation: DesignerReservationItem) => {
-    // TODO: 채팅 페이지 이동 또는 채팅방 생성
-    console.log('채팅 보내기:', reservation);
-  };
-
   return (
     <div className="flex min-h-screen flex-col bg-gray-200">
       {/* 헤더 */}
@@ -176,9 +158,6 @@ export default function MyReservationsPage() {
           isFetchingNextPage={isFetchingNextPage}
           isLoading={isLoading}
           fetchNextPage={fetchNextPage}
-          onChangeClick={handleChangeClick}
-          onCancelClick={handleCancelClick}
-          onChatClick={handleChatClick}
         />
       </div>
     </div>

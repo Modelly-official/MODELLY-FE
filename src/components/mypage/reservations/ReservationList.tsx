@@ -20,9 +20,6 @@ interface ReservationListProps {
   isFetchingNextPage: boolean;
   isLoading: boolean;
   fetchNextPage: () => void;
-  onChangeClick?: (reservation: ReservationItem) => void;
-  onCancelClick?: (reservation: ReservationItem) => void;
-  onChatClick?: (reservation: DesignerReservationItem) => void;
 }
 
 export default function ReservationList({
@@ -33,9 +30,6 @@ export default function ReservationList({
   isFetchingNextPage,
   isLoading,
   fetchNextPage,
-  onChangeClick,
-  onCancelClick,
-  onChatClick,
 }: ReservationListProps) {
   const { loadMoreRef } = useInfiniteScroll({
     hasNextPage,
@@ -65,17 +59,12 @@ export default function ReservationList({
             key={item.reservationId}
             reservation={item as ModelReservationItem}
             tabType={tabType}
-            onChangeClick={onChangeClick as (r: ModelReservationItem) => void}
-            onCancelClick={onCancelClick as (r: ModelReservationItem) => void}
           />
         ) : (
           <DesignerReservationCard
             key={item.reservationId}
             reservation={item as DesignerReservationItem}
             tabType={tabType}
-            onChatClick={onChatClick}
-            onChangeClick={onChangeClick as (r: DesignerReservationItem) => void}
-            onCancelClick={onCancelClick as (r: DesignerReservationItem) => void}
           />
         )
       )}
