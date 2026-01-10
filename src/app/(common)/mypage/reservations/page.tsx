@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
-import { useAuthReady } from '@/src/hooks/custom/mypage';
+import { getAccessToken, getUserRole } from '@/src/stores';
 import { useModelReservations, useDesignerMyReservations } from '@/src/hooks/queries/reservation';
 import { useToast } from '@/src/hooks/common';
 import { ReservationTabs, CategoryChips, MonthDropdown, ReservationList } from '@/src/components/mypage/reservations';
@@ -17,10 +17,23 @@ import type {
 
 type ReservationItem = ModelReservationItem | DesignerReservationItem;
 
+// 클라이언트 상태 확인을 위한 외부 스토어
+const emptySubscribe = () => () => {};
+
 export default function MyReservationsPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const { role, isLoggedIn, authReady } = useAuthReady();
+
+  // 클라이언트 여부 확인 (hydration-safe)
+  const isClient = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
+  // 클라이언트에서만 쿠키 읽기
+  const role = isClient ? (getUserRole() ?? 'model') : 'model';
+  const isLoggedIn = isClient ? !!getAccessToken() : false;
 
   // 탭 상태
   const [activeTab, setActiveTab] = useState<ReservationListType>('UPCOMING');
@@ -37,9 +50,8 @@ export default function MyReservationsPage() {
   // 월 옵션 생성
   const monthOptions = useMemo(() => generateMonthOptions(currentYear), [currentYear]);
 
-  // 현재 역할에 따라 API 호출 (authReady 후에만 정확한 role 사용)
-  const isModel = authReady && role === 'model';
-  const isDesigner = authReady && role === 'designer';
+  // 현재 역할에 따라 UI 조건부 렌더링
+  const isModel = isClient && role === 'model';
 
   // 모델 필터 파라미터 (카테고리 포함)
   const modelFilterParams = {
@@ -52,14 +64,14 @@ export default function MyReservationsPage() {
     month: selectedMonth,
   };
 
-  // 모델 예약 목록 조회 (모델만)
+  // 모델 예약 목록 조회 (모델만) - 클라이언트에서 로그인 상태일 때만
   const modelQuery = useModelReservations(activeTab, modelFilterParams, {
-    enabled: isLoggedIn && isModel,
+    enabled: isClient && isLoggedIn && role === 'model',
   });
 
-  // 디자이너 예약 목록 조회 (디자이너만)
+  // 디자이너 예약 목록 조회 (디자이너만) - 클라이언트에서 로그인 상태일 때만
   const designerQuery = useDesignerMyReservations(activeTab, designerFilterParams, {
-    enabled: isLoggedIn && isDesigner,
+    enabled: isClient && isLoggedIn && role === 'designer',
   });
 
   // 모델 데이터 가공

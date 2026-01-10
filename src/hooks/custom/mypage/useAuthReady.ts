@@ -1,4 +1,4 @@
-import { useSyncExternalStore, useRef } from 'react';
+import { useState, useCallback, useSyncExternalStore } from 'react';
 import { getAccessToken, getUserRole, getUserCategory, useAuthStore } from '@/src/stores';
 import type { Category } from '@/src/types/recruitment';
 
@@ -21,67 +21,82 @@ interface AuthReadyState {
   cookieCategory: Category | null;
 }
 
-interface SnapshotState {
-  role: Role;
-  isLoggedIn: boolean;
-  cookieCategory: Category | null;
-  authReady: boolean;
-}
+// 클라이언트 마운트 상태를 추적하는 외부 스토어
+let isMounted = false;
+const listeners = new Set<() => void>();
 
-// 빈 구독 함수 (쿠키는 외부 변경 이벤트가 없음)
-const subscribe = () => () => {};
-
-// 서버 스냅샷 (고정값)
-const serverSnapshot: SnapshotState = {
-  role: 'model',
-  isLoggedIn: false,
-  cookieCategory: null,
-  authReady: false,
+const mountStore = {
+  subscribe: (listener: () => void) => {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+  getSnapshot: () => isMounted,
+  getServerSnapshot: () => false,
+  mount: () => {
+    if (!isMounted) {
+      isMounted = true;
+      listeners.forEach((listener) => listener());
+    }
+  },
 };
+
+// 앱 시작 시 마운트 표시
+if (typeof window !== 'undefined') {
+  mountStore.mount();
+}
 
 /**
  * 인증 상태 동기화 훅
  * - 쿠키/스토어 기반으로 인증 상태를 초기화
- * - useSyncExternalStore로 SSR/CSR 안전하게 처리
+ * - useSyncExternalStore로 hydration 안전하게 처리
  */
 export function useAuthReady(): AuthReadyState {
   const user = useAuthStore((state) => state.user);
-  const cachedSnapshot = useRef<SnapshotState | null>(null);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  // 클라이언트 스냅샷: 쿠키에서 값 읽기 (캐싱으로 무한 루프 방지)
-  const getSnapshot = (): SnapshotState => {
+  // 클라이언트 마운트 상태 구독
+  const isClient = useSyncExternalStore(
+    mountStore.subscribe,
+    mountStore.getSnapshot,
+    mountStore.getServerSnapshot
+  );
+
+  // 쿠키 기반 인증 상태 계산
+  const getAuthState = useCallback(() => {
+    if (!isClient) {
+      return {
+        role: 'model' as Role,
+        isLoggedIn: false,
+        cookieCategory: null as Category | null,
+        authReady: false,
+      };
+    }
+
     const cookieRole = getUserRole();
     const token = getAccessToken();
     const category = getUserCategory();
 
     const role = (user?.role ?? cookieRole ?? 'model') as Role;
-    const isLoggedIn = !!(user ?? token);
+    const isLoggedIn = !!(isAuthenticated || user || token);
 
-    // 이전 스냅샷과 비교하여 변경 없으면 캐시된 값 반환
-    if (
-      cachedSnapshot.current &&
-      cachedSnapshot.current.role === role &&
-      cachedSnapshot.current.isLoggedIn === isLoggedIn &&
-      cachedSnapshot.current.cookieCategory === category
-    ) {
-      return cachedSnapshot.current;
-    }
-
-    // 새 스냅샷 캐싱
-    cachedSnapshot.current = {
+    return {
       role,
       isLoggedIn,
       cookieCategory: category,
       authReady: true,
     };
+  }, [isClient, user, isAuthenticated]);
 
-    return cachedSnapshot.current;
-  };
+  const [authState, setAuthState] = useState(getAuthState);
 
-  // 서버 스냅샷: 고정값 반환
-  const getServerSnapshot = (): SnapshotState => serverSnapshot;
+  // isClient, user, isAuthenticated가 변경되면 상태 업데이트
+  // useState의 lazy initializer 패턴 사용
+  if (isClient && !authState.authReady) {
+    const newState = getAuthState();
+    if (newState.authReady !== authState.authReady) {
+      setAuthState(newState);
+    }
+  }
 
-  const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-
-  return { user, ...state };
+  return { user, ...authState };
 }
