@@ -6,16 +6,16 @@ import { useToast } from '@/src/hooks/common/useToast';
 
 interface PostActionsProps {
   recruitmentId: number;
-  designerId: number;
+  designerUserId: number;
 }
 
-export default function PostActions({ recruitmentId, designerId }: PostActionsProps) {
+export default function PostActions({ recruitmentId, designerUserId }: PostActionsProps) {
   const router = useRouter();
   const createChatRoom = useCreateChatRoom();
   const { showToast } = useToast();
 
   const handleChat = () => {
-    createChatRoom.mutate(designerId, {
+    createChatRoom.mutate(designerUserId, {
       onSuccess: (response) => {
         router.push(`/chat/${response.result.chatRoomId}`);
       },
