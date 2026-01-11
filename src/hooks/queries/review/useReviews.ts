@@ -82,9 +82,9 @@ export function useWrittenReviews(
     },
     initialPageParam: {},
     getNextPageParam: (lastPage) => {
-      if (!lastPage.result.hasNext) return undefined;
+      if (!lastPage.result?.hasNext) return undefined;
       return {
-        cursorId: lastPage.result.nextCursorId ?? undefined,
+        cursorId: lastPage.result.nextCursor ?? undefined,
       };
     },
     enabled,

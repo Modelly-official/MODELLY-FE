@@ -4,14 +4,15 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
-import { useUnreviewedReservations, useWrittenReviews } from '@/src/hooks/queries/review';
-import { ReviewTabs, ReviewCategoryChips, UnreviewedList } from '@/src/components/mypage/reviews';
+import { useUnreviewedReservations, useWrittenReviews, useDeleteReview } from '@/src/hooks/queries/review';
+import { ReviewTabs, ReviewCategoryChips, UnreviewedList, WrittenReviewList } from '@/src/components/mypage/reviews';
 import { MonthDropdown } from '@/src/components/mypage/reservations';
 import { generateMonthOptions } from '@/src/constants';
 import type { ReviewTabType, ReviewCategoryFilter, UnreviewedReservation } from '@/src/types';
 
 export default function MyReviewsPage() {
   const router = useRouter();
+  const deleteReviewMutation = useDeleteReview();
 
   // 탭 상태
   const [activeTab, setActiveTab] = useState<ReviewTabType>('unreviewed');
@@ -46,11 +47,23 @@ export default function MyReviewsPage() {
 
   // 작성한 리뷰 목록 데이터 가공
   const writtenReviews = useMemo(() => {
-    return writtenQuery.data?.pages.flatMap((page) => page.result?.reviews ?? []) ?? [];
+    return writtenQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
   }, [writtenQuery.data?.pages]);
 
   // 현재 탭에 따른 총 개수
   const totalCount = activeTab === 'unreviewed' ? unreviewedCount : writtenReviews.length;
+
+  // 리뷰 수정 핸들러
+  const handleEditReview = (reviewId: number) => {
+    router.push(`/mypage/reviews/edit/${reviewId}`);
+  };
+
+  // 리뷰 삭제 핸들러
+  const handleDeleteReview = (reviewId: number) => {
+    if (window.confirm('리뷰를 삭제하시겠습니까?')) {
+      deleteReviewMutation.mutate(reviewId);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-200">
@@ -110,9 +123,15 @@ export default function MyReviewsPage() {
               isLoading={unreviewedQuery.isLoading}
             />
           ) : (
-            <div className="text-body-2-regular py-10 text-center text-gray-600">
-              작성한 리뷰 목록이 여기에 표시됩니다.
-            </div>
+            <WrittenReviewList
+              items={writtenReviews}
+              isLoading={writtenQuery.isLoading}
+              hasNextPage={writtenQuery.hasNextPage ?? false}
+              isFetchingNextPage={writtenQuery.isFetchingNextPage}
+              fetchNextPage={writtenQuery.fetchNextPage}
+              onEdit={handleEditReview}
+              onDelete={handleDeleteReview}
+            />
           )}
         </div>
       </div>

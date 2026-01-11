@@ -65,9 +65,9 @@ export interface UnreviewedReservationsResponse {
 
 // ===== 작성한 리뷰 목록 응답 =====
 export interface WrittenReviewsResponse {
-  reviews: WrittenReviewItem[];
+  items: WrittenReviewItem[];
   hasNext: boolean;
-  nextCursorId: number | null;
+  nextCursor: number | null;
 }
 
 // ===== 리뷰 작성 요청 =====
