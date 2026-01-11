@@ -34,4 +34,5 @@ export const AUTHENTICATED_ROUTES: string[] = [
   '/mypage/profile',      // 프로필 수정
   '/mypage/likes',        // 찜 목록
   '/mypage/reservations', // 예약 내역
+  '/mypage/reviews',      // 나의 리뷰
 ];
