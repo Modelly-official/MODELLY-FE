@@ -84,14 +84,15 @@ export async function deleteReview(reviewId: number): Promise<ApiResponse<void>>
 
 /**
  * 리뷰 이미지 Presigned URL 발급
- * GET /presigned-url/reviews?count=N
+ * GET /presigned-url/reviews?reservationId=N&imageCount=N
  * 인증 필요
  */
 export async function getReviewPresignedUrls(
-  count: number = 1
+  reservationId: number,
+  imageCount: number = 1
 ): Promise<ApiResponse<ReviewPresignedUrlsResponse>> {
   const { data } = await axiosInstance.get<
     ApiResponse<ReviewPresignedUrlsResponse>
-  >('/presigned-url/reviews', { params: { count } });
+  >('/presigned-url/reviews', { params: { reservationId, imageCount } });
   return data;
 }

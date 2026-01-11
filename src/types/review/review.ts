@@ -36,7 +36,7 @@ export interface WrittenReviewItem {
   rating: number;
   content: string;
   thumbnail?: string;
-  imageUrls: string[];
+  imageUrls?: string[];
   designerName: string;
   designerProfileImageUrl?: string;
   category: Category;
@@ -90,5 +90,7 @@ export interface ReviewPresignedUrlItem {
 }
 
 export interface ReviewPresignedUrlsResponse {
-  urls: ReviewPresignedUrlItem[];
+  folderId: string;
+  presignedUrls: ReviewPresignedUrlItem[];
+  thumbnailUrl: string;
 }

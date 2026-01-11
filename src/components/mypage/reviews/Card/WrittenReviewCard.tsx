@@ -30,7 +30,8 @@ export default function WrittenReviewCard({
   ) ?? [];
 
   // 이미지 개수 (썸네일 제외)
-  const additionalImageCount = review.imageUrls.length > 1 ? review.imageUrls.length - 1 : 0;
+  const imageCount = review.imageUrls?.length ?? 0;
+  const additionalImageCount = imageCount > 1 ? imageCount - 1 : 0;
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();
