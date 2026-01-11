@@ -7,6 +7,8 @@ import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { useAuthReady, useSimpleProfile } from '@/src/hooks/custom/mypage';
+import { useLogout } from '@/src/hooks/queries/auth';
+import { useToast } from '@/src/hooks/common/useToast';
 import {
   SETTING_LINKS,
   ACCOUNT_LINKS,
@@ -18,6 +20,8 @@ import {
 export default function MypagePage() {
   const router = useRouter();
   const { user, role, isLoggedIn, authReady } = useAuthReady();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { showToast } = useToast();
 
   // 프로필 조회
   const {
@@ -66,6 +70,26 @@ export default function MypagePage() {
   // TODO: 알림 API 연동
   const notificationCount = 1;
 
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    if (isLoggingOut) return;
+    logout(undefined, {
+      onSuccess: () => {
+        showToast('로그아웃되었습니다.');
+        router.push('/login');
+      },
+      onError: () => {
+        showToast('로그아웃에 실패했습니다.');
+      },
+    });
+  };
+
+  // 계정 메뉴 아이템 (onClick 연결)
+  const accountMenuItems = ACCOUNT_LINKS.map((label) => ({
+    label,
+    onClick: label === '로그아웃' ? handleLogout : undefined,
+  }));
+
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
       <div className="flex flex-col">
@@ -101,7 +125,7 @@ export default function MypagePage() {
           <MyMenuCard actions={quickActions} />
           <MenuList items={SETTING_LINKS.map((label) => ({ label }))} />
           <div className="-mx-4 h-2 bg-gray-200" />
-          <MenuList items={ACCOUNT_LINKS.map((label) => ({ label }))} />
+          <MenuList items={accountMenuItems} />
         </div>
       </div>
       <BottomNav />
