@@ -32,3 +32,6 @@ export * from './mypage';
 
 // Likes types
 export * from './likes';
+
+// Review types
+export * from './review';
