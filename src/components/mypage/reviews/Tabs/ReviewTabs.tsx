@@ -27,15 +27,14 @@ export default function ReviewTabs({
               key={tab.value}
               type="button"
               onClick={() => onTabChange(tab.value)}
-              className={`flex h-[52px] flex-1 cursor-pointer items-center justify-center gap-1 p-2.5 ${
-                isActive
+              className={`flex h-[52px] flex-1 cursor-pointer items-center justify-center gap-1 p-2.5 ${isActive
                   ? 'border-b-2 border-gray-800 text-body-1-semibold text-gray-900'
                   : 'text-body-1-medium text-gray-600'
-              }`}
+                }`}
             >
               {tab.label}
               {showCount && (
-                <span className={isActive ? 'text-body-1-semibold text-purple-500' : 'text-body-1-medium text-purple-500'}>
+                <span className={isActive ? 'text-body-1-semibold text-gray-900' : 'text-body-1-medium text-gray-600'}>
                   {unreviewedCount}
                 </span>
               )}

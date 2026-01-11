@@ -11,17 +11,16 @@ export type ReviewTabType = 'unreviewed' | 'written';
 // ===== 리뷰 미작성 예약 아이템 (API 응답) =====
 export interface UnreviewedReservation {
   reservationId: number;
-  date: string; // yyyy-MM-dd
-  designerName: string;
+  recruitmentId: number;
+  recruitmentTitle: string;
+  designerUserId: number;
+  designerId: number;
+  designerNickname: string;
+  shop: string;
   category: Category;
-}
-
-// ===== 리뷰 미작성 예약 아이템 (확장 - 상세 정보 포함) =====
-export interface UnreviewedReservationDetail extends UnreviewedReservation {
-  recruitmentTitle?: string;
-  startTime?: string;
-  shopName?: string;
-  subCategories?: SubCategory[];
+  subCategories: SubCategory[];
+  date: string; // yyyy-MM-dd
+  startTime: string;
 }
 
 // ===== 리뷰 답글 =====
@@ -56,7 +55,12 @@ export interface ReviewListParams {
 
 // ===== 리뷰 미작성 목록 응답 =====
 export interface UnreviewedReservationsResponse {
-  reservations: UnreviewedReservation[];
+  items: UnreviewedReservation[];
+  hasNext: boolean;
+  totalCount: number;
+  nextCursorId: number | null;
+  nextCursorDate: string | null;
+  nextCursorTime: string | null;
 }
 
 // ===== 작성한 리뷰 목록 응답 =====

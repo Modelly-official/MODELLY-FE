@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import { useUnreviewedReservations, useWrittenReviews } from '@/src/hooks/queries/review';
-import { ReviewTabs, ReviewCategoryChips } from '@/src/components/mypage/reviews';
+import { ReviewTabs, ReviewCategoryChips, UnreviewedList } from '@/src/components/mypage/reviews';
 import { MonthDropdown } from '@/src/components/mypage/reservations';
 import { generateMonthOptions } from '@/src/constants';
-import type { ReviewTabType, ReviewCategoryFilter } from '@/src/types';
+import type { ReviewTabType, ReviewCategoryFilter, UnreviewedReservation } from '@/src/types';
 
 export default function MyReviewsPage() {
   const router = useRouter();
@@ -36,8 +36,13 @@ export default function MyReviewsPage() {
     category: selectedCategory !== 'ALL' ? selectedCategory : undefined,
   });
 
+  // 리뷰 미작성 목록 데이터
+  const unreviewedReservations: UnreviewedReservation[] = useMemo(() => {
+    return unreviewedQuery.data?.result?.items ?? [];
+  }, [unreviewedQuery.data?.result?.items]);
+
   // 리뷰 미작성 개수
-  const unreviewedCount = unreviewedQuery.data?.result?.reservations?.length ?? 0;
+  const unreviewedCount = unreviewedReservations.length;
 
   // 작성한 리뷰 목록 데이터 가공
   const writtenReviews = useMemo(() => {
@@ -97,12 +102,13 @@ export default function MyReviewsPage() {
           </div>
         </div>
 
-        {/* 리뷰 목록 - 다음 단계에서 구현 */}
+        {/* 리뷰 목록 */}
         <div className="flex-1">
           {activeTab === 'unreviewed' ? (
-            <div className="text-body-2-regular py-10 text-center text-gray-600">
-              리뷰 미작성 목록이 여기에 표시됩니다.
-            </div>
+            <UnreviewedList
+              items={unreviewedReservations}
+              isLoading={unreviewedQuery.isLoading}
+            />
           ) : (
             <div className="text-body-2-regular py-10 text-center text-gray-600">
               작성한 리뷰 목록이 여기에 표시됩니다.
