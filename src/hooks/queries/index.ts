@@ -5,6 +5,7 @@ export * from './likes';
 export * from './myRecruitment';
 export * from './chat';
 export * from './reservation';
+export * from './review';
 export * from './calendar';
 export * from './designerHome';
 export * from './mypage';
