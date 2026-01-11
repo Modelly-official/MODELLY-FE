@@ -99,21 +99,25 @@ export default function LikesPage() {
       <LikesPageTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col px-4 pt-4">
+      <div className="flex flex-1 flex-col pt-4">
         {/* 카테고리 필터 */}
-        <LikesCategoryChips
-          selectedCategory={currentCategory}
-          onCategoryChange={setCurrentCategory}
-        />
+        <div className="px-4">
+          <LikesCategoryChips
+            selectedCategory={currentCategory}
+            onCategoryChange={setCurrentCategory}
+          />
+        </div>
 
         {/* 목록 영역 */}
         <div className="mt-[17px] flex-1">
           {activeTab === 'designer' ? (
-            <LikedDesignerList
-              designers={designers}
-              isLoading={isDesignerLoading}
-              isFetchingNext={isFetchingDesignerNextPage}
-            />
+            <div className="px-4">
+              <LikedDesignerList
+                designers={designers}
+                isLoading={isDesignerLoading}
+                isFetchingNext={isFetchingDesignerNextPage}
+              />
+            </div>
           ) : (
             <LikedRecruitmentGrid
               recruitments={recruitments}
