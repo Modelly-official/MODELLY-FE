@@ -7,10 +7,11 @@ import {
   LikesPageTabs,
   LikesCategoryChips,
   LikedDesignerList,
+  LikedRecruitmentGrid,
 } from '@/src/components/mypage/likes';
 import type { LikesTabType } from '@/src/components/mypage/likes';
 import type { LikesCategoryFilter, Category } from '@/src/types';
-import { useLikedDesigners } from '@/src/hooks/queries/likes';
+import { useLikedDesigners, useLikedRecruitments } from '@/src/hooks/queries/likes';
 import { useInfiniteScroll } from '@/src/hooks/common/useInfiniteScroll';
 
 export default function LikesPage() {
@@ -29,6 +30,7 @@ export default function LikesPage() {
 
   // 카테고리 필터 파라미터 변환 (ALL이면 undefined)
   const designerCategoryParam = designerCategory === 'ALL' ? undefined : (designerCategory as Category);
+  const recruitmentCategoryParam = recruitmentCategory === 'ALL' ? undefined : (recruitmentCategory as Category);
 
   // 찜한 디자이너 목록 조회
   const {
@@ -42,16 +44,38 @@ export default function LikesPage() {
     enabled: activeTab === 'designer',
   });
 
+  // 찜한 공고 목록 조회
+  const {
+    data: recruitmentData,
+    isLoading: isRecruitmentLoading,
+    hasNextPage: hasRecruitmentNextPage,
+    isFetchingNextPage: isFetchingRecruitmentNextPage,
+    fetchNextPage: fetchRecruitmentNextPage,
+  } = useLikedRecruitments({
+    category: recruitmentCategoryParam,
+    enabled: activeTab === 'recruitment',
+  });
+
   // 디자이너 데이터 가공
   const designers = useMemo(() => {
     return designerData?.pages.flatMap((page) => page.result.items) ?? [];
   }, [designerData?.pages]);
 
+  // 공고 데이터 가공
+  const recruitments = useMemo(() => {
+    return recruitmentData?.pages.flatMap((page) => page.result.items) ?? [];
+  }, [recruitmentData?.pages]);
+
+  // 현재 탭에 따른 무한스크롤 설정
+  const hasNextPage = activeTab === 'designer' ? hasDesignerNextPage : hasRecruitmentNextPage;
+  const isFetchingNextPage = activeTab === 'designer' ? isFetchingDesignerNextPage : isFetchingRecruitmentNextPage;
+  const fetchNextPage = activeTab === 'designer' ? fetchDesignerNextPage : fetchRecruitmentNextPage;
+
   // 무한스크롤
   const { loadMoreRef } = useInfiniteScroll({
-    hasNextPage: activeTab === 'designer' ? hasDesignerNextPage : false,
-    isFetchingNextPage: activeTab === 'designer' ? isFetchingDesignerNextPage : false,
-    fetchNextPage: activeTab === 'designer' ? fetchDesignerNextPage : () => {},
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage,
   });
 
   return (
@@ -91,9 +115,11 @@ export default function LikesPage() {
               isFetchingNext={isFetchingDesignerNextPage}
             />
           ) : (
-            <div className="text-body-2-medium text-gray-600">
-              공고 목록 (다음 단계에서 구현)
-            </div>
+            <LikedRecruitmentGrid
+              recruitments={recruitments}
+              isLoading={isRecruitmentLoading}
+              isFetchingNext={isFetchingRecruitmentNextPage}
+            />
           )}
         </div>
 
