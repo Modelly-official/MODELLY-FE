@@ -25,7 +25,7 @@ export type QuickActionConfig = {
 export const MODEL_QUICK_ACTIONS: QuickActionConfig[] = [
   { label: '예약 내역', iconPath: '/icons/myPage/reservationList.svg', href: '/mypage/reservations' },
   { label: '나의 리뷰', iconPath: '/icons/myPage/review.svg' },
-  { label: '찜', iconPath: '/icons/myPage/heart.svg' },
+  { label: '찜', iconPath: '/icons/myPage/heart.svg', href: '/mypage/likes' },
 ];
 
 /** 디자이너 퀵 액션 */

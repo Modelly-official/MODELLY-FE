@@ -65,11 +65,10 @@ export default function LikedRecruitmentCard({
           aria-label="찜 해제"
         >
           <Image
-            src="/icons/common/heart-active.svg"
+            src="/icons/explore/heart-active.svg"
             alt="찜하기"
-            width={24}
-            height={24}
-            className="drop-shadow-[0_0_4px_rgba(34,34,34,0.32)]"
+            width={19}
+            height={19}
           />
         </button>
       </div>
