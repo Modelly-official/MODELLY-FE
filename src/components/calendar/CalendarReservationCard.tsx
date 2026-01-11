@@ -12,8 +12,8 @@ import {
   ReservationCancelModal,
   ReservationSuccessModal,
 } from '@/src/components/reservation';
-import { MOCK_TIME_SLOTS } from '@/src/mocks/calendar';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useCancelReservation, useRequestReservationChange } from '@/src/hooks/queries/reservation';
 import { useToast } from '@/src/hooks/common/useToast';
 import type { CalendarReservationItem } from '@/src/types/calendar';
 import type { ReservationChangeRequest, ReservationCancelRequest, ReservationInfo } from '@/src/types/reservation';
@@ -52,6 +52,8 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
   const router = useRouter();
   const { showToast } = useToast();
   const createChatRoom = useCreateChatRoom();
+  const requestChange = useRequestReservationChange();
+  const cancelReservation = useCancelReservation();
 
   // 모달 상태 관리
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
@@ -62,6 +64,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
   // 예약 정보를 모달에 전달할 형식으로 변환
   const reservationInfo: ReservationInfo = {
     reservationId: reservation.reservationId,
+    recruitmentId: reservation.recruitmentId,
     modelUserId: reservation.modelUserId,
     modelName: reservation.modelName,
     date: reservation.date,
@@ -73,7 +76,18 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
     createChatRoom.mutate(reservation.modelUserId, {
       onSuccess: (response) => {
         const chatRoomId = response.result.chatRoomId;
-        router.push(`/chat/${chatRoomId}`);
+        const query = new URLSearchParams({
+          reservationId: String(reservation.reservationId),
+          modelUserId: String(reservation.modelUserId),
+          modelName: reservation.modelName,
+          date: reservation.date,
+          startTime: reservation.startTime,
+          endTime: reservation.endTime,
+        });
+        if (reservation.recruitmentId != null) {
+          query.set('recruitmentId', String(reservation.recruitmentId));
+        }
+        router.push(`/chat/${chatRoomId}?${query.toString()}`);
       },
       onError: () => {
         showToast('채팅방 생성에 실패했습니다');
@@ -91,18 +105,30 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
 
   // Mock: 예약 변경 요청 처리
   const handleChangeSubmit = (data: ReservationChangeRequest) => {
-    console.log('예약 변경 요청:', data);
-    setIsChangeModalOpen(false);
-    setSuccessMessage('예약 변경이 요청되었습니다');
-    setIsSuccessModalOpen(true);
+    requestChange.mutate(
+      { reservationId: reservation.reservationId, payload: data },
+      {
+        onSuccess: () => {
+          setIsChangeModalOpen(false);
+          setSuccessMessage('예약 변경이 요청되었습니다');
+          setIsSuccessModalOpen(true);
+        },
+      },
+    );
   };
 
   // Mock: 예약 취소 요청 처리
   const handleCancelSubmit = (data: ReservationCancelRequest) => {
-    console.log('예약 취소 요청:', data);
-    setIsCancelModalOpen(false);
-    setSuccessMessage('예약 취소가 요청되었습니다');
-    setIsSuccessModalOpen(true);
+    cancelReservation.mutate(
+      { reservationId: reservation.reservationId, payload: data },
+      {
+        onSuccess: () => {
+          setIsCancelModalOpen(false);
+          setSuccessMessage('예약 취소가 요청되었습니다');
+          setIsSuccessModalOpen(true);
+        },
+      },
+    );
   };
 
   // 성공 모달 확인 버튼 처리
@@ -173,13 +199,15 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
       </div>
 
       {/* 예약 변경 모달 */}
-      <ReservationChangeModal
-        isOpen={isChangeModalOpen}
-        onClose={() => setIsChangeModalOpen(false)}
-        reservation={reservationInfo}
-        timeSlots={MOCK_TIME_SLOTS}
-        onSubmit={handleChangeSubmit}
-      />
+      {isChangeModalOpen && (
+        <ReservationChangeModal
+          isOpen={isChangeModalOpen}
+          onClose={() => setIsChangeModalOpen(false)}
+          reservation={reservationInfo}
+          onSubmit={handleChangeSubmit}
+          isLoading={requestChange.isPending}
+        />
+      )}
 
       {/* 예약 취소 모달 */}
       <ReservationCancelModal
@@ -187,6 +215,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         onClose={() => setIsCancelModalOpen(false)}
         reservation={reservationInfo}
         onSubmit={handleCancelSubmit}
+        isLoading={cancelReservation.isPending}
       />
 
       {/* 성공 모달 */}

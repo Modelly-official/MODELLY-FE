@@ -20,6 +20,7 @@ export interface ReservationChangeResult {
 // 모달에서 사용할 예약 정보 타입
 export interface ReservationInfo {
   reservationId: number;
+  recruitmentId?: number | null;
   modelUserId: number;
   modelName: string;
   date: string; // yyyy-MM-dd
