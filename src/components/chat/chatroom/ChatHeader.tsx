@@ -2,19 +2,27 @@
 
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/common/left-arrow.svg';
-import DropDownArrowIcon from '@/public/icons/common/down-arrow.svg';
+import DropDownArrowIcon from '@/public/icons/common/arrow-down.svg';
 
 type Props = {
   title: string;
   rightLabel?: string;
   showReservation?: boolean;
+  isReservationOpen?: boolean;
+  onReservationClick?: () => void;
 };
 
-export default function ChatHeader({ title, rightLabel = '예약내역', showReservation = false }: Props) {
+export default function ChatHeader({
+  title,
+  rightLabel = '예약 내역',
+  showReservation = false,
+  isReservationOpen = false,
+  onReservationClick,
+}: Props) {
   const router = useRouter();
 
   return (
-    <header className="relative flex h-[51px] items-center px-4 py-3 safe-area-top">
+    <header className="safe-area-top relative flex h-[51px] items-center px-4 py-3">
       <button
         type="button"
         onClick={() => router.push('/chat')}
@@ -29,10 +37,19 @@ export default function ChatHeader({ title, rightLabel = '예약내역', showRes
       </div>
 
       {showReservation && (
-        <div className="text-body-2-medium absolute right-4 flex items-center gap-1 text-gray-800">
+        <button
+          type="button"
+          onClick={onReservationClick}
+          aria-expanded={isReservationOpen}
+          className="text-body-2-medium absolute right-4 flex cursor-pointer items-center gap-2 text-gray-800"
+        >
           <span>{rightLabel}</span>
-          <DropDownArrowIcon className="h-5 w-5 text-gray-800" />
-        </div>
+          <DropDownArrowIcon
+            className={`h-[9px] w-4 shrink-0 origin-center scale-[0.9] text-gray-800 transition-transform ${
+              isReservationOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
       )}
     </header>
   );
