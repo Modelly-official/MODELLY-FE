@@ -57,6 +57,7 @@ export default function StepConfirm({
 
   // 카테고리 enum 변환 (한글/영문 모두 처리)
   const categoryEnum = categoryNameToCode(category);
+  const categoryPayload = categoryEnum ? (categoryCodeToName(categoryEnum) ?? category) : category;
 
   // 예약하기 버튼 클릭
   const handleReservation = () => {
@@ -74,7 +75,7 @@ export default function StepConfirm({
         recruitmentId,
         date: selectedDate,
         startTime: selectedTime,
-        category: categoryEnum,
+        category: categoryPayload,
         subCategories: subCategoriesEnum,
         comment,
         designerName,

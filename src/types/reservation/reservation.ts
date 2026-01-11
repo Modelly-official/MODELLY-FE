@@ -1,7 +1,5 @@
 // 예약 관련 타입 정의
 
-import type { Category } from '../recruitment';
-
 // 시간 슬롯
 export interface TimeSlot {
   startTime: string; // HH:mm
@@ -26,12 +24,12 @@ export interface ReservationCreateRequest {
   recruitmentId: number;
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
-  category: Category;
+  category: string;
   subCategories: string[];
   comment: string; // 요청 사항 (시술내역/현재상태)
   designerName: string;
   shop: string;
-  imageUrls: string;
+  imageUrls?: string;
 }
 
 // 예약 생성 응답
