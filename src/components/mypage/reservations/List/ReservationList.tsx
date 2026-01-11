@@ -6,8 +6,7 @@ import type {
   ReservationListType,
 } from '@/src/types';
 import { useInfiniteScroll } from '@/src/hooks/common';
-import ModelReservationCard from './ModelReservationCard';
-import DesignerReservationCard from './DesignerReservationCard';
+import { ModelReservationCard, DesignerReservationCard } from '../Card';
 import ReservationListSkeleton from './ReservationListSkeleton';
 
 type ReservationItem = ModelReservationItem | DesignerReservationItem;
