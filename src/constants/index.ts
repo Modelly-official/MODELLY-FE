@@ -13,3 +13,6 @@ export * from './mypage';
 // Reservation
 export * from './reservation';
 
+// Review
+export * from './review';
+
