@@ -28,7 +28,7 @@ export default function StarRatingInput({
           key={star}
           type="button"
           onClick={() => onChange(star)}
-          className="transition-transform active:scale-95"
+          className="cursor-pointer transition-transform active:scale-95"
           aria-label={`${star}점`}
         >
           <Image
