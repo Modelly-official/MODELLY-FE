@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import BaseModal from '@/src/components/common/Modal/BaseModal';
 import ReservationInfoCard from './ReservationInfoCard';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
@@ -41,12 +41,6 @@ export default function ReservationCancelModal({
     onClose();
   };
 
-  useEffect(() => {
-    if (!isOpen) {
-      setReason('');
-    }
-  }, [isOpen]);
-
   return (
     <BaseModal isOpen={isOpen} onClose={handleClose} title="예약 취소" showCloseButton>
       <div className="flex flex-col gap-7 pt-5">
@@ -66,7 +60,7 @@ export default function ReservationCancelModal({
             onCompositionStart={reasonInput.onCompositionStart}
             onCompositionEnd={reasonInput.onCompositionEnd}
             placeholder="사유를 입력하세요"
-            className="bg-gray-100 text-body-2-medium text-gray-900 placeholder:text-gray-600 min-h-[49px] w-full resize-none rounded-[10px] px-4 py-3.5 focus:outline-none"
+            className="text-body-2-medium min-h-[49px] w-full resize-none rounded-[10px] bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none"
             rows={1}
           />
         </div>
@@ -78,8 +72,8 @@ export default function ReservationCancelModal({
           disabled={!isFormValid || isLoading}
           className={`text-body-2-medium flex h-[49px] w-full items-center justify-center rounded-full ${
             isFormValid && !isLoading
-              ? 'bg-gray-900 cursor-pointer text-white'
-              : 'bg-gray-100 text-gray-700 cursor-not-allowed'
+              ? 'cursor-pointer bg-gray-900 text-white'
+              : 'cursor-not-allowed bg-gray-100 text-gray-700'
           }`}
         >
           {isLoading ? (

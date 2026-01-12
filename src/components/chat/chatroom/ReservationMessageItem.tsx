@@ -73,7 +73,7 @@ export default function ReservationMessageItem({
             type="button"
             onClick={() => cancelChangeMutation.mutate(payload.reservationChangeId)}
             disabled={isActionPending}
-            className="text-body-2-medium w-full rounded-[10px] bg-white px-14 py-[10.5px] text-gray-900"
+            className="text-body-2-medium w-full cursor-pointer rounded-[10px] bg-white px-14 py-[10.5px] text-gray-900 disabled:cursor-not-allowed"
           >
             {RESERVATION_TEXT.changeRequestCancel}
           </button>
@@ -85,7 +85,7 @@ export default function ReservationMessageItem({
             type="button"
             onClick={() => acceptMutation.mutate(payload.reservationChangeId)}
             disabled={isActionPending}
-            className="text-body-2-medium flex-1 rounded-[10px] bg-gray-900 px-4 py-2 text-white"
+            className="text-body-2-medium flex-1 cursor-pointer rounded-[10px] bg-gray-900 px-4 py-2 text-white disabled:cursor-not-allowed"
           >
             {RESERVATION_TEXT.changeAccept}
           </button>
@@ -93,7 +93,7 @@ export default function ReservationMessageItem({
             type="button"
             onClick={() => rejectMutation.mutate(payload.reservationChangeId)}
             disabled={isActionPending}
-            className="text-body-2-medium flex-1 rounded-[10px] border border-purple-200 bg-white px-4 py-2 text-gray-900"
+            className="text-body-2-medium flex-1 cursor-pointer rounded-[10px] border border-purple-200 bg-white px-4 py-2 text-gray-900 disabled:cursor-not-allowed"
           >
             {RESERVATION_TEXT.reject}
           </button>
@@ -108,7 +108,7 @@ export default function ReservationMessageItem({
             type="button"
             onClick={() => proceedMutation.mutate(payload.reservationChangeId)}
             disabled={isActionPending}
-            className="text-body-2-medium flex-1 rounded-[10px] border border-gray-300 px-4 py-2 text-gray-900"
+            className="text-body-2-medium flex-1 cursor-pointer rounded-[10px] border border-gray-300 px-4 py-2 text-gray-900 disabled:cursor-not-allowed"
           >
             {RESERVATION_TEXT.proceed}
           </button>
@@ -117,7 +117,7 @@ export default function ReservationMessageItem({
               type="button"
               onClick={() => onOpenCancelModal(payload.reservationChangeId)}
               disabled={isActionPending}
-              className="text-body-2-medium flex-1 rounded-[10px] bg-gray-900 px-4 py-2 text-white"
+              className="text-body-2-medium flex-1 cursor-pointer rounded-[10px] bg-gray-900 px-4 py-2 text-white disabled:cursor-not-allowed"
             >
               {RESERVATION_TEXT.reservationCancel}
             </button>
@@ -154,7 +154,7 @@ export default function ReservationMessageItem({
               type="button"
               onClick={() => acceptMutation.mutate(payload.reservationChangeId)}
               disabled={isActionPending}
-              className="text-body-2-medium w-full rounded-[10px] bg-gray-300 px-4 py-2.5 text-gray-900"
+              className="text-body-2-medium w-full cursor-pointer rounded-[10px] bg-gray-300 px-4 py-2.5 text-gray-900 disabled:cursor-not-allowed"
             >
               {RESERVATION_TEXT.accept}
             </button>
@@ -162,7 +162,7 @@ export default function ReservationMessageItem({
               type="button"
               onClick={() => rejectMutation.mutate(payload.reservationChangeId)}
               disabled={isActionPending}
-              className="text-body-2-medium w-full rounded-[10px] bg-gray-300 px-4 py-2.5 text-gray-900"
+              className="text-body-2-medium w-full cursor-pointer rounded-[10px] bg-gray-300 px-4 py-2.5 text-gray-900 disabled:cursor-not-allowed"
             >
               {RESERVATION_TEXT.reject}
             </button>
@@ -227,7 +227,7 @@ export default function ReservationMessageItem({
               });
             }}
             disabled={isProceedDisabled}
-            className={`text-body-2-medium w-full rounded-[10px] py-3 ${tone.button}`}
+            className={`text-body-2-medium w-full cursor-pointer rounded-[10px] py-3 ${tone.button} disabled:cursor-not-allowed`}
           >
             {RESERVATION_TEXT.proceed}
           </button>
@@ -235,7 +235,7 @@ export default function ReservationMessageItem({
             type="button"
             onClick={() => onOpenCancelModal?.(payload.reservationChangeId)}
             disabled={isProceedDisabled}
-            className={`text-body-2-medium w-full rounded-[10px] py-3 ${tone.button}`}
+            className={`text-body-2-medium w-full cursor-pointer rounded-[10px] py-3 ${tone.button} disabled:cursor-not-allowed`}
           >
             {RESERVATION_TEXT.reservationCancel}
           </button>

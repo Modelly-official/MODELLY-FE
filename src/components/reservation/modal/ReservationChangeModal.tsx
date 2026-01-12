@@ -38,7 +38,9 @@ export default function ReservationChangeModal({
   const [reason, setReason] = useState('');
   const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(() => formatMonthKey(reservation.date) || formatMonthKey(new Date().toISOString()));
+  const [currentMonth, setCurrentMonth] = useState(
+    () => formatMonthKey(reservation.date) || formatMonthKey(new Date().toISOString()),
+  );
   const reasonInput = useIMEInput(reason, setReason);
 
   const { data: schedulesData, isLoading: isSchedulesLoading } = useAvailableSchedules(
@@ -46,7 +48,7 @@ export default function ReservationChangeModal({
     { enabled: !!reservation.recruitmentId && isOpen },
   );
 
-  const availableSchedules = schedulesData?.result?.schedules ?? [];
+  const availableSchedules = useMemo(() => schedulesData?.result?.schedules ?? [], [schedulesData]);
   const availableDates = useMemo(() => {
     if (availableSchedules.length === 0) return undefined;
     return availableSchedules

@@ -67,16 +67,16 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
         <div className="min-w-0 flex-1">
           {/* 이름 + 시간 */}
           <div className="flex items-center justify-between">
-            <span className="text-body-1-medium max-w-[224px] truncate text-gray-900">{chat.name}</span>
+            <span className="text-body-1-medium max-w-56 truncate text-gray-900">{chat.name}</span>
             <span className="text-caption-1-medium ml-2 whitespace-nowrap text-gray-600">
               {formatChatListTime(chat.lastMessageTime)}
             </span>
           </div>
 
           {/* 마지막 메시지 + 읽지 않은 수 */}
-          <div className="mt-[2px] flex items-center justify-between">
+          <div className="mt-0.5 flex items-center justify-between">
             <span
-              className={`max-w-[224px] truncate ${hasUnread ? 'text-body-2-medium text-gray-900' : 'text-body-2-regular text-gray-700'}`}
+              className={`max-w-56 truncate ${hasUnread ? 'text-body-2-medium text-gray-900' : 'text-body-2-regular text-gray-700'}`}
             >
               {previewMessage}
             </span>
