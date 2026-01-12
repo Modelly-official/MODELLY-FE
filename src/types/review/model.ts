@@ -24,15 +24,12 @@ export interface WrittenReviewItem {
   rating: number;
   content: string;
   thumbnail?: string;
-  imageUrls?: string[];
+  imageList?: string[];
   designerName: string;
-  designerProfileImageUrl?: string;
-  category?: Category;
-  subCategories?: SubCategory[];
   shop?: string;
   shopAddress?: string;
+  summary?: string; // 카테고리 요약 (예: "파마", "염색", "커트")
   createdAt: string;
-  reply?: ReviewReply;
 }
 
 // ===== 리뷰 미작성 예약 목록 조회 파라미터 =====
