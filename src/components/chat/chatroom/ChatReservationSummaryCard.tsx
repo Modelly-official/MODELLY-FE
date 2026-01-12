@@ -78,7 +78,7 @@ export default function ChatReservationSummaryCard({
           onClick={onChange}
           disabled={isChangeLoading}
           className={`text-body-2-medium flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full ${
-            isChangeLoading ? 'cursor-not-allowed bg-gray-200 text-gray-400' : 'bg-gray-900 text-white'
+            isChangeLoading ? 'cursor-not-allowed bg-gray-200 text-gray-400' : 'bg-purple-500 text-white'
           }`}
         >
           {isChangeLoading ? (
