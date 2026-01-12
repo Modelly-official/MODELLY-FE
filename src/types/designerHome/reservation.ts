@@ -49,6 +49,7 @@ export type ReservationStatus = '예약대기' | '예약확정' | '예약거절'
 /** 예약 상세 정보 */
 export interface ReservationDetailResult {
   reservationId: number;
+  recruitmentId?: number;
   modelUserId: number;
   modelName: string;
   category: string;

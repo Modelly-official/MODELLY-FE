@@ -1,15 +1,71 @@
+export type ChatRole = 'DESIGNER' | 'MODEL';
+export type ChatMessageType = 'TEXT' | 'IMAGE' | 'RESERVATION';
+export type SendChatMessageType = Exclude<ChatMessageType, 'RESERVATION'>;
+
+export type ReservationEventType =
+  | 'CHANGE_REQUEST'
+  | 'CHANGE_REJECTED'
+  | 'CHANGE_PROCEED'
+  | 'CHANGE_CANCEL'
+  | 'RESERVATION_CANCEL';
+
+export type ReservationMessagePayload =
+  | {
+      eventType: 'CHANGE_REQUEST';
+      reservationChangeId: number;
+      reservationId: number;
+      oldDate: string;
+      oldStartTime: string;
+      oldEndTime: string;
+      newDate: string;
+      newStartTime: string;
+      newEndTime: string;
+      reason: string;
+    }
+  | {
+      eventType: 'CHANGE_REJECTED';
+      reservationChangeId: number;
+      notice: string;
+    }
+  | {
+      eventType: 'CHANGE_PROCEED';
+      reservationChangeId: number;
+      reservationId: number;
+      date: string;
+      startTime: string;
+      endTime: string;
+      notice: string;
+    }
+  | {
+      eventType: 'CHANGE_CANCEL';
+      reservationChangeId: number;
+      reservationId: number;
+      date: string;
+      startTime: string;
+      endTime: string;
+      notice: string;
+    }
+  | {
+      eventType: 'RESERVATION_CANCEL';
+      reservationId: number;
+      date: string;
+      startTime: string;
+      endTime: string;
+      reason: string;
+      notice: string;
+    };
+
 export type Message = {
   id: number | string;
   fromMe: boolean;
-  text: string;
+  messageType: ChatMessageType;
+  text?: string;
   time?: string;
   imageUrls?: string[];
+  reservation?: ReservationMessagePayload | null;
   pending?: boolean; // 전송 대기 표시용(optimistic UI)
   failed?: boolean; // 전송 실패 표시용(optimistic UI)
 };
-
-export type ChatRole = 'DESIGNER' | 'MODEL';
-export type ChatMessageType = 'TEXT' | 'IMAGE';
 
 export interface ChatRoomSummary {
   roomId: number;
@@ -62,7 +118,7 @@ export interface CreateChatRoomResponse {
 }
 
 export interface SendChatMessagePayload {
-  messageType: ChatMessageType;
+  messageType: SendChatMessageType;
   message?: string | null;
   imageUrls?: string[] | null;
 }

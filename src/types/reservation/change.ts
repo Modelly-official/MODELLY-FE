@@ -21,6 +21,7 @@ export interface ReservationChangeResult {
 export interface ReservationInfo {
   reservationId: number;
   recruitmentId?: number | null;
+  recruitmentTitle?: string;
   modelUserId: number;
   modelName: string;
   date: string; // yyyy-MM-dd

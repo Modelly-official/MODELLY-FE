@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BaseModal from '@/src/components/common/Modal/BaseModal';
 import ReservationInfoCard from './ReservationInfoCard';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
@@ -40,6 +40,12 @@ export default function ReservationCancelModal({
     setReason('');
     onClose();
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setReason('');
+    }
+  }, [isOpen]);
 
   return (
     <BaseModal isOpen={isOpen} onClose={handleClose} title="예약 취소" showCloseButton>

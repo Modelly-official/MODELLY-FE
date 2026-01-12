@@ -230,6 +230,7 @@ export default function useChatRoom(roomId?: string | number) {
     const optimistic: Message = {
       id: `temp-${Date.now()}`,
       fromMe: true,
+      messageType: 'TEXT',
       text,
       time: formatMessageTime(now),
       pending: true,
@@ -280,6 +281,7 @@ export default function useChatRoom(roomId?: string | number) {
       const optimistic: Message = {
         id: tempId,
         fromMe: true,
+        messageType: 'IMAGE',
         text: '',
         time: formatMessageTime(now),
         imageUrls: [objectUrl],

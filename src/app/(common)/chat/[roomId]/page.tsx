@@ -230,7 +230,7 @@ export default function ChatRoom() {
                   key={m.id}
                   message={m}
                   showTime={showTime}
-                  onOpenCancelModal={reservationInfo ? handleOpenCancelModal : undefined}
+                  onOpenCancelModal={handleOpenCancelModal}
                 />
               );
             }

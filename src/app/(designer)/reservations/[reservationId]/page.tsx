@@ -41,7 +41,18 @@ export default function ReservationDetailPage() {
 
     createChatRoom.mutate(reservation.modelUserId, {
       onSuccess: (response) => {
-        router.push(`/chat/${response.result.chatRoomId}`);
+        const query = new URLSearchParams({
+          reservationId: String(reservation.reservationId),
+          modelUserId: String(reservation.modelUserId),
+          modelName: reservation.modelName,
+          date: reservation.date,
+          startTime: reservation.startTime,
+          endTime: reservation.endTime,
+        });
+        if (reservation.recruitmentId != null) {
+          query.set('recruitmentId', String(reservation.recruitmentId));
+        }
+        router.push(`/chat/${response.result.chatRoomId}?${query.toString()}`);
       },
       onError: () => {
         showToast('채팅방 생성에 실패했습니다');

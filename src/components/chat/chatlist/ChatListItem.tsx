@@ -7,6 +7,28 @@ import ProfileIcon from '@/public/icons/chat/profile.svg';
 import type { ChatRoomSummary } from '@/src/types/chat';
 import { formatChatListTime } from '@/src/utils/chat';
 
+const getReservationPreview = (raw: string) => {
+  try {
+    const payload = JSON.parse(raw) as { eventType?: string };
+    switch (payload.eventType) {
+      case 'CHANGE_REQUEST':
+        return '예약 변경 요청';
+      case 'CHANGE_REJECTED':
+        return '예약 변경 요청이 거절되었습니다.';
+      case 'CHANGE_PROCEED':
+        return '기존 일정으로 진행 확정';
+      case 'CHANGE_CANCEL':
+        return '예약 변경 요청이 취소되었습니다.';
+      case 'RESERVATION_CANCEL':
+        return '예약이 취소되었습니다.';
+      default:
+        return '예약 관련 알림';
+    }
+  } catch {
+    return '예약 관련 알림';
+  }
+};
+
 interface ChatListItemProps {
   chat: ChatRoomSummary;
 }
@@ -15,6 +37,7 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
   const [imageError, setImageError] = useState(false);
   const hasUnread = chat.unreadMessages > 0;
   const displayCount = chat.unreadMessages > 99 ? '99+' : chat.unreadMessages;
+  const previewMessage = chat.messageType === 'RESERVATION' ? getReservationPreview(chat.lastMessage) : chat.lastMessage;
 
   return (
     <li>
@@ -51,7 +74,7 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
             <span
               className={`max-w-[224px] truncate ${hasUnread ? 'text-body-2-medium text-gray-900' : 'text-body-2-regular text-gray-700'}`}
             >
-              {chat.lastMessage}
+              {previewMessage}
             </span>
             {hasUnread && (
               <span className="text-caption-1-medium ml-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-purple-500 px-1.5 text-white">

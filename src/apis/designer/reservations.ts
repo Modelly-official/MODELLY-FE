@@ -1,5 +1,10 @@
 import { axiosInstance } from '../axios';
-import type { ApiResponse } from '@/src/types';
+import type {
+  ApiResponse,
+  DesignerReservationListItem,
+  GetDesignerReservationListParams,
+  ReservationScrollResult,
+} from '@/src/types';
 import type {
   GetTodayReservationsParams,
   TodayReservationsResult,
@@ -28,6 +33,20 @@ export async function getTodayReservations(
 export async function getPendingReservations(): Promise<ApiResponse<PendingReservationsResult>> {
   const { data } = await axiosInstance.get<ApiResponse<PendingReservationsResult>>(
     '/designers/reservations/pending'
+  );
+  return data;
+}
+
+/**
+ * 예약 목록 조회 (무한 스크롤)
+ * GET /designers/reservations
+ */
+export async function getDesignerReservations(
+  params: GetDesignerReservationListParams
+): Promise<ApiResponse<ReservationScrollResult<DesignerReservationListItem>>> {
+  const { data } = await axiosInstance.get<ApiResponse<ReservationScrollResult<DesignerReservationListItem>>>(
+    '/designers/reservations',
+    { params }
   );
   return data;
 }

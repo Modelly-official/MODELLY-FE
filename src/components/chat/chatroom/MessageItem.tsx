@@ -14,18 +14,34 @@ export default function MessageItem({
   showTime?: boolean;
   sharpCorner?: 'left' | 'right';
 }) {
-  if (!message || (!message.text && !message.imageUrls?.length)) return null;
+  if (!message || (message.messageType === 'RESERVATION' && !message.text)) return null;
+  if (!message.text && !message.imageUrls?.length) return null;
   const defaultSharp = message.fromMe ? 'right' : 'left';
+  const isReservationNotice =
+    message.messageType === 'TEXT' && message.text?.includes('예약 일정 변경 요청이 수락되었습니다');
+  const isReservationNoticeFromMe = isReservationNotice && message.fromMe;
   const effectiveSharp = sharpCorner ?? defaultSharp;
-  const cornerClass = effectiveSharp === 'right' ? 'rounded-br-none' : 'rounded-bl-none';
+  const cornerClass = effectiveSharp
+    ? effectiveSharp === 'right'
+      ? 'rounded-br-none'
+      : 'rounded-bl-none'
+    : '';
   const hasImages = (message.imageUrls?.length ?? 0) > 0;
   const isPending = message.pending || message.failed;
   const status = isPending ? '전송 중...' : null;
   const statusClass = 'text-gray-600';
+  const shouldShowAvatar = !message.fromMe;
+  const bubbleTone = isReservationNotice
+    ? isReservationNoticeFromMe
+      ? 'bg-purple-300 text-purple-700'
+      : 'border border-gray-300 bg-white text-gray-800'
+    : message.fromMe
+      ? 'bg-purple-300 text-purple-700'
+      : 'border border-gray-300 bg-white text-gray-800';
 
   return (
     <li className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}>
-      {!message.fromMe && (
+      {shouldShowAvatar && (
         <div className="mr-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white">
             <ProfileIcon className="h-[26.15px] w-[26.15px] text-gray-400" />
@@ -54,8 +70,8 @@ export default function MessageItem({
               <span className={`${statusClass} text-caption-1-medium translate-y-0.5`}>{status}</span>
             )}
             <div
-              className={`text-body-2-medium inline-block rounded-2xl px-4 py-3 ${cornerClass} ${
-                message.fromMe ? 'bg-purple-300 text-purple-700' : 'border border-gray-300 bg-white text-gray-800'
+              className={`text-body-2-medium inline-block rounded-2xl px-4 py-3 ${cornerClass} ${bubbleTone} ${
+                isReservationNotice ? 'w-[220px]' : ''
               }`}
             >
               {message.text}
