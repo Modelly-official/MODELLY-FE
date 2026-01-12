@@ -28,6 +28,7 @@ export function useChatRooms(params?: { size?: number; enabled?: boolean }) {
       const hasMore = (lastPage.result?.length ?? 0) >= size;
       return hasMore ? (lastPageParam as number) + 1 : undefined;
     },
+    refetchOnMount: 'always',
     staleTime: 1000 * 30, // 30초
     refetchInterval: 1000 * 60, // 1분마다 자동 refetch
     enabled,
