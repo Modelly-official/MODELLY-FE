@@ -27,6 +27,7 @@ export interface ReservationInfo {
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
   endTime?: string; // HH:mm
+  status?: string;
 }
 
 // 시간 선택용 슬롯 (Dropdown에서 사용)

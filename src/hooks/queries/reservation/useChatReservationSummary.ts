@@ -46,6 +46,7 @@ const mapDesignerReservationInfo = (
   date: item.date,
   startTime: item.startTime,
   endTime: item.endTime,
+  status: item.status,
 });
 
 const mapModelReservationInfo = (
@@ -61,6 +62,7 @@ const mapModelReservationInfo = (
   date: item.date,
   startTime: item.startTime,
   endTime: item.endTime,
+  status: item.status,
 });
 
 const getSummaryFromDesigner = (
@@ -68,7 +70,9 @@ const getSummaryFromDesigner = (
   opponentUserId?: number | null,
 ) => {
   const items = response.result?.items ?? [];
-  const filtered = opponentUserId ? items.filter((item) => item.modelUserId === opponentUserId) : [];
+  const filtered = opponentUserId
+    ? items.filter((item) => item.modelUserId === opponentUserId && item.status === 'RESERVATION_CONFIRMED')
+    : [];
   if (filtered.length === 0) return null;
   const sorted = [...filtered].sort(compareReservationOrder);
   return mapDesignerReservationInfo(sorted[0], opponentUserId);
@@ -80,7 +84,9 @@ const getSummaryFromModel = (
   opponentName?: string,
 ) => {
   const items = response.result?.items ?? [];
-  const filtered = opponentUserId ? items.filter((item) => item.designerUserId === opponentUserId) : [];
+  const filtered = opponentUserId
+    ? items.filter((item) => item.designerUserId === opponentUserId && item.status === 'RESERVATION_CONFIRMED')
+    : [];
   if (filtered.length === 0) return null;
   const sorted = [...filtered].sort(compareReservationOrder);
   return mapModelReservationInfo(sorted[0], opponentUserId, opponentName);
@@ -95,6 +101,7 @@ export function useChatReservationSummary({
   return useQuery<ReservationInfo | null, Error>({
     queryKey: ['reservation', 'chatSummary', role, opponentUserId],
     enabled: enabled && !!role && !!opponentUserId,
+    refetchOnMount: 'always',
     queryFn: async () => {
       if (!role || !opponentUserId) return null;
       if (role === 'designer') {

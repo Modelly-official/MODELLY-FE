@@ -56,6 +56,7 @@ export default function ChatRoom() {
     const endTime = searchParams.get('endTime');
     const recruitmentIdParam = searchParams.get('recruitmentId');
     const recruitmentTitle = searchParams.get('recruitmentTitle');
+    const status = searchParams.get('status');
 
     if (!reservationIdParam || !modelUserIdParam || !modelName || !date || !startTime) return null;
     const reservationId = Number(reservationIdParam);
@@ -72,6 +73,7 @@ export default function ChatRoom() {
       date,
       startTime,
       endTime: endTime || undefined,
+      status: status || undefined,
     };
   }, [searchParams]);
 
@@ -83,11 +85,16 @@ export default function ChatRoom() {
   });
 
   const reservationInfo = queryReservationInfo ?? fetchedReservationInfo ?? null;
+  const isConfirmedReservation =
+    !reservationInfo?.status ||
+    reservationInfo.status === 'RESERVATION_CONFIRMED' ||
+    reservationInfo.status === '예약확정';
+  const confirmedReservationInfo = isConfirmedReservation ? reservationInfo : null;
 
   const handleChangeSubmit = (data: ReservationChangeRequest) => {
-    if (!reservationInfo) return;
+    if (!confirmedReservationInfo) return;
     requestChange.mutate(
-      { reservationId: reservationInfo.reservationId, payload: data, roomId: validRoomId },
+      { reservationId: confirmedReservationInfo.reservationId, payload: data, roomId: validRoomId },
       {
         onSuccess: () => {
           setIsChangeModalOpen(false);
@@ -99,10 +106,10 @@ export default function ChatRoom() {
   };
 
   const handleCancelSubmit = (data: ReservationCancelRequest) => {
-    if (!reservationInfo) return;
+    if (!confirmedReservationInfo) return;
     cancelReservation.mutate(
       {
-        reservationId: reservationInfo.reservationId,
+        reservationId: confirmedReservationInfo.reservationId,
         payload: data,
         roomId: validRoomId,
         reservationChangeId: pendingCancelChangeId ?? undefined,
@@ -185,7 +192,7 @@ export default function ChatRoom() {
 
   return (
     <div className="relative flex h-screen flex-col bg-gray-200">
-      {reservationInfo && isReservationOpen && (
+      {confirmedReservationInfo && isReservationOpen && (
         <div className="safe-area-top absolute inset-x-0 top-0 z-20 rounded-b-[20px] bg-white pt-[15.5px] pb-5">
           <div className="flex justify-end px-4 pb-[15.5px]">
             <button
@@ -200,7 +207,7 @@ export default function ChatRoom() {
           </div>
           <div className="px-5 pt-3">
             <ChatReservationSummaryCard
-              reservation={reservationInfo}
+              reservation={confirmedReservationInfo}
               onChange={() => setIsChangeModalOpen(true)}
               onCancel={() => handleOpenCancelModal()}
               isChangeLoading={requestChange.isPending}
@@ -212,10 +219,10 @@ export default function ChatRoom() {
       )}
       <ChatHeader
         title={headerTitle}
-        showReservation={!!reservationInfo}
+        showReservation={!!confirmedReservationInfo}
         isReservationOpen={isReservationOpen}
         onReservationClick={() => {
-          if (!reservationInfo) return;
+          if (!confirmedReservationInfo) return;
           setIsReservationOpen((prev) => !prev);
         }}
       />
@@ -240,12 +247,12 @@ export default function ChatRoom() {
       </main>
       <ChatInput value={input} onChange={setInput} onSend={sendMessage} onImageSelect={sendImage} />
 
-      {reservationInfo && (
+      {confirmedReservationInfo && (
         <>
           <ReservationChangeModal
             isOpen={isChangeModalOpen}
             onClose={() => setIsChangeModalOpen(false)}
-            reservation={reservationInfo}
+            reservation={confirmedReservationInfo}
             onSubmit={handleChangeSubmit}
             isLoading={requestChange.isPending}
           />
@@ -255,7 +262,7 @@ export default function ChatRoom() {
               setIsCancelModalOpen(false);
               setPendingCancelChangeId(null);
             }}
-            reservation={reservationInfo}
+            reservation={confirmedReservationInfo}
             onSubmit={handleCancelSubmit}
             isLoading={cancelReservation.isPending}
           />

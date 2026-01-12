@@ -48,6 +48,7 @@ export default function ReservationDetailPage() {
           date: reservation.date,
           startTime: reservation.startTime,
           endTime: reservation.endTime,
+          status: reservation.status,
         });
         if (reservation.recruitmentId != null) {
           query.set('recruitmentId', String(reservation.recruitmentId));
