@@ -38,7 +38,11 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
   const hasUnread = chat.unreadMessages > 0;
   const displayCount = chat.unreadMessages > 99 ? '99+' : chat.unreadMessages;
   const previewMessage =
-    chat.messageType === 'RESERVATION' ? getReservationPreview(chat.lastMessage) : chat.lastMessage;
+    chat.messageType === 'RESERVATION'
+      ? getReservationPreview(chat.lastMessage)
+      : chat.messageType === 'IMAGE'
+        ? '사진'
+        : chat.lastMessage;
 
   return (
     <li>
