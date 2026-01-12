@@ -7,7 +7,12 @@ import { publishMessage, publishRead, subscribeRoom } from '@/src/utils/chat';
 import useStompClient from '@/src/hooks/custom/chat/useStompClient';
 import useChatImage from '@/src/hooks/custom/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';
-import { mapApiMessage, mapStompMessage, formatMessageTime } from '@/src/utils/chat/messageConverter';
+import {
+  mapApiMessage,
+  mapStompMessage,
+  formatMessageDateKey,
+  formatMessageTime,
+} from '@/src/utils/chat/messageConverter';
 import { parseUserIdFromToken } from '@/src/utils/auth/token';
 import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
 
@@ -233,6 +238,7 @@ export default function useChatRoom(roomId?: string | number) {
       messageType: 'TEXT',
       text,
       time: formatMessageTime(now),
+      dateKey: formatMessageDateKey(now),
       pending: true,
     };
     setMessages((prev) => [...prev, optimistic]);
@@ -284,6 +290,7 @@ export default function useChatRoom(roomId?: string | number) {
         messageType: 'IMAGE',
         text: '',
         time: formatMessageTime(now),
+        dateKey: formatMessageDateKey(now),
         imageUrls: [objectUrl],
       };
       setMessages((prev) => [...prev, optimistic]);

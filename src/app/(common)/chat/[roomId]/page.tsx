@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import ChatHeader from '@/src/components/chat/chatroom/ChatHeader';
 import MessageItem from '@/src/components/chat/chatroom/MessageItem';
@@ -16,6 +16,7 @@ import {
 } from '@/src/hooks/queries/reservation';
 import useChatRoom from '@/src/hooks/custom/chat/useChatRoom';
 import { getUserRole, useAuthStore } from '@/src/stores';
+import { formatChatDateLabel } from '@/src/utils/chat';
 import type { ReservationCancelRequest, ReservationChangeRequest, ReservationInfo } from '@/src/types/reservation';
 
 export default function ChatRoom() {
@@ -233,17 +234,34 @@ export default function ChatRoom() {
           {messages.map((m, idx) => {
             const next = messages[idx + 1];
             const showTime = !next || next.time !== m.time;
+            const prev = messages[idx - 1];
+            const showDateDivider = !!m.dateKey && m.dateKey !== prev?.dateKey;
             if (m.messageType === 'RESERVATION' && m.reservation) {
               return (
-                <ReservationMessageItem
-                  key={m.id}
-                  message={m}
-                  showTime={showTime}
-                  onOpenCancelModal={handleOpenCancelModal}
-                />
+                <Fragment key={m.id}>
+                  {showDateDivider && (
+                    <li className="flex justify-center py-1">
+                      <span className="text-caption-1-medium rounded-full bg-gray-700/50 px-2.5 py-1 text-white">
+                        {formatChatDateLabel(m.dateKey)}
+                      </span>
+                    </li>
+                  )}
+                  <ReservationMessageItem message={m} showTime={showTime} onOpenCancelModal={handleOpenCancelModal} />
+                </Fragment>
               );
             }
-            return <MessageItem key={m.id} message={m} showTime={showTime} />;
+            return (
+              <Fragment key={m.id}>
+                {showDateDivider && (
+                  <li className="flex justify-center py-1">
+                    <span className="text-caption-1-medium rounded-full bg-gray-700/50 px-4 py-1 text-white">
+                      {formatChatDateLabel(m.dateKey)}
+                    </span>
+                  </li>
+                )}
+                <MessageItem message={m} showTime={showTime} />
+              </Fragment>
+            );
           })}
         </ul>
       </main>

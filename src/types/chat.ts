@@ -61,6 +61,7 @@ export type Message = {
   messageType: ChatMessageType;
   text?: string;
   time?: string;
+  dateKey?: string;
   imageUrls?: string[];
   reservation?: ReservationMessagePayload | null;
   pending?: boolean; // 전송 대기 표시용(optimistic UI)
