@@ -194,7 +194,7 @@ export default function ChatRoom() {
 
   return (
     <div className="relative flex h-screen flex-col bg-gray-200">
-      {confirmedReservationInfo && isReservationOpen && (
+      {isReservationOpen && (
         <div className="safe-area-top absolute inset-x-0 top-0 z-20 rounded-b-[20px] bg-white pt-[15.5px] pb-5">
           <div className="flex justify-end px-4 pb-[15.5px]">
             <button
@@ -207,25 +207,32 @@ export default function ChatRoom() {
               <DropDownArrowIcon className="h-[9px] w-4 scale-[0.9] rotate-180 text-gray-800" />
             </button>
           </div>
-          <div className="px-5 pt-3">
-            <ChatReservationSummaryCard
-              reservation={confirmedReservationInfo}
-              onChange={() => setIsChangeModalOpen(true)}
-              onCancel={() => handleOpenCancelModal()}
-              isChangeLoading={requestChange.isPending}
-              isCancelLoading={cancelReservation.isPending}
-              showTitle={false}
-            />
-          </div>
+          {confirmedReservationInfo ? (
+            <div className="px-5 pt-3">
+              <ChatReservationSummaryCard
+                reservation={confirmedReservationInfo}
+                onChange={() => setIsChangeModalOpen(true)}
+                onCancel={() => handleOpenCancelModal()}
+                isChangeLoading={requestChange.isPending}
+                isCancelLoading={cancelReservation.isPending}
+                showTitle={false}
+              />
+            </div>
+          ) : (
+            <div className="px-5 pt-3">
+              <div className="text-body-2-medium rounded-2xl bg-white px-4 text-center text-gray-700">
+                예약 내역이 없습니다
+              </div>
+            </div>
+          )}
         </div>
       )}
       <ChatHeader
         title={headerTitle}
         roleLabel={roleLabel}
-        showReservation={!!confirmedReservationInfo}
+        showReservation
         isReservationOpen={isReservationOpen}
         onReservationClick={() => {
-          if (!confirmedReservationInfo) return;
           setIsReservationOpen((prev) => !prev);
         }}
       />
