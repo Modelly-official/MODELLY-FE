@@ -17,6 +17,12 @@ interface WrittenReviewListProps {
   onDelete?: (reviewId: number) => void;
 }
 
+// 날짜 키 생성 (YYYY-MM-DD 형식)
+function getDateKey(dateStr: string): string {
+  const date = new Date(dateStr);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 // 선택된 년도로 필터링 후 월별로 그룹핑하는 함수
 function groupReviewsByMonth(reviews: WrittenReviewItem[], selectedYear: number) {
   // 선택된 년도로 필터링
@@ -96,20 +102,37 @@ export default function WrittenReviewList({
   return (
     <div className="flex flex-col gap-6">
       {groupedReviews.map((group) => (
-        <div key={group.monthKey} className="flex flex-col gap-3">
+        <div key={group.monthKey} className="flex flex-col">
           {/* 월 헤더 */}
-          <h3 className="text-head-4-semibold text-gray-900">{group.monthLabel}</h3>
+          <h3 className="mb-3 text-head-4-semibold text-gray-900">{group.monthLabel}</h3>
 
-          {/* 해당 월의 리뷰 목록 */}
-          <div className="flex flex-col gap-3">
-            {group.items.map((review) => (
-              <WrittenReviewCard
-                key={review.reviewId}
-                review={review}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            ))}
+          {/* 해당 월의 리뷰 목록 - 타임라인 형식 */}
+          <div className="flex flex-col">
+            {group.items.map((review, index) => {
+              const currentDateKey = getDateKey(review.createdAt);
+              const prevDateKey = index > 0 ? getDateKey(group.items[index - 1].createdAt) : null;
+              const nextDateKey = index < group.items.length - 1 ? getDateKey(group.items[index + 1].createdAt) : null;
+
+              // 이전 리뷰와 같은 날짜인 경우 날짜 표시 안함
+              const showDate = prevDateKey !== currentDateKey;
+              // 다음 리뷰가 없거나, 다음 리뷰와 날짜가 다른 경우 그룹의 마지막
+              const isLastInDateGroup = nextDateKey !== currentDateKey;
+              // 월 그룹의 마지막 아이템
+              const isLastInMonth = index === group.items.length - 1;
+
+              return (
+                <WrittenReviewCard
+                  key={review.reviewId}
+                  review={review}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  showDate={showDate}
+                  isLastInDateGroup={isLastInDateGroup}
+                  isLastInMonth={isLastInMonth}
+                  isFirstItem={index === 0}
+                />
+              );
+            })}
           </div>
         </div>
       ))}
