@@ -6,6 +6,7 @@ import DropDownArrowIcon from '@/public/icons/common/arrow-down.svg';
 
 type Props = {
   title: string;
+  roleLabel?: string;
   rightLabel?: string;
   showReservation?: boolean;
   isReservationOpen?: boolean;
@@ -14,6 +15,7 @@ type Props = {
 
 export default function ChatHeader({
   title,
+  roleLabel,
   rightLabel = '예약 내역',
   showReservation = false,
   isReservationOpen = false,
@@ -22,7 +24,7 @@ export default function ChatHeader({
   const router = useRouter();
 
   return (
-    <header className="safe-area-top relative flex h-[51px] items-center px-4 py-3">
+    <header className="safe-area-top relative flex h-13 items-center px-4 py-3">
       <button
         type="button"
         onClick={() => router.push('/chat')}
@@ -33,7 +35,10 @@ export default function ChatHeader({
       </button>
 
       <div className="absolute left-1/2 -translate-x-1/2 transform text-center">
-        <div className="text-head-4-medium text-gray-950">{title}</div>
+        <div className="flex items-center justify-center gap-1">
+          <span className="text-head-4-medium text-gray-950">{title}</span>
+          {roleLabel && <span className="text-head-4-medium text-gray-950">{roleLabel}</span>}
+        </div>
       </div>
 
       {showReservation && (

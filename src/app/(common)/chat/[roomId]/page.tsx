@@ -29,6 +29,7 @@ export default function ChatRoom() {
   const { messages, opponent, input, setInput, sendMessage, sendImage, fetchPrevMessages, hasNext, loading } =
     useChatRoom(roomId);
   const headerTitle = opponent?.name ?? '';
+  const roleLabel = opponent?.role === 'DESIGNER' ? '디자이너' : undefined;
   const requestChange = useRequestReservationChange();
   const cancelReservation = useCancelReservation();
   const roleFromStore = useAuthStore((state) => state.user?.role);
@@ -219,6 +220,7 @@ export default function ChatRoom() {
       )}
       <ChatHeader
         title={headerTitle}
+        roleLabel={roleLabel}
         showReservation={!!confirmedReservationInfo}
         isReservationOpen={isReservationOpen}
         onReservationClick={() => {
