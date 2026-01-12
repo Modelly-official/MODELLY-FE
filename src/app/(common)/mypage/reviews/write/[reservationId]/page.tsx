@@ -155,13 +155,17 @@ export default function ReviewWritePage() {
           type="button"
           onClick={handleSubmit}
           disabled={!isValidForm || isSubmitting}
-          className={`w-full rounded-full py-4 text-body-1-semibold transition-colors ${
+          className={`flex w-full items-center justify-center rounded-full py-4 text-body-1-semibold transition-colors ${
             isValidForm && !isSubmitting
               ? 'bg-gray-900 text-white'
               : 'bg-gray-200 text-gray-600'
           }`}
         >
-          {isSubmitting ? '작성 중...' : '작성하기'}
+          {isSubmitting ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            '작성하기'
+          )}
         </button>
       </div>
     </div>

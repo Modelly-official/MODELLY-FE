@@ -40,7 +40,7 @@ export default function ProfileEditPage() {
   if (!authReady || !isLoggedIn) return null;
 
   const isDesigner = currentRole === 'designer';
-  const buttonText = isUploading ? '이미지 업로드 중...' : isLoading ? '저장 중...' : '완료';
+  const isButtonLoading = isUploading || isLoading;
 
   return (
     <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
@@ -153,7 +153,11 @@ export default function ProfileEditPage() {
             disabled={!isFormValid || isLoading}
             onClick={handleSubmit}
           >
-            {buttonText}
+            {isButtonLoading ? (
+              <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              '완료'
+            )}
           </FixedBottomButton>
         </div>
       </form>
