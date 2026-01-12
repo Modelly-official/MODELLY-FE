@@ -37,6 +37,7 @@ export default function useChatRoom(roomId?: string | number) {
   const { clientRef, connected: stompConnected } = useStompClient();
   const subscriptionRef = useRef<StompSubscription | null>(null);
   const lastMessageIdRef = useRef<string | number | null>(null);
+  const lastReadSentRef = useRef<number | null>(null);
   const pendingTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingQueueRef = useRef<{ id: string; payload: SendChatMessagePayload }[]>([]);
@@ -146,6 +147,17 @@ export default function useChatRoom(roomId?: string | number) {
   }, [messages]);
 
   useEffect(() => {
+    if (!roomId) return;
+    const client = clientRef.current;
+    if (!client || !stompConnected) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.fromMe || typeof last.id !== 'number') return;
+    if (lastReadSentRef.current === last.id) return;
+    publishRead(client, roomId, last.id);
+    lastReadSentRef.current = last.id;
+  }, [messages, roomId, stompConnected, clientRef]);
+
+  useEffect(() => {
     if (stompConnected) {
       flushPendingSends();
     }
@@ -213,6 +225,7 @@ export default function useChatRoom(roomId?: string | number) {
     const lastMessageId = lastMessageIdRef.current;
     if (typeof lastMessageId === 'number') {
       publishRead(client, roomId, lastMessageId);
+      lastReadSentRef.current = lastMessageId;
     }
 
     return () => {
