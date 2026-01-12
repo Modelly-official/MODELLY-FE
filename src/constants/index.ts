@@ -7,3 +7,5 @@ export * from './explore';
 // Signup
 export * from './signup';
 
+// Chat
+export * from './chat';

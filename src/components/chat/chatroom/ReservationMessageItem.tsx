@@ -8,8 +8,9 @@ import {
   useProceedReservationChange,
   useRejectReservationChange,
 } from '@/src/hooks/queries/reservation';
+import { RESERVATION_TEXT } from '@/src/constants/chat';
 import { formatDateToShort, formatTimeWithPeriod } from '@/src/utils/common';
-import type { Message, ReservationMessagePayload } from '@/src/types/chat';
+import type { Message } from '@/src/types/chat';
 
 interface ReservationMessageItemProps {
   message: Message;
@@ -22,7 +23,7 @@ const formatSchedule = (date: string, startTime: string, endTime?: string) => {
   return `${formatDateToShort(date)} · ${formatTimeWithPeriod(startTime)}${endLabel}`;
 };
 
-const CHANGE_REQUEST_TITLE = '예약 일정 변경 요청드립니다 :)';
+const CARD_WIDTH = 'w-[222px]';
 
 export default function ReservationMessageItem({
   message,
@@ -74,7 +75,7 @@ export default function ReservationMessageItem({
             disabled={isActionPending}
             className="text-body-2-medium w-full rounded-[10px] bg-white px-14 py-[10.5px] text-gray-900"
           >
-            변경 요청 취소
+            {RESERVATION_TEXT.changeRequestCancel}
           </button>
         );
       }
@@ -86,7 +87,7 @@ export default function ReservationMessageItem({
             disabled={isActionPending}
             className="text-body-2-medium flex-1 rounded-[10px] bg-gray-900 px-4 py-2 text-white"
           >
-            변경 수락
+            {RESERVATION_TEXT.changeAccept}
           </button>
           <button
             type="button"
@@ -94,7 +95,7 @@ export default function ReservationMessageItem({
             disabled={isActionPending}
             className="text-body-2-medium flex-1 rounded-[10px] border border-purple-200 bg-white px-4 py-2 text-gray-900"
           >
-            거절
+            {RESERVATION_TEXT.reject}
           </button>
         </div>
       );
@@ -109,7 +110,7 @@ export default function ReservationMessageItem({
             disabled={isActionPending}
             className="text-body-2-medium flex-1 rounded-[10px] border border-gray-300 px-4 py-2 text-gray-900"
           >
-            기존대로 진행
+            {RESERVATION_TEXT.proceed}
           </button>
           {onOpenCancelModal && (
             <button
@@ -118,7 +119,7 @@ export default function ReservationMessageItem({
               disabled={isActionPending}
               className="text-body-2-medium flex-1 rounded-[10px] bg-gray-900 px-4 py-2 text-white"
             >
-              예약 취소
+              {RESERVATION_TEXT.reservationCancel}
             </button>
           )}
         </div>
@@ -139,12 +140,12 @@ export default function ReservationMessageItem({
 
     if (!message.fromMe) {
       return (
-        <div className={`flex w-[222px] flex-col gap-3 ${tone.container} px-4 py-3`}>
-          <div className={`text-body-2-medium ${tone.text}`}>{CHANGE_REQUEST_TITLE}</div>
+        <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
+          <div className={`text-body-2-medium ${tone.text}`}>{RESERVATION_TEXT.changeRequestTitle}</div>
           <div className={`h-px w-full ${tone.divider}`} />
           <div className="flex flex-col gap-2">
-            {renderScheduleRow('기존 일정', oldLabel, labelClass, valueClass, rowGap)}
-            {renderScheduleRow('변경 일정', newLabel, labelClass, valueClass, rowGap)}
+            {renderScheduleRow(RESERVATION_TEXT.labelOldSchedule, oldLabel, labelClass, valueClass, rowGap)}
+            {renderScheduleRow(RESERVATION_TEXT.labelNewSchedule, newLabel, labelClass, valueClass, rowGap)}
           </div>
           <div className={`h-px w-full ${tone.divider}`} />
           <div className={`text-body-2-medium ${tone.text}`}>{payload.reason}</div>
@@ -155,7 +156,7 @@ export default function ReservationMessageItem({
               disabled={isActionPending}
               className="text-body-2-medium w-full rounded-[10px] bg-gray-300 px-4 py-2.5 text-gray-900"
             >
-              수락
+              {RESERVATION_TEXT.accept}
             </button>
             <button
               type="button"
@@ -163,7 +164,7 @@ export default function ReservationMessageItem({
               disabled={isActionPending}
               className="text-body-2-medium w-full rounded-[10px] bg-gray-300 px-4 py-2.5 text-gray-900"
             >
-              거절
+              {RESERVATION_TEXT.reject}
             </button>
           </div>
         </div>
@@ -171,12 +172,12 @@ export default function ReservationMessageItem({
     }
 
     return (
-      <div className={`flex w-[222px] flex-col gap-3 ${tone.container} px-4 py-3`}>
-        <div className={`text-body-2-medium ${tone.text}`}>{CHANGE_REQUEST_TITLE}</div>
+      <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
+        <div className={`text-body-2-medium ${tone.text}`}>{RESERVATION_TEXT.changeRequestTitle}</div>
         <div className={`h-px w-full ${tone.divider}`} />
         <div className="flex flex-col gap-2">
-          {renderScheduleRow('기존 일정', oldLabel, labelClass, valueClass, rowGap)}
-          {renderScheduleRow('변경 일정', newLabel, labelClass, valueClass, rowGap)}
+          {renderScheduleRow(RESERVATION_TEXT.labelOldSchedule, oldLabel, labelClass, valueClass, rowGap)}
+          {renderScheduleRow(RESERVATION_TEXT.labelNewSchedule, newLabel, labelClass, valueClass, rowGap)}
         </div>
         <div className={`h-px w-full ${tone.divider}`} />
         <div className={`text-body-2-medium ${tone.text}`}>{payload.reason}</div>
@@ -191,11 +192,11 @@ export default function ReservationMessageItem({
     const tone = getCardTone(message.fromMe);
 
     return (
-      <div className={`flex w-[222px] flex-col gap-3 ${tone.container} px-4 py-3`}>
+      <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
         <div className={`text-body-2-medium whitespace-pre-line ${tone.text}`}>{payload.notice}</div>
         <div className={`h-px w-full ${tone.divider}`} />
         {renderScheduleRow(
-          '기존 일정',
+          RESERVATION_TEXT.labelOldSchedule,
           scheduleLabel,
           `text-body-2-regular ${tone.label}`,
           `text-body-2-medium ${tone.text}`,
@@ -213,7 +214,7 @@ export default function ReservationMessageItem({
     const isProceedDisabled = isActionPending || hasProceeded || !isRequester;
 
     return (
-      <div className={`flex w-[220px] flex-col gap-3 ${tone.container} px-4 py-3`}>
+      <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
         <div className={`text-body-2-regular whitespace-pre-line ${tone.text}`}>{payload.notice}</div>
         <div className="flex flex-col gap-2">
           <button
@@ -228,7 +229,7 @@ export default function ReservationMessageItem({
             disabled={isProceedDisabled}
             className={`text-body-2-medium w-full rounded-[10px] py-3 ${tone.button}`}
           >
-            기존대로 진행
+            {RESERVATION_TEXT.proceed}
           </button>
           <button
             type="button"
@@ -236,9 +237,11 @@ export default function ReservationMessageItem({
             disabled={isProceedDisabled}
             className={`text-body-2-medium w-full rounded-[10px] py-3 ${tone.button}`}
           >
-            예약 취소
+            {RESERVATION_TEXT.reservationCancel}
           </button>
-          {!isRequester && <span className="text-caption-1-medium text-purple-600">상대방만 선택할 수 있어요.</span>}
+          {!isRequester && (
+            <span className="text-caption-1-medium text-purple-600">{RESERVATION_TEXT.onlyOtherCanSelect}</span>
+          )}
         </div>
       </div>
     );
@@ -250,11 +253,11 @@ export default function ReservationMessageItem({
     const tone = getCardTone(message.fromMe);
 
     return (
-      <div className={`flex w-[220px] flex-col gap-3 ${tone.container} px-4 py-3`}>
+      <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
         <div className={`text-body-2-medium whitespace-pre-line ${tone.text}`}>{payload.notice}</div>
         <div className={`h-px w-full ${tone.divider}`} />
         {renderScheduleRow(
-          '기존 일정',
+          RESERVATION_TEXT.labelOldSchedule,
           scheduleLabel,
           `text-body-2-regular ${tone.label}`,
           `text-body-2-medium ${tone.text}`,
@@ -267,14 +270,14 @@ export default function ReservationMessageItem({
     if (payload.eventType !== 'CHANGE_CANCEL') return null;
     const scheduleLabel = formatChangeDateTime(payload.date, payload.startTime);
     const tone = getCardTone(message.fromMe, { dividerClass: 'bg-gray-200' });
-    const noticeText = message.fromMe ? '변경 요청을 취소하였습니다.' : payload.notice;
+    const noticeText = message.fromMe ? RESERVATION_TEXT.changeCancelNotice : payload.notice;
 
     return (
-      <div className={`flex w-[220px] flex-col gap-3 ${tone.container} px-4 py-3`}>
+      <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
         <div className={`text-body-2-medium whitespace-pre-line ${tone.text}`}>{noticeText}</div>
         <div className={`h-px w-full ${tone.divider}`} />
         {renderScheduleRow(
-          '기존 일정',
+          RESERVATION_TEXT.labelOldSchedule,
           scheduleLabel,
           `text-body-2-regular ${tone.label}`,
           `text-body-2-medium ${tone.text}`,
@@ -285,7 +288,7 @@ export default function ReservationMessageItem({
 
   const renderDefaultCard = () => (
     <div className="flex w-full flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3">
-      <div className="text-body-2-semibold text-gray-900">예약 안내</div>
+      <div className="text-body-2-semibold text-gray-900">{RESERVATION_TEXT.defaultTitle}</div>
       <div className="flex flex-col gap-1">{renderDetails()}</div>
       {renderActions()}
     </div>
