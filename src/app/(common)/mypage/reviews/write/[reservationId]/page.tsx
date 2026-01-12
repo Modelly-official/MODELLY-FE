@@ -1,139 +1,43 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import CloseIcon from '@/public/icons/common/close.svg';
 import { StarRatingInput } from '@/src/components/review';
 import { ReviewImageUploader } from '@/src/components/mypage/reviews';
-import { useUnreviewedReservations, useCreateReview } from '@/src/hooks/queries/review';
-import { getReviewPresignedUrls } from '@/src/apis';
-import { useToast } from '@/src/hooks/common/useToast';
+import { useUnreviewedReservations } from '@/src/hooks/queries/review';
+import { useReviewForm } from '@/src/hooks/custom/review';
 import type { UnreviewedReservation } from '@/src/types';
-
-// 최대 글자 수
-const MAX_CONTENT_LENGTH = 100;
-// 최소 글자 수
-const MIN_CONTENT_LENGTH = 10;
-// 최대 이미지 수
-const MAX_IMAGES = 3;
 
 export default function ReviewWritePage() {
   const router = useRouter();
   const params = useParams();
-  const { showToast } = useToast();
   const reservationId = Number(params.reservationId);
 
   // 리뷰 미작성 예약 목록에서 현재 예약 정보 가져오기
   const { data: unreviewedData, isLoading: isLoadingReservation } = useUnreviewedReservations();
 
-  // 리뷰 작성 mutation
-  const createReviewMutation = useCreateReview();
-
-  // 현재 예약 정보 찾기
+  // 현재 예약 정보 찾기 (무한 스크롤 pages에서 검색)
   const reservation: UnreviewedReservation | undefined = useMemo(() => {
-    return unreviewedData?.result?.items?.find(
-      (item) => item.reservationId === reservationId
-    );
+    const allItems = unreviewedData?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
+    return allItems.find((item) => item.reservationId === reservationId);
   }, [unreviewedData, reservationId]);
 
-  // 폼 상태
-  const [rating, setRating] = useState(0);
-  const [content, setContent] = useState('');
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // 폼 유효성 검사
-  const isValidForm = useMemo(() => {
-    return (
-      rating > 0 &&
-      content.length >= MIN_CONTENT_LENGTH &&
-      content.length <= MAX_CONTENT_LENGTH
-    );
-  }, [rating, content]);
-
-  // 이미지 추가 핸들러
-  const handleImagesAdd = (files: File[]) => {
-    const newFiles = [...imageFiles, ...files].slice(0, MAX_IMAGES);
-    setImageFiles(newFiles);
-
-    // 미리보기 URL 생성
-    const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-    // 이전 URL들 해제
-    previewUrls.forEach((url) => URL.revokeObjectURL(url));
-    setPreviewUrls(newPreviews);
-  };
-
-  // 이미지 삭제 핸들러
-  const handleImageRemove = (index: number) => {
-    const newFiles = imageFiles.filter((_, i) => i !== index);
-    setImageFiles(newFiles);
-
-    // 미리보기 URL 업데이트
-    URL.revokeObjectURL(previewUrls[index]);
-    setPreviewUrls(previewUrls.filter((_, i) => i !== index));
-  };
-
-  // 이미지 업로드 함수
-  const uploadImages = async (files: File[]): Promise<string[]> => {
-    if (files.length === 0) return [];
-
-    // Presigned URL 발급 (reservationId 필요)
-    const presignedResponse = await getReviewPresignedUrls(reservationId, files.length);
-    if (!presignedResponse.isSuccess || !presignedResponse.result?.presignedUrls) {
-      throw new Error('이미지 업로드 URL을 가져오지 못했습니다.');
-    }
-
-    const uploadPromises = files.map(async (file, index) => {
-      const { uploadUrl, imageUrl } = presignedResponse.result!.presignedUrls[index];
-
-      // S3에 직접 업로드
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': file.type || 'application/octet-stream',
-        },
-        body: file,
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error(`이미지 업로드 실패 (${uploadRes.status})`);
-      }
-
-      return imageUrl;
-    });
-
-    return Promise.all(uploadPromises);
-  };
-
-  // 폼 제출 핸들러
-  const handleSubmit = async () => {
-    if (!isValidForm || isSubmitting) return;
-
-    setIsSubmitting(true);
-    try {
-      // 이미지 업로드
-      const uploadedImageUrls = await uploadImages(imageFiles);
-
-      // 리뷰 작성 API 호출
-      await createReviewMutation.mutateAsync({
-        reservationId,
-        data: {
-          rating,
-          content,
-          imageUrls: uploadedImageUrls.length > 0 ? uploadedImageUrls : undefined,
-        },
-      });
-
-      // 성공 시 목록으로 이동
-      router.push('/mypage/reviews');
-    } catch (error) {
-      // useCreateReview hook에서 이미 toast 표시하므로 여기서는 로깅만
-      console.error('리뷰 등록 오류:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // 리뷰 폼 훅
+  const {
+    rating,
+    setRating,
+    content,
+    setContent,
+    previewUrls,
+    isValidForm,
+    isSubmitting,
+    handleImagesAdd,
+    handleImageRemove,
+    handleSubmit,
+    maxContentLength,
+    maxImages,
+  } = useReviewForm({ reservationId, reservation });
 
   // 로딩 상태
   if (isLoadingReservation) {
@@ -220,7 +124,7 @@ export default function ReviewWritePage() {
               <textarea
                 value={content}
                 onChange={(e) => {
-                  if (e.target.value.length <= MAX_CONTENT_LENGTH) {
+                  if (e.target.value.length <= maxContentLength) {
                     setContent(e.target.value);
                   }
                 }}
@@ -229,7 +133,7 @@ export default function ReviewWritePage() {
               />
               <div className="text-right">
                 <span className="text-body-2-regular text-gray-600">
-                  {content.length}/{MAX_CONTENT_LENGTH}
+                  {content.length}/{maxContentLength}
                 </span>
               </div>
             </div>
@@ -240,7 +144,7 @@ export default function ReviewWritePage() {
             previewUrls={previewUrls}
             onImagesAdd={handleImagesAdd}
             onImageRemove={handleImageRemove}
-            maxImages={MAX_IMAGES}
+            maxImages={maxImages}
           />
         </div>
       </div>
