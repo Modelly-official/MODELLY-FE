@@ -12,20 +12,20 @@ const getReservationPreview = (raw: string) => {
     const payload = JSON.parse(raw) as { eventType?: string };
     switch (payload.eventType) {
       case 'CHANGE_REQUEST':
-        return '예약 변경 요청';
+        return '예약 일정 변경 요청드립니다 :)';
       case 'CHANGE_REJECTED':
         return '예약 변경 요청이 거절되었습니다.';
       case 'CHANGE_PROCEED':
-        return '기존 일정으로 진행 확정';
+        return '변경 없이 기존 예약 일정으로 진행합니다.';
       case 'CHANGE_CANCEL':
         return '예약 변경 요청이 취소되었습니다.';
       case 'RESERVATION_CANCEL':
         return '예약이 취소되었습니다.';
       default:
-        return '예약 관련 알림';
+        return '예약 관련 알림이 왔습니다.';
     }
   } catch {
-    return '예약 관련 알림';
+    return '예약 관련 알림이 왔습니다.';
   }
 };
 
@@ -37,11 +37,15 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
   const [imageError, setImageError] = useState(false);
   const hasUnread = chat.unreadMessages > 0;
   const displayCount = chat.unreadMessages > 99 ? '99+' : chat.unreadMessages;
-  const previewMessage = chat.messageType === 'RESERVATION' ? getReservationPreview(chat.lastMessage) : chat.lastMessage;
+  const previewMessage =
+    chat.messageType === 'RESERVATION' ? getReservationPreview(chat.lastMessage) : chat.lastMessage;
 
   return (
     <li>
-      <Link href={`/chat/${chat.roomId}`} className="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-100">
+      <Link
+        href={`/chat/${chat.roomId}`}
+        className="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-100"
+      >
         {/* 프로필 이미지 52x52 */}
         <div className="relative h-[52px] w-[52px] shrink-0 overflow-hidden rounded-full bg-gray-300">
           {chat.profileImageUrl && !imageError ? (
