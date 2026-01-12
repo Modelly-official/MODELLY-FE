@@ -39,18 +39,29 @@ export interface WrittenReviewItem {
   imageUrls?: string[];
   designerName: string;
   designerProfileImageUrl?: string;
-  category: Category;
+  category?: Category;
   subCategories?: SubCategory[];
-  shopName?: string;
+  shop?: string; // API 응답 필드명
+  shopAddress?: string;
   createdAt: string;
   reply?: ReviewReply;
 }
 
 // ===== 리뷰 목록 조회 파라미터 =====
 export interface ReviewListParams {
-  category?: Category;
+  category?: Category | string; // API는 한글 카테고리명을 받음 (헤어, 네일, 타투, 속눈썹)
   cursorId?: number;
   size?: number;
+}
+
+// ===== 리뷰 미작성 예약 목록 조회 파라미터 =====
+export interface UnreviewedListParams {
+  month?: string; // yyyy-MM
+  category?: Category | string; // API는 한글 카테고리명을 받음
+  size?: number;
+  cursorDate?: string;
+  cursorTime?: string;
+  cursorId?: number;
 }
 
 // ===== 리뷰 미작성 목록 응답 =====
@@ -74,7 +85,9 @@ export interface WrittenReviewsResponse {
 export interface CreateReviewRequest {
   rating: number;
   content: string;
-  imageUrls?: string[];
+  thumbnail?: string;
+  imageUrlList?: string[];
+  imageFolderId?: string;
 }
 
 // ===== 리뷰 작성 응답 =====
@@ -93,4 +106,11 @@ export interface ReviewPresignedUrlsResponse {
   folderId: string;
   presignedUrls: ReviewPresignedUrlItem[];
   thumbnailUrl: string;
+}
+
+// ===== 리뷰 이미지 업로드 결과 =====
+export interface ReviewImageUploadResult {
+  thumbnail: string;
+  imageUrls: string[];
+  imageFolderId: string;
 }

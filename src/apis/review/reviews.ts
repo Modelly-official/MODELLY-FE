@@ -1,12 +1,15 @@
 import { axiosInstance } from '../axios';
+import { uploadImageToS3 } from '../auth/profile';
 import type {
   ApiResponse,
   UnreviewedReservationsResponse,
   WrittenReviewsResponse,
   ReviewListParams,
+  UnreviewedListParams,
   CreateReviewRequest,
   CreateReviewResponse,
   ReviewPresignedUrlsResponse,
+  ReviewImageUploadResult,
 } from '@/src/types';
 
 /**
@@ -14,12 +17,12 @@ import type {
  * GET /models/reservations/unreviewed
  * 인증 필요
  */
-export async function getUnreviewedReservations(): Promise<
-  ApiResponse<UnreviewedReservationsResponse>
-> {
+export async function getUnreviewedReservations(
+  params?: UnreviewedListParams
+): Promise<ApiResponse<UnreviewedReservationsResponse>> {
   const { data } = await axiosInstance.get<
     ApiResponse<UnreviewedReservationsResponse>
-  >('/models/reservations/unreviewed');
+  >('/models/reservations/unreviewed', { params });
   return data;
 }
 
@@ -95,4 +98,38 @@ export async function getReviewPresignedUrls(
     ApiResponse<ReviewPresignedUrlsResponse>
   >('/presigned-url/reviews', { params: { reservationId, imageCount } });
   return data;
+}
+
+/**
+ * 리뷰 이미지 업로드 (Presigned URL 발급 + S3 업로드)
+ * @param reservationId - 예약 ID
+ * @param files - 업로드할 이미지 파일 배열
+ * @returns 업로드 결과 (thumbnail, imageUrls, imageFolderId)
+ */
+export async function uploadReviewImages(
+  reservationId: number,
+  files: File[]
+): Promise<ReviewImageUploadResult | null> {
+  if (files.length === 0) return null;
+
+  // 1. Presigned URL 발급
+  const presignedResponse = await getReviewPresignedUrls(reservationId, files.length);
+
+  if (!presignedResponse.isSuccess || !presignedResponse.result) {
+    throw new Error(presignedResponse.message || '이미지 업로드 URL을 가져오지 못했습니다.');
+  }
+
+  const { folderId, presignedUrls, thumbnailUrl } = presignedResponse.result;
+
+  // 2. S3에 병렬 업로드
+  await Promise.all(
+    files.map((file, index) => uploadImageToS3(presignedUrls[index].uploadUrl, file))
+  );
+
+  // 3. 결과 반환
+  return {
+    thumbnail: thumbnailUrl,
+    imageUrls: presignedUrls.map((item) => item.imageUrl),
+    imageFolderId: folderId,
+  };
 }

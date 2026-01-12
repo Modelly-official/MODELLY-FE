@@ -1,5 +1,4 @@
 import {
-  useQuery,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
@@ -14,9 +13,11 @@ import {
 import { useToast } from '@/src/hooks/common/useToast';
 import type {
   ApiResponse,
+  Category,
   UnreviewedReservationsResponse,
   WrittenReviewsResponse,
   ReviewListParams,
+  UnreviewedListParams,
   CreateReviewRequest,
   CreateReviewResponse,
 } from '@/src/types';
@@ -24,7 +25,8 @@ import type {
 // Query Keys
 export const reviewKeys = {
   all: ['reviews'] as const,
-  unreviewed: () => [...reviewKeys.all, 'unreviewed'] as const,
+  unreviewed: (params?: { category?: Category }) =>
+    [...reviewKeys.all, 'unreviewed', params] as const,
   written: (params?: ReviewListParams) =>
     [...reviewKeys.all, 'written', params] as const,
 };
@@ -34,24 +36,54 @@ interface ReviewCursor {
   cursorId?: number;
 }
 
+interface UnreviewedCursor {
+  cursorDate?: string;
+  cursorTime?: string;
+  cursorId?: number;
+}
+
 interface UseReviewsOptions {
   enabled?: boolean;
 }
 
+interface UseUnreviewedParams {
+  category?: Category;
+}
+
 /**
- * 리뷰 미작성 예약 목록 조회 Hook
+ * 리뷰 미작성 예약 목록 조회 Hook (무한 스크롤)
  */
 export function useUnreviewedReservations(
+  params?: UseUnreviewedParams,
   options: UseReviewsOptions = {}
 ) {
   const { enabled = true } = options;
 
-  return useQuery<
+  return useInfiniteQuery<
     ApiResponse<UnreviewedReservationsResponse>,
-    Error
+    Error,
+    { pages: ApiResponse<UnreviewedReservationsResponse>[]; pageParams: UnreviewedCursor[] },
+    ReturnType<typeof reviewKeys.unreviewed>,
+    UnreviewedCursor
   >({
-    queryKey: reviewKeys.unreviewed(),
-    queryFn: getUnreviewedReservations,
+    queryKey: reviewKeys.unreviewed(params),
+    queryFn: async ({ pageParam }) => {
+      // 영문 카테고리 코드 그대로 전달
+      const apiParams: UnreviewedListParams = {
+        ...pageParam,
+        category: params?.category,
+      };
+      return getUnreviewedReservations(apiParams);
+    },
+    initialPageParam: {},
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.result?.hasNext) return undefined;
+      return {
+        cursorDate: lastPage.result.nextCursorDate ?? undefined,
+        cursorTime: lastPage.result.nextCursorTime ?? undefined,
+        cursorId: lastPage.result.nextCursorId ?? undefined,
+      };
+    },
     enabled,
     staleTime: 1000 * 60 * 2, // 2분
   });
@@ -75,10 +107,12 @@ export function useWrittenReviews(
   >({
     queryKey: reviewKeys.written(params),
     queryFn: async ({ pageParam }) => {
-      return getWrittenReviews({
+      // 영문 카테고리 코드 그대로 전달
+      const apiParams = {
         ...params,
         cursorId: pageParam?.cursorId,
-      });
+      };
+      return getWrittenReviews(apiParams);
     },
     initialPageParam: {},
     getNextPageParam: (lastPage) => {
