@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import { useUnreviewedReservations, useWrittenReviews, useDeleteReview } from '@/src/hooks/queries/review';
-import { ReviewTabs, ReviewCategoryChips, UnreviewedList, WrittenReviewList, YearDropdown } from '@/src/components/mypage/reviews';
+import { ReviewTabs, ReviewCategoryChips, UnreviewedList, WrittenReviewList, YearDropdown } from '@/src/components/mypage/model-reviews';
 import type { ReviewTabType, ReviewCategoryFilter, UnreviewedReservation } from '@/src/types';
 
 export default function MyReviewsPage() {

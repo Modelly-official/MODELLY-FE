@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import CloseIcon from '@/public/icons/common/close.svg';
 import { StarRatingInput } from '@/src/components/review';
-import { ReviewImageUploader } from '@/src/components/mypage/reviews';
+import { ReviewImageUploader } from '@/src/components/mypage/model-reviews';
 import { useUnreviewedReservations } from '@/src/hooks/queries/review';
 import { useReviewForm } from '@/src/hooks/custom/review';
 import type { UnreviewedReservation } from '@/src/types';
