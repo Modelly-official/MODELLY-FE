@@ -57,15 +57,17 @@ export async function updateReply(
 
 /**
  * 리뷰 고정/해제
- * PATCH /designers/reviews
+ * PATCH /designers/reviews?reviewId={reviewId}
  * 인증 필요
  */
 export async function pinReview(
   pinData: PinReviewRequest
 ): Promise<ApiResponse<void>> {
+  const { reviewId, isFixed } = pinData;
   const { data } = await axiosInstance.patch<ApiResponse<void>>(
     '/designers/reviews',
-    pinData
+    { isFixed },
+    { params: { reviewId } }
   );
   return data;
 }

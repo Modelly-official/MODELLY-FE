@@ -1,21 +1,25 @@
 // 디자이너 리뷰 관련 타입 정의
 
-import type { Category } from '../recruitment/recruitment';
-import type { ReviewReply } from './common';
+// ===== 디자이너 리뷰 답글 =====
+export interface DesignerReviewReply {
+  replyId: number;
+  content: string;
+  createdAt: string;
+  designerName: string;
+}
 
 // ===== 디자이너 리뷰 아이템 (디자이너가 받은 리뷰) =====
 export interface DesignerReviewItem {
   reviewId: number;
-  rating: number;
-  content: string;
-  thumbnail?: string;
-  imageUrls?: string[];
+  modelImage: string;
   modelName: string;
-  modelProfileImageUrl?: string;
-  category?: Category;
-  isPinned: boolean;
-  createdAt: string;
-  reply?: ReviewReply;
+  rating: number;
+  createdDate: string;
+  isFixed: boolean;
+  content: string;
+  reviewImages: string[];
+  summary: string;
+  replyDto?: DesignerReviewReply;
 }
 
 // ===== 디자이너 리뷰 목록 응답 =====
@@ -39,5 +43,5 @@ export interface CreateReplyResponse {
 // ===== 리뷰 고정/해제 요청 =====
 export interface PinReviewRequest {
   reviewId: number;
-  isPinned: boolean;
+  isFixed: boolean;
 }

@@ -128,7 +128,7 @@ export function usePinReview() {
     mutationFn: (pinData) => pinReview(pinData),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: designerReviewKeys.all });
-      showToast(variables.isPinned ? '리뷰가 고정되었습니다.' : '리뷰 고정이 해제되었습니다.');
+      showToast(variables.isFixed ? '리뷰가 고정되었습니다.' : '리뷰 고정이 해제되었습니다.');
     },
     onError: () => {
       showToast('리뷰 고정 상태 변경에 실패했습니다.');
