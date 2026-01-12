@@ -1,18 +1,31 @@
 'use client';
 
 import type { UnreviewedReservation } from '@/src/types';
+import { useInfiniteScroll } from '@/src/hooks/common';
 import { UnreviewedCard } from '../Card';
 import UnreviewedListSkeleton from './UnreviewedListSkeleton';
 
 interface UnreviewedListProps {
   items: UnreviewedReservation[];
   isLoading: boolean;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }
 
 export default function UnreviewedList({
   items,
   isLoading,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  fetchNextPage = () => {},
 }: UnreviewedListProps) {
+  const { loadMoreRef } = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
+
   // 로딩 상태
   if (isLoading) {
     return <UnreviewedListSkeleton />;
@@ -35,6 +48,16 @@ export default function UnreviewedList({
           reservation={item}
         />
       ))}
+
+      {/* 무한 스크롤 트리거 */}
+      <div ref={loadMoreRef} className="h-4" />
+
+      {/* 추가 로딩 */}
+      {isFetchingNextPage && (
+        <div className="flex justify-center py-4">
+          <div className="size-6 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
+        </div>
+      )}
     </div>
   );
 }

@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import { useUnreviewedReservations, useWrittenReviews, useDeleteReview } from '@/src/hooks/queries/review';
-import { ReviewTabs, ReviewCategoryChips, UnreviewedList, WrittenReviewList } from '@/src/components/mypage/reviews';
-import { MonthDropdown } from '@/src/components/mypage/reservations';
-import { generateMonthOptions } from '@/src/constants';
+import { ReviewTabs, ReviewCategoryChips, UnreviewedList, WrittenReviewList, YearDropdown } from '@/src/components/mypage/reviews';
 import type { ReviewTabType, ReviewCategoryFilter, UnreviewedReservation } from '@/src/types';
 
 export default function MyReviewsPage() {
@@ -20,27 +18,36 @@ export default function MyReviewsPage() {
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<ReviewCategoryFilter>('ALL');
 
-  // 월 선택 상태 (현재 월로 초기화, yyyy-MM 형식)
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = `${currentYear}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  // 년도 선택 상태 (현재 년도로 초기화)
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
 
-  // 월 옵션 생성
-  const monthOptions = useMemo(() => generateMonthOptions(currentYear), [currentYear]);
+  // 년도 옵션 생성 (최근 5년)
+  const yearOptions = useMemo(() => {
+    const years: number[] = [];
+    for (let i = 0; i < 5; i++) {
+      years.push(currentYear - i);
+    }
+    return years;
+  }, [currentYear]);
 
-  // 리뷰 미작성 예약 목록 조회
-  const unreviewedQuery = useUnreviewedReservations();
+  // 카테고리 필터 파라미터
+  const categoryParam = selectedCategory !== 'ALL' ? selectedCategory : undefined;
 
-  // 작성한 리뷰 목록 조회 (무한 스크롤)
-  const writtenQuery = useWrittenReviews({
-    category: selectedCategory !== 'ALL' ? selectedCategory : undefined,
+  // 리뷰 미작성 예약 목록 조회 (무한 스크롤 + 카테고리 필터)
+  const unreviewedQuery = useUnreviewedReservations({
+    category: categoryParam,
   });
 
-  // 리뷰 미작성 목록 데이터
+  // 작성한 리뷰 목록 조회 (무한 스크롤 + 카테고리 필터)
+  const writtenQuery = useWrittenReviews({
+    category: categoryParam,
+  });
+
+  // 리뷰 미작성 목록 데이터 (무한 스크롤 pages에서 추출)
   const unreviewedReservations: UnreviewedReservation[] = useMemo(() => {
-    return unreviewedQuery.data?.result?.items ?? [];
-  }, [unreviewedQuery.data?.result?.items]);
+    return unreviewedQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
+  }, [unreviewedQuery.data?.pages]);
 
   // 리뷰 미작성 개수
   const unreviewedCount = unreviewedReservations.length;
@@ -102,18 +109,20 @@ export default function MyReviewsPage() {
           onCategoryChange={setSelectedCategory}
         />
 
-        {/* 월 선택 및 전체 개수 */}
-        <div className="flex items-center justify-between">
-          <MonthDropdown
-            options={monthOptions}
-            selectedMonth={selectedMonth}
-            onMonthChange={setSelectedMonth}
-          />
-          <div className="flex items-center gap-1">
-            <span className="text-body-2-medium text-black">전체</span>
-            <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+        {/* 년도 선택 및 전체 개수 (작성한 리뷰 탭에서만 표시) */}
+        {activeTab === 'written' && (
+          <div className="flex items-center justify-between">
+            <YearDropdown
+              years={yearOptions}
+              selectedYear={selectedYear}
+              onYearChange={setSelectedYear}
+            />
+            <div className="flex items-center gap-1">
+              <span className="text-body-2-medium text-black">전체</span>
+              <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 리뷰 목록 */}
         <div className="flex-1">
@@ -121,10 +130,14 @@ export default function MyReviewsPage() {
             <UnreviewedList
               items={unreviewedReservations}
               isLoading={unreviewedQuery.isLoading}
+              hasNextPage={unreviewedQuery.hasNextPage ?? false}
+              isFetchingNextPage={unreviewedQuery.isFetchingNextPage}
+              fetchNextPage={unreviewedQuery.fetchNextPage}
             />
           ) : (
             <WrittenReviewList
               items={writtenReviews}
+              selectedYear={selectedYear}
               isLoading={writtenQuery.isLoading}
               hasNextPage={writtenQuery.hasNextPage ?? false}
               isFetchingNextPage={writtenQuery.isFetchingNextPage}

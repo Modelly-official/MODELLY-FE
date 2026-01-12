@@ -8,6 +8,7 @@ import WrittenReviewListSkeleton from './WrittenReviewListSkeleton';
 
 interface WrittenReviewListProps {
   items: WrittenReviewItem[];
+  selectedYear: number;
   isLoading: boolean;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
@@ -16,14 +17,20 @@ interface WrittenReviewListProps {
   onDelete?: (reviewId: number) => void;
 }
 
-// 월별로 리뷰를 그룹핑하는 함수
-function groupReviewsByMonth(reviews: WrittenReviewItem[]) {
+// 선택된 년도로 필터링 후 월별로 그룹핑하는 함수
+function groupReviewsByMonth(reviews: WrittenReviewItem[], selectedYear: number) {
+  // 선택된 년도로 필터링
+  const filteredReviews = reviews.filter((review) => {
+    const date = new Date(review.createdAt);
+    return date.getFullYear() === selectedYear;
+  });
+
   const groups: { [key: string]: WrittenReviewItem[] } = {};
 
-  reviews.forEach((review) => {
+  filteredReviews.forEach((review) => {
     const date = new Date(review.createdAt);
-    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
-    const monthLabel = `${date.getMonth() + 1}월`;
+    const month = date.getMonth() + 1;
+    const monthKey = `${month}`;
 
     if (!groups[monthKey]) {
       groups[monthKey] = [];
@@ -31,22 +38,19 @@ function groupReviewsByMonth(reviews: WrittenReviewItem[]) {
     groups[monthKey].push(review);
   });
 
-  // 월별로 정렬 (최신순)
+  // 월별로 정렬 (최신 월 먼저)
   return Object.entries(groups)
-    .sort(([a], [b]) => b.localeCompare(a))
-    .map(([key, items]) => {
-      const [year, month] = key.split('-');
-      return {
-        monthKey: key,
-        monthLabel: `${month}월`,
-        year,
-        items,
-      };
-    });
+    .sort(([a], [b]) => Number(b) - Number(a))
+    .map(([month, items]) => ({
+      monthKey: month,
+      monthLabel: `${month}월`,
+      items,
+    }));
 }
 
 export default function WrittenReviewList({
   items,
+  selectedYear,
   isLoading,
   hasNextPage,
   isFetchingNextPage,
@@ -60,19 +64,31 @@ export default function WrittenReviewList({
     fetchNextPage,
   });
 
-  // 월별 그룹핑
-  const groupedReviews = useMemo(() => groupReviewsByMonth(items), [items]);
+  // 선택된 년도로 필터링 후 월별 그룹핑
+  const groupedReviews = useMemo(
+    () => groupReviewsByMonth(items, selectedYear),
+    [items, selectedYear]
+  );
 
   // 로딩 상태
   if (isLoading) {
     return <WrittenReviewListSkeleton />;
   }
 
-  // 빈 상태
+  // 빈 상태 (전체 리뷰가 없는 경우)
   if (items.length === 0) {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <p className="text-body-2-medium text-gray-700">작성한 리뷰가 없습니다</p>
+      </div>
+    );
+  }
+
+  // 선택된 년도에 리뷰가 없는 경우
+  if (groupedReviews.length === 0) {
+    return (
+      <div className="flex flex-1 items-center justify-center py-20">
+        <p className="text-body-2-medium text-gray-700">{selectedYear}년에 작성한 리뷰가 없습니다</p>
       </div>
     );
   }
