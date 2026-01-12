@@ -319,7 +319,8 @@ export default function ReservationMessageItem({
 
         {showTime && message.time && (
           <div className="text-caption-1-medium mt-0.5 flex items-center gap-2 text-gray-600">
-            <span>{message.time}</span>
+            {message.fromMe && message.read === false && <span className="text-purple-600">안읽음</span>}
+            {showTime && <span>{message.time}</span>}
           </div>
         )}
       </div>

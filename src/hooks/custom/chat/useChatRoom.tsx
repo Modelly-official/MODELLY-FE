@@ -160,6 +160,16 @@ export default function useChatRoom(roomId?: string | number) {
     // 연결되어 있으면 바로 구독
     subscriptionRef.current?.unsubscribe();
     subscriptionRef.current = subscribeRoom<StompIncomingChatPayload>(client, roomId, (payload) => {
+      if (payload.messageType === 'READ') {
+        const lastReadMessageId = payload.lastReadMessageId;
+        setMessages((prev) =>
+          prev.map((m) => {
+            if (!m.fromMe || typeof m.id !== 'number') return m;
+            return m.id <= lastReadMessageId ? { ...m, read: true } : m;
+          }),
+        );
+        return;
+      }
       const mapped = mapStompMessage(payload, effectiveUserId);
       if (!mapped) return;
       setMessages((prev) => {
@@ -239,6 +249,7 @@ export default function useChatRoom(roomId?: string | number) {
       text,
       time: formatMessageTime(now),
       dateKey: formatMessageDateKey(now),
+      read: false,
       pending: true,
     };
     setMessages((prev) => [...prev, optimistic]);
@@ -291,6 +302,7 @@ export default function useChatRoom(roomId?: string | number) {
         text: '',
         time: formatMessageTime(now),
         dateKey: formatMessageDateKey(now),
+        read: false,
         imageUrls: [objectUrl],
       };
       setMessages((prev) => [...prev, optimistic]);

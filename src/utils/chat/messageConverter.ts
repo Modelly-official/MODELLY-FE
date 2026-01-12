@@ -109,6 +109,7 @@ export const formatChatListTime = (isoString?: string): string => {
 export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number | null): Message => {
   const fromMe = currentUserId != null ? msg.senderUserId === currentUserId : false;
   const dateKey = msg.createdAt ? formatMessageDateKey(msg.createdAt) : undefined;
+  const read = msg.isRead ?? msg.read ?? false;
 
   if (msg.messageType === 'RESERVATION') {
     const reservation = parseReservationPayload(msg.message);
@@ -120,6 +121,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
         text: msg.message ?? '',
         time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
         dateKey,
+        read,
       };
     }
     return {
@@ -129,6 +131,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
       reservation,
       time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
       dateKey,
+      read,
     };
   }
 
@@ -139,6 +142,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
     text: msg.messageType === 'IMAGE' ? '' : (msg.message ?? ''),
     time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
     dateKey,
+    read,
     imageUrls: msg.imageUrls,
   };
 };
@@ -149,6 +153,8 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
   const senderId = payload.senderUserId ?? payload.senderId;
   const fromMe = currentUserId != null ? senderId === currentUserId : false;
   const dateKey = payload.createdAt ? formatMessageDateKey(payload.createdAt) : undefined;
+  const read = payload.isRead ?? payload.read ?? false;
+  const resolvedRead = fromMe ? false : read;
 
   if (payload.messageType === 'RESERVATION') {
     const reservation = parseReservationPayload(payload.message);
@@ -160,6 +166,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
         text: payload.message ?? '',
         time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
         dateKey,
+        read: resolvedRead,
       };
     }
     return {
@@ -169,6 +176,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
       reservation,
       time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
       dateKey,
+      read: resolvedRead,
     };
   }
 
@@ -179,6 +187,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
     text: payload.messageType === 'IMAGE' ? '' : (payload.message ?? ''),
     time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
     dateKey,
+    read: resolvedRead,
     imageUrls: payload.imageUrls,
   };
 };

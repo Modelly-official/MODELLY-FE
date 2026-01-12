@@ -62,6 +62,7 @@ export type Message = {
   text?: string;
   time?: string;
   dateKey?: string;
+  read?: boolean;
   imageUrls?: string[];
   reservation?: ReservationMessagePayload | null;
   pending?: boolean; // 전송 대기 표시용(optimistic UI)
@@ -98,6 +99,7 @@ export interface ChatMessageResponse {
   imageUrls?: string[];
   createdAt: string;
   read: boolean;
+  isRead?: boolean;
 }
 
 export interface ChatRoomDetailResponse {
@@ -140,6 +142,7 @@ export type StompIncomingChatPayload =
       imageUrls?: string[];
       createdAt?: string;
       read?: boolean;
+      isRead?: boolean;
     }
   | {
       messageType: 'READ';

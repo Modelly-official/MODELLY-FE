@@ -30,6 +30,7 @@ export default function MessageItem({
   const isPending = message.pending || message.failed;
   const status = isPending ? '전송 중...' : null;
   const statusClass = 'text-gray-600';
+  const showUnread = showTime && message.fromMe && message.read === false;
   const shouldShowAvatar = !message.fromMe;
   const bubbleTone = isReservationNotice
     ? isReservationNoticeFromMe
@@ -83,6 +84,7 @@ export default function MessageItem({
         )}
         {(showTime || status) && (
           <div className="text-caption-1-medium mt-0.5 flex items-center gap-2 text-gray-600">
+            {showUnread && <span className="text-purple-600">안읽음</span>}
             {showTime && <span>{message.time}</span>}
           </div>
         )}
