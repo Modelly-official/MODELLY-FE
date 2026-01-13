@@ -48,13 +48,28 @@ export function useExploreData({
   const { mutate: toggleRecruitmentLike } = useToggleRecruitmentLike();
   const { mutate: toggleDesignerLike } = useToggleDesignerLike();
 
-  // Flatten paginated data
-  const recruitments = useMemo(
-    () => recruitmentData?.pages.flatMap((page) => page.result.items) ?? [],
-    [recruitmentData]
-  );
+  // Flatten paginated data + 중복 제거
+  const recruitments = useMemo(() => {
+    if (!recruitmentData?.pages) return [];
+    const allItems = recruitmentData.pages.flatMap((page) => page.result.items);
+    const seen = new Set<number>();
+    return allItems.filter((item) => {
+      if (seen.has(item.recruitmentId)) return false;
+      seen.add(item.recruitmentId);
+      return true;
+    });
+  }, [recruitmentData]);
 
-  const designers = useMemo(() => designerData?.pages.flatMap((page) => page.result.items) ?? [], [designerData]);
+  const designers = useMemo(() => {
+    if (!designerData?.pages) return [];
+    const allItems = designerData.pages.flatMap((page) => page.result.items);
+    const seen = new Set<number>();
+    return allItems.filter((item) => {
+      if (seen.has(item.designerId)) return false;
+      seen.add(item.designerId);
+      return true;
+    });
+  }, [designerData]);
 
   // Loading states
   const isWaitingForLocation = needsLocation && !hasLocation && isLocationLoading;
