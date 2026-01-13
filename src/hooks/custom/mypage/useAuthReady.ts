@@ -1,4 +1,4 @@
-import { useState, useCallback, useSyncExternalStore } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 import { getAccessToken, getUserRole, getUserCategory, useAuthStore } from '@/src/stores';
 import type { Category } from '@/src/types/recruitment';
 
@@ -61,8 +61,8 @@ export function useAuthReady(): AuthReadyState {
     mountStore.getServerSnapshot
   );
 
-  // 쿠키 기반 인증 상태 계산
-  const getAuthState = useCallback(() => {
+  // 인증 상태 계산 (isClient가 변경되면 재계산)
+  const authState = useMemo(() => {
     if (!isClient) {
       return {
         role: 'model' as Role,
@@ -86,17 +86,6 @@ export function useAuthReady(): AuthReadyState {
       authReady: true,
     };
   }, [isClient, user, isAuthenticated]);
-
-  const [authState, setAuthState] = useState(getAuthState);
-
-  // isClient, user, isAuthenticated가 변경되면 상태 업데이트
-  // useState의 lazy initializer 패턴 사용
-  if (isClient && !authState.authReady) {
-    const newState = getAuthState();
-    if (newState.authReady !== authState.authReady) {
-      setAuthState(newState);
-    }
-  }
 
   return { user, ...authState };
 }
