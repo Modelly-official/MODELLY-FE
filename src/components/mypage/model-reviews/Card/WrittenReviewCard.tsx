@@ -124,7 +124,7 @@ export default function WrittenReviewCard({
                 className="flex size-5 cursor-pointer items-center justify-center"
                 aria-label="더보기"
               >
-                <DotIcon className="size-5 rotate-90 text-gray-900" />
+                <DotIcon className="size-5 text-gray-900" />
               </button>
 
               {/* 드롭다운 메뉴 */}
