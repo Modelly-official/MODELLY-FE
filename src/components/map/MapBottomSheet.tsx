@@ -42,10 +42,10 @@ export default function MapBottomSheet({
   onHeightChange,
   children,
 }: MapBottomSheetProps) {
-  const [sheetState, setSheetState] = useState<BottomSheetState>('mid');
+  const [sheetState, setSheetState] = useState<BottomSheetState>('min');
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
-  const [currentHeight, setCurrentHeight] = useState(SHEET_HEIGHTS.mid);
+  const [currentHeight, setCurrentHeight] = useState(SHEET_HEIGHTS.min);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   // 상태에 따른 높이 계산
