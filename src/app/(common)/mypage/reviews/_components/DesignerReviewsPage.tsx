@@ -78,14 +78,6 @@ export default function DesignerReviewsPage() {
     pinReviewMutation.mutate({ reviewId, isFixed });
   };
 
-  // 답글 삭제
-  const handleReplyDelete = (reviewId: number, replyId: number) => {
-    if (window.confirm('답글을 삭제하시겠습니까?')) {
-      // TODO: 답글 삭제 mutation 추가
-      console.log('Delete reply:', reviewId, replyId);
-    }
-  };
-
   const isSubmittingReply = createReplyMutation.isPending || updateReplyMutation.isPending;
 
   return (
@@ -135,7 +127,6 @@ export default function DesignerReviewsPage() {
                 onPin={handlePin}
                 onReplyClick={handleReplyClick}
                 onReplyEdit={handleReplyEdit}
-                onReplyDelete={handleReplyDelete}
                 isReplying={replyingReviewId === review.reviewId}
                 replyContent={replyingReviewId === review.reviewId ? replyContent : ''}
                 onReplyContentChange={setReplyContent}

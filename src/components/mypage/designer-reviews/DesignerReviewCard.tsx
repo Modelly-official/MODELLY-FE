@@ -11,7 +11,6 @@ interface DesignerReviewCardProps {
   onPin?: (reviewId: number, isFixed: boolean) => void;
   onReplyClick?: (reviewId: number) => void;
   onReplyEdit?: (reviewId: number, replyId: number) => void;
-  onReplyDelete?: (reviewId: number, replyId: number) => void;
   isReplying?: boolean;
   replyContent?: string;
   onReplyContentChange?: (content: string) => void;
@@ -25,7 +24,6 @@ export default function DesignerReviewCard({
   onPin,
   onReplyClick,
   onReplyEdit,
-  onReplyDelete,
   isReplying = false,
   replyContent = '',
   onReplyContentChange,
@@ -52,15 +50,6 @@ export default function DesignerReviewCard({
     e.stopPropagation();
     setIsMenuOpen(false);
     onPin?.(review.reviewId, !review.isFixed);
-  };
-
-  // 답글 삭제
-  const handleReplyDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    if (review.replyDto) {
-      onReplyDelete?.(review.reviewId, review.replyDto.replyId);
-    }
   };
 
   // 답글 달기 클릭
@@ -131,19 +120,10 @@ export default function DesignerReviewCard({
                     <button
                       type="button"
                       onClick={handlePin}
-                      className={`block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100 ${review.replyDto ? 'border-b border-gray-400' : ''}`}
+                      className="block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
                     >
                       {review.isFixed ? '고정 취소' : '리뷰 고정'}
                     </button>
-                    {review.replyDto && (
-                      <button
-                        type="button"
-                        onClick={handleReplyDelete}
-                        className="block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
-                      >
-                        답글 삭제
-                      </button>
-                    )}
                   </div>
                 </>
               )}
