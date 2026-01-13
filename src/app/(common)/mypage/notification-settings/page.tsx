@@ -7,7 +7,7 @@ import { Toggle } from '@/src/components/common';
 import { getUserRole } from '@/src/stores';
 
 // 클라이언트 상태 확인을 위한 외부 스토어
-const emptySubscribe = () => () => {};
+const emptySubscribe = () => () => { };
 
 // 알림 설정 항목 타입
 type NotificationItem = {
@@ -102,9 +102,8 @@ export default function NotificationSettingsPage() {
 
         {/* 하위 알림 항목들 */}
         <div
-          className={`transition-opacity duration-200 ${
-            !chatNotification ? 'pointer-events-none opacity-50' : ''
-          }`}
+          className={`transition-opacity duration-200 ${!chatNotification ? 'pointer-events-none opacity-50' : ''
+            }`}
         >
           {notificationItems.map((item, index) => (
             <div key={item.key}>
