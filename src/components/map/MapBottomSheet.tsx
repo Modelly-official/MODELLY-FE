@@ -166,19 +166,31 @@ export default function MapBottomSheet({
     onHeightChange?.(displayHeight);
   }, [displayHeight, onHeightChange]);
 
-  // 스크롤 끝 감지
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || !onLoadMore) return;
-    // 다음 페이지가 없거나 로딩 중이면 무시
-    if (!hasNextPage || isFetchingNextPage) return;
+  // IntersectionObserver로 무한 스크롤 감지
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    // 스크롤이 끝에서 100px 이내면 다음 페이지 로드
-    if (scrollHeight - scrollTop - clientHeight < 100) {
-      onLoadMore();
-    }
-  }, [onLoadMore, hasNextPage, isFetchingNextPage]);
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    const loadMoreElement = loadMoreRef.current;
+    if (!scrollContainer || !loadMoreElement || !onLoadMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          onLoadMore();
+        }
+      },
+      {
+        root: scrollContainer, // 내부 스크롤 컨테이너 지정
+        rootMargin: '100px',
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(loadMoreElement);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, onLoadMore]);
 
   return (
     <div
@@ -243,9 +255,10 @@ export default function MapBottomSheet({
         style={{
           height: `calc(${displayHeight}vh - 200px)`,
         }}
-        onScroll={handleScroll}
       >
         {children}
+        {/* Infinite scroll trigger */}
+        <div ref={loadMoreRef} className="h-4" />
       </div>
     </div>
   );
