@@ -51,9 +51,6 @@ export default function NaverMapView({
   const markersRef = useRef<naver.maps.Marker[]>([]);
   const clusteringRef = useRef<MarkerClustering | null>(null);
   const listenersRef = useRef<naver.maps.MapEventListener[]>([]);
-  const lastCenterRef = useRef<MapPosition>(center);
-  // 초기 로드 시 idle 이벤트 무시를 위해 true로 시작
-  const isProgrammaticMoveRef = useRef(true);
   // 샵 ID로 마커와 샵 정보를 추적
   const shopMarkerMapRef = useRef<Map<number, { marker: naver.maps.Marker; shop: MapShopItem }>>(
     new Map()
@@ -90,38 +87,14 @@ export default function NaverMapView({
     const map = new naver.maps.Map(mapRef.current, mapOptions);
     setMapInstance(map);
 
-    // 지도 이동 완료 후 idle 이벤트 (사용자 드래그와 프로그래밍적 이동 모두 발생)
-    const idleListener = naver.maps.Event.addListener(map, 'idle', () => {
-      // 프로그래밍적 이동인 경우 플래그만 리셋하고 콜백 호출 안 함
-      if (isProgrammaticMoveRef.current) {
-        isProgrammaticMoveRef.current = false;
-        return;
-      }
-
-      // 사용자 드래그인 경우 콜백 호출
-      const newCenter = map.getCenter();
-      const newPosition = {
-        lat: newCenter.y,
-        lng: newCenter.x,
-      };
-
-      // 위치가 실제로 변경된 경우에만 콜백 호출
-      const hasChanged =
-        Math.abs(lastCenterRef.current.lat - newPosition.lat) > 0.0001 ||
-        Math.abs(lastCenterRef.current.lng - newPosition.lng) > 0.0001;
-
-      if (hasChanged) {
-        lastCenterRef.current = newPosition;
-        onCenterChangedRef.current?.(newPosition);
-      }
+    // init 이벤트 후에 다른 이벤트 리스너 등록
+    naver.maps.Event.addListener(map, 'init', () => {
+      // 줌 변경 이벤트
+      const zoomListener = naver.maps.Event.addListener(map, 'zoom_changed', () => {
+        onZoomChangedRef.current?.(map.getZoom());
+      });
+      listenersRef.current.push(zoomListener);
     });
-    listenersRef.current.push(idleListener);
-
-    // 줌 변경 이벤트
-    const zoomListener = naver.maps.Event.addListener(map, 'zoom_changed', () => {
-      onZoomChangedRef.current?.(map.getZoom());
-    });
-    listenersRef.current.push(zoomListener);
 
     onMapReady?.(map);
 
@@ -227,19 +200,24 @@ export default function NaverMapView({
     prevSelectedShopIdRef.current = selectedShopId;
   }, [selectedShopId]);
 
-  // center prop 변경 감지 (외부에서 변경 시에만 지도 이동)
+  // center prop 변경 감지 - 실제 지도 중심과 비교하여 이동
   useEffect(() => {
     if (!mapInstance) return;
 
-    const isSameCenter =
-      Math.abs(lastCenterRef.current.lat - center.lat) < 0.0001 &&
-      Math.abs(lastCenterRef.current.lng - center.lng) < 0.0001;
+    // 실제 지도의 현재 중심 좌표를 가져옴
+    const currentMapCenter = mapInstance.getCenter();
+    const currentLat = currentMapCenter.y;
+    const currentLng = currentMapCenter.x;
 
-    if (!isSameCenter) {
-      // 프로그래밍적 이동임을 표시 (idle 이벤트에서 콜백 호출 방지)
-      isProgrammaticMoveRef.current = true;
-      lastCenterRef.current = center;
-      mapInstance.setCenter(new naver.maps.LatLng(center.lat, center.lng));
+    const isSameAsMapCenter =
+      Math.abs(currentLat - center.lat) < 0.0001 &&
+      Math.abs(currentLng - center.lng) < 0.0001;
+
+    if (!isSameAsMapCenter) {
+      mapInstance.panTo(new naver.maps.LatLng(center.lat, center.lng), {
+        duration: 300,
+        easing: 'easeOutCubic',
+      });
     }
   }, [mapInstance, center]);
 

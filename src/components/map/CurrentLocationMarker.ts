@@ -8,7 +8,7 @@
 // 정확도 원 크기 (px)
 const ACCURACY_CIRCLE_SIZE = 80;
 // 위치 포인트 크기 (px)
-const LOCATION_DOT_SIZE = 24;
+const LOCATION_DOT_SIZE = 20;
 // 내부 원 크기 (px)
 const INNER_DOT_SIZE = 12;
 // 내부 원 색상 (purple-600)

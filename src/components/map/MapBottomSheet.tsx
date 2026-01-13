@@ -11,7 +11,7 @@ const BOTTOM_NAV_HEIGHT = 76; // 60px + safe-area
 
 // BottomSheet 높이 설정 (vh 기준)
 export const SHEET_HEIGHTS = {
-  min: 10, // 최소 높이 (핸들 + 타이틀 + 탭)
+  min: 8, // 최소 높이 (핸들 + 타이틀 + 탭)
   mid: 50, // 중간 높이
   max: 85, // 최대 높이 (BottomNav 영역 제외)
 };
