@@ -10,7 +10,9 @@ const ACCURACY_CIRCLE_SIZE = 80;
 // 위치 포인트 크기 (px)
 const LOCATION_DOT_SIZE = 24;
 // 내부 원 크기 (px)
-const INNER_DOT_SIZE = 12;
+const INNER_DOT_SIZE = 16;
+// 내부 원 색상 (진한 보라색)
+const INNER_DOT_COLOR = '#6366F1';
 
 /**
  * 현재 위치 마커 HTML 생성
@@ -53,7 +55,7 @@ function createCurrentLocationMarkerHtml(): string {
           width: ${INNER_DOT_SIZE}px;
           height: ${INNER_DOT_SIZE}px;
           border-radius: 50%;
-          background-color: #7A7DFF;
+          background-color: ${INNER_DOT_COLOR};
         "></div>
       </div>
     </div>
