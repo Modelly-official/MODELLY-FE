@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // Playwright test artifacts:
     'playwright-report/**',
     'test-results/**',
+    // Public static files:
+    'public/**',
   ]),
 ]);
 
