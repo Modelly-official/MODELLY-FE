@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import ProfileIcon from '@/public/icons/chat/profile.svg';
 import { Message } from '@/src/types/chat';
@@ -9,11 +9,16 @@ export default function MessageItem({
   message,
   showTime = true,
   sharpCorner,
+  avatarUrl,
+  avatarName,
 }: {
   message: Message;
   showTime?: boolean;
   sharpCorner?: 'left' | 'right';
+  avatarUrl?: string | null;
+  avatarName?: string;
 }) {
+  const [avatarError, setAvatarError] = useState(false);
   if (!message || (message.messageType === 'RESERVATION' && !message.text)) return null;
   if (!message.text && !message.imageUrls?.length) return null;
   const defaultSharp = message.fromMe ? 'right' : 'left';
@@ -32,6 +37,7 @@ export default function MessageItem({
   const statusClass = 'text-gray-600';
   const showUnread = showTime && message.fromMe && message.read === false;
   const shouldShowAvatar = !message.fromMe;
+  const showAvatarImage = !!avatarUrl && !avatarError;
   const bubbleTone = isReservationNotice
     ? isReservationNoticeFromMe
       ? 'bg-purple-300 text-purple-700'
@@ -44,8 +50,19 @@ export default function MessageItem({
     <li className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}>
       {shouldShowAvatar && (
         <div className="mr-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white">
-            <ProfileIcon className="h-[26.15px] w-[26.15px] text-gray-400" />
+          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-300 bg-white">
+            {showAvatarImage ? (
+              <Image
+                src={avatarUrl}
+                alt={avatarName ?? '프로필 이미지'}
+                fill
+                sizes="40px"
+                className="object-cover"
+                onError={() => setAvatarError(true)}
+              />
+            ) : (
+              <ProfileIcon className="h-[26.15px] w-[26.15px] text-gray-400" />
+            )}
           </div>
         </div>
       )}

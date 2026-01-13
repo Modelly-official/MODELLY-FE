@@ -254,7 +254,13 @@ export default function ChatRoom() {
                       </span>
                     </li>
                   )}
-                  <ReservationMessageItem message={m} showTime={showTime} onOpenCancelModal={handleOpenCancelModal} />
+                  <ReservationMessageItem
+                    message={m}
+                    showTime={showTime}
+                    onOpenCancelModal={handleOpenCancelModal}
+                    avatarUrl={opponent?.profileImageUrl}
+                    avatarName={opponent?.name}
+                  />
                 </Fragment>
               );
             }
@@ -267,7 +273,12 @@ export default function ChatRoom() {
                     </span>
                   </li>
                 )}
-                <MessageItem message={m} showTime={showTime} />
+                <MessageItem
+                  message={m}
+                  showTime={showTime}
+                  avatarUrl={opponent?.profileImageUrl}
+                  avatarName={opponent?.name}
+                />
               </Fragment>
             );
           })}

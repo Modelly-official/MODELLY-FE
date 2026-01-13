@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import ProfileIcon from '@/public/icons/chat/profile.svg';
 import {
   useAcceptReservationChange,
@@ -16,6 +17,8 @@ interface ReservationMessageItemProps {
   message: Message;
   showTime?: boolean;
   onOpenCancelModal?: (reservationChangeId?: number) => void;
+  avatarUrl?: string | null;
+  avatarName?: string;
 }
 
 const formatSchedule = (date: string, startTime: string, endTime?: string) => {
@@ -29,8 +32,11 @@ export default function ReservationMessageItem({
   message,
   showTime = true,
   onOpenCancelModal,
+  avatarUrl,
+  avatarName,
 }: ReservationMessageItemProps) {
   const [hasProceeded, setHasProceeded] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const acceptMutation = useAcceptReservationChange();
   const rejectMutation = useRejectReservationChange();
   const cancelChangeMutation = useCancelReservationChange();
@@ -298,8 +304,19 @@ export default function ReservationMessageItem({
     <li className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}>
       {!message.fromMe && (
         <div className="mr-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white">
-            <ProfileIcon className="h-[26.15px] w-[26.15px] text-gray-400" />
+          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-300 bg-white">
+            {avatarUrl && !avatarError ? (
+              <Image
+                src={avatarUrl}
+                alt={avatarName ?? '프로필 이미지'}
+                fill
+                sizes="40px"
+                className="object-cover"
+                onError={() => setAvatarError(true)}
+              />
+            ) : (
+              <ProfileIcon className="h-[26.15px] w-[26.15px] text-gray-400" />
+            )}
           </div>
         </div>
       )}
