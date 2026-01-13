@@ -1,10 +1,32 @@
 import { axiosInstance } from '../axios';
 import { isMockEnabled } from '@/src/config/api';
-import { mockMapShops } from '@/src/mocks/map';
+import { mockMapShopsRaw } from '@/src/mocks/map';
+import { categoryNameToCode } from '@/src/utils/myRecruitment/category/categoryMapping';
 import type { ApiResponse } from '@/src/types';
-import type { MapShopItem, MapShopParams } from '@/src/types/map';
+import type {
+  MapShopItem,
+  MapShopApiItem,
+  MapShopParams,
+  MapShopApiResponse,
+} from '@/src/types/map';
 
 const DEFAULT_PAGE_SIZE = 50;
+
+/**
+ * API 원본 응답을 UI용 타입으로 변환
+ * - category: 한글 → 영문 enum
+ */
+function convertApiItemToMapShopItem(apiItem: MapShopApiItem): MapShopItem {
+  const categoryCode = categoryNameToCode(apiItem.category);
+
+  return {
+    designerId: apiItem.designerId,
+    shopName: apiItem.shopName,
+    category: categoryCode ?? 'HAIR', // fallback
+    shopLatitude: apiItem.shopLatitude,
+    shopLongitude: apiItem.shopLongitude,
+  };
+}
 
 /**
  * 지도 샵 목록 조회
@@ -18,11 +40,15 @@ export async function getMapShops(
   }
 
   const { size = DEFAULT_PAGE_SIZE, ...restParams } = params;
-  const { data } = await axiosInstance.get<ApiResponse<MapShopItem[]>>(
-    '/map/shops',
-    { params: { ...restParams, size } }
-  );
-  return data;
+  const { data } = await axiosInstance.get<MapShopApiResponse>('/map/shops', {
+    params: { ...restParams, size },
+  });
+
+  // API 응답 변환
+  return {
+    ...data,
+    result: data.result.map(convertApiItemToMapShopItem),
+  };
 }
 
 // ===== Mock 함수 =====
@@ -32,8 +58,11 @@ function getMockMapShops(
 ): Promise<ApiResponse<MapShopItem[]>> {
   const { category, size = DEFAULT_PAGE_SIZE } = params;
 
-  // 카테고리 필터링
-  let filtered = [...mockMapShops];
+  // 변환된 데이터
+  const convertedShops = mockMapShopsRaw.map(convertApiItemToMapShopItem);
+
+  // 카테고리 필터링 (변환 후 영문 기준)
+  let filtered = [...convertedShops];
 
   if (category) {
     filtered = filtered.filter((item) => item.category === category);

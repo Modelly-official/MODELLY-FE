@@ -128,7 +128,7 @@ function MapContent() {
         center={displayCenter}
         zoom={zoom}
         shops={mockMapShops}
-        selectedShopId={selectedShop?.shopId}
+        selectedDesignerId={selectedShop?.designerId}
         userLocation={userLocation}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}

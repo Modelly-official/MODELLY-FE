@@ -2,12 +2,20 @@
 
 import type { Category, SubCategory, SortOption } from '../recruitment';
 
-// ===== 지도 샵 아이템 (마커용) =====
-export interface MapShopItem {
-  shopId: number;
+// ===== API 원본 응답 (한글 category) =====
+export interface MapShopApiItem {
   designerId: number;
   shopName: string;
-  category: Category;
+  category: string; // API 응답은 한글 ("헤어", "네일" 등)
+  shopLatitude: number;
+  shopLongitude: number;
+}
+
+// ===== 지도 샵 아이템 (마커용, 변환 후) =====
+export interface MapShopItem {
+  designerId: number;
+  shopName: string;
+  category: Category; // 영문 enum으로 변환됨
   shopLatitude: number;
   shopLongitude: number;
 }
@@ -20,7 +28,15 @@ export interface MapShopParams {
   userLongitude: number;
 }
 
-// ===== 지도 샵 조회 응답 =====
+// ===== 지도 샵 API 원본 응답 =====
+export interface MapShopApiResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: MapShopApiItem[];
+}
+
+// ===== 지도 샵 조회 응답 (변환 후) =====
 export interface MapShopResponse {
   isSuccess: boolean;
   code: string;

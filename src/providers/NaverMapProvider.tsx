@@ -31,7 +31,10 @@ function isNaverMapsLoaded(): boolean {
 }
 
 function isMarkerClusteringLoaded(): boolean {
-  return typeof window !== 'undefined' && typeof window.MarkerClustering !== 'undefined';
+  return (
+    typeof window !== 'undefined' &&
+    typeof (window as Window & { MarkerClustering?: unknown }).MarkerClustering !== 'undefined'
+  );
 }
 
 export function NaverMapProvider({ children }: NaverMapProviderProps) {

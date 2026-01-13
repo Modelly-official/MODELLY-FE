@@ -1,2 +1,2 @@
 // Map mocks export
-export * from './shops';
+export { mockMapShopsRaw, mockMapShops } from './shops';

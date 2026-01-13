@@ -26,7 +26,7 @@ interface NaverMapViewProps {
   center?: MapPosition;
   zoom?: number;
   shops?: MapShopItem[];
-  selectedShopId?: number;
+  selectedDesignerId?: number;
   userLocation?: MapPosition | null; // 현재 사용자 위치
   onCenterChanged?: (center: MapPosition) => void;
   onZoomChanged?: (zoom: number) => void;
@@ -38,7 +38,7 @@ export default function NaverMapView({
   center = DEFAULT_CENTER,
   zoom = DEFAULT_ZOOM,
   shops = [],
-  selectedShopId,
+  selectedDesignerId,
   userLocation,
   onCenterChanged,
   onZoomChanged,
@@ -51,11 +51,11 @@ export default function NaverMapView({
   const markersRef = useRef<naver.maps.Marker[]>([]);
   const clusteringRef = useRef<MarkerClustering | null>(null);
   const listenersRef = useRef<naver.maps.MapEventListener[]>([]);
-  // 샵 ID로 마커와 샵 정보를 추적
+  // designerId로 마커와 샵 정보를 추적
   const shopMarkerMapRef = useRef<Map<number, { marker: naver.maps.Marker; shop: MapShopItem }>>(
     new Map()
   );
-  const prevSelectedShopIdRef = useRef<number | undefined>(undefined);
+  const prevSelectedDesignerIdRef = useRef<number | undefined>(undefined);
   // 현재 위치 마커
   const currentLocationMarkerRef = useRef<naver.maps.Marker | null>(null);
 
@@ -151,9 +151,9 @@ export default function NaverMapView({
     const markers = createShopMarkersForClustering(shops, onShopClick);
     markersRef.current = markers;
 
-    // shopMarkerMap 구축
+    // shopMarkerMap 구축 (designerId를 key로 사용)
     shops.forEach((shop, index) => {
-      shopMarkerMapRef.current.set(shop.shopId, {
+      shopMarkerMapRef.current.set(shop.designerId, {
         marker: markers[index],
         shop,
       });
@@ -173,9 +173,9 @@ export default function NaverMapView({
     }
   }, [mapInstance, shops, onShopClick]);
 
-  // selectedShopId 변경 시 마커 아이콘 업데이트
+  // selectedDesignerId 변경 시 마커 아이콘 업데이트
   useEffect(() => {
-    const prevId = prevSelectedShopIdRef.current;
+    const prevId = prevSelectedDesignerIdRef.current;
 
     // 이전 선택된 마커를 기본 상태로 되돌림
     if (prevId !== undefined) {
@@ -186,8 +186,8 @@ export default function NaverMapView({
     }
 
     // 새로 선택된 마커를 선택 상태로 변경
-    if (selectedShopId !== undefined) {
-      const selectedData = shopMarkerMapRef.current.get(selectedShopId);
+    if (selectedDesignerId !== undefined) {
+      const selectedData = shopMarkerMapRef.current.get(selectedDesignerId);
       if (selectedData) {
         updateMarkerToSelected(
           selectedData.marker,
@@ -197,8 +197,8 @@ export default function NaverMapView({
       }
     }
 
-    prevSelectedShopIdRef.current = selectedShopId;
-  }, [selectedShopId]);
+    prevSelectedDesignerIdRef.current = selectedDesignerId;
+  }, [selectedDesignerId]);
 
   // center prop 변경 감지 - 실제 지도 중심과 비교하여 이동
   useEffect(() => {
