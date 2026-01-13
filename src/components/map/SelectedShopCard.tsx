@@ -2,7 +2,7 @@
 
 import 'swiper/css';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -29,6 +29,7 @@ interface SelectedShopCardProps {
   recruitment: RecruitmentListItem;
   onClose: () => void;
   onLikeToggle?: () => void;
+  onDragOffsetChange?: (offset: number) => void;
 }
 
 export default function SelectedShopCard({
@@ -36,6 +37,7 @@ export default function SelectedShopCard({
   recruitment,
   onClose,
   onLikeToggle,
+  onDragOffsetChange,
 }: SelectedShopCardProps) {
   const { isLiked, handleClick } = useLikeToggle({
     serverValue: recruitment.isLiked ?? false,
@@ -48,6 +50,11 @@ export default function SelectedShopCard({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const startYRef = useRef(0);
   const baseOffsetRef = useRef(0); // 접힌 상태에서의 기준 오프셋
+
+  // 드래그 오프셋 변경 시 부모에게 알림
+  useEffect(() => {
+    onDragOffsetChange?.(dragOffset);
+  }, [dragOffset, onDragOffsetChange]);
 
   // 이미지 배열 생성 (썸네일 + 추가 이미지)
   const images = recruitment.recruitmentThumbnail

@@ -14,6 +14,7 @@ interface MapControlsProps {
   showRefreshButton?: boolean;
   bottomSheetHeight: number; // vh 단위
   isSelectedShopCard?: boolean; // SelectedShopCard 표시 여부
+  selectedCardDragOffset?: number; // SelectedShopCard 드래그 오프셋 (px)
 }
 
 export default function MapControls({
@@ -22,10 +23,11 @@ export default function MapControls({
   showRefreshButton = true,
   bottomSheetHeight,
   isSelectedShopCard = false,
+  selectedCardDragOffset = 0,
 }: MapControlsProps) {
-  // GPS 버튼 bottom 위치 계산
+  // GPS 버튼 bottom 위치 계산 (드래그 오프셋 반영)
   const gpsButtonBottom = isSelectedShopCard
-    ? `${BOTTOM_NAV_HEIGHT + SELECTED_CARD_HEIGHT + 18}px`
+    ? `${BOTTOM_NAV_HEIGHT + SELECTED_CARD_HEIGHT + 18 - selectedCardDragOffset}px`
     : `calc(${bottomSheetHeight}vh + ${BOTTOM_NAV_HEIGHT}px + 18px)`;
 
   return (

@@ -35,6 +35,7 @@ function MapContent() {
   const [zoom, setZoom] = useState(15);
   const [bottomSheetHeight, setBottomSheetHeight] = useState(SHEET_HEIGHTS.mid);
   const [selectedShop, setSelectedShop] = useState<MapShopItem | null>(null);
+  const [selectedCardDragOffset, setSelectedCardDragOffset] = useState(0);
 
   // 필터 상태
   const [category, setCategory] = useState<Category>('HAIR');
@@ -69,12 +70,14 @@ function MapContent() {
 
   const handleCloseSelectedShop = useCallback(() => {
     setSelectedShop(null);
+    setSelectedCardDragOffset(0);
   }, []);
 
   // 현 지도에서 검색
   const handleRefreshSearch = useCallback(() => {
     // TODO: API 연결 시 현재 지도 영역 기준으로 재검색
     setSelectedShop(null); // 선택된 샵 카드 닫기
+    setSelectedCardDragOffset(0);
     showToast('현재 지도 영역에서 검색합니다');
   }, [showToast]);
 
@@ -127,6 +130,7 @@ function MapContent() {
         showRefreshButton={!isLocationLoading}
         bottomSheetHeight={bottomSheetHeight}
         isSelectedShopCard={!!selectedShop && !!selectedRecruitment}
+        selectedCardDragOffset={selectedCardDragOffset}
       />
 
       {/* 위치 로딩 중 표시 */}
@@ -144,6 +148,7 @@ function MapContent() {
           shop={selectedShop}
           recruitment={selectedRecruitment}
           onClose={handleCloseSelectedShop}
+          onDragOffsetChange={setSelectedCardDragOffset}
         />
       ) : (
         <MapBottomSheet
