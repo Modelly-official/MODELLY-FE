@@ -25,9 +25,20 @@ interface NaverMapProviderProps {
 // MarkerClustering 스크립트 URL (로컬)
 const MARKER_CLUSTERING_SCRIPT_URL = '/scripts/MarkerClustering.js';
 
+// 스크립트가 이미 로드되었는지 확인하는 헬퍼 함수
+function isNaverMapsLoaded(): boolean {
+  return typeof window !== 'undefined' && typeof window.naver?.maps !== 'undefined';
+}
+
+function isMarkerClusteringLoaded(): boolean {
+  return typeof window !== 'undefined' && typeof window.MarkerClustering !== 'undefined';
+}
+
 export function NaverMapProvider({ children }: NaverMapProviderProps) {
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [isClusteringLoaded, setIsClusteringLoaded] = useState(false);
+  // 탭 전환 시 이미 로드된 스크립트 감지를 위해 초기값을 함수로 설정
+  // SSR에서는 false, CSR에서는 실제 로드 상태 확인
+  const [isMapLoaded, setIsMapLoaded] = useState(() => isNaverMapsLoaded());
+  const [isClusteringLoaded, setIsClusteringLoaded] = useState(() => isMarkerClusteringLoaded());
   const ncpClientId = process.env.NEXT_PUBLIC_NCP_CLIENT_ID;
 
   const handleMapScriptLoad = useCallback(() => {
