@@ -1,7 +1,6 @@
 // 모델 리뷰 관련 타입 정의
 
 import type { Category, SubCategory } from '../recruitment/recruitment';
-import type { ReviewReply } from './common';
 
 // ===== 리뷰 미작성 예약 아이템 (API 응답) =====
 export interface UnreviewedReservation {
