@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import { useDesignerReviews, useCreateReply, useUpdateReply, usePinReview } from '@/src/hooks/queries/review';
+import { useInfiniteScroll } from '@/src/hooks/common/useInfiniteScroll';
 import { DesignerReviewCard } from '@/src/components/mypage/designer-reviews';
 import type { DesignerReviewItem } from '@/src/types';
 
@@ -12,10 +13,17 @@ export default function DesignerReviewsPage() {
   const router = useRouter();
 
   // API Hooks
-  const designerReviewsQuery = useDesignerReviews();
+  const designerReviewsQuery = useDesignerReviews({ size: 8 });
   const createReplyMutation = useCreateReply();
   const updateReplyMutation = useUpdateReply();
   const pinReviewMutation = usePinReview();
+
+  // 무한 스크롤
+  const { loadMoreRef } = useInfiniteScroll({
+    hasNextPage: designerReviewsQuery.hasNextPage ?? false,
+    isFetchingNextPage: designerReviewsQuery.isFetchingNextPage,
+    fetchNextPage: designerReviewsQuery.fetchNextPage,
+  });
 
   // 답글 입력 상태
   const [replyingReviewId, setReplyingReviewId] = useState<number | null>(null);
@@ -135,6 +143,16 @@ export default function DesignerReviewsPage() {
                 isSubmittingReply={isSubmittingReply}
               />
             ))}
+
+            {/* 무한 스크롤 트리거 */}
+            <div ref={loadMoreRef} className="h-4" />
+
+            {/* 추가 로딩 스피너 */}
+            {designerReviewsQuery.isFetchingNextPage && (
+              <div className="flex justify-center py-4">
+                <div className="size-6 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
+              </div>
+            )}
           </div>
         )}
       </div>
