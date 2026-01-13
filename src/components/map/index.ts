@@ -18,3 +18,7 @@ export {
   createClusteringOptions,
   clusterStylingFunction,
 } from './ClusterMarker';
+export {
+  createCurrentLocationMarker,
+  updateCurrentLocationMarker,
+} from './CurrentLocationMarker';

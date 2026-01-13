@@ -53,6 +53,17 @@ function MapContent() {
     return DEFAULT_CENTER;
   }, [location]);
 
+  // 현재 위치 마커용 좌표
+  const userLocation = useMemo<MapPosition | null>(() => {
+    if (location) {
+      return {
+        lat: location.latitude,
+        lng: location.longitude,
+      };
+    }
+    return null;
+  }, [location]);
+
   // 실제 표시할 중심 좌표 (사용자가 지도를 움직이면 mapCenter, 아니면 initialCenter)
   const displayCenter = mapCenter ?? initialCenter;
 
@@ -118,6 +129,7 @@ function MapContent() {
         zoom={zoom}
         shops={mockMapShops}
         selectedShopId={selectedShop?.shopId}
+        userLocation={userLocation}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}
         onShopClick={handleShopClick}

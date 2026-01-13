@@ -8,6 +8,10 @@ import {
   updateMarkerToSelected,
 } from './ShopMarker';
 import { createClusteringOptions } from './ClusterMarker';
+import {
+  createCurrentLocationMarker,
+  updateCurrentLocationMarker,
+} from './CurrentLocationMarker';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 
 // 서울 홍대입구역 기본 좌표
@@ -23,6 +27,7 @@ interface NaverMapViewProps {
   zoom?: number;
   shops?: MapShopItem[];
   selectedShopId?: number;
+  userLocation?: MapPosition | null; // 현재 사용자 위치
   onCenterChanged?: (center: MapPosition) => void;
   onZoomChanged?: (zoom: number) => void;
   onShopClick?: (shop: MapShopItem) => void;
@@ -34,6 +39,7 @@ export default function NaverMapView({
   zoom = DEFAULT_ZOOM,
   shops = [],
   selectedShopId,
+  userLocation,
   onCenterChanged,
   onZoomChanged,
   onShopClick,
@@ -53,6 +59,8 @@ export default function NaverMapView({
     new Map()
   );
   const prevSelectedShopIdRef = useRef<number | undefined>(undefined);
+  // 현재 위치 마커
+  const currentLocationMarkerRef = useRef<naver.maps.Marker | null>(null);
 
   // 콜백을 ref로 관리하여 최신 값 유지
   const onCenterChangedRef = useRef(onCenterChanged);
@@ -132,6 +140,12 @@ export default function NaverMapView({
       // 마커 제거
       markersRef.current.forEach((marker) => marker.setMap(null));
       markersRef.current = [];
+
+      // 현재 위치 마커 제거
+      if (currentLocationMarkerRef.current) {
+        currentLocationMarkerRef.current.setMap(null);
+        currentLocationMarkerRef.current = null;
+      }
 
       // 이벤트 리스너 제거
       listenersRef.current.forEach((listener) => {
@@ -235,6 +249,29 @@ export default function NaverMapView({
       mapInstance.setZoom(zoom);
     }
   }, [mapInstance, zoom]);
+
+  // 현재 위치 마커 생성/업데이트
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    if (userLocation) {
+      if (currentLocationMarkerRef.current) {
+        // 기존 마커 위치 업데이트
+        updateCurrentLocationMarker(currentLocationMarkerRef.current, userLocation);
+      } else {
+        // 새 마커 생성
+        const marker = createCurrentLocationMarker(userLocation);
+        marker.setMap(mapInstance);
+        currentLocationMarkerRef.current = marker;
+      }
+    } else {
+      // 위치 정보가 없으면 마커 제거
+      if (currentLocationMarkerRef.current) {
+        currentLocationMarkerRef.current.setMap(null);
+        currentLocationMarkerRef.current = null;
+      }
+    }
+  }, [mapInstance, userLocation]);
 
   if (!isLoaded) {
     return (

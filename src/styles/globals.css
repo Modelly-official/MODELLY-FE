@@ -111,6 +111,45 @@
   .animate-slide-up {
     animation: slide-up 0.3s ease-out;
   }
+
+  /* Current Location Marker Pulse Animation */
+  @keyframes location-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes accuracy-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.15;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.25;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.15;
+    }
+  }
+
+  .current-location-pulse {
+    animation: location-pulse 2s ease-in-out infinite;
+  }
+
+  .current-location-accuracy {
+    animation: accuracy-pulse 2s ease-in-out infinite;
+  }
 }
 
 /* Custom Utilities - Tailwind v4 @utility 디렉티브 사용 */
