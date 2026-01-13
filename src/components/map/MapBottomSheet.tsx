@@ -28,6 +28,10 @@ interface MapBottomSheetProps {
   onSubCategoryChange: (subCategory: SubCategory | 'ALL') => void;
   onSortChange: (sortOption: SortOption) => void;
   onHeightChange?: (height: number) => void;
+  // 무한 스크롤 props
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  onLoadMore?: () => void;
   children: React.ReactNode;
 }
 
@@ -40,6 +44,9 @@ export default function MapBottomSheet({
   onSubCategoryChange,
   onSortChange,
   onHeightChange,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMore,
   children,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<BottomSheetState>('min');
@@ -47,6 +54,7 @@ export default function MapBottomSheet({
   const [dragStartY, setDragStartY] = useState(0);
   const [currentHeight, setCurrentHeight] = useState(SHEET_HEIGHTS.min);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // 상태에 따른 높이 계산
   const getHeightForState = (state: BottomSheetState): number => {
@@ -158,6 +166,20 @@ export default function MapBottomSheet({
     onHeightChange?.(displayHeight);
   }, [displayHeight, onHeightChange]);
 
+  // 스크롤 끝 감지
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || !onLoadMore) return;
+    // 다음 페이지가 없거나 로딩 중이면 무시
+    if (!hasNextPage || isFetchingNextPage) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    // 스크롤이 끝에서 100px 이내면 다음 페이지 로드
+    if (scrollHeight - scrollTop - clientHeight < 100) {
+      onLoadMore();
+    }
+  }, [onLoadMore, hasNextPage, isFetchingNextPage]);
+
   return (
     <div
       ref={sheetRef}
@@ -216,10 +238,12 @@ export default function MapBottomSheet({
 
       {/* 리스트 영역 */}
       <div
+        ref={scrollRef}
         className="scrollbar-hide overflow-y-auto px-4"
         style={{
           height: `calc(${displayHeight}vh - 200px)`,
         }}
+        onScroll={handleScroll}
       >
         {children}
       </div>

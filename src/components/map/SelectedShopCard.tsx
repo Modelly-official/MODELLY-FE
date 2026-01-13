@@ -33,6 +33,7 @@ interface SelectedShopCardProps {
 }
 
 export default function SelectedShopCard({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shop: _shop, // TODO: API 연결 시 샵 정보로 공고 조회
   recruitment,
   onClose,

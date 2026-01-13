@@ -12,8 +12,8 @@ import {
 } from '@/src/components/map';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useMapShops } from '@/src/hooks/queries/map/useMapShops';
+import { useRecruitments } from '@/src/hooks/queries/explore/useRecruitments';
 import { useToast } from '@/src/hooks/common/useToast';
-import { mockRecruitmentItems } from '@/src/mocks/explore';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
 
@@ -62,16 +62,46 @@ function MapContent() {
     return null;
   }, [manualSearchCenter, location, isLocationLoading]);
 
-  // 지도 샵 목록 조회 API
+  // 지도 샵 목록 조회 API (전체 카테고리 표시)
   const { data: shopsData, isLoading: isShopsLoading } = useMapShops({
     userLatitude: searchCenter?.lat,
     userLongitude: searchCenter?.lng,
-    category,
+    // category 미전달 시 전체 표시
     enabled: !!searchCenter,
   });
 
   // 샵 목록 (API 응답 또는 빈 배열)
   const shops = shopsData?.result ?? [];
+
+  // 공고 목록 조회 API (무한 스크롤)
+  const {
+    data: recruitmentsData,
+    isLoading: isRecruitmentsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useRecruitments({
+    category,
+    subCategory: subCategory !== 'ALL' ? subCategory : undefined,
+    sortOption,
+    userLatitude: searchCenter?.lat,
+    userLongitude: searchCenter?.lng,
+    enabled: !!searchCenter,
+    mockEndpoint: 'mapRecruitments', // map 전용 mock 설정
+  });
+
+  // 공고 목록 (전체 페이지 합침 + 중복 제거)
+  const recruitments = useMemo(() => {
+    if (!recruitmentsData?.pages) return [];
+    const allItems = recruitmentsData.pages.flatMap((page) => page.result.items);
+    // recruitmentId 기준 중복 제거
+    const seen = new Set<number>();
+    return allItems.filter((item) => {
+      if (seen.has(item.recruitmentId)) return false;
+      seen.add(item.recruitmentId);
+      return true;
+    });
+  }, [recruitmentsData]);
 
   // 사용자 위치가 있으면 해당 위치, 없으면 기본 좌표
   const initialCenter = useMemo<MapPosition>(() => {
@@ -137,22 +167,13 @@ function MapContent() {
     }
   }, [location, requestLocation]);
 
-  // 카테고리별 필터링된 공고 리스트 (mock)
-  const filteredRecruitments = useMemo(() => {
-    return mockRecruitmentItems.filter((item) => {
-      // 카테고리 필터
-      if (item.category !== category) return false;
-      // 서브카테고리 필터
-      if (subCategory !== 'ALL' && !item.subCategories.includes(subCategory)) return false;
-      return true;
-    });
-  }, [category, subCategory]);
-
-  // 선택된 샵에 해당하는 공고 찾기 (mock - 같은 카테고리의 첫 번째 공고)
+  // 선택된 샵에 해당하는 공고 찾기 (같은 카테고리의 첫 번째 공고)
+  // TODO: 추후 designerId 기반 공고 조회 API가 있으면 교체
   const selectedRecruitment = useMemo(() => {
-    if (!selectedShop) return null;
-    return mockRecruitmentItems.find((item) => item.category === selectedShop.category) ?? null;
-  }, [selectedShop]);
+    if (!selectedShop || recruitments.length === 0) return null;
+    // 현재는 같은 카테고리의 첫 번째 공고 반환
+    return recruitments.find((item) => item.category === selectedShop.category) ?? recruitments[0] ?? null;
+  }, [selectedShop, recruitments]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -179,10 +200,10 @@ function MapContent() {
       />
 
       {/* 위치 로딩 중 표시 */}
-      {(isLocationLoading || isShopsLoading) && (
+      {(isLocationLoading || isShopsLoading || isRecruitmentsLoading) && (
         <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 shadow-md">
           <span className="text-body-2-medium text-gray-700">
-            {isLocationLoading ? '현재 위치를 가져오는 중...' : '샵을 검색하는 중...'}
+            {isLocationLoading ? '현재 위치를 가져오는 중...' : isShopsLoading ? '샵을 검색하는 중...' : '공고를 불러오는 중...'}
           </span>
         </div>
       )}
@@ -200,20 +221,28 @@ function MapContent() {
           category={category}
           subCategory={subCategory}
           sortOption={sortOption}
-          totalCount={filteredRecruitments.length}
+          totalCount={recruitments.length}
           onCategoryChange={setCategory}
           onSubCategoryChange={setSubCategory}
           onSortChange={setSortOption}
           onHeightChange={setBottomSheetHeight}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={fetchNextPage}
         >
           {/* 공고 리스트 - 세로 스크롤 */}
           <div className="flex flex-col gap-4">
-            {filteredRecruitments.map((recruitment) => (
+            {recruitments.map((recruitment) => (
               <MapRecruitmentCard
                 key={recruitment.recruitmentId}
                 recruitment={recruitment}
               />
             ))}
+            {isFetchingNextPage && (
+              <div className="py-3 text-center">
+                <span className="text-body-2-medium text-gray-600">불러오는 중...</span>
+              </div>
+            )}
           </div>
         </MapBottomSheet>
       )}
