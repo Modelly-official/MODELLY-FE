@@ -144,8 +144,38 @@ declare namespace naver.maps {
   type Bounds = LatLngBounds;
 }
 
+// Marker 클래스 확장 (getElement 메서드 추가)
+declare namespace naver.maps {
+  interface Marker {
+    getElement(): HTMLElement;
+  }
+}
+
+// MarkerClustering 라이브러리 타입
+interface MarkerClusteringOptions {
+  minClusterSize?: number;
+  maxZoom?: number;
+  map: naver.maps.Map;
+  markers: naver.maps.Marker[];
+  disableClickZoom?: boolean;
+  gridSize?: number;
+  icons?: naver.maps.HtmlIcon[];
+  indexGenerator?: number[];
+  stylingFunction?: (clusterMarker: naver.maps.Marker, count: number) => void;
+}
+
+declare class MarkerClustering {
+  constructor(options: MarkerClusteringOptions);
+  setMap(map: naver.maps.Map | null): void;
+  getMap(): naver.maps.Map | null;
+  setMarkers(markers: naver.maps.Marker[]): void;
+  getMarkers(): naver.maps.Marker[];
+  redraw(): void;
+}
+
 declare global {
   interface Window {
     naver: typeof naver;
+    MarkerClustering: typeof MarkerClustering;
   }
 }
