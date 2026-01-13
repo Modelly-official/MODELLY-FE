@@ -7,6 +7,7 @@ import type { ReservationInfo } from '@/src/types/reservation';
 
 interface ChatReservationSummaryCardProps {
   reservation: ReservationInfo;
+  viewerRole?: string | null;
   onChange: () => void;
   onCancel: () => void;
   isChangeLoading?: boolean;
@@ -16,6 +17,7 @@ interface ChatReservationSummaryCardProps {
 
 export default function ChatReservationSummaryCard({
   reservation,
+  viewerRole,
   onChange,
   onCancel,
   isChangeLoading = false,
@@ -27,10 +29,15 @@ export default function ChatReservationSummaryCard({
   const timeLabel = formatTimeWithPeriod(reservation.startTime).replace(' ', '');
   const { monthDay, weekday } = getDateBadge(reservation.date);
   const canOpenRecruitment = reservation.recruitmentId != null;
+  const normalizedRole = viewerRole?.toLowerCase();
+  const recruitmentPath =
+    normalizedRole === 'designer'
+      ? `/myRecruitment/${reservation.recruitmentId}`
+      : `/post/${reservation.recruitmentId}`;
 
   const handleRecruitmentClick = () => {
     if (!canOpenRecruitment) return;
-    router.push(`/myRecruitment/${reservation.recruitmentId}`);
+    router.push(recruitmentPath);
   };
 
   return (

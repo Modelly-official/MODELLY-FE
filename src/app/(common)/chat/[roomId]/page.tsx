@@ -211,6 +211,7 @@ export default function ChatRoom() {
             <div className="px-5 pt-3">
               <ChatReservationSummaryCard
                 reservation={confirmedReservationInfo}
+                viewerRole={userRole}
                 onChange={() => setIsChangeModalOpen(true)}
                 onCancel={() => handleOpenCancelModal()}
                 isChangeLoading={requestChange.isPending}
