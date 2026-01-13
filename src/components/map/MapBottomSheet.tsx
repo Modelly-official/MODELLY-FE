@@ -1,0 +1,217 @@
+'use client';
+
+import { useRef, useState, useCallback, useEffect } from 'react';
+import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
+import type { BottomSheetState } from '@/src/types/map';
+import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
+import { CategoryTabs, SubCategoryChips, SortDropdown } from '@/src/components/explore';
+
+// BottomSheet 높이 설정 (vh 기준)
+const SHEET_HEIGHTS = {
+  min: 15, // 최소 높이 (핸들 + 타이틀만)
+  mid: 50, // 중간 높이
+  max: 90, // 최대 높이 (전체 화면)
+};
+
+// 드래그 임계값 (px)
+const DRAG_THRESHOLD = 50;
+
+interface MapBottomSheetProps {
+  category: Category;
+  subCategory: SubCategory | 'ALL';
+  sortOption: SortOption;
+  totalCount: number;
+  onCategoryChange: (category: Category) => void;
+  onSubCategoryChange: (subCategory: SubCategory | 'ALL') => void;
+  onSortChange: (sortOption: SortOption) => void;
+  children: React.ReactNode;
+}
+
+export default function MapBottomSheet({
+  category,
+  subCategory,
+  sortOption,
+  totalCount,
+  onCategoryChange,
+  onSubCategoryChange,
+  onSortChange,
+  children,
+}: MapBottomSheetProps) {
+  const [sheetState, setSheetState] = useState<BottomSheetState>('mid');
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [currentHeight, setCurrentHeight] = useState(SHEET_HEIGHTS.mid);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  // 상태에 따른 높이 계산
+  const getHeightForState = (state: BottomSheetState): number => {
+    return SHEET_HEIGHTS[state];
+  };
+
+  // 드래그 시작
+  const handleDragStart = useCallback(
+    (clientY: number) => {
+      setIsDragging(true);
+      setDragStartY(clientY);
+    },
+    []
+  );
+
+  // 드래그 중
+  const handleDragMove = useCallback(
+    (clientY: number) => {
+      if (!isDragging) return;
+
+      const deltaY = dragStartY - clientY;
+      const deltaVh = (deltaY / window.innerHeight) * 100;
+      const newHeight = Math.max(
+        SHEET_HEIGHTS.min,
+        Math.min(SHEET_HEIGHTS.max, getHeightForState(sheetState) + deltaVh)
+      );
+      setCurrentHeight(newHeight);
+    },
+    [isDragging, dragStartY, sheetState]
+  );
+
+  // 드래그 종료
+  const handleDragEnd = useCallback(() => {
+    if (!isDragging) return;
+
+    setIsDragging(false);
+    const deltaVh = currentHeight - getHeightForState(sheetState);
+
+    // 드래그 임계값에 따라 상태 변경
+    if (deltaVh > (DRAG_THRESHOLD / window.innerHeight) * 100) {
+      // 위로 드래그
+      if (sheetState === 'min') {
+        setSheetState('mid');
+        setCurrentHeight(SHEET_HEIGHTS.mid);
+      } else if (sheetState === 'mid') {
+        setSheetState('max');
+        setCurrentHeight(SHEET_HEIGHTS.max);
+      }
+    } else if (deltaVh < -(DRAG_THRESHOLD / window.innerHeight) * 100) {
+      // 아래로 드래그
+      if (sheetState === 'max') {
+        setSheetState('mid');
+        setCurrentHeight(SHEET_HEIGHTS.mid);
+      } else if (sheetState === 'mid') {
+        setSheetState('min');
+        setCurrentHeight(SHEET_HEIGHTS.min);
+      }
+    } else {
+      // 원래 상태로 복귀
+      setCurrentHeight(getHeightForState(sheetState));
+    }
+  }, [isDragging, currentHeight, sheetState]);
+
+  // 터치 이벤트 핸들러
+  const handleTouchStart = (e: React.TouchEvent) => {
+    handleDragStart(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    handleDragMove(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    handleDragEnd();
+  };
+
+  // 마우스 이벤트 핸들러
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleDragStart(e.clientY);
+  };
+
+  // 글로벌 마우스 이벤트
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      handleDragMove(e.clientY);
+    };
+
+    const handleMouseUp = () => {
+      handleDragEnd();
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, handleDragMove, handleDragEnd]);
+
+  // 현재 높이 (드래그 중이면 currentHeight, 아니면 상태에 따른 높이)
+  const displayHeight = isDragging ? currentHeight : getHeightForState(sheetState);
+
+  return (
+    <div
+      ref={sheetRef}
+      className="absolute right-0 bottom-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
+      style={{
+        height: `${displayHeight}vh`,
+        transition: isDragging ? 'none' : 'height 0.3s ease-out',
+      }}
+    >
+      {/* 드래그 핸들 */}
+      <div
+        className="flex cursor-grab justify-center pt-3 pb-2 active:cursor-grabbing"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+      >
+        <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />
+      </div>
+
+      {/* 타이틀 */}
+      <div className="px-4 py-1">
+        <h2 className="text-head-4-semibold text-gray-900">공고 리스트</h2>
+      </div>
+
+      {/* 카테고리 탭 */}
+      <CategoryTabs
+        categories={CATEGORIES}
+        selectedCategory={category}
+        onCategoryChange={(cat) => onCategoryChange(cat as Category)}
+      />
+
+      {/* 필터 영역 */}
+      <div className="flex flex-col gap-3 px-4 py-3">
+        {/* 서브 카테고리 칩 */}
+        <SubCategoryChips
+          subCategories={SUB_CATEGORIES_BY_CATEGORY[category]}
+          selectedSubCategory={subCategory}
+          onSubCategoryChange={(sub) => onSubCategoryChange(sub as SubCategory | 'ALL')}
+        />
+
+        {/* 총 개수 및 정렬 */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <span className="text-body-2-medium text-black">전체</span>
+            <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+          </div>
+          <SortDropdown
+            sortOptions={SORT_OPTIONS}
+            selectedSort={sortOption}
+            onSortChange={(s) => onSortChange(s as SortOption)}
+          />
+        </div>
+      </div>
+
+      {/* 리스트 영역 */}
+      <div
+        className="scrollbar-hide overflow-y-auto px-4"
+        style={{
+          height: `calc(${displayHeight}vh - 200px)`,
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
