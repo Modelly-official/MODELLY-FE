@@ -35,3 +35,6 @@ export * from './likes';
 
 // Review types
 export * from './review';
+
+// Map types
+export * from './map';

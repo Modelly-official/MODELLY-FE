@@ -5,6 +5,7 @@ export const API_CONFIG = {
     recruitmentDetail: false,
     designers: false,
     designerRecruitments: false,
+    mapShops: false,
   },
 } as const;
 

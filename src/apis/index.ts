@@ -3,6 +3,7 @@ export * from './chat';
 export * from './designer';
 export * from './explore';
 export * from './likes';
+export * from './map';
 export * from './reservation';
 export * from './review';
 export * from './mypage';
