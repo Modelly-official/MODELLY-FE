@@ -4,6 +4,7 @@ import type { Category, SubCategory, SortOption } from '../recruitment';
 
 // ===== 지도 샵 아이템 (마커용) =====
 export interface MapShopItem {
+  shopId: number;
   designerId: number;
   shopName: string;
   category: Category;
