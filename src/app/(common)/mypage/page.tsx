@@ -123,7 +123,7 @@ export default function MypagePage() {
             isLoading={isLoading}
           />
           <MyMenuCard actions={quickActions} />
-          <MenuList items={SETTING_LINKS.map((label) => ({ label }))} />
+          <MenuList items={[...SETTING_LINKS]} />
           <div className="-mx-4 h-2 bg-gray-200" />
           <MenuList items={accountMenuItems} />
         </div>

@@ -1,7 +1,10 @@
 // 마이페이지 관련 상수
 
 /** 설정 메뉴 항목 */
-export const SETTING_LINKS = ['알람설정', '고객센터/FAQ'] as const;
+export const SETTING_LINKS = [
+  { label: '알람설정', href: '/mypage/notification-settings' },
+  { label: '고객센터/FAQ' },
+] as const;
 
 /** 계정 메뉴 항목 */
 export const ACCOUNT_LINKS = ['계정 추가하기', '로그아웃', '탈퇴하기'] as const;
