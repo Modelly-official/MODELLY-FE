@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useNaverMap } from '@/src/providers/NaverMapProvider';
-import { createShopMarkers, removeMarkers } from './ShopMarker';
+import { createShopMarkersForClustering } from './ShopMarker';
+import { createClusteringOptions } from './ClusterMarker';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 
 // 서울 홍대입구역 기본 좌표
@@ -36,6 +37,7 @@ export default function NaverMapView({
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<naver.maps.Map | null>(null);
   const markersRef = useRef<naver.maps.Marker[]>([]);
+  const clusteringRef = useRef<MarkerClustering | null>(null);
   const listenersRef = useRef<naver.maps.MapEventListener[]>([]);
   const isUserInteractionRef = useRef(false);
   const lastCenterRef = useRef<MapPosition>(center);
@@ -94,8 +96,14 @@ export default function NaverMapView({
   // 지도 인스턴스 cleanup
   useEffect(() => {
     return () => {
+      // 클러스터링 제거
+      if (clusteringRef.current) {
+        clusteringRef.current.setMap(null);
+        clusteringRef.current = null;
+      }
+
       // 마커 제거
-      removeMarkers(markersRef.current);
+      markersRef.current.forEach((marker) => marker.setMap(null));
       markersRef.current = [];
 
       // 이벤트 리스너 제거
@@ -110,15 +118,36 @@ export default function NaverMapView({
     };
   }, [mapInstance]);
 
-  // shops 변경 시 마커 업데이트
+  // shops 변경 시 마커 및 클러스터링 업데이트
   useEffect(() => {
     if (!mapInstance) return;
 
-    // 기존 마커 제거
-    removeMarkers(markersRef.current);
+    // 기존 클러스터링 제거
+    if (clusteringRef.current) {
+      clusteringRef.current.setMap(null);
+      clusteringRef.current = null;
+    }
 
-    // 새 마커 생성
-    markersRef.current = createShopMarkers(shops, mapInstance, onShopClick);
+    // 기존 마커 제거
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
+
+    // 새 마커 생성 (map에 추가하지 않음 - 클러스터링이 관리)
+    const markers = createShopMarkersForClustering(shops, onShopClick);
+    markersRef.current = markers;
+
+    // 클러스터링 생성
+    if (markers.length > 0) {
+      const clusteringOptions = createClusteringOptions({
+        map: mapInstance,
+        markers,
+        minClusterSize: 2,
+        maxZoom: 16,
+        gridSize: 120,
+      });
+
+      clusteringRef.current = new MarkerClustering(clusteringOptions);
+    }
   }, [mapInstance, shops, onShopClick]);
 
   // center prop 변경 감지 (외부에서 변경 시에만 지도 이동)

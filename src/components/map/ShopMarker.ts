@@ -106,6 +106,33 @@ export function createShopMarkers(
   return shops.map((shop) => createShopMarker({ shop, map, onClick }));
 }
 
+// 클러스터링용 마커 생성 (map에 추가하지 않음)
+export function createShopMarkersForClustering(
+  shops: MapShopItem[],
+  onClick?: (shop: MapShopItem) => void
+): naver.maps.Marker[] {
+  return shops.map((shop) => {
+    const position = new naver.maps.LatLng(shop.shopLatitude, shop.shopLongitude);
+
+    const marker = new naver.maps.Marker({
+      position,
+      icon: {
+        content: createMarkerHtml(shop.category),
+        size: new naver.maps.Size(MARKER_WIDTH, MARKER_HEIGHT),
+        anchor: new naver.maps.Point(MARKER_WIDTH / 2, MARKER_HEIGHT),
+      },
+    });
+
+    if (onClick) {
+      naver.maps.Event.addListener(marker, 'click', () => {
+        onClick(shop);
+      });
+    }
+
+    return marker;
+  });
+}
+
 // 마커 제거
 export function removeMarkers(markers: naver.maps.Marker[]): void {
   markers.forEach((marker) => {
