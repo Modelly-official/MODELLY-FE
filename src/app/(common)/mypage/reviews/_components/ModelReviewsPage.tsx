@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
-import BellIcon from '@/public/icons/designer-home/bell.svg';
 import { useUnreviewedReservations, useWrittenReviews, useDeleteReview } from '@/src/hooks/queries/review';
 import {
   ReviewTabs,
@@ -91,13 +90,7 @@ export default function ModelReviewsPage() {
           <ArrowLeftIcon className="text-black" />
         </button>
         <h1 className="text-head-4-medium text-center text-black">나의 리뷰</h1>
-        <button
-          type="button"
-          className="flex size-6 cursor-pointer items-center justify-center"
-          aria-label="알림"
-        >
-          <BellIcon className="text-black" />
-        </button>
+        <div className="size-6" />
       </header>
 
       {/* 탭 */}
