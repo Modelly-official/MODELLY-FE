@@ -33,7 +33,6 @@ function createMarkerHtml(category: Category): string {
       height: ${MARKER_HEIGHT}px;
       cursor: pointer;
     ">
-      <!-- Union 배경 (말풍선 모양) -->
       <img
         src="${MARKER_UNION_PATH}"
         width="${MARKER_WIDTH}"
@@ -41,7 +40,6 @@ function createMarkerHtml(category: Category): string {
         alt=""
         style="position: absolute; top: 0; left: 0;"
       />
-      <!-- 원형 아이콘 배경 -->
       <div style="
         position: absolute;
         top: 5px;

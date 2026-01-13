@@ -5,12 +5,13 @@ import { NaverMapProvider } from '@/src/providers/NaverMapProvider';
 import { NaverMapView } from '@/src/components/map';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useToast } from '@/src/hooks/common/useToast';
-import type { MapPosition } from '@/src/types/map';
+import { mockMapShops } from '@/src/mocks/map';
+import type { MapPosition, MapShopItem } from '@/src/types/map';
 
-// 서울 강남역 기본 좌표
+// 서울 홍대입구역 기본 좌표
 const DEFAULT_CENTER: MapPosition = {
-  lat: 37.4979,
-  lng: 127.0276,
+  lat: 37.5571,
+  lng: 126.9236,
 };
 
 function MapContent() {
@@ -45,14 +46,21 @@ function MapContent() {
     setZoom(newZoom);
   };
 
+  const handleShopClick = (shop: MapShopItem) => {
+    // TODO: 샵 클릭 시 처리 (BottomSheet 열기 등)
+    showToast(`${shop.shopName} 클릭`, 'success');
+  };
+
   return (
     <div className="relative h-screen w-full">
       {/* 지도 */}
       <NaverMapView
         center={displayCenter}
         zoom={zoom}
+        shops={mockMapShops}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}
+        onShopClick={handleShopClick}
       />
 
       {/* 위치 로딩 중 표시 */}
