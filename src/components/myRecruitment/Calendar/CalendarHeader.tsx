@@ -22,7 +22,7 @@ export default function CalendarHeader({ year, month, onPrevMonth, onNextMonth }
         className="flex h-8 w-8 items-center justify-center"
         aria-label="이전 달"
       >
-        <ArrowLeftIcon className="h-4 w-[9px] cursor-pointer" />
+        <ArrowLeftIcon className="size-5 cursor-pointer" />
       </button>
 
       <span className="text-head-2-semibold text-gray-900">
@@ -35,7 +35,7 @@ export default function CalendarHeader({ year, month, onPrevMonth, onNextMonth }
         className="flex h-8 w-8 items-center justify-center"
         aria-label="다음 달"
       >
-        <ArrowRightIcon className="h-4 w-[9px] cursor-pointer" />
+        <ArrowRightIcon className="size-5 cursor-pointer" />
       </button>
     </div>
   );

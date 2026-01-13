@@ -31,5 +31,9 @@ export const DESIGNER_ONLY_ROUTES = [
 
 // ===== 인증된 사용자 공통 라우트 =====
 export const AUTHENTICATED_ROUTES: string[] = [
-  // 추후 인증 필요 공통 페이지 추가 시 사용
+  '/mypage/profile',               // 프로필 수정
+  '/mypage/likes',                 // 찜 목록
+  '/mypage/reservations',          // 예약 내역
+  '/mypage/reviews',               // 나의 리뷰
+  '/mypage/notification-settings', // 알림 설정
 ];

@@ -95,7 +95,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
       {/* 헤더 영역 */}
       <div className="flex h-[52px] items-center justify-between px-4 py-3">
         <button type="button" onClick={goPrev} className="flex size-6 cursor-pointer items-center justify-center">
-          <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
+          <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={24} height={24} />
         </button>
         <h1 className="text-head-4-medium text-black">{isEdit ? '모집글 수정' : '모집글 등록'}</h1>
         <div className="size-6" />
@@ -204,13 +204,17 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
           type="button"
           onClick={goNext}
           disabled={!isSubmitButtonEnabled || isSubmitting}
-          className={`text-body-1-semibold w-full rounded-full py-4 ${
+          className={`text-body-1-semibold flex w-full items-center justify-center rounded-full py-4 ${
             isSubmitButtonEnabled && !isSubmitting
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
-          {isSubmitting ? (isEdit ? '수정 중...' : '등록 중...') : (isEdit ? '모집글 수정' : '새 모집글 등록')}
+          {isSubmitting ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            isEdit ? '모집글 수정' : '새 모집글 등록'
+          )}
         </button>
       </div>
     </div>

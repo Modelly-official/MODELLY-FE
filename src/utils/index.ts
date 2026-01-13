@@ -4,3 +4,4 @@ export * from './common';
 export * from './debug';
 export * from './chat';
 export * from './myRecruitment';
+export * from './mypage';

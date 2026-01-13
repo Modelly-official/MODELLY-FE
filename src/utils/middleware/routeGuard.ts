@@ -16,12 +16,17 @@ function matchRoute(pathname: string, route: string): boolean {
   return pathname.startsWith(route + '/');
 }
 
+// 정확 매칭만 허용하는 라우트 (하위 경로는 인증 필요)
+const EXACT_MATCH_ROUTES = ['/mypage'];
+
 /**
  * 공개 라우트 확인
  */
 export function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => {
     if (route === '/') return pathname === '/';
+    // 정확 매칭만 허용하는 라우트
+    if (EXACT_MATCH_ROUTES.includes(route)) return pathname === route;
     return matchRoute(pathname, route);
   });
 }

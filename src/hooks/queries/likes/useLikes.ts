@@ -4,6 +4,7 @@ import { useAuthStore } from '@/src/stores';
 import { useToast } from '@/src/hooks/common/useToast';
 import { recruitmentKeys } from '../explore/useRecruitments';
 import { designerKeys } from '../explore/useDesigners';
+import { likedListKeys } from './useLikedList';
 import type { ApiResponse } from '@/src/types';
 
 /**
@@ -27,6 +28,8 @@ export function useToggleRecruitmentLike() {
       // 목록 및 상세 쿼리 모두 갱신
       queryClient.invalidateQueries({ queryKey: recruitmentKeys.lists() });
       queryClient.invalidateQueries({ queryKey: recruitmentKeys.detail(recruitmentId) });
+      // 찜 목록 갱신
+      queryClient.invalidateQueries({ queryKey: likedListKeys.recruitments() });
     },
   });
 }
@@ -52,6 +55,8 @@ export function useToggleDesignerLike() {
       // 목록 및 상세 쿼리 모두 갱신
       queryClient.invalidateQueries({ queryKey: designerKeys.lists() });
       queryClient.invalidateQueries({ queryKey: designerKeys.detail(designerId) });
+      // 찜 목록 갱신
+      queryClient.invalidateQueries({ queryKey: likedListKeys.designers() });
     },
   });
 }

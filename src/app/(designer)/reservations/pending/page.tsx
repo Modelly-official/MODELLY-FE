@@ -31,7 +31,7 @@ export default function PendingReservationsPage() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="h-4 text-black" />
+          <ArrowLeftIcon className="size-6 text-black" />
         </button>
         <h1 className="text-head-4-medium text-black">예약 신청</h1>
         {/* 우측 여백 맞춤용 */}
