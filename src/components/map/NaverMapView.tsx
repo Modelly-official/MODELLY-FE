@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useNaverMap } from '@/src/providers/NaverMapProvider';
-import { createShopMarkersForClustering } from './ShopMarker';
+import {
+  createShopMarkersForClustering,
+  updateMarkerToDefault,
+  updateMarkerToSelected,
+} from './ShopMarker';
 import { createClusteringOptions } from './ClusterMarker';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 
@@ -18,6 +22,7 @@ interface NaverMapViewProps {
   center?: MapPosition;
   zoom?: number;
   shops?: MapShopItem[];
+  selectedShopId?: number;
   onCenterChanged?: (center: MapPosition) => void;
   onZoomChanged?: (zoom: number) => void;
   onShopClick?: (shop: MapShopItem) => void;
@@ -28,6 +33,7 @@ export default function NaverMapView({
   center = DEFAULT_CENTER,
   zoom = DEFAULT_ZOOM,
   shops = [],
+  selectedShopId,
   onCenterChanged,
   onZoomChanged,
   onShopClick,
@@ -42,6 +48,11 @@ export default function NaverMapView({
   const lastCenterRef = useRef<MapPosition>(center);
   // 초기 로드 시 idle 이벤트 무시를 위해 true로 시작
   const isProgrammaticMoveRef = useRef(true);
+  // 샵 ID로 마커와 샵 정보를 추적
+  const shopMarkerMapRef = useRef<Map<number, { marker: naver.maps.Marker; shop: MapShopItem }>>(
+    new Map()
+  );
+  const prevSelectedShopIdRef = useRef<number | undefined>(undefined);
 
   // 콜백을 ref로 관리하여 최신 값 유지
   const onCenterChangedRef = useRef(onCenterChanged);
@@ -147,10 +158,19 @@ export default function NaverMapView({
     // 기존 마커 제거
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
+    shopMarkerMapRef.current.clear();
 
     // 새 마커 생성 (map에 추가하지 않음 - 클러스터링이 관리)
     const markers = createShopMarkersForClustering(shops, onShopClick);
     markersRef.current = markers;
+
+    // shopMarkerMap 구축
+    shops.forEach((shop, index) => {
+      shopMarkerMapRef.current.set(shop.shopId, {
+        marker: markers[index],
+        shop,
+      });
+    });
 
     // 클러스터링 생성
     if (markers.length > 0) {
@@ -165,6 +185,33 @@ export default function NaverMapView({
       clusteringRef.current = new MarkerClustering(clusteringOptions);
     }
   }, [mapInstance, shops, onShopClick]);
+
+  // selectedShopId 변경 시 마커 아이콘 업데이트
+  useEffect(() => {
+    const prevId = prevSelectedShopIdRef.current;
+
+    // 이전 선택된 마커를 기본 상태로 되돌림
+    if (prevId !== undefined) {
+      const prevData = shopMarkerMapRef.current.get(prevId);
+      if (prevData) {
+        updateMarkerToDefault(prevData.marker, prevData.shop.category);
+      }
+    }
+
+    // 새로 선택된 마커를 선택 상태로 변경
+    if (selectedShopId !== undefined) {
+      const selectedData = shopMarkerMapRef.current.get(selectedShopId);
+      if (selectedData) {
+        updateMarkerToSelected(
+          selectedData.marker,
+          selectedData.shop.category,
+          selectedData.shop.shopName
+        );
+      }
+    }
+
+    prevSelectedShopIdRef.current = selectedShopId;
+  }, [selectedShopId]);
 
   // center prop 변경 감지 (외부에서 변경 시에만 지도 이동)
   useEffect(() => {
