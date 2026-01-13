@@ -14,7 +14,8 @@ import { useLikeToggle } from '@/src/hooks/custom/explore';
 import { RatingDisplay, DistanceDisplay } from '@/src/components/explore/Cards/shared';
 import LocationIcon from '@/public/icons/explore/location.svg';
 import CloseIcon from '@/public/icons/map/close.svg';
-import HeartIcon from '@/public/icons/map/heart.svg';
+import HeartFilledIcon from '@/public/icons/map/heart.svg';
+import HeartOutlineIcon from '@/public/icons/map/heart-outline.svg';
 
 // BottomNav 높이 (px)
 const BOTTOM_NAV_HEIGHT = 76;
@@ -176,7 +177,11 @@ export default function SelectedShopCard({
                 onClick={handleClick}
                 className="flex size-8 cursor-pointer items-center justify-center rounded-full bg-gray-200"
               >
-                <HeartIcon className={`size-[18px] ${isLiked ? 'text-purple-500' : 'text-gray-600'}`} />
+                {isLiked ? (
+                  <HeartFilledIcon className="size-[18px] text-purple-500" />
+                ) : (
+                  <HeartOutlineIcon className="size-[18px] text-gray-600" />
+                )}
               </button>
               <button
                 type="button"
