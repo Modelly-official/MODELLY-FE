@@ -11,8 +11,8 @@ import {
   SHEET_HEIGHTS,
 } from '@/src/components/map';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
+import { useMapShops } from '@/src/hooks/queries/map/useMapShops';
 import { useToast } from '@/src/hooks/common/useToast';
-import { mockMapShops } from '@/src/mocks/map';
 import { mockRecruitmentItems } from '@/src/mocks/explore';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
@@ -37,10 +37,41 @@ function MapContent() {
   const [selectedShop, setSelectedShop] = useState<MapShopItem | null>(null);
   const [selectedCardDragOffset, setSelectedCardDragOffset] = useState(0);
 
+  // 수동 검색 좌표 ("현 지도에서 검색" 클릭 시 설정)
+  const [manualSearchCenter, setManualSearchCenter] = useState<MapPosition | null>(null);
+
   // 필터 상태
   const [category, setCategory] = useState<Category>('HAIR');
   const [subCategory, setSubCategory] = useState<SubCategory | 'ALL'>('ALL');
   const [sortOption, setSortOption] = useState<SortOption>('DISTANCE');
+
+  // 검색 기준 좌표 계산: 수동 설정 > 사용자 위치 > 기본 좌표
+  const searchCenter = useMemo<MapPosition | null>(() => {
+    // 수동으로 설정된 검색 위치가 있으면 우선
+    if (manualSearchCenter) return manualSearchCenter;
+    // 사용자 위치가 있으면 사용
+    if (location) {
+      return {
+        lat: location.latitude,
+        lng: location.longitude,
+      };
+    }
+    // 위치 로딩 완료 후에도 없으면 기본 좌표
+    if (!isLocationLoading) return DEFAULT_CENTER;
+    // 아직 로딩 중이면 null
+    return null;
+  }, [manualSearchCenter, location, isLocationLoading]);
+
+  // 지도 샵 목록 조회 API
+  const { data: shopsData, isLoading: isShopsLoading } = useMapShops({
+    userLatitude: searchCenter?.lat,
+    userLongitude: searchCenter?.lng,
+    category,
+    enabled: !!searchCenter,
+  });
+
+  // 샵 목록 (API 응답 또는 빈 배열)
+  const shops = shopsData?.result ?? [];
 
   // 사용자 위치가 있으면 해당 위치, 없으면 기본 좌표
   const initialCenter = useMemo<MapPosition>(() => {
@@ -86,11 +117,13 @@ function MapContent() {
 
   // 현 지도에서 검색
   const handleRefreshSearch = useCallback(() => {
-    // TODO: API 연결 시 현재 지도 영역 기준으로 재검색
-    setSelectedShop(null); // 선택된 샵 카드 닫기
+    // 현재 지도 중심을 검색 기준으로 설정
+    setManualSearchCenter(displayCenter);
+    setSelectedShop(null);
     setSelectedCardDragOffset(0);
+    // refetch는 searchCenter가 변경되면 자동으로 트리거됨 (queryKey 변경)
     showToast('현재 지도 영역에서 검색합니다');
-  }, [showToast]);
+  }, [displayCenter, showToast]);
 
   // 현재 위치로 이동
   const handleCurrentLocation = useCallback(() => {
@@ -127,7 +160,7 @@ function MapContent() {
       <NaverMapView
         center={displayCenter}
         zoom={zoom}
-        shops={mockMapShops}
+        shops={shops}
         selectedDesignerId={selectedShop?.designerId}
         userLocation={userLocation}
         onCenterChanged={handleCenterChanged}
@@ -146,10 +179,10 @@ function MapContent() {
       />
 
       {/* 위치 로딩 중 표시 */}
-      {isLocationLoading && (
+      {(isLocationLoading || isShopsLoading) && (
         <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 shadow-md">
           <span className="text-body-2-medium text-gray-700">
-            현재 위치를 가져오는 중...
+            {isLocationLoading ? '현재 위치를 가져오는 중...' : '샵을 검색하는 중...'}
           </span>
         </div>
       )}
