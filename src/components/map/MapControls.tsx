@@ -5,12 +5,15 @@ import RefreshIcon from '@/public/icons/map/refresh.svg';
 
 // BottomNav 높이 (px)
 const BOTTOM_NAV_HEIGHT = 76;
+// SelectedShopCard 예상 높이 (px)
+const SELECTED_CARD_HEIGHT = 340;
 
 interface MapControlsProps {
   onRefreshSearch: () => void;
   onCurrentLocation: () => void;
   showRefreshButton?: boolean;
   bottomSheetHeight: number; // vh 단위
+  isSelectedShopCard?: boolean; // SelectedShopCard 표시 여부
 }
 
 export default function MapControls({
@@ -18,7 +21,13 @@ export default function MapControls({
   onCurrentLocation,
   showRefreshButton = true,
   bottomSheetHeight,
+  isSelectedShopCard = false,
 }: MapControlsProps) {
+  // GPS 버튼 bottom 위치 계산
+  const gpsButtonBottom = isSelectedShopCard
+    ? `${BOTTOM_NAV_HEIGHT + SELECTED_CARD_HEIGHT + 18}px`
+    : `calc(${bottomSheetHeight}vh + ${BOTTOM_NAV_HEIGHT}px + 18px)`;
+
   return (
     <>
       {/* 현 지도에서 검색 버튼 - 상단 중앙 */}
@@ -33,13 +42,13 @@ export default function MapControls({
         </button>
       )}
 
-      {/* 현재 위치 버튼 - BottomSheet 상단에서 18px 위 */}
+      {/* 현재 위치 버튼 - BottomSheet/SelectedCard 상단에서 18px 위 */}
       <button
         type="button"
         onClick={onCurrentLocation}
         className="absolute right-4 z-30 cursor-pointer"
         style={{
-          bottom: `calc(${bottomSheetHeight}vh + ${BOTTOM_NAV_HEIGHT}px + 18px)`,
+          bottom: gpsButtonBottom,
           transition: 'bottom 0.1s ease-out',
         }}
       >

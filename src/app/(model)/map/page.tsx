@@ -7,6 +7,7 @@ import {
   MapBottomSheet,
   MapRecruitmentCard,
   MapControls,
+  SelectedShopCard,
   SHEET_HEIGHTS,
 } from '@/src/components/map';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
@@ -33,6 +34,7 @@ function MapContent() {
   const [mapCenter, setMapCenter] = useState<MapPosition | null>(null);
   const [zoom, setZoom] = useState(15);
   const [bottomSheetHeight, setBottomSheetHeight] = useState(SHEET_HEIGHTS.mid);
+  const [selectedShop, setSelectedShop] = useState<MapShopItem | null>(null);
 
   // 필터 상태
   const [category, setCategory] = useState<Category>('HAIR');
@@ -62,13 +64,17 @@ function MapContent() {
   }, []);
 
   const handleShopClick = useCallback((shop: MapShopItem) => {
-    // TODO: 샵 클릭 시 처리 (선택된 샵 카드 표시)
-    showToast(`${shop.shopName} 클릭`);
-  }, [showToast]);
+    setSelectedShop(shop);
+  }, []);
+
+  const handleCloseSelectedShop = useCallback(() => {
+    setSelectedShop(null);
+  }, []);
 
   // 현 지도에서 검색
   const handleRefreshSearch = useCallback(() => {
     // TODO: API 연결 시 현재 지도 영역 기준으로 재검색
+    setSelectedShop(null); // 선택된 샵 카드 닫기
     showToast('현재 지도 영역에서 검색합니다');
   }, [showToast]);
 
@@ -95,6 +101,12 @@ function MapContent() {
     });
   }, [category, subCategory]);
 
+  // 선택된 샵에 해당하는 공고 찾기 (mock - 같은 카테고리의 첫 번째 공고)
+  const selectedRecruitment = useMemo(() => {
+    if (!selectedShop) return null;
+    return mockRecruitmentItems.find((item) => item.category === selectedShop.category) ?? null;
+  }, [selectedShop]);
+
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* 지도 */}
@@ -102,6 +114,7 @@ function MapContent() {
         center={displayCenter}
         zoom={zoom}
         shops={mockMapShops}
+        selectedShopId={selectedShop?.shopId}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}
         onShopClick={handleShopClick}
@@ -113,6 +126,7 @@ function MapContent() {
         onCurrentLocation={handleCurrentLocation}
         showRefreshButton={!isLocationLoading}
         bottomSheetHeight={bottomSheetHeight}
+        isSelectedShopCard={!!selectedShop && !!selectedRecruitment}
       />
 
       {/* 위치 로딩 중 표시 */}
@@ -124,27 +138,35 @@ function MapContent() {
         </div>
       )}
 
-      {/* BottomSheet */}
-      <MapBottomSheet
-        category={category}
-        subCategory={subCategory}
-        sortOption={sortOption}
-        totalCount={filteredRecruitments.length}
-        onCategoryChange={setCategory}
-        onSubCategoryChange={setSubCategory}
-        onSortChange={setSortOption}
-        onHeightChange={setBottomSheetHeight}
-      >
-        {/* 공고 리스트 - 세로 스크롤 */}
-        <div className="flex flex-col gap-4">
-          {filteredRecruitments.map((recruitment) => (
-            <MapRecruitmentCard
-              key={recruitment.recruitmentId}
-              recruitment={recruitment}
-            />
-          ))}
-        </div>
-      </MapBottomSheet>
+      {/* 선택된 샵 카드 또는 BottomSheet */}
+      {selectedShop && selectedRecruitment ? (
+        <SelectedShopCard
+          shop={selectedShop}
+          recruitment={selectedRecruitment}
+          onClose={handleCloseSelectedShop}
+        />
+      ) : (
+        <MapBottomSheet
+          category={category}
+          subCategory={subCategory}
+          sortOption={sortOption}
+          totalCount={filteredRecruitments.length}
+          onCategoryChange={setCategory}
+          onSubCategoryChange={setSubCategory}
+          onSortChange={setSortOption}
+          onHeightChange={setBottomSheetHeight}
+        >
+          {/* 공고 리스트 - 세로 스크롤 */}
+          <div className="flex flex-col gap-4">
+            {filteredRecruitments.map((recruitment) => (
+              <MapRecruitmentCard
+                key={recruitment.recruitmentId}
+                recruitment={recruitment}
+              />
+            ))}
+          </div>
+        </MapBottomSheet>
+      )}
     </div>
   );
 }
