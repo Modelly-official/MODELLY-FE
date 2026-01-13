@@ -11,10 +11,17 @@ export const recruitmentKeys = {
   detail: (id: number) => [...recruitmentKeys.details(), id] as const,
 };
 
-interface UseRecruitmentsParams extends Omit<RecruitmentListParams, 'cursorId'> {
+interface UseRecruitmentsParams extends Omit<RecruitmentListParams, 'cursorId' | 'cursorReviewCount' | 'cursorDistance'> {
   enabled?: boolean;
   /** mock endpoint 오버라이드 (기본: 'recruitments', map에서는 'mapRecruitments') */
   mockEndpoint?: MockEndpoint;
+}
+
+// 정렬별 커서 정보
+interface CursorInfo {
+  cursorId: number;
+  cursorReviewCount?: number;
+  cursorDistance?: number;
 }
 
 /**
@@ -27,28 +34,46 @@ export function useRecruitments(params: UseRecruitmentsParams = {}) {
   return useInfiniteQuery<
     ApiResponse<RecruitmentListResponse>,
     Error,
-    { pages: ApiResponse<RecruitmentListResponse>[]; pageParams: (number | undefined)[] },
+    { pages: ApiResponse<RecruitmentListResponse>[]; pageParams: (CursorInfo | undefined)[] },
     ReturnType<typeof recruitmentKeys.list>,
-    number | undefined
+    CursorInfo | undefined
   >({
     queryKey: recruitmentKeys.list(queryParams),
     queryFn: async ({ pageParam }) => {
       return getRecruitments(
-        { ...queryParams, cursorId: pageParam },
+        {
+          ...queryParams,
+          cursorId: pageParam?.cursorId,
+          cursorReviewCount: pageParam?.cursorReviewCount,
+          cursorDistance: pageParam?.cursorDistance,
+        },
         { mockEndpoint }
       );
     },
     initialPageParam: undefined,
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.result.hasNext) return undefined;
+
+      const items = lastPage.result.items;
+      const lastItem = items[items.length - 1];
+      if (!lastItem) return undefined;
+
+      const nextCursor = lastPage.result.nextCursor;
+
       // API 버그 방어: 이전 페이지의 nextCursor와 동일하면 더 이상 데이터 없음 (무한 루프 방지)
       if (allPages.length >= 2) {
-        const prevCursor = allPages[allPages.length - 2].result.nextCursor;
-        if (prevCursor === lastPage.result.nextCursor) {
+        const prevPage = allPages[allPages.length - 2];
+        if (prevPage.result.nextCursor === nextCursor) {
           return undefined;
         }
       }
-      return lastPage.result.nextCursor;
+
+      // 정렬별 추가 커서 정보 포함
+      return {
+        cursorId: nextCursor,
+        cursorReviewCount: lastItem.reviewCount,
+        cursorDistance: lastItem.distance,
+      };
     },
     enabled,
     staleTime: 1000 * 60 * 5, // 5분
