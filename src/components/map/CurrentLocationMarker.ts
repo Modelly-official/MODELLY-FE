@@ -11,8 +11,8 @@ const ACCURACY_CIRCLE_SIZE = 80;
 const LOCATION_DOT_SIZE = 24;
 // 내부 원 크기 (px)
 const INNER_DOT_SIZE = 16;
-// 내부 원 색상 (진한 보라색)
-const INNER_DOT_COLOR = '#6366F1';
+// 내부 원 색상 (purple-700)
+const INNER_DOT_COLOR = '#5559ff';
 
 /**
  * 현재 위치 마커 HTML 생성
