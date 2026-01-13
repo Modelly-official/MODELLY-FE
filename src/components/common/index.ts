@@ -22,3 +22,6 @@ export { BaseModal, ConfirmModal, LoginRequiredModal, InstallPrompt } from './Mo
 // Skeleton Components
 export { Skeleton } from './Skeleton';
 
+// Toggle Components
+export { Toggle } from './Toggle';
+
