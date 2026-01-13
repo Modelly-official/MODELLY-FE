@@ -1,8 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { NaverMapProvider } from '@/src/providers/NaverMapProvider';
-import { NaverMapView, MapBottomSheet, MapRecruitmentCard } from '@/src/components/map';
+import {
+  NaverMapView,
+  MapBottomSheet,
+  MapRecruitmentCard,
+  MapControls,
+  SHEET_HEIGHTS,
+} from '@/src/components/map';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useToast } from '@/src/hooks/common/useToast';
 import { mockMapShops } from '@/src/mocks/map';
@@ -18,7 +24,7 @@ const DEFAULT_CENTER: MapPosition = {
 
 function MapContent() {
   const { showToast } = useToast();
-  const { location, isLoading: isLocationLoading } = useUserLocation({
+  const { location, isLoading: isLocationLoading, requestLocation } = useUserLocation({
     autoRequest: true,
     onError: (message) => showToast(message),
   });
@@ -26,6 +32,7 @@ function MapContent() {
   // 지도 상태
   const [mapCenter, setMapCenter] = useState<MapPosition | null>(null);
   const [zoom, setZoom] = useState(15);
+  const [bottomSheetHeight, setBottomSheetHeight] = useState(SHEET_HEIGHTS.mid);
 
   // 필터 상태
   const [category, setCategory] = useState<Category>('HAIR');
@@ -46,18 +53,36 @@ function MapContent() {
   // 실제 표시할 중심 좌표 (사용자가 지도를 움직이면 mapCenter, 아니면 initialCenter)
   const displayCenter = mapCenter ?? initialCenter;
 
-  const handleCenterChanged = (newCenter: MapPosition) => {
+  const handleCenterChanged = useCallback((newCenter: MapPosition) => {
     setMapCenter(newCenter);
-  };
+  }, []);
 
-  const handleZoomChanged = (newZoom: number) => {
+  const handleZoomChanged = useCallback((newZoom: number) => {
     setZoom(newZoom);
-  };
+  }, []);
 
-  const handleShopClick = (shop: MapShopItem) => {
+  const handleShopClick = useCallback((shop: MapShopItem) => {
     // TODO: 샵 클릭 시 처리 (선택된 샵 카드 표시)
     showToast(`${shop.shopName} 클릭`);
-  };
+  }, [showToast]);
+
+  // 현 지도에서 검색
+  const handleRefreshSearch = useCallback(() => {
+    // TODO: API 연결 시 현재 지도 영역 기준으로 재검색
+    showToast('현재 지도 영역에서 검색합니다');
+  }, [showToast]);
+
+  // 현재 위치로 이동
+  const handleCurrentLocation = useCallback(() => {
+    if (location) {
+      setMapCenter({
+        lat: location.latitude,
+        lng: location.longitude,
+      });
+    } else {
+      requestLocation();
+    }
+  }, [location, requestLocation]);
 
   // 카테고리별 필터링된 공고 리스트 (mock)
   const filteredRecruitments = useMemo(() => {
@@ -82,6 +107,14 @@ function MapContent() {
         onShopClick={handleShopClick}
       />
 
+      {/* 지도 컨트롤 버튼 */}
+      <MapControls
+        onRefreshSearch={handleRefreshSearch}
+        onCurrentLocation={handleCurrentLocation}
+        showRefreshButton={!isLocationLoading}
+        bottomSheetHeight={bottomSheetHeight}
+      />
+
       {/* 위치 로딩 중 표시 */}
       {isLocationLoading && (
         <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 shadow-md">
@@ -100,6 +133,7 @@ function MapContent() {
         onCategoryChange={setCategory}
         onSubCategoryChange={setSubCategory}
         onSortChange={setSortOption}
+        onHeightChange={setBottomSheetHeight}
       >
         {/* 공고 리스트 - 세로 스크롤 */}
         <div className="flex flex-col gap-4">

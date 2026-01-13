@@ -39,8 +39,21 @@ export default function NaverMapView({
   const markersRef = useRef<naver.maps.Marker[]>([]);
   const clusteringRef = useRef<MarkerClustering | null>(null);
   const listenersRef = useRef<naver.maps.MapEventListener[]>([]);
-  const isUserInteractionRef = useRef(false);
   const lastCenterRef = useRef<MapPosition>(center);
+  // 초기 로드 시 idle 이벤트 무시를 위해 true로 시작
+  const isProgrammaticMoveRef = useRef(true);
+
+  // 콜백을 ref로 관리하여 최신 값 유지
+  const onCenterChangedRef = useRef(onCenterChanged);
+  const onZoomChangedRef = useRef(onZoomChanged);
+
+  useEffect(() => {
+    onCenterChangedRef.current = onCenterChanged;
+  }, [onCenterChanged]);
+
+  useEffect(() => {
+    onZoomChangedRef.current = onZoomChanged;
+  }, [onZoomChanged]);
 
   // 지도 초기화 (한 번만 실행)
   useEffect(() => {
@@ -58,35 +71,38 @@ export default function NaverMapView({
     const map = new naver.maps.Map(mapRef.current, mapOptions);
     setMapInstance(map);
 
-    // 드래그 시작 시 사용자 인터랙션 플래그 설정
-    const dragStartListener = naver.maps.Event.addListener(map, 'dragstart', () => {
-      isUserInteractionRef.current = true;
+    // 지도 이동 완료 후 idle 이벤트 (사용자 드래그와 프로그래밍적 이동 모두 발생)
+    const idleListener = naver.maps.Event.addListener(map, 'idle', () => {
+      // 프로그래밍적 이동인 경우 플래그만 리셋하고 콜백 호출 안 함
+      if (isProgrammaticMoveRef.current) {
+        isProgrammaticMoveRef.current = false;
+        return;
+      }
+
+      // 사용자 드래그인 경우 콜백 호출
+      const newCenter = map.getCenter();
+      const newPosition = {
+        lat: newCenter.y,
+        lng: newCenter.x,
+      };
+
+      // 위치가 실제로 변경된 경우에만 콜백 호출
+      const hasChanged =
+        Math.abs(lastCenterRef.current.lat - newPosition.lat) > 0.0001 ||
+        Math.abs(lastCenterRef.current.lng - newPosition.lng) > 0.0001;
+
+      if (hasChanged) {
+        lastCenterRef.current = newPosition;
+        onCenterChangedRef.current?.(newPosition);
+      }
     });
-    listenersRef.current.push(dragStartListener);
+    listenersRef.current.push(idleListener);
 
-    // center 변경 이벤트 (사용자 인터랙션일 때만 콜백 호출)
-    if (onCenterChanged) {
-      const listener = naver.maps.Event.addListener(map, 'dragend', () => {
-        if (isUserInteractionRef.current) {
-          const newCenter = map.getCenter();
-          const newPosition = {
-            lat: newCenter.y,
-            lng: newCenter.x,
-          };
-          lastCenterRef.current = newPosition;
-          onCenterChanged(newPosition);
-          isUserInteractionRef.current = false;
-        }
-      });
-      listenersRef.current.push(listener);
-    }
-
-    if (onZoomChanged) {
-      const listener = naver.maps.Event.addListener(map, 'zoom_changed', () => {
-        onZoomChanged(map.getZoom());
-      });
-      listenersRef.current.push(listener);
-    }
+    // 줌 변경 이벤트
+    const zoomListener = naver.maps.Event.addListener(map, 'zoom_changed', () => {
+      onZoomChangedRef.current?.(map.getZoom());
+    });
+    listenersRef.current.push(zoomListener);
 
     onMapReady?.(map);
 
@@ -159,6 +175,8 @@ export default function NaverMapView({
       Math.abs(lastCenterRef.current.lng - center.lng) < 0.0001;
 
     if (!isSameCenter) {
+      // 프로그래밍적 이동임을 표시 (idle 이벤트에서 콜백 호출 방지)
+      isProgrammaticMoveRef.current = true;
       lastCenterRef.current = center;
       mapInstance.setCenter(new naver.maps.LatLng(center.lat, center.lng));
     }

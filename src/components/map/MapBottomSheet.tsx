@@ -6,11 +6,14 @@ import type { BottomSheetState } from '@/src/types/map';
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
 import { CategoryTabs, SubCategoryChips, SortDropdown } from '@/src/components/explore';
 
+// BottomNav 높이 (px)
+const BOTTOM_NAV_HEIGHT = 76; // 60px + safe-area
+
 // BottomSheet 높이 설정 (vh 기준)
-const SHEET_HEIGHTS = {
-  min: 15, // 최소 높이 (핸들 + 타이틀만)
+export const SHEET_HEIGHTS = {
+  min: 10, // 최소 높이 (핸들 + 타이틀 + 탭)
   mid: 50, // 중간 높이
-  max: 90, // 최대 높이 (전체 화면)
+  max: 85, // 최대 높이 (BottomNav 영역 제외)
 };
 
 // 드래그 임계값 (px)
@@ -24,6 +27,7 @@ interface MapBottomSheetProps {
   onCategoryChange: (category: Category) => void;
   onSubCategoryChange: (subCategory: SubCategory | 'ALL') => void;
   onSortChange: (sortOption: SortOption) => void;
+  onHeightChange?: (height: number) => void;
   children: React.ReactNode;
 }
 
@@ -35,6 +39,7 @@ export default function MapBottomSheet({
   onCategoryChange,
   onSubCategoryChange,
   onSortChange,
+  onHeightChange,
   children,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<BottomSheetState>('mid');
@@ -148,12 +153,18 @@ export default function MapBottomSheet({
   // 현재 높이 (드래그 중이면 currentHeight, 아니면 상태에 따른 높이)
   const displayHeight = isDragging ? currentHeight : getHeightForState(sheetState);
 
+  // 높이 변경 시 부모에게 알림
+  useEffect(() => {
+    onHeightChange?.(displayHeight);
+  }, [displayHeight, onHeightChange]);
+
   return (
     <div
       ref={sheetRef}
-      className="absolute right-0 bottom-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
+      className="absolute right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
       style={{
         height: `${displayHeight}vh`,
+        bottom: `${BOTTOM_NAV_HEIGHT}px`,
         transition: isDragging ? 'none' : 'height 0.3s ease-out',
       }}
     >
