@@ -15,6 +15,9 @@ export * from './recruitment';
 // Designer types
 export * from './designer';
 
+// Profile types
+export * from './profile';
+
 // My Recruitment types (Designer)
 export * from './myRecruitment';
 
