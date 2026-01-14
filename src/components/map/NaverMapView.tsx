@@ -12,15 +12,11 @@ import {
   createCurrentLocationMarker,
   updateCurrentLocationMarker,
 } from './CurrentLocationMarker';
+import { MAP_DEFAULTS } from '@/src/constants/map';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 
-// 서울 홍대입구역 기본 좌표
-const DEFAULT_CENTER: MapPosition = {
-  lat: 37.5571,
-  lng: 126.9236,
-};
-
-const DEFAULT_ZOOM = 15;
+const DEFAULT_CENTER: MapPosition = MAP_DEFAULTS.CENTER;
+const DEFAULT_ZOOM = MAP_DEFAULTS.ZOOM;
 
 interface NaverMapViewProps {
   center?: MapPosition;

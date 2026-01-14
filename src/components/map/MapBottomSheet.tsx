@@ -4,20 +4,11 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
 import type { BottomSheetState } from '@/src/types/map';
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
+import { LAYOUT, SHEET_HEIGHTS, DRAG } from '@/src/constants/map';
 import { CategoryTabs, SubCategoryChips, SortDropdown } from '@/src/components/explore';
 
-// BottomNav 높이 (px)
-const BOTTOM_NAV_HEIGHT = 76; // 60px + safe-area
-
-// BottomSheet 높이 설정 (vh 기준)
-export const SHEET_HEIGHTS = {
-  min: 8, // 최소 높이 (핸들 + 타이틀 + 탭)
-  mid: 50, // 중간 높이
-  max: 85, // 최대 높이 (BottomNav 영역 제외)
-};
-
-// 드래그 임계값 (px)
-const DRAG_THRESHOLD = 50;
+// re-export for backward compatibility
+export { SHEET_HEIGHTS } from '@/src/constants/map';
 
 interface MapBottomSheetProps {
   category: Category;
@@ -94,7 +85,7 @@ export default function MapBottomSheet({
     const deltaVh = currentHeight - getHeightForState(sheetState);
 
     // 드래그 임계값에 따라 상태 변경
-    if (deltaVh > (DRAG_THRESHOLD / window.innerHeight) * 100) {
+    if (deltaVh > (DRAG.THRESHOLD / window.innerHeight) * 100) {
       // 위로 드래그
       if (sheetState === 'min') {
         setSheetState('mid');
@@ -103,7 +94,7 @@ export default function MapBottomSheet({
         setSheetState('max');
         setCurrentHeight(SHEET_HEIGHTS.max);
       }
-    } else if (deltaVh < -(DRAG_THRESHOLD / window.innerHeight) * 100) {
+    } else if (deltaVh < -(DRAG.THRESHOLD / window.innerHeight) * 100) {
       // 아래로 드래그
       if (sheetState === 'max') {
         setSheetState('mid');
@@ -198,7 +189,7 @@ export default function MapBottomSheet({
       className="absolute right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
       style={{
         height: `${displayHeight}vh`,
-        bottom: `${BOTTOM_NAV_HEIGHT}px`,
+        bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
         transition: isDragging ? 'none' : 'height 0.3s ease-out',
       }}
     >

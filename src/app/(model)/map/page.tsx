@@ -16,14 +16,12 @@ import { useRecruitments } from '@/src/hooks/queries/explore/useRecruitments';
 import { useToggleRecruitmentLike, useToggleDesignerLike } from '@/src/hooks/queries/likes';
 import { usePublicDesignerProfile } from '@/src/hooks/queries/profile';
 import { useToast } from '@/src/hooks/common/useToast';
+import { MAP_DEFAULTS } from '@/src/constants/map';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
 
-// 서울 홍대입구역 기본 좌표
-const DEFAULT_CENTER: MapPosition = {
-  lat: 37.5571,
-  lng: 126.9236,
-};
+// 상수에서 기본 좌표 사용
+const DEFAULT_CENTER: MapPosition = MAP_DEFAULTS.CENTER;
 
 function MapContent() {
   const { showToast } = useToast();

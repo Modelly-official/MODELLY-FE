@@ -14,13 +14,7 @@ import LocationIcon from '@/public/icons/explore/location.svg';
 import CloseIcon from '@/public/icons/map/close.svg';
 import HeartFilledIcon from '@/public/icons/map/heart.svg';
 import HeartOutlineIcon from '@/public/icons/map/heart-outline.svg';
-
-// BottomNav 높이 (px)
-const BOTTOM_NAV_HEIGHT = 76;
-// 카드 높이 (핸들 제외, 콘텐츠 영역)
-const CARD_CONTENT_HEIGHT = 230;
-// 접힌 상태로 전환하기 위한 드래그 임계값
-const COLLAPSE_THRESHOLD = 100;
+import { LAYOUT, DRAG } from '@/src/constants/map';
 
 interface SelectedShopCardProps {
   shop: MapShopItem;
@@ -68,7 +62,7 @@ export default function SelectedShopCard({
   // 드래그 시작
   const handleDragStart = (clientY: number) => {
     startYRef.current = clientY;
-    baseOffsetRef.current = isCollapsed ? CARD_CONTENT_HEIGHT : 0;
+    baseOffsetRef.current = isCollapsed ? DRAG.CARD_CONTENT_HEIGHT : 0;
     setIsDragging(true);
   };
 
@@ -78,8 +72,8 @@ export default function SelectedShopCard({
     const diff = clientY - startYRef.current;
     const newOffset = baseOffsetRef.current + diff;
 
-    // 0 ~ CARD_CONTENT_HEIGHT 범위로 제한
-    const clampedOffset = Math.max(0, Math.min(newOffset, CARD_CONTENT_HEIGHT));
+    // 0 ~ DRAG.CARD_CONTENT_HEIGHT 범위로 제한
+    const clampedOffset = Math.max(0, Math.min(newOffset, DRAG.CARD_CONTENT_HEIGHT));
     setDragOffset(clampedOffset);
   };
 
@@ -91,17 +85,17 @@ export default function SelectedShopCard({
     // 현재 오프셋 기준으로 스냅 결정
     if (isCollapsed) {
       // 접힌 상태에서 위로 임계값 이상 드래그하면 펼치기
-      if (dragOffset < CARD_CONTENT_HEIGHT - COLLAPSE_THRESHOLD) {
+      if (dragOffset < DRAG.CARD_CONTENT_HEIGHT - DRAG.COLLAPSE_THRESHOLD) {
         setIsCollapsed(false);
         setDragOffset(0);
       } else {
-        setDragOffset(CARD_CONTENT_HEIGHT);
+        setDragOffset(DRAG.CARD_CONTENT_HEIGHT);
       }
     } else {
       // 펼친 상태에서 아래로 임계값 이상 드래그하면 접기
-      if (dragOffset > COLLAPSE_THRESHOLD) {
+      if (dragOffset > DRAG.COLLAPSE_THRESHOLD) {
         setIsCollapsed(true);
-        setDragOffset(CARD_CONTENT_HEIGHT);
+        setDragOffset(DRAG.CARD_CONTENT_HEIGHT);
       } else {
         setDragOffset(0);
       }
@@ -149,7 +143,7 @@ export default function SelectedShopCard({
     <div
       className="absolute right-0 left-0 z-20 rounded-t-[20px] bg-white px-0 pt-3 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.09)]"
       style={{
-        bottom: `${BOTTOM_NAV_HEIGHT}px`,
+        bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
         transform: `translateY(${dragOffset}px)`,
         transition: isDragging ? 'none' : 'transform 0.2s ease-out',
       }}

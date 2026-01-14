@@ -2,11 +2,7 @@
 
 import Image from 'next/image';
 import RefreshIcon from '@/public/icons/map/refresh.svg';
-
-// BottomNav 높이 (px)
-const BOTTOM_NAV_HEIGHT = 76;
-// SelectedShopCard 예상 높이 (px)
-const SELECTED_CARD_HEIGHT = 340;
+import { LAYOUT } from '@/src/constants/map';
 
 interface MapControlsProps {
   onRefreshSearch: () => void;
@@ -27,8 +23,8 @@ export default function MapControls({
 }: MapControlsProps) {
   // GPS 버튼 bottom 위치 계산 (드래그 오프셋 반영)
   const gpsButtonBottom = isSelectedShopCard
-    ? `${BOTTOM_NAV_HEIGHT + SELECTED_CARD_HEIGHT + 18 - selectedCardDragOffset}px`
-    : `calc(${bottomSheetHeight}vh + ${BOTTOM_NAV_HEIGHT}px + 18px)`;
+    ? `${LAYOUT.BOTTOM_NAV_HEIGHT + LAYOUT.SELECTED_CARD_HEIGHT + 18 - selectedCardDragOffset}px`
+    : `calc(${bottomSheetHeight}vh + ${LAYOUT.BOTTOM_NAV_HEIGHT}px + 18px)`;
 
   return (
     <>
