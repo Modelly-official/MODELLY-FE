@@ -19,8 +19,8 @@ export const LAYOUT = {
 
 // ===== BottomSheet 높이 설정 (vh 기준) =====
 export const SHEET_HEIGHTS = {
-  /** 최소 높이 (핸들 + 타이틀 + 탭) */
-  min: 8,
+  /** 최소 높이 (핸들 + 타이틀이 보이는 정도) */
+  min: 12,
   /** 중간 높이 */
   mid: 50,
   /** 최대 높이 (BottomNav 영역 제외) */
