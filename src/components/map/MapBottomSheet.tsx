@@ -215,35 +215,27 @@ export default function MapBottomSheet({
     }
   }, [handleDragEnd]);
 
-  // 마우스 이벤트 핸들러
+  // 마우스 이벤트 핸들러 (mousedown에서 직접 글로벌 리스너 등록)
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       handleDragStart(e.clientY);
+
+      const handleMouseMove = (ev: MouseEvent) => {
+        handleDragMove(ev.clientY);
+      };
+
+      const handleMouseUp = () => {
+        handleDragEnd();
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
     },
-    [handleDragStart]
+    [handleDragStart, handleDragMove, handleDragEnd]
   );
-
-  // 글로벌 마우스 이벤트
-  useEffect(() => {
-    if (!isDraggingRef.current) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      handleDragMove(e.clientY);
-    };
-
-    const handleMouseUp = () => {
-      handleDragEnd();
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [handleDragMove, handleDragEnd]);
 
   // IntersectionObserver로 무한 스크롤 감지
   const loadMoreRef = useRef<HTMLDivElement>(null);
