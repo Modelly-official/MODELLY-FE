@@ -1,13 +1,14 @@
 'use client';
 
-import { Fragment, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { Fragment, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import ChatHeader from '@/src/components/chat/chatroom/ChatHeader';
 import MessageItem from '@/src/components/chat/chatroom/MessageItem';
 import ReservationMessageItem from '@/src/components/chat/chatroom/ReservationMessageItem';
 import ChatInput from '@/src/components/chat/chatroom/ChatInput';
 import ChatReservationSummaryCard from '@/src/components/chat/chatroom/ChatReservationSummaryCard';
 import { ReservationCancelModal, ReservationChangeModal, ReservationSuccessModal } from '@/src/components/reservation';
+import { LoginRequiredModal } from '@/src/components/common';
 import DropDownArrowIcon from '@/public/icons/common/arrow-down.svg';
 import {
   useCancelReservation,
@@ -15,20 +16,36 @@ import {
   useRequestReservationChange,
 } from '@/src/hooks/queries/reservation';
 import useChatRoom from '@/src/hooks/custom/chat/useChatRoom';
-import { getUserRole, useAuthStore } from '@/src/stores';
+import { getAccessToken, getUserRole, useAuthStore } from '@/src/stores';
 import { formatChatDateLabel } from '@/src/utils/chat';
 import type { ReservationCancelRequest, ReservationChangeRequest, ReservationInfo } from '@/src/types/reservation';
 
+const subscribeToAuth = () => () => {};
+const getAuthSnapshot = () => !!getAccessToken();
+const getServerSnapshot = () => false;
+const subscribeToHydration = () => () => {};
+const getHydrationSnapshot = () => true;
+
 export default function ChatRoom() {
+  const pathname = usePathname();
   const routeParams = useParams();
   const searchParams = useSearchParams();
   const roomIdParam = routeParams?.roomId;
   const roomId = Array.isArray(roomIdParam) ? roomIdParam[0] : roomIdParam;
   const roomIdNumber = roomId ? Number(roomId) : undefined;
   const validRoomId = roomIdNumber != null && !Number.isNaN(roomIdNumber) ? roomIdNumber : undefined;
+  const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
+  const isHydrated = useSyncExternalStore(subscribeToHydration, getHydrationSnapshot, getServerSnapshot);
+  const [modalDismissed, setModalDismissed] = useState(false);
+  const showLoginModal = isHydrated && !isAuthenticated && !modalDismissed;
+  const callbackUrl = useMemo(() => {
+    const query = searchParams.toString();
+    return query ? `${pathname}?${query}` : pathname;
+  }, [pathname, searchParams]);
 
+  const activeRoomId = isAuthenticated ? roomId : undefined;
   const { messages, opponent, input, setInput, sendMessage, sendImage, fetchPrevMessages, hasNext, loading } =
-    useChatRoom(roomId);
+    useChatRoom(activeRoomId);
   const headerTitle = opponent?.name ?? '';
   const roleLabel = opponent?.role === 'DESIGNER' ? '디자이너' : undefined;
   const requestChange = useRequestReservationChange();
@@ -313,6 +330,11 @@ export default function ChatRoom() {
           />
         </>
       )}
+      <LoginRequiredModal
+        isOpen={showLoginModal}
+        onClose={() => setModalDismissed(true)}
+        callbackUrl={callbackUrl}
+      />
     </div>
   );
 }
