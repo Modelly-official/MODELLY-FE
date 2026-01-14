@@ -7,11 +7,7 @@ import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
 import ChatIcon from '@/public/icons/calendar/chat.svg';
 import { subCategoryCodeToName } from '@/src/utils/myRecruitment/category';
 import { formatDateToShort, formatTimeWithPeriod } from '@/src/utils/common';
-import {
-  ReservationChangeModal,
-  ReservationCancelModal,
-  ReservationSuccessModal,
-} from '@/src/components/reservation';
+import { ReservationChangeModal, ReservationCancelModal, ReservationSuccessModal } from '@/src/components/reservation';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useCancelReservation, useRequestReservationChange } from '@/src/hooks/queries/reservation';
 import { useToast } from '@/src/hooks/common/useToast';
@@ -103,21 +99,27 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
     setIsCancelModalOpen(true);
   };
 
-  // Mock: 예약 변경 요청 처리
-  const handleChangeSubmit = (data: ReservationChangeRequest) => {
-    requestChange.mutate(
-      { reservationId: reservation.reservationId, payload: data },
-      {
-        onSuccess: () => {
-          setIsChangeModalOpen(false);
-          setSuccessMessage('예약 변경이 요청되었습니다');
-          setIsSuccessModalOpen(true);
+  // 예약 변경 요청 처리
+  const handleChangeSubmit = async (data: ReservationChangeRequest) => {
+    try {
+      const response = await createChatRoom.mutateAsync(reservation.modelUserId);
+      const roomId = response.result.chatRoomId;
+      requestChange.mutate(
+        { reservationId: reservation.reservationId, payload: data, roomId },
+        {
+          onSuccess: () => {
+            setIsChangeModalOpen(false);
+            setSuccessMessage('예약 변경이 요청되었습니다');
+            setIsSuccessModalOpen(true);
+          },
         },
-      },
-    );
+      );
+    } catch {
+      showToast('채팅방 생성에 실패했습니다.');
+    }
   };
 
-  // Mock: 예약 취소 요청 처리
+  // 예약 취소 요청 처리
   const handleCancelSubmit = (data: ReservationCancelRequest) => {
     cancelReservation.mutate(
       { reservationId: reservation.reservationId, payload: data },
@@ -169,7 +171,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
           type="button"
           onClick={handleChatClick}
           disabled={createChatRoom.isPending}
-          className={`flex h-[42px] items-center gap-1 whitespace-nowrap rounded-full px-3 py-[10px] ${
+          className={`flex h-[42px] items-center gap-1 rounded-full px-3 py-2.5 whitespace-nowrap ${
             createChatRoom.isPending ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-gray-900'
           }`}
         >
@@ -184,7 +186,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleChangeClick}
-          className="flex h-[42px] cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-gray-400 bg-white px-3 py-[10px]"
+          className="flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-3 py-2.5 whitespace-nowrap"
         >
           <span className="text-body-2-medium text-gray-900">예약 변경</span>
         </button>
@@ -192,7 +194,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         <button
           type="button"
           onClick={handleCancelClick}
-          className="flex h-[42px] cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-gray-400 bg-white px-3 py-[10px]"
+          className="flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-3 py-2.5 whitespace-nowrap"
         >
           <span className="text-body-2-medium text-gray-900">예약 취소</span>
         </button>
@@ -205,7 +207,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
           onClose={() => setIsChangeModalOpen(false)}
           reservation={reservationInfo}
           onSubmit={handleChangeSubmit}
-          isLoading={requestChange.isPending}
+          isLoading={requestChange.isPending || createChatRoom.isPending}
         />
       )}
 
