@@ -71,7 +71,12 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
         <div className="min-w-0 flex-1">
           {/* 이름 + 시간 */}
           <div className="flex items-center justify-between">
-            <span className="text-body-1-medium max-w-56 truncate text-gray-900">{chat.name}</span>
+            <div className="flex min-w-0 items-center gap-1">
+              <span className="text-body-1-medium max-w-40 truncate text-gray-900">{chat.name}</span>
+              {chat.role === 'DESIGNER' && (
+                <span className="text-body-1-medium shrink-0 text-gray-900">디자이너</span>
+              )}
+            </div>
             <span className="text-caption-1-medium ml-2 whitespace-nowrap text-gray-600">
               {formatChatListTime(chat.lastMessageTime)}
             </span>
