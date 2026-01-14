@@ -14,6 +14,7 @@ import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useMapShops } from '@/src/hooks/queries/map/useMapShops';
 import { useRecruitments } from '@/src/hooks/queries/explore/useRecruitments';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
+import { usePublicDesignerProfile } from '@/src/hooks/queries/profile';
 import { useToast } from '@/src/hooks/common/useToast';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
@@ -95,6 +96,15 @@ function MapContent() {
   // 찜(좋아요) mutation
   const { mutate: toggleRecruitmentLike } = useToggleRecruitmentLike();
 
+  // 선택된 샵의 디자이너 공개 프로필 조회 API
+  const {
+    data: profileData,
+    isLoading: isProfileLoading,
+  } = usePublicDesignerProfile({
+    designerId: selectedShop?.designerId ?? null,
+    enabled: !!selectedShop,
+  });
+
   // 공고 목록 (전체 페이지 합침 + 중복 제거)
   const recruitments = useMemo(() => {
     if (!recruitmentsData?.pages) return [];
@@ -174,13 +184,9 @@ function MapContent() {
     }
   }, [location, requestLocation]);
 
-  // 선택된 샵에 해당하는 공고 찾기 (같은 카테고리의 첫 번째 공고)
-  // TODO: 추후 designerId 기반 공고 조회 API가 있으면 교체
-  const selectedRecruitment = useMemo(() => {
-    if (!selectedShop || recruitments.length === 0) return null;
-    // 현재는 같은 카테고리의 첫 번째 공고 반환
-    return recruitments.find((item) => item.category === selectedShop.category) ?? recruitments[0] ?? null;
-  }, [selectedShop, recruitments]);
+  // 선택된 샵의 프로필 및 공고 정보
+  const designerProfile = profileData?.result?.profile ?? null;
+  const designerRecruitments = profileData?.result?.openRecruitments ?? [];
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -202,7 +208,7 @@ function MapContent() {
         onCurrentLocation={handleCurrentLocation}
         showRefreshButton={!isLocationLoading}
         bottomSheetHeight={bottomSheetHeight}
-        isSelectedShopCard={!!selectedShop && !!selectedRecruitment}
+        isSelectedShopCard={!!selectedShop && !!designerProfile}
         selectedCardDragOffset={selectedCardDragOffset}
       />
 
@@ -215,15 +221,23 @@ function MapContent() {
         </div>
       )}
 
+      {/* 선택된 샵 프로필 로딩 중 표시 */}
+      {selectedShop && isProfileLoading && (
+        <div className="absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white px-4 py-2 shadow-md">
+          <span className="text-body-2-medium text-gray-700">디자이너 정보를 불러오는 중...</span>
+        </div>
+      )}
+
       {/* 선택된 샵 카드 또는 BottomSheet */}
-      {selectedShop && selectedRecruitment ? (
+      {selectedShop && designerProfile ? (
         <SelectedShopCard
           shop={selectedShop}
-          recruitment={selectedRecruitment}
+          profile={designerProfile}
+          recruitments={designerRecruitments}
           onClose={handleCloseSelectedShop}
           onDragOffsetChange={setSelectedCardDragOffset}
         />
-      ) : (
+      ) : !selectedShop ? (
         <MapBottomSheet
           category={category}
           subCategory={subCategory}
@@ -253,7 +267,7 @@ function MapContent() {
             )}
           </div>
         </MapBottomSheet>
-      )}
+      ) : null}
     </div>
   );
 }

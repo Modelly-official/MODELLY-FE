@@ -7,11 +7,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { MapShopItem } from '@/src/types/map';
-import type { RecruitmentListItem } from '@/src/types';
+import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
-import { formatDistrict } from '@/src/utils/common';
 import { useLikeToggle } from '@/src/hooks/custom/explore';
-import { RatingDisplay, DistanceDisplay } from '@/src/components/explore/Cards/shared';
 import LocationIcon from '@/public/icons/explore/location.svg';
 import CloseIcon from '@/public/icons/map/close.svg';
 import HeartFilledIcon from '@/public/icons/map/heart.svg';
@@ -26,23 +24,28 @@ const COLLAPSE_THRESHOLD = 100;
 
 interface SelectedShopCardProps {
   shop: MapShopItem;
-  recruitment: RecruitmentListItem;
+  profile: DesignerProfileInfo;
+  recruitments: DesignerRecruitmentCard[];
   onClose: () => void;
-  onLikeToggle?: () => void;
+  onDesignerLikeToggle?: () => void;
   onDragOffsetChange?: (offset: number) => void;
 }
 
 export default function SelectedShopCard({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  shop: _shop, // TODO: API 연결 시 샵 정보로 공고 조회
-  recruitment,
+  shop,
+  profile,
+  recruitments,
   onClose,
-  onLikeToggle,
+  onDesignerLikeToggle,
   onDragOffsetChange,
 }: SelectedShopCardProps) {
+  // 첫 번째 공고 (대표 공고)
+  const firstRecruitment = recruitments[0] ?? null;
+  const recruitmentCount = recruitments.length;
+
   const { isLiked, handleClick } = useLikeToggle({
-    serverValue: recruitment.isLiked ?? false,
-    onToggle: onLikeToggle,
+    serverValue: profile.isLiked ?? false,
+    onToggle: onDesignerLikeToggle,
   });
 
   // 드래그 상태 관리
@@ -57,10 +60,10 @@ export default function SelectedShopCard({
     onDragOffsetChange?.(dragOffset);
   }, [dragOffset, onDragOffsetChange]);
 
-  // 이미지 배열 생성 (썸네일 + 추가 이미지)
-  const images = recruitment.recruitmentThumbnail
-    ? [recruitment.recruitmentThumbnail, recruitment.recruitmentThumbnail, recruitment.recruitmentThumbnail]
-    : [];
+  // 공고별 썸네일 이미지 배열 생성
+  const images = recruitments
+    .filter((r) => r.thumbnailUrl)
+    .map((r) => ({ recruitmentId: r.recruitmentId, thumbnailUrl: r.thumbnailUrl }));
 
   // 드래그 시작
   const handleDragStart = (clientY: number) => {
@@ -174,10 +177,15 @@ export default function SelectedShopCard({
           {/* 카테고리 배지 + 버튼 */}
           <div className="flex items-center justify-between px-4">
             <div className="flex items-center gap-1">
-              <CategoryBadge category={recruitment.category} variant="filled" />
-              {recruitment.subCategories.slice(0, 1).map((subCategory) => (
+              <CategoryBadge category={shop.category} variant="filled" />
+              {firstRecruitment?.subCategories.slice(0, 1).map((subCategory) => (
                 <CategoryBadge key={subCategory} category={subCategory} />
               ))}
+              {recruitmentCount > 1 && (
+                <span className="text-caption-1-medium text-gray-600">
+                  +{recruitmentCount - 1}개 공고
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -201,46 +209,38 @@ export default function SelectedShopCard({
             </div>
           </div>
 
-          {/* 제목 */}
+          {/* 제목 (첫 번째 공고 또는 샵 이름) */}
           <div className="px-4">
-            <Link href={`/post/${recruitment.recruitmentId}`}>
+            {firstRecruitment ? (
+              <Link href={`/post/${firstRecruitment.recruitmentId}`}>
+                <h3 className="truncate text-head-3-semibold text-black">
+                  {firstRecruitment.title}
+                </h3>
+              </Link>
+            ) : (
               <h3 className="truncate text-head-3-semibold text-black">
-                {recruitment.title}
+                {profile.shop}
               </h3>
-            </Link>
+            )}
           </div>
 
           {/* 디자이너 정보 */}
           <div className="flex flex-col gap-1 px-4">
             <p className="text-body-2-medium text-gray-800">
-              {recruitment.designerName} · {recruitment.shop}
+              {profile.nickname} · {profile.shop}
             </p>
 
             {/* 위치 */}
             <div className="flex items-center gap-1">
               <LocationIcon className="h-[13.5px] w-[11.25px] text-gray-800" />
               <span className="text-body-2-medium text-gray-800">
-                {formatDistrict(recruitment.shopAddress)}
+                {profile.address.line1} {profile.address.line2}
               </span>
-            </div>
-
-            {/* 별점 및 거리 */}
-            <div className="flex items-center gap-1.5">
-              <RatingDisplay
-                rating={recruitment.averageRating}
-                reviewCount={recruitment.reviewCount}
-              />
-              {recruitment.distance != null && (
-                <>
-                  <span className="text-body-2-medium text-gray-800">·</span>
-                  <DistanceDisplay distance={recruitment.distance} />
-                </>
-              )}
             </div>
           </div>
         </div>
 
-        {/* 이미지 갤러리 (Swiper 캐러셀) */}
+        {/* 이미지 갤러리 (공고별 썸네일) */}
         {images.length > 0 && (
           <div className="px-4">
             <Swiper
@@ -248,15 +248,15 @@ export default function SelectedShopCard({
               spaceBetween={8}
               className="overflow-visible!"
             >
-              {images.map((image, index) => (
-                <SwiperSlide key={index} className="w-[120px]!">
+              {images.map((image) => (
+                <SwiperSlide key={image.recruitmentId} className="w-[120px]!">
                   <Link
-                    href={`/post/${recruitment.recruitmentId}`}
+                    href={`/post/${image.recruitmentId}`}
                     className="relative block h-[138px] w-[120px] overflow-hidden rounded-[16px] bg-gray-200"
                   >
                     <Image
-                      src={image}
-                      alt={`${recruitment.title} 이미지 ${index + 1}`}
+                      src={image.thumbnailUrl}
+                      alt="공고 이미지"
                       fill
                       sizes="120px"
                       className="pointer-events-none select-none object-cover"
