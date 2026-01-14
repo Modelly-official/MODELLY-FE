@@ -1,5 +1,5 @@
 import { axiosInstance } from '../axios';
-import { isMockEnabled } from '@/src/config/api';
+import { isMockEnabled, type MockEndpoint } from '@/src/config/api';
 import {
   mockRecruitmentItems,
   mockRecruitmentDetail,
@@ -14,14 +14,21 @@ import type {
 
 const DEFAULT_PAGE_SIZE = 6;
 
+interface GetRecruitmentsOptions {
+  /** mock endpoint 오버라이드 (기본: 'recruitments') */
+  mockEndpoint?: MockEndpoint;
+}
+
 /**
  * 공고 목록 조회
  * GET /recruitments
  */
 export async function getRecruitments(
-  params: RecruitmentListParams = {}
+  params: RecruitmentListParams = {},
+  options: GetRecruitmentsOptions = {}
 ): Promise<ApiResponse<RecruitmentListResponse>> {
-  if (isMockEnabled('recruitments')) {
+  const { mockEndpoint = 'recruitments' } = options;
+  if (isMockEnabled(mockEndpoint)) {
     return getMockRecruitments(params);
   }
 

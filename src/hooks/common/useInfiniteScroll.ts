@@ -46,5 +46,18 @@ export function useInfiniteScroll({
     return () => observer.disconnect();
   }, [handleObserver, threshold, rootMargin]);
 
+  // hasNextPage가 true가 될 때 요소가 이미 뷰포트에 있으면 fetchNextPage 호출
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element || !hasNextPage || isFetchingNextPage) return;
+
+    const rect = element.getBoundingClientRect();
+    const isVisible = rect.top < window.innerHeight + 100; // rootMargin 고려
+
+    if (isVisible) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   return { loadMoreRef };
 }

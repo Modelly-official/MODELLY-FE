@@ -15,6 +15,9 @@ export * from './recruitment';
 // Designer types
 export * from './designer';
 
+// Profile types
+export * from './profile';
+
 // My Recruitment types (Designer)
 export * from './myRecruitment';
 
@@ -35,3 +38,6 @@ export * from './likes';
 
 // Review types
 export * from './review';
+
+// Map types
+export * from './map';
