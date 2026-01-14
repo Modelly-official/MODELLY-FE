@@ -236,11 +236,12 @@ export default function SelectedShopCard({
 
         {/* 이미지 갤러리 (공고별 썸네일) */}
         {images.length > 0 && (
-          <div className="px-4">
+          <div className="overflow-hidden">
             <Swiper
               slidesPerView="auto"
               spaceBetween={8}
-              className="overflow-visible!"
+              slidesOffsetBefore={16}
+              slidesOffsetAfter={16}
             >
               {images.map((image) => (
                 <SwiperSlide key={image.recruitmentId} className="w-[120px]!">
