@@ -47,19 +47,23 @@ export default function MapBottomSheet({
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // max 상태에서 스크롤이 맨 위인지 확인
+  const isScrollAtTop = useCallback(() => {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return true;
+    return scrollEl.scrollTop <= 0;
+  }, []);
+
   // 상태에 따른 높이 계산
   const getHeightForState = (state: BottomSheetState): number => {
     return SHEET_HEIGHTS[state];
   };
 
   // 드래그 시작
-  const handleDragStart = useCallback(
-    (clientY: number) => {
-      setIsDragging(true);
-      setDragStartY(clientY);
-    },
-    []
-  );
+  const handleDragStart = useCallback((clientY: number) => {
+    setIsDragging(true);
+    setDragStartY(clientY);
+  }, []);
 
   // 드래그 중
   const handleDragMove = useCallback(
@@ -109,17 +113,70 @@ export default function MapBottomSheet({
     }
   }, [isDragging, currentHeight, sheetState]);
 
-  // 터치 이벤트 핸들러
-  const handleTouchStart = (e: React.TouchEvent) => {
+  // 핸들 터치 이벤트 (항상 드래그)
+  const handleHandleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
     handleDragStart(e.touches[0].clientY);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleHandleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
     handleDragMove(e.touches[0].clientY);
   };
 
-  const handleTouchEnd = () => {
+  const handleHandleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
     handleDragEnd();
+  };
+
+  // 스크롤 영역 터치 이벤트 (max 상태에서만 스크롤, 아니면 드래그)
+  const scrollTouchStartY = useRef(0);
+  const isScrollDragging = useRef(false);
+
+  const handleScrollTouchStart = (e: React.TouchEvent) => {
+    scrollTouchStartY.current = e.touches[0].clientY;
+    isScrollDragging.current = false;
+
+    // max 상태가 아니면 드래그 모드
+    if (sheetState !== 'max') {
+      handleDragStart(e.touches[0].clientY);
+      isScrollDragging.current = true;
+    }
+  };
+
+  const handleScrollTouchMove = (e: React.TouchEvent) => {
+    const currentY = e.touches[0].clientY;
+    const deltaY = scrollTouchStartY.current - currentY;
+
+    // max 상태가 아니면 드래그
+    if (sheetState !== 'max') {
+      if (isScrollDragging.current) {
+        e.preventDefault();
+        handleDragMove(currentY);
+      }
+      return;
+    }
+
+    // max 상태에서 스크롤이 맨 위이고 아래로 드래그하면 시트 높이 줄이기
+    if (isScrollAtTop() && deltaY < -10) {
+      if (!isScrollDragging.current) {
+        handleDragStart(currentY);
+        isScrollDragging.current = true;
+      }
+      e.preventDefault();
+      handleDragMove(currentY);
+    } else if (isScrollDragging.current) {
+      e.preventDefault();
+      handleDragMove(currentY);
+    }
+    // 그 외에는 기본 스크롤 동작
+  };
+
+  const handleScrollTouchEnd = () => {
+    if (isScrollDragging.current) {
+      handleDragEnd();
+      isScrollDragging.current = false;
+    }
   };
 
   // 마우스 이벤트 핸들러
@@ -173,7 +230,7 @@ export default function MapBottomSheet({
         }
       },
       {
-        root: scrollContainer, // 내부 스크롤 컨테이너 지정
+        root: scrollContainer,
         rootMargin: '100px',
         threshold: 0.1,
       }
@@ -182,6 +239,11 @@ export default function MapBottomSheet({
     observer.observe(loadMoreElement);
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, onLoadMore]);
+
+  // max 상태가 아니면 스크롤 비활성화
+  const scrollStyle = sheetState === 'max'
+    ? { height: `calc(${displayHeight}dvh - 200px)` }
+    : { height: `calc(${displayHeight}dvh - 200px)`, overflow: 'hidden' as const };
 
   return (
     <div
@@ -193,12 +255,13 @@ export default function MapBottomSheet({
         transition: isDragging ? 'none' : 'height 0.3s ease-out',
       }}
     >
-      {/* 드래그 핸들 */}
+      {/* 드래그 핸들 - 항상 드래그 가능 */}
       <div
         className="flex cursor-grab justify-center pt-3 pb-2 active:cursor-grabbing"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        style={{ touchAction: 'none' }}
+        onTouchStart={handleHandleTouchStart}
+        onTouchMove={handleHandleTouchMove}
+        onTouchEnd={handleHandleTouchEnd}
         onMouseDown={handleMouseDown}
       >
         <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />
@@ -239,13 +302,18 @@ export default function MapBottomSheet({
         </div>
       </div>
 
-      {/* 리스트 영역 */}
+      {/* 리스트 영역 - max 상태에서만 스크롤 가능 */}
       <div
         ref={scrollRef}
-        className="scrollbar-hide overflow-y-auto px-4"
+        className="scrollbar-hide px-4"
         style={{
-          height: `calc(${displayHeight}vh - 200px)`,
+          ...scrollStyle,
+          overflowY: sheetState === 'max' ? 'auto' : 'hidden',
+          touchAction: sheetState === 'max' ? 'pan-y' : 'none',
         }}
+        onTouchStart={handleScrollTouchStart}
+        onTouchMove={handleScrollTouchMove}
+        onTouchEnd={handleScrollTouchEnd}
       >
         {children}
         {/* Infinite scroll trigger */}
