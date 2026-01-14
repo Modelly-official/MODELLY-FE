@@ -75,6 +75,7 @@ export interface ChatRoomSummary {
   name: string;
   nickname?: string;
   profileImageUrl: string;
+  category?: string;
   messageType: ChatMessageType;
   lastMessage: string;
   lastMessageTime: string;

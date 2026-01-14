@@ -6,7 +6,8 @@ const DEFAULT_PAGE_SIZE = 20;
 
 export const chatRoomKeys = {
   all: ['chatRooms'] as const,
-  list: (size?: number) => [...chatRoomKeys.all, 'list', { size: size ?? DEFAULT_PAGE_SIZE }] as const,
+  list: (size?: number, category?: string) =>
+    [...chatRoomKeys.all, 'list', { size: size ?? DEFAULT_PAGE_SIZE, category: category ?? null }] as const,
 };
 
 /**
@@ -14,13 +15,13 @@ export const chatRoomKeys = {
  * - 무한 스크롤 지원
  * - page 기반 페이지네이션
  */
-export function useChatRooms(params?: { size?: number; enabled?: boolean }) {
-  const { enabled = true, size = DEFAULT_PAGE_SIZE } = params ?? {};
+export function useChatRooms(params?: { size?: number; enabled?: boolean; category?: string }) {
+  const { enabled = true, size = DEFAULT_PAGE_SIZE, category } = params ?? {};
 
   return useInfiniteQuery<ApiResponse<ChatRoomListResponse>, Error>({
-    queryKey: chatRoomKeys.list(size),
+    queryKey: chatRoomKeys.list(size, category),
     queryFn: async ({ pageParam }) => {
-      return getChatRooms({ page: pageParam as number, size });
+      return getChatRooms({ page: pageParam as number, size, category });
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
