@@ -26,6 +26,11 @@ interface MapBottomSheetProps {
   children: React.ReactNode;
 }
 
+// 상태별 translateY 계산 (max 높이 기준으로 얼마나 아래로 내릴지)
+const getTranslateY = (state: BottomSheetState): number => {
+  return SHEET_HEIGHTS.max - SHEET_HEIGHTS[state];
+};
+
 export default function MapBottomSheet({
   category,
   subCategory,
@@ -40,12 +45,18 @@ export default function MapBottomSheet({
   onLoadMore,
   children,
 }: MapBottomSheetProps) {
-  const [sheetState, setSheetState] = useState<BottomSheetState>('min');
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartY, setDragStartY] = useState(0);
-  const [currentHeight, setCurrentHeight] = useState<number>(SHEET_HEIGHTS.min);
+  // DOM 참조
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 드래그 상태 (ref로 관리 - 리렌더링 방지)
+  const isDraggingRef = useRef(false);
+  const dragStartYRef = useRef(0);
+  const baseTranslateYRef = useRef(getTranslateY('min'));
+  const currentTranslateYRef = useRef(getTranslateY('min'));
+
+  // 스냅 상태 (state로 관리 - 드래그 종료 시에만 업데이트)
+  const [sheetState, setSheetState] = useState<BottomSheetState>('min');
 
   // max 상태에서 스크롤이 맨 위인지 확인
   const isScrollAtTop = useCallback(() => {
@@ -54,140 +65,168 @@ export default function MapBottomSheet({
     return scrollEl.scrollTop <= 0;
   }, []);
 
-  // 상태에 따른 높이 계산
-  const getHeightForState = (state: BottomSheetState): number => {
-    return SHEET_HEIGHTS[state];
-  };
+  // DOM 직접 업데이트 (리렌더링 없음)
+  const updateTransform = useCallback((translateY: number, animate: boolean = false) => {
+    if (!sheetRef.current) return;
+    sheetRef.current.style.transition = animate ? 'transform 0.3s ease-out' : 'none';
+    sheetRef.current.style.transform = `translateY(${translateY}dvh)`;
+  }, []);
+
+  // 높이 변경 시 부모에게 알림
+  useEffect(() => {
+    onHeightChange?.(SHEET_HEIGHTS[sheetState]);
+  }, [sheetState, onHeightChange]);
 
   // 드래그 시작
   const handleDragStart = useCallback((clientY: number) => {
-    setIsDragging(true);
-    setDragStartY(clientY);
+    isDraggingRef.current = true;
+    dragStartYRef.current = clientY;
+    baseTranslateYRef.current = currentTranslateYRef.current;
   }, []);
 
-  // 드래그 중
+  // 드래그 중 (리렌더링 없이 DOM 직접 조작)
   const handleDragMove = useCallback(
     (clientY: number) => {
-      if (!isDragging) return;
+      if (!isDraggingRef.current) return;
 
-      const deltaY = dragStartY - clientY;
+      const deltaY = dragStartYRef.current - clientY;
       const deltaVh = (deltaY / window.innerHeight) * 100;
-      const newHeight = Math.max(
-        SHEET_HEIGHTS.min,
-        Math.min(SHEET_HEIGHTS.max, getHeightForState(sheetState) + deltaVh)
-      );
-      setCurrentHeight(newHeight);
+      const newTranslateY = baseTranslateYRef.current - deltaVh;
+
+      // 0 ~ (max - min) 범위로 제한
+      const minTranslateY = 0; // max 상태
+      const maxTranslateY = SHEET_HEIGHTS.max - SHEET_HEIGHTS.min; // min 상태
+      const clampedTranslateY = Math.max(minTranslateY, Math.min(newTranslateY, maxTranslateY));
+
+      currentTranslateYRef.current = clampedTranslateY;
+      updateTransform(clampedTranslateY);
     },
-    [isDragging, dragStartY, sheetState]
+    [updateTransform]
   );
 
-  // 드래그 종료
+  // 드래그 종료 - 스냅 동작
   const handleDragEnd = useCallback(() => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
 
-    setIsDragging(false);
-    const deltaVh = currentHeight - getHeightForState(sheetState);
+    const currentTranslateY = currentTranslateYRef.current;
+    const deltaVh = baseTranslateYRef.current - currentTranslateY;
+    const thresholdVh = (DRAG.THRESHOLD / window.innerHeight) * 100;
 
-    // 드래그 임계값에 따라 상태 변경
-    if (deltaVh > (DRAG.THRESHOLD / window.innerHeight) * 100) {
+    let newState: BottomSheetState = sheetState;
+
+    if (deltaVh > thresholdVh) {
       // 위로 드래그
-      if (sheetState === 'min') {
-        setSheetState('mid');
-        setCurrentHeight(SHEET_HEIGHTS.mid);
-      } else if (sheetState === 'mid') {
-        setSheetState('max');
-        setCurrentHeight(SHEET_HEIGHTS.max);
-      }
-    } else if (deltaVh < -(DRAG.THRESHOLD / window.innerHeight) * 100) {
+      if (sheetState === 'min') newState = 'mid';
+      else if (sheetState === 'mid') newState = 'max';
+    } else if (deltaVh < -thresholdVh) {
       // 아래로 드래그
-      if (sheetState === 'max') {
-        setSheetState('mid');
-        setCurrentHeight(SHEET_HEIGHTS.mid);
-      } else if (sheetState === 'mid') {
-        setSheetState('min');
-        setCurrentHeight(SHEET_HEIGHTS.min);
-      }
-    } else {
-      // 원래 상태로 복귀
-      setCurrentHeight(getHeightForState(sheetState));
+      if (sheetState === 'max') newState = 'mid';
+      else if (sheetState === 'mid') newState = 'min';
     }
-  }, [isDragging, currentHeight, sheetState]);
+
+    // 새 상태로 스냅
+    const targetTranslateY = getTranslateY(newState);
+    currentTranslateYRef.current = targetTranslateY;
+    updateTransform(targetTranslateY, true);
+
+    // state 업데이트 (드래그 종료 시에만)
+    setSheetState(newState);
+  }, [sheetState, updateTransform]);
 
   // 핸들 터치 이벤트 (항상 드래그)
-  const handleHandleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
-    handleDragStart(e.touches[0].clientY);
-  };
+  const handleHandleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+      handleDragStart(e.touches[0].clientY);
+    },
+    [handleDragStart]
+  );
 
-  const handleHandleTouchMove = (e: React.TouchEvent) => {
-    e.preventDefault();
-    handleDragMove(e.touches[0].clientY);
-  };
+  const handleHandleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+      handleDragMove(e.touches[0].clientY);
+    },
+    [handleDragMove]
+  );
 
-  const handleHandleTouchEnd = (e: React.TouchEvent) => {
-    e.preventDefault();
-    handleDragEnd();
-  };
+  const handleHandleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+      handleDragEnd();
+    },
+    [handleDragEnd]
+  );
 
   // 스크롤 영역 터치 이벤트 (max 상태에서만 스크롤, 아니면 드래그)
   const scrollTouchStartY = useRef(0);
   const isScrollDragging = useRef(false);
 
-  const handleScrollTouchStart = (e: React.TouchEvent) => {
-    scrollTouchStartY.current = e.touches[0].clientY;
-    isScrollDragging.current = false;
+  const handleScrollTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      scrollTouchStartY.current = e.touches[0].clientY;
+      isScrollDragging.current = false;
 
-    // max 상태가 아니면 드래그 모드
-    if (sheetState !== 'max') {
-      handleDragStart(e.touches[0].clientY);
-      isScrollDragging.current = true;
-    }
-  };
+      // max 상태가 아니면 드래그 모드
+      if (sheetState !== 'max') {
+        handleDragStart(e.touches[0].clientY);
+        isScrollDragging.current = true;
+      }
+    },
+    [sheetState, handleDragStart]
+  );
 
-  const handleScrollTouchMove = (e: React.TouchEvent) => {
-    const currentY = e.touches[0].clientY;
-    const deltaY = scrollTouchStartY.current - currentY;
+  const handleScrollTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      const currentY = e.touches[0].clientY;
+      const deltaY = scrollTouchStartY.current - currentY;
 
-    // max 상태가 아니면 드래그
-    if (sheetState !== 'max') {
-      if (isScrollDragging.current) {
+      // max 상태가 아니면 드래그
+      if (sheetState !== 'max') {
+        if (isScrollDragging.current) {
+          e.preventDefault();
+          handleDragMove(currentY);
+        }
+        return;
+      }
+
+      // max 상태에서 스크롤이 맨 위이고 아래로 드래그하면 시트 높이 줄이기
+      if (isScrollAtTop() && deltaY < -10) {
+        if (!isScrollDragging.current) {
+          handleDragStart(currentY);
+          isScrollDragging.current = true;
+        }
+        e.preventDefault();
+        handleDragMove(currentY);
+      } else if (isScrollDragging.current) {
         e.preventDefault();
         handleDragMove(currentY);
       }
-      return;
-    }
+      // 그 외에는 기본 스크롤 동작
+    },
+    [sheetState, isScrollAtTop, handleDragStart, handleDragMove]
+  );
 
-    // max 상태에서 스크롤이 맨 위이고 아래로 드래그하면 시트 높이 줄이기
-    if (isScrollAtTop() && deltaY < -10) {
-      if (!isScrollDragging.current) {
-        handleDragStart(currentY);
-        isScrollDragging.current = true;
-      }
-      e.preventDefault();
-      handleDragMove(currentY);
-    } else if (isScrollDragging.current) {
-      e.preventDefault();
-      handleDragMove(currentY);
-    }
-    // 그 외에는 기본 스크롤 동작
-  };
-
-  const handleScrollTouchEnd = () => {
+  const handleScrollTouchEnd = useCallback(() => {
     if (isScrollDragging.current) {
       handleDragEnd();
       isScrollDragging.current = false;
     }
-  };
+  }, [handleDragEnd]);
 
   // 마우스 이벤트 핸들러
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleDragStart(e.clientY);
-  };
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      handleDragStart(e.clientY);
+    },
+    [handleDragStart]
+  );
 
   // 글로벌 마우스 이벤트
   useEffect(() => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
 
     const handleMouseMove = (e: MouseEvent) => {
       handleDragMove(e.clientY);
@@ -204,15 +243,7 @@ export default function MapBottomSheet({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, handleDragMove, handleDragEnd]);
-
-  // 현재 높이 (드래그 중이면 currentHeight, 아니면 상태에 따른 높이)
-  const displayHeight = isDragging ? currentHeight : getHeightForState(sheetState);
-
-  // 높이 변경 시 부모에게 알림
-  useEffect(() => {
-    onHeightChange?.(displayHeight);
-  }, [displayHeight, onHeightChange]);
+  }, [handleDragMove, handleDragEnd]);
 
   // IntersectionObserver로 무한 스크롤 감지
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -240,19 +271,18 @@ export default function MapBottomSheet({
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, onLoadMore]);
 
-  // max 상태가 아니면 스크롤 비활성화
-  const scrollStyle = sheetState === 'max'
-    ? { height: `calc(${displayHeight}dvh - 200px)` }
-    : { height: `calc(${displayHeight}dvh - 200px)`, overflow: 'hidden' as const };
+  // 현재 높이 (스크롤 영역 계산용)
+  const currentHeight = SHEET_HEIGHTS[sheetState];
 
   return (
     <div
       ref={sheetRef}
       className="fixed right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)] sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2"
       style={{
-        height: `${displayHeight}dvh`,
+        height: `${SHEET_HEIGHTS.max}dvh`,
         bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
-        transition: isDragging ? 'none' : 'height 0.3s ease-out',
+        transform: `translateY(${getTranslateY(sheetState)}dvh)`,
+        willChange: 'transform',
       }}
     >
       {/* 드래그 핸들 - 항상 드래그 가능 */}
@@ -307,7 +337,7 @@ export default function MapBottomSheet({
         ref={scrollRef}
         className="scrollbar-hide px-4"
         style={{
-          ...scrollStyle,
+          height: `calc(${currentHeight}dvh - 200px)`,
           overflowY: sheetState === 'max' ? 'auto' : 'hidden',
           touchAction: sheetState === 'max' ? 'pan-y' : 'none',
         }}
