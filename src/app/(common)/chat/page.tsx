@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import ChatList from '@/src/components/chat/chatlist/ChatList';
-import { SearchInput } from '@/src/components/common';
 import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
 import { getAccessToken } from '@/src/stores';
@@ -17,7 +16,6 @@ const getServerSnapshot = () => false;
 export default function ChatPage() {
   const { showToast } = useToast();
   const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
-  const [searchKeyword, setSearchKeyword] = useState('');
   const [modalDismissed, setModalDismissed] = useState(false);
 
   // 비로그인 상태이고 모달을 닫지 않은 경우 표시
@@ -33,12 +31,6 @@ export default function ChatPage() {
     return data?.pages.flatMap((page) => page.result ?? []) ?? [];
   }, [data?.pages]);
 
-  // 검색 필터링
-  const filteredChats = useMemo(() => {
-    if (!searchKeyword) return allChats;
-    return allChats.filter((chat) => chat.name.toLowerCase().includes(searchKeyword.toLowerCase()));
-  }, [allChats, searchKeyword]);
-
   // 에러 처리
   useEffect(() => {
     if (error) {
@@ -47,15 +39,10 @@ export default function ChatPage() {
   }, [error, showToast]);
 
   return (
-    <div className="min-h-screen bg-white pb-20 pt-[env(safe-area-inset-top)]">
+    <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-20">
       <h1 className="text-head-2-semibold px-5 py-3">채팅</h1>
-      <SearchInput
-        onSearch={setSearchKeyword}
-        placeholder="검색하기"
-        className="mx-4 mt-2 mb-4"
-      />
       <ChatList
-        chats={filteredChats}
+        chats={allChats}
         isLoading={isLoading}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
