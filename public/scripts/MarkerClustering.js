@@ -67,12 +67,12 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 	draw: naver.maps.Util.noop,
 
 	onRemove: function() {
-		naver.maps.Event.removeListener(this._mapRelation);
+		naver.maps.Event.removeListener(this._mapRelations);
 
 		this._clearClusters();
 
 		this._geoTree = null;
-		this._mapRelation = null;
+		this._mapRelations = null;
 	},
 
 	/**
