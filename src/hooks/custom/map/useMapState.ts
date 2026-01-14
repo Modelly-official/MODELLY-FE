@@ -39,8 +39,8 @@ interface UseMapStateReturn {
 export function useMapState({ userLocation }: UseMapStateOptions = {}): UseMapStateReturn {
   // 지도 상태
   const [mapCenter, setMapCenter] = useState<MapPosition | null>(null);
-  const [zoom, setZoom] = useState(MAP_DEFAULTS.ZOOM);
-  const [bottomSheetHeight, setBottomSheetHeight] = useState(SHEET_HEIGHTS.mid);
+  const [zoom, setZoom] = useState<number>(MAP_DEFAULTS.ZOOM);
+  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(SHEET_HEIGHTS.mid);
   const [selectedShop, setSelectedShop] = useState<MapShopItem | null>(null);
   const [selectedCardDragOffset, setSelectedCardDragOffset] = useState(0);
 

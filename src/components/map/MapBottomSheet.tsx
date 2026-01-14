@@ -43,7 +43,7 @@ export default function MapBottomSheet({
   const [sheetState, setSheetState] = useState<BottomSheetState>('min');
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
-  const [currentHeight, setCurrentHeight] = useState(SHEET_HEIGHTS.min);
+  const [currentHeight, setCurrentHeight] = useState<number>(SHEET_HEIGHTS.min);
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
