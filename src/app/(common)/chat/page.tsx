@@ -49,7 +49,7 @@ export default function ChatPage() {
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-20">
       <h1 className="text-head-3-semibold px-5 py-3">채팅</h1>
       {isModelUser && (
-        <div className="scrollbar-hide flex gap-2 overflow-x-auto px-5 pb-4">
+        <div className="scrollbar-hide flex gap-1.5 overflow-x-auto px-4 py-2">
           {[
             { code: 'ALL', label: '전체' },
             { code: 'HAIR', label: '헤어' },
@@ -63,7 +63,7 @@ export default function ChatPage() {
                 key={chip.code}
                 type="button"
                 onClick={() => setSelectedCategory(chip.code)}
-                className={`text-body-2-medium shrink-0 cursor-pointer rounded-[99px] px-3 py-1 ${
+                className={`text-body-2-medium shrink-0 cursor-pointer rounded-[99px] px-3.5 py-1.5 ${
                   isActive ? 'bg-gray-900 text-white' : 'border border-gray-400 text-gray-700'
                 }`}
               >
