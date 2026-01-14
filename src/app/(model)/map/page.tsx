@@ -13,6 +13,7 @@ import {
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useMapShops } from '@/src/hooks/queries/map/useMapShops';
 import { useRecruitments } from '@/src/hooks/queries/explore/useRecruitments';
+import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 import { useToast } from '@/src/hooks/common/useToast';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
@@ -63,7 +64,7 @@ function MapContent() {
   }, [manualSearchCenter, location, isLocationLoading]);
 
   // 지도 샵 목록 조회 API (전체 카테고리 표시)
-  const { data: shopsData, isLoading: isShopsLoading } = useMapShops({
+  const { data: shopsData, isLoading: isShopsLoading, refetch: refetchShops } = useMapShops({
     userLatitude: searchCenter?.lat,
     userLongitude: searchCenter?.lng,
     // category 미전달 시 전체 표시
@@ -80,6 +81,7 @@ function MapContent() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+  refetch: refetchRecruitments,
   } = useRecruitments({
     category,
     subCategory: subCategory !== 'ALL' ? subCategory : undefined,
@@ -89,6 +91,9 @@ function MapContent() {
     enabled: !!searchCenter,
     mockEndpoint: 'mapRecruitments', // map 전용 mock 설정
   });
+
+  // 찜(좋아요) mutation
+  const { mutate: toggleRecruitmentLike } = useToggleRecruitmentLike();
 
   // 공고 목록 (전체 페이지 합침 + 중복 제거)
   const recruitments = useMemo(() => {
@@ -151,9 +156,11 @@ function MapContent() {
     setManualSearchCenter(displayCenter);
     setSelectedShop(null);
     setSelectedCardDragOffset(0);
-    // refetch는 searchCenter가 변경되면 자동으로 트리거됨 (queryKey 변경)
+    // 좌표가 같아도 강제로 refetch (캐시된 데이터 무시)
+    refetchShops();
+    refetchRecruitments();
     showToast('현재 지도 영역에서 검색합니다');
-  }, [displayCenter, showToast]);
+  }, [displayCenter, showToast, refetchShops, refetchRecruitments]);
 
   // 현재 위치로 이동
   const handleCurrentLocation = useCallback(() => {
@@ -236,6 +243,7 @@ function MapContent() {
               <MapRecruitmentCard
                 key={recruitment.recruitmentId}
                 recruitment={recruitment}
+                onLikeToggle={() => toggleRecruitmentLike(recruitment.recruitmentId)}
               />
             ))}
             {isFetchingNextPage && (
