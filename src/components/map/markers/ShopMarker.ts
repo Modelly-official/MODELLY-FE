@@ -2,6 +2,16 @@
 import type { Category } from '@/src/types/recruitment';
 import type { MapShopItem } from '@/src/types/map';
 
+// HTML 특수문자 이스케이프 (XSS 방지)
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // 마커 색상 (단일 색상)
 const MARKER_COLOR = '#8F93FF'; // Blue/Purple 50
 
@@ -72,6 +82,7 @@ function createMarkerHtml(category: Category): string {
 // 선택된 마커 HTML 생성 (샵 이름 표시)
 function createSelectedMarkerHtml(category: Category, shopName: string): string {
   const iconPath = MARKER_ICON_PATHS[category];
+  const escapedShopName = escapeHtml(shopName);
 
   return `
     <div style="
@@ -119,7 +130,7 @@ function createSelectedMarkerHtml(category: Category, shopName: string): string 
           letter-spacing: -0.28px;
           color: white;
           white-space: nowrap;
-        ">${shopName}</span>
+        ">${escapedShopName}</span>
       </div>
       <!-- 삼각형 꼬리 -->
       <div style="

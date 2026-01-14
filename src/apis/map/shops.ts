@@ -44,10 +44,10 @@ export async function getMapShops(
     params: { ...restParams, size },
   });
 
-  // API 응답 변환
+  // API 응답 변환 (null/undefined 방어)
   return {
     ...data,
-    result: data.result.map(convertApiItemToMapShopItem),
+    result: Array.isArray(data.result) ? data.result.map(convertApiItemToMapShopItem) : [],
   };
 }
 

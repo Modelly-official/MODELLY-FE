@@ -2,7 +2,7 @@
 
 import 'swiper/css';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -15,6 +15,9 @@ import CloseIcon from '@/public/icons/map/close.svg';
 import HeartFilledIcon from '@/public/icons/map/heart.svg';
 import HeartOutlineIcon from '@/public/icons/map/heart-outline.svg';
 import { LAYOUT, DRAG } from '@/src/constants/map';
+
+// 드래그 시작 임계값 (px) - 이 거리 이상 이동해야 드래그로 인식
+const DRAG_START_THRESHOLD = 10;
 
 interface SelectedShopCardProps {
   shop: MapShopItem;
@@ -42,125 +45,215 @@ export default function SelectedShopCard({
     onToggle: onDesignerLikeToggle,
   });
 
-  // 드래그 상태 관리
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const startYRef = useRef(0);
-  const baseOffsetRef = useRef(0); // 접힌 상태에서의 기준 오프셋
+  // DOM 참조
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // 드래그 오프셋 변경 시 부모에게 알림
+  // 드래그 상태 (ref로 관리 - 리렌더링 방지)
+  const isDraggingRef = useRef(false);
+  const isDragStartedRef = useRef(false); // 임계값 넘어서 실제 드래그 시작됨
+  const startYRef = useRef(0);
+  const baseOffsetRef = useRef(0);
+  const currentOffsetRef = useRef(0);
+
+  // 글로벌 마우스 리스너 cleanup용 ref
+  const mouseListenersRef = useRef<{
+    mousemove: (e: MouseEvent) => void;
+    mouseup: () => void;
+  } | null>(null);
+
+  // 스냅 상태 (state로 관리 - 드래그 종료 시에만 업데이트)
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [finalOffset, setFinalOffset] = useState(0);
+
+  // 최종 offset 변경 시 부모에게 알림
   useEffect(() => {
-    onDragOffsetChange?.(dragOffset);
-  }, [dragOffset, onDragOffsetChange]);
+    onDragOffsetChange?.(finalOffset);
+  }, [finalOffset, onDragOffsetChange]);
 
   // 공고별 썸네일 이미지 배열 생성
   const images = recruitments
     .filter((r) => r.thumbnailUrl)
     .map((r) => ({ recruitmentId: r.recruitmentId, thumbnailUrl: r.thumbnailUrl }));
 
-  // 드래그 시작
-  const handleDragStart = (clientY: number) => {
+  // DOM 직접 업데이트 (리렌더링 없음)
+  const updateTransform = useCallback((offset: number, animate: boolean = false) => {
+    if (!containerRef.current) return;
+    containerRef.current.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
+    containerRef.current.style.transform = `translateY(${offset}px)`;
+  }, []);
+
+  // 드래그 준비 (터치/마우스 시작 시 호출)
+  const handleDragPrepare = useCallback((clientY: number) => {
+    isDraggingRef.current = true;
+    isDragStartedRef.current = false;
     startYRef.current = clientY;
-    baseOffsetRef.current = isCollapsed ? DRAG.CARD_CONTENT_HEIGHT : 0;
-    setIsDragging(true);
-  };
+    baseOffsetRef.current = currentOffsetRef.current;
+  }, []);
 
-  // 드래그 중
-  const handleDragMove = (clientY: number) => {
-    if (!isDragging) return;
-    const diff = clientY - startYRef.current;
-    const newOffset = baseOffsetRef.current + diff;
+  // 드래그 중 (리렌더링 없이 DOM 직접 조작)
+  const handleDragMove = useCallback(
+    (clientY: number) => {
+      if (!isDraggingRef.current) return;
 
-    // 0 ~ DRAG.CARD_CONTENT_HEIGHT 범위로 제한
-    const clampedOffset = Math.max(0, Math.min(newOffset, DRAG.CARD_CONTENT_HEIGHT));
-    setDragOffset(clampedOffset);
-  };
+      const diff = clientY - startYRef.current;
+
+      // 임계값 체크 - 아직 드래그 시작 안 됐으면
+      if (!isDragStartedRef.current) {
+        if (Math.abs(diff) < DRAG_START_THRESHOLD) {
+          return; // 아직 임계값 안 넘음, 클릭일 수 있음
+        }
+        isDragStartedRef.current = true; // 드래그 시작!
+      }
+
+      const newOffset = baseOffsetRef.current + diff;
+      const clampedOffset = Math.max(0, Math.min(newOffset, DRAG.CARD_CONTENT_HEIGHT));
+
+      currentOffsetRef.current = clampedOffset;
+      updateTransform(clampedOffset);
+    },
+    [updateTransform]
+  );
 
   // 드래그 종료 - 스냅 동작
-  const handleDragEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
+  const handleDragEnd = useCallback(() => {
+    if (!isDraggingRef.current) return;
 
-    // 현재 오프셋 기준으로 스냅 결정
+    const wasDragging = isDragStartedRef.current;
+    isDraggingRef.current = false;
+    isDragStartedRef.current = false;
+
+    // 실제 드래그가 발생하지 않았으면 스냅하지 않음 (클릭이었음)
+    if (!wasDragging) return;
+
+    const currentOffset = currentOffsetRef.current;
+    let targetOffset: number;
+    let collapsed: boolean;
+
     if (isCollapsed) {
       // 접힌 상태에서 위로 임계값 이상 드래그하면 펼치기
-      if (dragOffset < DRAG.CARD_CONTENT_HEIGHT - DRAG.COLLAPSE_THRESHOLD) {
-        setIsCollapsed(false);
-        setDragOffset(0);
+      if (currentOffset < DRAG.CARD_CONTENT_HEIGHT - DRAG.COLLAPSE_THRESHOLD) {
+        targetOffset = 0;
+        collapsed = false;
       } else {
-        setDragOffset(DRAG.CARD_CONTENT_HEIGHT);
+        targetOffset = DRAG.CARD_CONTENT_HEIGHT;
+        collapsed = true;
       }
     } else {
       // 펼친 상태에서 아래로 임계값 이상 드래그하면 접기
-      if (dragOffset > DRAG.COLLAPSE_THRESHOLD) {
-        setIsCollapsed(true);
-        setDragOffset(DRAG.CARD_CONTENT_HEIGHT);
+      if (currentOffset > DRAG.COLLAPSE_THRESHOLD) {
+        targetOffset = DRAG.CARD_CONTENT_HEIGHT;
+        collapsed = true;
       } else {
-        setDragOffset(0);
+        targetOffset = 0;
+        collapsed = false;
       }
     }
-  };
 
-  // 터치 이벤트 핸들러 (핸들에서 시작)
-  const handleTouchStart = (e: React.TouchEvent) => {
-    handleDragStart(e.touches[0].clientY);
-  };
+    // 애니메이션과 함께 스냅
+    currentOffsetRef.current = targetOffset;
+    updateTransform(targetOffset, true);
 
-  // 터치 이벤트 핸들러 (컨테이너에서 처리)
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    handleDragMove(e.touches[0].clientY);
-  };
+    // state 업데이트 (드래그 종료 시에만)
+    setIsCollapsed(collapsed);
+    setFinalOffset(targetOffset);
+  }, [isCollapsed, updateTransform]);
 
-  const handleTouchEnd = () => {
+  // 전체 영역 터치 이벤트 (드래그 임계값 적용)
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      handleDragPrepare(e.touches[0].clientY);
+    },
+    [handleDragPrepare]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDraggingRef.current) return;
+
+      const clientY = e.touches[0].clientY;
+      const deltaY = Math.abs(startYRef.current - clientY);
+
+      // 임계값 넘으면 드래그 모드 - 기본 동작 방지
+      if (isDragStartedRef.current || deltaY >= DRAG_START_THRESHOLD) {
+        e.preventDefault();
+      }
+
+      handleDragMove(clientY);
+    },
+    [handleDragMove]
+  );
+
+  const handleTouchEnd = useCallback(() => {
     handleDragEnd();
-  };
+  }, [handleDragEnd]);
 
-  // 마우스 이벤트 핸들러 (핸들에서 시작)
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleDragStart(e.clientY);
-  };
+  // 마우스 이벤트 핸들러 (mousedown에서 직접 글로벌 리스너 등록)
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      // 인터랙티브 요소 클릭은 무시
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, select, a, [role="button"]')) {
+        return;
+      }
 
-  // 마우스 이벤트 핸들러 (컨테이너에서 처리)
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    handleDragMove(e.clientY);
-  };
+      handleDragPrepare(e.clientY);
 
-  const handleMouseUp = () => {
-    handleDragEnd();
-  };
+      const handleMouseMove = (ev: MouseEvent) => {
+        if (!isDraggingRef.current) return;
 
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      handleDragEnd();
-    }
-  };
+        const deltaY = Math.abs(startYRef.current - ev.clientY);
+
+        // 임계값 넘으면 드래그 모드
+        if (isDragStartedRef.current || deltaY >= DRAG_START_THRESHOLD) {
+          ev.preventDefault();
+        }
+
+        handleDragMove(ev.clientY);
+      };
+
+      const handleMouseUp = () => {
+        handleDragEnd();
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+        mouseListenersRef.current = null;
+      };
+
+      // cleanup ref에 저장
+      mouseListenersRef.current = { mousemove: handleMouseMove, mouseup: handleMouseUp };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    },
+    [handleDragPrepare, handleDragMove, handleDragEnd]
+  );
+
+  // 컴포넌트 언마운트 시 글로벌 리스너 cleanup
+  useEffect(() => {
+    return () => {
+      if (mouseListenersRef.current) {
+        window.removeEventListener('mousemove', mouseListenersRef.current.mousemove);
+        window.removeEventListener('mouseup', mouseListenersRef.current.mouseup);
+        mouseListenersRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div
-      className="absolute right-0 left-0 z-20 rounded-t-[20px] bg-white px-0 pt-3 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.09)]"
+      ref={containerRef}
+      className="fixed right-0 left-0 z-20 rounded-t-[20px] bg-white px-0 pt-3 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.09)] sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2"
       style={{
         bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
-        transform: `translateY(${dragOffset}px)`,
-        transition: isDragging ? 'none' : 'transform 0.2s ease-out',
+        transform: `translateY(${finalOffset}px)`,
+        willChange: 'transform',
       }}
+      onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
     >
       {/* 드래그 핸들 */}
-      <div
-        className="mb-3 flex cursor-grab justify-center py-1 active:cursor-grabbing"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-      >
+      <div className="mb-3 flex cursor-grab justify-center py-1 active:cursor-grabbing">
         <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />
       </div>
 
@@ -236,11 +329,12 @@ export default function SelectedShopCard({
 
         {/* 이미지 갤러리 (공고별 썸네일) */}
         {images.length > 0 && (
-          <div className="px-4">
+          <div className="overflow-hidden">
             <Swiper
               slidesPerView="auto"
               spaceBetween={8}
-              className="overflow-visible!"
+              slidesOffsetBefore={16}
+              slidesOffsetAfter={16}
             >
               {images.map((image) => (
                 <SwiperSlide key={image.recruitmentId} className="w-[120px]!">

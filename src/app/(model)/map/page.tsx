@@ -102,7 +102,7 @@ function MapContent() {
   });
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-screen h-[100dvh] w-full overflow-hidden overscroll-none touch-none">
       {/* 지도 */}
       <NaverMapView
         center={displayCenter}
@@ -122,6 +122,7 @@ function MapContent() {
         showRefreshButton={!isLocationLoading}
         bottomSheetHeight={bottomSheetHeight}
         isSelectedShopCard={!!selectedShop && !!designerProfile}
+        hasRecruitmentImages={designerRecruitments.some((r) => r.thumbnailUrl)}
         selectedCardDragOffset={selectedCardDragOffset}
       />
 
