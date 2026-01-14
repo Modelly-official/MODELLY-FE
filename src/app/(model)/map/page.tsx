@@ -122,6 +122,7 @@ function MapContent() {
         showRefreshButton={!isLocationLoading}
         bottomSheetHeight={bottomSheetHeight}
         isSelectedShopCard={!!selectedShop && !!designerProfile}
+        hasRecruitmentImages={designerRecruitments.some((r) => r.thumbnailUrl)}
         selectedCardDragOffset={selectedCardDragOffset}
       />
 
