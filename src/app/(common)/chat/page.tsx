@@ -43,6 +43,13 @@ export default function ChatPage() {
   }, [data?.pages]);
   const isListLoading = !isHydrated || isLoading || (isFetching && allChats.length === 0);
 
+  // 채팅방은 생성된 채로 메세지가 없는 경우, 채팅방 리스트에 뜨는 것을 방지
+  const visibleChats = useMemo(() => {
+    return allChats.filter(
+      (chat) => chat.lastMessageTime != null && chat.lastMessage != null && chat.messageType != null,
+    );
+  }, [allChats]);
+
   // 에러 처리
   useEffect(() => {
     if (error) {
@@ -55,7 +62,7 @@ export default function ChatPage() {
       <h1 className="text-head-3-semibold px-5 py-3">채팅</h1>
       {isModelUser && <ChatCategoryChips selectedCategory={selectedCategory} onChange={setSelectedCategory} />}
       <ChatList
-        chats={allChats}
+        chats={visibleChats}
         isLoading={isListLoading}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
