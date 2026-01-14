@@ -141,7 +141,7 @@ export default function SelectedShopCard({
 
   return (
     <div
-      className="absolute right-0 left-0 z-20 rounded-t-[20px] bg-white px-0 pt-3 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.09)]"
+      className="fixed right-0 left-0 z-20 rounded-t-[20px] bg-white px-0 pt-3 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.09)] sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2"
       style={{
         bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
         transform: `translateY(${dragOffset}px)`,

@@ -186,9 +186,9 @@ export default function MapBottomSheet({
   return (
     <div
       ref={sheetRef}
-      className="absolute right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
+      className="fixed right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)] sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2"
       style={{
-        height: `${displayHeight}vh`,
+        height: `${displayHeight}dvh`,
         bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
         transition: isDragging ? 'none' : 'height 0.3s ease-out',
       }}
