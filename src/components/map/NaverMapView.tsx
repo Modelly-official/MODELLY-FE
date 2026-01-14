@@ -6,12 +6,12 @@ import {
   createShopMarkersForClustering,
   updateMarkerToDefault,
   updateMarkerToSelected,
-} from './ShopMarker';
-import { createClusteringOptions } from './ClusterMarker';
+} from './markers/ShopMarker';
+import { createClusteringOptions } from './markers/ClusterMarker';
 import {
   createCurrentLocationMarker,
   updateCurrentLocationMarker,
-} from './CurrentLocationMarker';
+} from './markers/CurrentLocationMarker';
 import { MAP_DEFAULTS } from '@/src/constants/map';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
 
