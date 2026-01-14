@@ -21,8 +21,8 @@ export const LAYOUT = {
 export const SHEET_HEIGHTS = {
   /** 최소 높이 (핸들 + 타이틀이 보이는 정도) */
   min: 12,
-  /** 중간 높이 */
-  mid: 50,
+  /** 중간 높이 (공고 1개 정도 보이는 높이) */
+  mid: 35,
   /** 최대 높이 (BottomNav 영역 제외) */
   max: 85,
 } as const;
