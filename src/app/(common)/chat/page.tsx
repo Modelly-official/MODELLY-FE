@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
 import ChatList from '@/src/components/chat/chatlist/ChatList';
 import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
@@ -12,10 +13,13 @@ import BottomNav from '@/src/components/common/BottomNav';
 const subscribeToAuth = () => () => {};
 const getAuthSnapshot = () => !!getAccessToken();
 const getServerSnapshot = () => false;
+const subscribeToHydration = () => () => {};
+const getHydrationSnapshot = () => true;
 
 export default function ChatPage() {
   const { showToast } = useToast();
   const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
+  const isHydrated = useSyncExternalStore(subscribeToHydration, getHydrationSnapshot, getServerSnapshot);
   const roleFromStore = useAuthStore((state) => state.user?.role);
   const roleFromCookie = getUserRole();
   const userRole = roleFromStore ?? roleFromCookie;
@@ -25,7 +29,7 @@ export default function ChatPage() {
   const requestCategory = selectedCategory === 'ALL' ? undefined : selectedCategory;
 
   // 비로그인 상태이고 모달을 닫지 않은 경우 표시
-  const showLoginModal = !isAuthenticated && !modalDismissed;
+  const showLoginModal = isHydrated && !isAuthenticated && !modalDismissed;
 
   // 인증된 경우에만 API 호출 (무한 스크롤)
   const { data, isLoading, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
@@ -37,7 +41,7 @@ export default function ChatPage() {
   const allChats = useMemo(() => {
     return data?.pages.flatMap((page) => page.result ?? []) ?? [];
   }, [data?.pages]);
-  const isListLoading = isLoading || (isFetching && allChats.length === 0);
+  const isListLoading = !isHydrated || isLoading || (isFetching && allChats.length === 0);
 
   // 에러 처리
   useEffect(() => {
@@ -49,31 +53,7 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-20">
       <h1 className="text-head-3-semibold px-5 py-3">채팅</h1>
-      {isModelUser && (
-        <div className="scrollbar-hide flex gap-1.5 overflow-x-auto px-4 py-2">
-          {[
-            { code: 'ALL', label: '전체' },
-            { code: 'HAIR', label: '헤어' },
-            { code: 'NAIL', label: '네일' },
-            { code: 'TATTOO', label: '타투' },
-            { code: 'EYELASH', label: '속눈썹' },
-          ].map((chip) => {
-            const isActive = selectedCategory === chip.code;
-            return (
-              <button
-                key={chip.code}
-                type="button"
-                onClick={() => setSelectedCategory(chip.code)}
-                className={`text-body-2-medium shrink-0 cursor-pointer rounded-[99px] px-3.5 py-1.5 ${
-                  isActive ? 'bg-gray-900 text-white' : 'border border-gray-400 text-gray-700'
-                }`}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
-        </div>
-      )}
+      {isModelUser && <ChatCategoryChips selectedCategory={selectedCategory} onChange={setSelectedCategory} />}
       <ChatList
         chats={allChats}
         isLoading={isListLoading}
