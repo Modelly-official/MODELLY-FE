@@ -221,7 +221,7 @@ export default function ChatRoom() {
             </div>
           ) : (
             <div className="px-5 pt-3">
-              <div className="text-body-2-medium rounded-2xl bg-white px-4 text-center text-gray-700">
+              <div className="text-body-2-medium rounded-2xl bg-white px-4 text-center text-gray-700/32">
                 예약 내역이 없습니다
               </div>
             </div>
