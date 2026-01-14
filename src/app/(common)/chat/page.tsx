@@ -22,8 +22,7 @@ export default function ChatPage() {
   const isHydrated = useSyncExternalStore(subscribeToHydration, getHydrationSnapshot, getServerSnapshot);
   const roleFromStore = useAuthStore((state) => state.user?.role);
   const roleFromCookie = getUserRole();
-  const userRole = roleFromStore ?? roleFromCookie;
-  const isModelUser = userRole === 'model';
+  const userRole = roleFromCookie ?? roleFromStore;
   const [modalDismissed, setModalDismissed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const requestCategory = selectedCategory === 'ALL' ? undefined : selectedCategory;
@@ -34,13 +33,22 @@ export default function ChatPage() {
   // 인증된 경우에만 API 호출 (무한 스크롤)
   const { data, isLoading, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
     enabled: isAuthenticated,
-    category: isModelUser ? requestCategory : undefined,
+    category: requestCategory,
   });
 
   // 모든 페이지의 채팅방을 하나의 배열로 합침
   const allChats = useMemo(() => {
     return data?.pages.flatMap((page) => page.result ?? []) ?? [];
   }, [data?.pages]);
+  const inferredRole = useMemo(() => {
+    const hasDesignerOpponent = allChats.some((chat) => chat.role === 'DESIGNER');
+    const hasModelOpponent = allChats.some((chat) => chat.role === 'MODEL');
+    if (hasDesignerOpponent && !hasModelOpponent) return 'model';
+    if (hasModelOpponent && !hasDesignerOpponent) return 'designer';
+    return null;
+  }, [allChats]);
+  const resolvedRole = userRole ?? inferredRole;
+  const isModelUser = resolvedRole === 'model';
   const isListLoading = !isHydrated || isLoading || (isFetching && allChats.length === 0);
 
   // 채팅방은 생성된 채로 메세지가 없는 경우, 채팅방 리스트에 뜨는 것을 방지
