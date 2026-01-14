@@ -28,7 +28,7 @@ export default function ChatPage() {
   const showLoginModal = !isAuthenticated && !modalDismissed;
 
   // 인증된 경우에만 API 호출 (무한 스크롤)
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
+  const { data, isLoading, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
     enabled: isAuthenticated,
     category: isModelUser ? requestCategory : undefined,
   });
@@ -37,6 +37,7 @@ export default function ChatPage() {
   const allChats = useMemo(() => {
     return data?.pages.flatMap((page) => page.result ?? []) ?? [];
   }, [data?.pages]);
+  const isListLoading = isLoading || (isFetching && allChats.length === 0);
 
   // 에러 처리
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function ChatPage() {
       )}
       <ChatList
         chats={allChats}
-        isLoading={isLoading}
+        isLoading={isListLoading}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
         onLoadMore={fetchNextPage}

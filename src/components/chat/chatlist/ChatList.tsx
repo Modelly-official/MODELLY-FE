@@ -14,20 +14,23 @@ type Props = {
 
 function ChatListSkeleton() {
   return (
-    <div className="animate-skeleton">
+    <ul>
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex items-center gap-3 px-4 py-3">
-          <div className="h-[52px] w-[52px] shrink-0 rounded-full bg-gray-200" />
+        <li key={i} className="flex items-center gap-3 px-4 py-3">
+          <div className="animate-skeleton h-[52px] w-[52px] shrink-0 rounded-full bg-gray-200" />
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <div className="h-4 w-24 rounded bg-gray-200" />
-              <div className="h-3 w-10 rounded bg-gray-200" />
+              <div className="animate-skeleton h-4 w-24 rounded bg-gray-200" />
+              <div className="animate-skeleton h-3 w-10 rounded bg-gray-200" />
             </div>
-            <div className="mt-2 h-4 w-48 rounded bg-gray-200" />
+            <div className="mt-2 flex items-center justify-between">
+              <div className="animate-skeleton h-4 w-48 rounded bg-gray-200" />
+              <div className="animate-skeleton h-5 w-5 rounded-full bg-gray-200" />
+            </div>
           </div>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
