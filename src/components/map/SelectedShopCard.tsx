@@ -16,6 +16,9 @@ import HeartFilledIcon from '@/public/icons/map/heart.svg';
 import HeartOutlineIcon from '@/public/icons/map/heart-outline.svg';
 import { LAYOUT, DRAG } from '@/src/constants/map';
 
+// 드래그 시작 임계값 (px) - 이 거리 이상 이동해야 드래그로 인식
+const DRAG_START_THRESHOLD = 10;
+
 interface SelectedShopCardProps {
   shop: MapShopItem;
   profile: DesignerProfileInfo;
@@ -47,6 +50,7 @@ export default function SelectedShopCard({
 
   // 드래그 상태 (ref로 관리 - 리렌더링 방지)
   const isDraggingRef = useRef(false);
+  const isDragStartedRef = useRef(false); // 임계값 넘어서 실제 드래그 시작됨
   const startYRef = useRef(0);
   const baseOffsetRef = useRef(0);
   const currentOffsetRef = useRef(0);
@@ -72,9 +76,10 @@ export default function SelectedShopCard({
     containerRef.current.style.transform = `translateY(${offset}px)`;
   }, []);
 
-  // 드래그 시작
-  const handleDragStart = useCallback((clientY: number) => {
+  // 드래그 준비 (터치/마우스 시작 시 호출)
+  const handleDragPrepare = useCallback((clientY: number) => {
     isDraggingRef.current = true;
+    isDragStartedRef.current = false;
     startYRef.current = clientY;
     baseOffsetRef.current = currentOffsetRef.current;
   }, []);
@@ -85,6 +90,15 @@ export default function SelectedShopCard({
       if (!isDraggingRef.current) return;
 
       const diff = clientY - startYRef.current;
+
+      // 임계값 체크 - 아직 드래그 시작 안 됐으면
+      if (!isDragStartedRef.current) {
+        if (Math.abs(diff) < DRAG_START_THRESHOLD) {
+          return; // 아직 임계값 안 넘음, 클릭일 수 있음
+        }
+        isDragStartedRef.current = true; // 드래그 시작!
+      }
+
       const newOffset = baseOffsetRef.current + diff;
       const clampedOffset = Math.max(0, Math.min(newOffset, DRAG.CARD_CONTENT_HEIGHT));
 
@@ -97,7 +111,13 @@ export default function SelectedShopCard({
   // 드래그 종료 - 스냅 동작
   const handleDragEnd = useCallback(() => {
     if (!isDraggingRef.current) return;
+
+    const wasDragging = isDragStartedRef.current;
     isDraggingRef.current = false;
+    isDragStartedRef.current = false;
+
+    // 실제 드래그가 발생하지 않았으면 스냅하지 않음 (클릭이었음)
+    if (!wasDragging) return;
 
     const currentOffset = currentOffsetRef.current;
     let targetOffset: number;
@@ -132,17 +152,27 @@ export default function SelectedShopCard({
     setFinalOffset(targetOffset);
   }, [isCollapsed, updateTransform]);
 
-  // 터치 이벤트 핸들러
+  // 전체 영역 터치 이벤트 (드래그 임계값 적용)
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      handleDragStart(e.touches[0].clientY);
+      handleDragPrepare(e.touches[0].clientY);
     },
-    [handleDragStart]
+    [handleDragPrepare]
   );
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
-      handleDragMove(e.touches[0].clientY);
+      if (!isDraggingRef.current) return;
+
+      const clientY = e.touches[0].clientY;
+      const deltaY = Math.abs(startYRef.current - clientY);
+
+      // 임계값 넘으면 드래그 모드 - 기본 동작 방지
+      if (isDragStartedRef.current || deltaY >= DRAG_START_THRESHOLD) {
+        e.preventDefault();
+      }
+
+      handleDragMove(clientY);
     },
     [handleDragMove]
   );
@@ -151,31 +181,41 @@ export default function SelectedShopCard({
     handleDragEnd();
   }, [handleDragEnd]);
 
-  // 마우스 이벤트 핸들러
+  // 마우스 이벤트 핸들러 (mousedown에서 직접 글로벌 리스너 등록)
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault();
-      handleDragStart(e.clientY);
+      // 인터랙티브 요소 클릭은 무시
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, select, a, [role="button"]')) {
+        return;
+      }
+
+      handleDragPrepare(e.clientY);
+
+      const handleMouseMove = (ev: MouseEvent) => {
+        if (!isDraggingRef.current) return;
+
+        const deltaY = Math.abs(startYRef.current - ev.clientY);
+
+        // 임계값 넘으면 드래그 모드
+        if (isDragStartedRef.current || deltaY >= DRAG_START_THRESHOLD) {
+          ev.preventDefault();
+        }
+
+        handleDragMove(ev.clientY);
+      };
+
+      const handleMouseUp = () => {
+        handleDragEnd();
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
     },
-    [handleDragStart]
+    [handleDragPrepare, handleDragMove, handleDragEnd]
   );
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      handleDragMove(e.clientY);
-    },
-    [handleDragMove]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    handleDragEnd();
-  }, [handleDragEnd]);
-
-  const handleMouseLeave = useCallback(() => {
-    if (isDraggingRef.current) {
-      handleDragEnd();
-    }
-  }, [handleDragEnd]);
 
   return (
     <div
@@ -186,21 +226,13 @@ export default function SelectedShopCard({
         transform: `translateY(${finalOffset}px)`,
         willChange: 'transform',
       }}
+      onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
     >
       {/* 드래그 핸들 */}
-      <div
-        className="mb-3 flex cursor-grab justify-center py-1 active:cursor-grabbing"
-        style={{ touchAction: 'none' }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-      >
+      <div className="mb-3 flex cursor-grab justify-center py-1 active:cursor-grabbing">
         <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />
       </div>
 

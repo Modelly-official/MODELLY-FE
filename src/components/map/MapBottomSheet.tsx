@@ -10,6 +10,9 @@ import { CategoryTabs, SubCategoryChips, SortDropdown } from '@/src/components/e
 // re-export for backward compatibility
 export { SHEET_HEIGHTS } from '@/src/constants/map';
 
+// 드래그 시작 임계값 (px) - 이 거리 이상 이동해야 드래그로 인식
+const DRAG_START_THRESHOLD = 10;
+
 interface MapBottomSheetProps {
   category: Category;
   subCategory: SubCategory | 'ALL';
@@ -51,6 +54,7 @@ export default function MapBottomSheet({
 
   // 드래그 상태 (ref로 관리 - 리렌더링 방지)
   const isDraggingRef = useRef(false);
+  const isDragStartedRef = useRef(false); // 임계값 넘어서 실제 드래그 시작됨
   const dragStartYRef = useRef(0);
   const baseTranslateYRef = useRef(getTranslateY('min'));
   const currentTranslateYRef = useRef(getTranslateY('min'));
@@ -77,9 +81,10 @@ export default function MapBottomSheet({
     onHeightChange?.(SHEET_HEIGHTS[sheetState]);
   }, [sheetState, onHeightChange]);
 
-  // 드래그 시작
-  const handleDragStart = useCallback((clientY: number) => {
+  // 드래그 준비 (터치/마우스 시작 시 호출)
+  const handleDragPrepare = useCallback((clientY: number) => {
     isDraggingRef.current = true;
+    isDragStartedRef.current = false;
     dragStartYRef.current = clientY;
     baseTranslateYRef.current = currentTranslateYRef.current;
   }, []);
@@ -90,6 +95,15 @@ export default function MapBottomSheet({
       if (!isDraggingRef.current) return;
 
       const deltaY = dragStartYRef.current - clientY;
+
+      // 임계값 체크 - 아직 드래그 시작 안 됐으면
+      if (!isDragStartedRef.current) {
+        if (Math.abs(deltaY) < DRAG_START_THRESHOLD) {
+          return; // 아직 임계값 안 넘음, 클릭일 수 있음
+        }
+        isDragStartedRef.current = true; // 드래그 시작!
+      }
+
       const deltaVh = (deltaY / window.innerHeight) * 100;
       const newTranslateY = baseTranslateYRef.current - deltaVh;
 
@@ -107,7 +121,13 @@ export default function MapBottomSheet({
   // 드래그 종료 - 스냅 동작
   const handleDragEnd = useCallback(() => {
     if (!isDraggingRef.current) return;
+
+    const wasDragging = isDragStartedRef.current;
     isDraggingRef.current = false;
+    isDragStartedRef.current = false;
+
+    // 실제 드래그가 발생하지 않았으면 스냅하지 않음 (클릭이었음)
+    if (!wasDragging) return;
 
     const currentTranslateY = currentTranslateYRef.current;
     const deltaVh = baseTranslateYRef.current - currentTranslateY;
@@ -134,30 +154,34 @@ export default function MapBottomSheet({
     setSheetState(newState);
   }, [sheetState, updateTransform]);
 
-  // 핸들 터치 이벤트 (항상 드래그)
-  const handleHandleTouchStart = useCallback(
+  // 헤더 영역 터치 이벤트 (드래그 임계값 적용)
+  const handleHeaderTouchStart = useCallback(
     (e: React.TouchEvent) => {
-      e.preventDefault();
-      handleDragStart(e.touches[0].clientY);
+      handleDragPrepare(e.touches[0].clientY);
     },
-    [handleDragStart]
+    [handleDragPrepare]
   );
 
-  const handleHandleTouchMove = useCallback(
+  const handleHeaderTouchMove = useCallback(
     (e: React.TouchEvent) => {
-      e.preventDefault();
-      handleDragMove(e.touches[0].clientY);
+      if (!isDraggingRef.current) return;
+
+      const clientY = e.touches[0].clientY;
+      const deltaY = Math.abs(dragStartYRef.current - clientY);
+
+      // 임계값 넘으면 드래그 모드 - 기본 동작 방지
+      if (isDragStartedRef.current || deltaY >= DRAG_START_THRESHOLD) {
+        e.preventDefault();
+      }
+
+      handleDragMove(clientY);
     },
     [handleDragMove]
   );
 
-  const handleHandleTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      e.preventDefault();
-      handleDragEnd();
-    },
-    [handleDragEnd]
-  );
+  const handleHeaderTouchEnd = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
 
   // 스크롤 영역 터치 이벤트 (max 상태에서만 스크롤, 아니면 드래그)
   const scrollTouchStartY = useRef(0);
@@ -168,13 +192,13 @@ export default function MapBottomSheet({
       scrollTouchStartY.current = e.touches[0].clientY;
       isScrollDragging.current = false;
 
-      // max 상태가 아니면 드래그 모드
-      if (sheetState !== 'max') {
-        handleDragStart(e.touches[0].clientY);
+      // min 상태면 드래그 모드 (mid/max는 스크롤 허용)
+      if (sheetState === 'min') {
+        handleDragPrepare(e.touches[0].clientY);
         isScrollDragging.current = true;
       }
     },
-    [sheetState, handleDragStart]
+    [sheetState, handleDragPrepare]
   );
 
   const handleScrollTouchMove = useCallback(
@@ -182,19 +206,22 @@ export default function MapBottomSheet({
       const currentY = e.touches[0].clientY;
       const deltaY = scrollTouchStartY.current - currentY;
 
-      // max 상태가 아니면 드래그
-      if (sheetState !== 'max') {
+      // min 상태면 드래그
+      if (sheetState === 'min') {
         if (isScrollDragging.current) {
-          e.preventDefault();
+          // 임계값 넘으면 기본 동작 방지
+          if (isDragStartedRef.current || Math.abs(deltaY) >= DRAG_START_THRESHOLD) {
+            e.preventDefault();
+          }
           handleDragMove(currentY);
         }
         return;
       }
 
-      // max 상태에서 스크롤이 맨 위이고 아래로 드래그하면 시트 높이 줄이기
+      // mid/max 상태에서 스크롤이 맨 위이고 아래로 드래그하면 시트 높이 줄이기
       if (isScrollAtTop() && deltaY < -10) {
         if (!isScrollDragging.current) {
-          handleDragStart(currentY);
+          handleDragPrepare(currentY);
           isScrollDragging.current = true;
         }
         e.preventDefault();
@@ -205,7 +232,7 @@ export default function MapBottomSheet({
       }
       // 그 외에는 기본 스크롤 동작
     },
-    [sheetState, isScrollAtTop, handleDragStart, handleDragMove]
+    [sheetState, isScrollAtTop, handleDragPrepare, handleDragMove]
   );
 
   const handleScrollTouchEnd = useCallback(() => {
@@ -215,13 +242,27 @@ export default function MapBottomSheet({
     }
   }, [handleDragEnd]);
 
-  // 마우스 이벤트 핸들러 (mousedown에서 직접 글로벌 리스너 등록)
-  const handleMouseDown = useCallback(
+  // 헤더 영역 마우스 이벤트 (mousedown에서 직접 글로벌 리스너 등록)
+  const handleHeaderMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      e.preventDefault();
-      handleDragStart(e.clientY);
+      // 인터랙티브 요소 클릭은 무시 (버튼, 입력 등)
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, select, a, [role="button"]')) {
+        return;
+      }
+
+      handleDragPrepare(e.clientY);
 
       const handleMouseMove = (ev: MouseEvent) => {
+        if (!isDraggingRef.current) return;
+
+        const deltaY = Math.abs(dragStartYRef.current - ev.clientY);
+
+        // 임계값 넘으면 드래그 모드
+        if (isDragStartedRef.current || deltaY >= DRAG_START_THRESHOLD) {
+          ev.preventDefault();
+        }
+
         handleDragMove(ev.clientY);
       };
 
@@ -234,7 +275,7 @@ export default function MapBottomSheet({
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
     },
-    [handleDragStart, handleDragMove, handleDragEnd]
+    [handleDragPrepare, handleDragMove, handleDragEnd]
   );
 
   // IntersectionObserver로 무한 스크롤 감지
@@ -277,61 +318,62 @@ export default function MapBottomSheet({
         willChange: 'transform',
       }}
     >
-      {/* 드래그 핸들 - 항상 드래그 가능 */}
+      {/* 헤더 영역 - 전체 드래그 가능 */}
       <div
-        className="flex cursor-grab justify-center pt-3 pb-2 active:cursor-grabbing"
-        style={{ touchAction: 'none' }}
-        onTouchStart={handleHandleTouchStart}
-        onTouchMove={handleHandleTouchMove}
-        onTouchEnd={handleHandleTouchEnd}
-        onMouseDown={handleMouseDown}
+        onTouchStart={handleHeaderTouchStart}
+        onTouchMove={handleHeaderTouchMove}
+        onTouchEnd={handleHeaderTouchEnd}
+        onMouseDown={handleHeaderMouseDown}
       >
-        <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />
-      </div>
+        {/* 드래그 핸들 */}
+        <div className="flex cursor-grab justify-center pt-3 pb-2 active:cursor-grabbing">
+          <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />
+        </div>
 
-      {/* 타이틀 */}
-      <div className="px-4 py-1">
-        <h2 className="text-head-4-semibold text-gray-900">공고 리스트</h2>
-      </div>
+        {/* 타이틀 */}
+        <div className="px-4 py-1">
+          <h2 className="text-head-4-semibold text-gray-900">공고 리스트</h2>
+        </div>
 
-      {/* 카테고리 탭 */}
-      <CategoryTabs
-        categories={CATEGORIES}
-        selectedCategory={category}
-        onCategoryChange={(cat) => onCategoryChange(cat as Category)}
-      />
-
-      {/* 필터 영역 */}
-      <div className="flex flex-col gap-3 px-4 py-3">
-        {/* 서브 카테고리 칩 */}
-        <SubCategoryChips
-          subCategories={SUB_CATEGORIES_BY_CATEGORY[category]}
-          selectedSubCategory={subCategory}
-          onSubCategoryChange={(sub) => onSubCategoryChange(sub as SubCategory | 'ALL')}
+        {/* 카테고리 탭 */}
+        <CategoryTabs
+          categories={CATEGORIES}
+          selectedCategory={category}
+          onCategoryChange={(cat) => onCategoryChange(cat as Category)}
         />
 
-        {/* 총 개수 및 정렬 */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <span className="text-body-2-medium text-black">전체</span>
-            <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
-          </div>
-          <SortDropdown
-            sortOptions={SORT_OPTIONS}
-            selectedSort={sortOption}
-            onSortChange={(s) => onSortChange(s as SortOption)}
+        {/* 필터 영역 */}
+        <div className="flex flex-col gap-3 px-4 py-3">
+          {/* 서브 카테고리 칩 */}
+          <SubCategoryChips
+            subCategories={SUB_CATEGORIES_BY_CATEGORY[category]}
+            selectedSubCategory={subCategory}
+            onSubCategoryChange={(sub) => onSubCategoryChange(sub as SubCategory | 'ALL')}
           />
+
+          {/* 총 개수 및 정렬 */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <span className="text-body-2-medium text-black">전체</span>
+              <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+            </div>
+            <SortDropdown
+              sortOptions={SORT_OPTIONS}
+              selectedSort={sortOption}
+              onSortChange={(s) => onSortChange(s as SortOption)}
+            />
+          </div>
         </div>
       </div>
 
-      {/* 리스트 영역 - max 상태에서만 스크롤 가능 */}
+      {/* 리스트 영역 - mid/max 상태에서 스크롤 가능 */}
       <div
         ref={scrollRef}
         className="scrollbar-hide px-4"
         style={{
           height: `calc(${currentHeight}dvh - 200px)`,
-          overflowY: sheetState === 'max' ? 'auto' : 'hidden',
-          touchAction: sheetState === 'max' ? 'pan-y' : 'none',
+          overflowY: sheetState !== 'min' ? 'auto' : 'hidden',
+          touchAction: sheetState !== 'min' ? 'pan-y' : 'none',
         }}
         onTouchStart={handleScrollTouchStart}
         onTouchMove={handleScrollTouchMove}
