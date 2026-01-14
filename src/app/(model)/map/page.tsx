@@ -13,7 +13,7 @@ import {
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useMapShops } from '@/src/hooks/queries/map/useMapShops';
 import { useRecruitments } from '@/src/hooks/queries/explore/useRecruitments';
-import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
+import { useToggleRecruitmentLike, useToggleDesignerLike } from '@/src/hooks/queries/likes';
 import { usePublicDesignerProfile } from '@/src/hooks/queries/profile';
 import { useToast } from '@/src/hooks/common/useToast';
 import type { MapPosition, MapShopItem } from '@/src/types/map';
@@ -95,6 +95,7 @@ function MapContent() {
 
   // 찜(좋아요) mutation
   const { mutate: toggleRecruitmentLike } = useToggleRecruitmentLike();
+  const { mutate: toggleDesignerLike } = useToggleDesignerLike();
 
   // 선택된 샵의 디자이너 공개 프로필 조회 API
   const {
@@ -235,6 +236,7 @@ function MapContent() {
           profile={designerProfile}
           recruitments={designerRecruitments}
           onClose={handleCloseSelectedShop}
+          onDesignerLikeToggle={() => toggleDesignerLike(selectedShop.designerId)}
           onDragOffsetChange={setSelectedCardDragOffset}
         />
       ) : !selectedShop ? (
