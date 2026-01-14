@@ -55,6 +55,12 @@ export default function SelectedShopCard({
   const baseOffsetRef = useRef(0);
   const currentOffsetRef = useRef(0);
 
+  // 글로벌 마우스 리스너 cleanup용 ref
+  const mouseListenersRef = useRef<{
+    mousemove: (e: MouseEvent) => void;
+    mouseup: () => void;
+  } | null>(null);
+
   // 스냅 상태 (state로 관리 - 드래그 종료 시에만 업데이트)
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [finalOffset, setFinalOffset] = useState(0);
@@ -209,13 +215,28 @@ export default function SelectedShopCard({
         handleDragEnd();
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseup', handleMouseUp);
+        mouseListenersRef.current = null;
       };
+
+      // cleanup ref에 저장
+      mouseListenersRef.current = { mousemove: handleMouseMove, mouseup: handleMouseUp };
 
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
     },
     [handleDragPrepare, handleDragMove, handleDragEnd]
   );
+
+  // 컴포넌트 언마운트 시 글로벌 리스너 cleanup
+  useEffect(() => {
+    return () => {
+      if (mouseListenersRef.current) {
+        window.removeEventListener('mousemove', mouseListenersRef.current.mousemove);
+        window.removeEventListener('mouseup', mouseListenersRef.current.mouseup);
+        mouseListenersRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div
