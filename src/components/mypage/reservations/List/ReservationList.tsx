@@ -6,7 +6,7 @@ import type {
   ReservationListType,
 } from '@/src/types';
 import { useInfiniteScroll } from '@/src/hooks/common';
-import { ModelReservationCard, DesignerReservationCard } from '../Card';
+import { ModelReservationCard, DesignerReservationCard, PendingReservationCard } from '../Card';
 import ReservationListSkeleton from './ReservationListSkeleton';
 
 type ReservationItem = ModelReservationItem | DesignerReservationItem;
@@ -52,21 +52,35 @@ export default function ReservationList({
 
   return (
     <div className="flex flex-col gap-4">
-      {items.map((item) =>
-        role === 'model' ? (
-          <ModelReservationCard
-            key={item.reservationId}
-            reservation={item as ModelReservationItem}
-            tabType={tabType}
-          />
-        ) : (
+      {items.map((item) => {
+        // 모델 - 대기 중 탭
+        if (role === 'model' && tabType === 'PENDING') {
+          return (
+            <PendingReservationCard
+              key={item.reservationId}
+              reservation={item as ModelReservationItem}
+            />
+          );
+        }
+        // 모델 - 다가오는 일정 / 완료된 일정
+        if (role === 'model') {
+          return (
+            <ModelReservationCard
+              key={item.reservationId}
+              reservation={item as ModelReservationItem}
+              tabType={tabType}
+            />
+          );
+        }
+        // 디자이너
+        return (
           <DesignerReservationCard
             key={item.reservationId}
             reservation={item as DesignerReservationItem}
             tabType={tabType}
           />
-        )
-      )}
+        );
+      })}
 
       {/* 무한 스크롤 트리거 */}
       <div ref={loadMoreRef} className="h-4" />
