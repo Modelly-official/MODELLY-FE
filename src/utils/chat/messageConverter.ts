@@ -150,7 +150,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
 export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId?: number | null): Message | null => {
   if (payload.messageType === 'READ') return null;
 
-  const senderId = payload.senderUserId ?? payload.senderId;
+  const senderId = payload.senderId;
   const fromMe = currentUserId != null ? senderId === currentUserId : false;
   const dateKey = payload.createdAt ? formatMessageDateKey(payload.createdAt) : undefined;
   const read = payload.isRead ?? payload.read ?? false;

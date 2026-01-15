@@ -113,7 +113,7 @@ export interface ChatRoomDetailResponse {
 }
 
 export interface ChatRoomReservationSummary {
-  reservationId?: number;
+  reservationId?: number; // fallback (현재 API 응답에 없음)
   recruitmentId: number | null;
   recruitmentTitle: string | null;
   date: string;
@@ -153,8 +153,7 @@ export type StompIncomingChatPayload =
       messageType: ChatMessageType;
       messageId: number;
       chatRoomId: number;
-      senderUserId?: number;
-      senderId?: number; // 예시 응답에 senderId 명칭이 있을 수 있어 보조 필드로 허용
+      senderId?: number;
       message?: string;
       imageUrls?: string[];
       createdAt?: string;
