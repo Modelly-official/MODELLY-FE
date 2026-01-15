@@ -4,6 +4,7 @@ import type { ReservationListType, MyReservationStatus, ReservationCategoryFilte
 
 /** 예약 내역 탭 옵션 */
 export const RESERVATION_TABS: { value: ReservationListType; label: string }[] = [
+  { value: 'PENDING', label: '대기 중' },
   { value: 'UPCOMING', label: '다가오는 일정' },
   { value: 'COMPLETED', label: '완료된 일정' },
 ];

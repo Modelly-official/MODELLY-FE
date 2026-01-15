@@ -7,7 +7,7 @@ export type MyReservationStatus =
   | 'RESERVATION_CANCELLED';
 
 // 예약 목록 타입 (탭)
-export type ReservationListType = 'UPCOMING' | 'COMPLETED';
+export type ReservationListType = 'PENDING' | 'UPCOMING' | 'COMPLETED';
 
 // 예약 카테고리 필터
 export type ReservationCategoryFilter = 'ALL' | 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH';
