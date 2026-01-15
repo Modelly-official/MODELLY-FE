@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { ModelReservationItem, ReservationInfo, ReservationCancelRequest } from '@/src/types';
-import {
-  ReservationCancelModal,
-  ReservationSuccessModal,
-} from '@/src/components/reservation';
+import type { ModelReservationItem } from '@/src/types';
+import { ConfirmModal } from '@/src/components/common/Modal';
 import { CategoryBadges, ReservationInfo as ReservationInfoComponent, ReservationTitle } from './common';
 
 interface PendingReservationCardProps {
@@ -20,17 +17,6 @@ export default function PendingReservationCard({
 
   // 모달 상태 관리
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-
-  // 예약 정보를 모달에 전달할 형식으로 변환
-  const reservationInfo: ReservationInfo = {
-    reservationId: reservation.reservationId,
-    modelUserId: reservation.designerUserId,
-    modelName: reservation.designerNickname,
-    date: reservation.date,
-    startTime: reservation.startTime,
-  };
 
   const handleCardClick = () => {
     router.push(`/post/${reservation.recruitmentId}`);
@@ -44,16 +30,9 @@ export default function PendingReservationCard({
     setIsCancelModalOpen(true);
   };
 
-  const handleCancelSubmit = (data: ReservationCancelRequest) => {
-    console.log('신청 취소 요청:', data);
+  const handleCancelConfirm = () => {
+    // TODO: API 연동 - 신청 취소 처리
     setIsCancelModalOpen(false);
-    setSuccessMessage('신청이 취소되었습니다');
-    setIsSuccessModalOpen(true);
-  };
-
-  const handleSuccessConfirm = () => {
-    setIsSuccessModalOpen(false);
-    setSuccessMessage('');
   };
 
   return (
@@ -101,20 +80,14 @@ export default function PendingReservationCard({
         </button>
       </div>
 
-      {/* 신청 취소 모달 */}
-      <ReservationCancelModal
+      {/* 신청 취소 확인 모달 */}
+      <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        reservation={reservationInfo}
-        onSubmit={handleCancelSubmit}
-      />
-
-      {/* 성공 모달 */}
-      <ReservationSuccessModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
-        message={successMessage}
-        onConfirm={handleSuccessConfirm}
+        onConfirm={handleCancelConfirm}
+        message="예약 신청을 취소하시겠습니까?"
+        cancelText="아니오"
+        confirmText="네"
       />
     </div>
   );
