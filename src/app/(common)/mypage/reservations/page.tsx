@@ -35,8 +35,8 @@ export default function MyReservationsPage() {
   const role = isClient ? (getUserRole() ?? 'model') : 'model';
   const isLoggedIn = isClient ? !!getAccessToken() : false;
 
-  // 탭 상태
-  const [activeTab, setActiveTab] = useState<ReservationListType>('UPCOMING');
+  // 탭 상태 (대기 중 탭이 기본)
+  const [activeTab, setActiveTab] = useState<ReservationListType>('PENDING');
 
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<ReservationCategoryFilter>('ALL');
@@ -136,18 +136,20 @@ export default function MyReservationsPage() {
           />
         )}
 
-        {/* 월 선택 및 전체 개수 */}
-        <div className="flex items-center justify-between">
-          <MonthDropdown
-            options={monthOptions}
-            selectedMonth={selectedMonth}
-            onMonthChange={setSelectedMonth}
-          />
-          <div className="flex items-center gap-1">
-            <span className="text-body-2-medium text-black">전체</span>
-            <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+        {/* 월 선택 및 전체 개수 (대기 중 탭에서는 월 선택 숨김) */}
+        {activeTab !== 'PENDING' && (
+          <div className="flex items-center justify-between">
+            <MonthDropdown
+              options={monthOptions}
+              selectedMonth={selectedMonth}
+              onMonthChange={setSelectedMonth}
+            />
+            <div className="flex items-center gap-1">
+              <span className="text-body-2-medium text-black">전체</span>
+              <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 예약 목록 */}
         <ReservationList
