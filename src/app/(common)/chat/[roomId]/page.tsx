@@ -91,10 +91,9 @@ export default function ChatRoom() {
   }, [searchParams]);
 
   const { data: fetchedReservationInfo } = useChatReservationSummary({
+    roomId: validRoomId ?? null,
     role: userRole,
-    opponentUserId: opponent?.userId,
-    opponentName: opponent?.name,
-    enabled: !queryReservationInfo,
+    enabled: !queryReservationInfo && isAuthenticated,
   });
 
   const reservationInfo = queryReservationInfo ?? fetchedReservationInfo ?? null;

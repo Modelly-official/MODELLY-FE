@@ -112,6 +112,22 @@ export interface ChatRoomDetailResponse {
   lastReadMessageId?: number;
 }
 
+export interface ChatRoomReservationSummary {
+  reservationId?: number;
+  recruitmentId: number | null;
+  recruitmentTitle: string | null;
+  date: string;
+  startTime: string;
+  endTime: string;
+  opponentUserId: number;
+  opponentName: string;
+}
+
+export interface ChatRoomReservationSummaryResponse {
+  hasReservation: boolean;
+  reservation: ChatRoomReservationSummary | null;
+}
+
 export interface PresignedUploadResponse {
   uploadUrl: string;
   imageUrl: string;
