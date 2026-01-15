@@ -20,11 +20,14 @@ export interface ReservationChangeResult {
 // 모달에서 사용할 예약 정보 타입
 export interface ReservationInfo {
   reservationId: number;
+  recruitmentId?: number | null;
+  recruitmentTitle?: string;
   modelUserId: number;
   modelName: string;
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
   endTime?: string; // HH:mm
+  status?: string;
 }
 
 // 시간 선택용 슬롯 (Dropdown에서 사용)

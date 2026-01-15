@@ -56,18 +56,15 @@ export default function StepConfirm({
   const { mutate: createReservation, isPending } = useCreateReservation();
 
   // 카테고리 enum 변환 (한글/영문 모두 처리)
-  const categoryEnum = categoryNameToCode(category);
+  const normalizedCategory = category.trim();
+  const categoryEnum = categoryNameToCode(normalizedCategory);
 
   // 예약하기 버튼 클릭
   const handleReservation = () => {
     if (!selectedDate || !selectedTime || !uploadedImageUrl || !categoryEnum) return;
 
-    const shop = shopName;
-
     // 서브카테고리 한글 → enum 변환
-    const subCategoriesEnum = subCategories.map((sub) =>
-      subCategoryNameToCode(categoryEnum, sub)
-    );
+    const subCategoriesEnum = subCategories.map((sub) => subCategoryNameToCode(categoryEnum, sub));
 
     createReservation(
       {
@@ -78,19 +75,19 @@ export default function StepConfirm({
         subCategories: subCategoriesEnum,
         comment,
         designerName,
-        shop,
+        shop: shopName,
         imageUrls: uploadedImageUrl,
       },
       {
         onSuccess: () => {
           goNext();
         },
-      }
+      },
     );
   };
 
   // 카테고리 & 서브카테고리 한글 변환 (디스플레이용)
-  const categoryKorean = categoryEnum ? (categoryCodeToName(categoryEnum) ?? category) : category;
+  const categoryKorean = categoryEnum ? (categoryCodeToName(categoryEnum) ?? normalizedCategory) : normalizedCategory;
   const subCategoriesKorean = categoryEnum
     ? subCategories.map((sub) => subCategoryCodeToName(categoryEnum, sub)).join('/')
     : subCategories.join('/');
@@ -120,21 +117,17 @@ export default function StepConfirm({
       <div className="flex flex-1 flex-col px-4 pt-1">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
-          <p className="text-head-3 leading-140 font-normal tracking-[-0.4px] text-gray-900">
-            4/4
-          </p>
+          <p className="text-head-3 leading-140 font-normal tracking-[-0.4px] text-gray-900">4/4</p>
           <h1 className="text-head-2-semibold text-gray-900">예약 사항을 확인해주세요.</h1>
         </div>
 
         {/* 안내 문구 */}
-        <p className="mt-2 text-body-2-medium text-gray-600">
-          예약 일정 기준 3일 전까지만 취소가 가능합니다.
-        </p>
+        <p className="text-body-2-medium mt-2 text-gray-600">예약 일정 기준 3일 전까지만 취소가 가능합니다.</p>
 
         {/* 정보 리스트 */}
         <div className="relative mt-6 flex flex-col gap-3">
           {/* 세로선 - 첫번째 원 중심에서 마지막 원 중심까지 (점선) */}
-          <div className="absolute left-[11px] top-[28px] h-[260px] w-0 border-l border-dashed border-gray-500" />
+          <div className="absolute left-[11px] top-[28px] bottom-[28px] w-0 border-l border-dashed border-gray-500" />
 
           {infoItems.map((item, index) => (
             <div key={item.label} className="flex items-center gap-4">
@@ -145,9 +138,7 @@ export default function StepConfirm({
 
               {/* 정보 카드 */}
               <div className="flex h-14 flex-1 items-center gap-4 rounded-lg border border-gray-400 p-4">
-                <span className="w-[68px] shrink-0 text-body-2-semibold text-gray-500">
-                  {item.label}
-                </span>
+                <span className="text-body-2-semibold w-[68px] shrink-0 text-gray-500">{item.label}</span>
                 <span className="text-body-1-medium text-gray-900">{item.value}</span>
               </div>
             </div>

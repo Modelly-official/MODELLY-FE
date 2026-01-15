@@ -6,6 +6,7 @@ import type { ApiResponse, ChatRoomDetailResponse, ChatRoomListResponse, CreateC
 export const getChatRooms = async (params?: {
   page?: number;
   size?: number;
+  category?: string;
 }): Promise<ApiResponse<ChatRoomListResponse>> => {
   const response = await axiosInstance.get<ApiResponse<ChatRoomListResponse>>('/chat/rooms', {
     params,

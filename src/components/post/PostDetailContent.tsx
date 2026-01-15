@@ -235,7 +235,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
         </div>
       ) : (
         // 다른 사람 공고: 채팅하기 / 예약하기
-        <PostActions recruitmentId={detail.recruitmentId} designerId={detail.designerProfile.designerId} />
+        <PostActions recruitmentId={detail.recruitmentId} designerUserId={detail.designerProfile.userId} />
       )}
     </div>
   );

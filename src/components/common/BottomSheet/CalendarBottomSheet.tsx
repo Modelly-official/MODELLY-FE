@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import BaseBottomSheet from './BaseBottomSheet';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
@@ -13,6 +13,7 @@ interface CalendarBottomSheetProps {
   availableDates?: string[]; // 선택 가능한 날짜 목록 (없으면 과거 제외 모든 날짜 선택 가능)
   title?: string;
   minDate?: string; // 최소 선택 가능 날짜 (기본: 오늘)
+  onMonthChange?: (year: number, month: number) => void;
 }
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
@@ -25,6 +26,7 @@ export default function CalendarBottomSheet({
   availableDates,
   title = '날짜 선택',
   minDate,
+  onMonthChange,
 }: CalendarBottomSheetProps) {
   // 현재 표시 중인 년/월
   const [currentYear, setCurrentYear] = useState(() => {
@@ -131,6 +133,11 @@ export default function CalendarBottomSheet({
 
   // 월을 2자리로 포맷
   const formattedMonth = currentMonth.toString().padStart(2, '0');
+
+  useEffect(() => {
+    if (!isOpen || !onMonthChange) return;
+    onMonthChange(currentYear, currentMonth);
+  }, [currentYear, currentMonth, isOpen, onMonthChange]);
 
   return (
     <BaseBottomSheet isOpen={isOpen} onClose={onClose} title={title}>

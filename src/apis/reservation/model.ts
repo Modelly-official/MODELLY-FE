@@ -2,6 +2,9 @@ import { axiosInstance } from '../axios';
 import type {
   ApiResponse,
   AvailableSchedulesResult,
+  GetModelReservationListParams,
+  ModelReservationListItem,
+  ReservationScrollResult,
   ReservationCreateRequest,
   ReservationCreateResult,
   ReservationPresignedUrlResult,
@@ -36,6 +39,20 @@ export async function createReservation(
   const { data } = await axiosInstance.post<ApiResponse<ReservationCreateResult>>(
     '/models/reservations',
     request
+  );
+  return data;
+}
+
+/**
+ * 예약 목록 조회 (무한 스크롤)
+ * GET /models/reservations
+ */
+export async function getModelReservations(
+  params: GetModelReservationListParams
+): Promise<ApiResponse<ReservationScrollResult<ModelReservationListItem>>> {
+  const { data } = await axiosInstance.get<ApiResponse<ReservationScrollResult<ModelReservationListItem>>>(
+    '/models/reservations',
+    { params }
   );
   return data;
 }

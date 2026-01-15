@@ -7,7 +7,12 @@ import { publishMessage, publishRead, subscribeRoom } from '@/src/utils/chat';
 import useStompClient from '@/src/hooks/custom/chat/useStompClient';
 import useChatImage from '@/src/hooks/custom/chat/useChatImage';
 import { getAccessToken, useAuthStore } from '@/src/stores';
-import { mapApiMessage, mapStompMessage, formatMessageTime } from '@/src/utils/chat/messageConverter';
+import {
+  mapApiMessage,
+  mapStompMessage,
+  formatMessageDateKey,
+  formatMessageTime,
+} from '@/src/utils/chat/messageConverter';
 import { parseUserIdFromToken } from '@/src/utils/auth/token';
 import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
 
@@ -32,6 +37,7 @@ export default function useChatRoom(roomId?: string | number) {
   const { clientRef, connected: stompConnected } = useStompClient();
   const subscriptionRef = useRef<StompSubscription | null>(null);
   const lastMessageIdRef = useRef<string | number | null>(null);
+  const lastReadSentRef = useRef<number | null>(null);
   const pendingTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingQueueRef = useRef<{ id: string; payload: SendChatMessagePayload }[]>([]);
@@ -141,6 +147,17 @@ export default function useChatRoom(roomId?: string | number) {
   }, [messages]);
 
   useEffect(() => {
+    if (!roomId) return;
+    const client = clientRef.current;
+    if (!client || !stompConnected) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.fromMe || typeof last.id !== 'number') return;
+    if (lastReadSentRef.current === last.id) return;
+    publishRead(client, roomId, last.id);
+    lastReadSentRef.current = last.id;
+  }, [messages, roomId, stompConnected, clientRef]);
+
+  useEffect(() => {
     if (stompConnected) {
       flushPendingSends();
     }
@@ -155,6 +172,16 @@ export default function useChatRoom(roomId?: string | number) {
     // 연결되어 있으면 바로 구독
     subscriptionRef.current?.unsubscribe();
     subscriptionRef.current = subscribeRoom<StompIncomingChatPayload>(client, roomId, (payload) => {
+      if (payload.messageType === 'READ') {
+        const lastReadMessageId = payload.lastReadMessageId;
+        setMessages((prev) =>
+          prev.map((m) => {
+            if (!m.fromMe || typeof m.id !== 'number') return m;
+            return m.id <= lastReadMessageId ? { ...m, read: true } : m;
+          }),
+        );
+        return;
+      }
       const mapped = mapStompMessage(payload, effectiveUserId);
       if (!mapped) return;
       setMessages((prev) => {
@@ -198,6 +225,7 @@ export default function useChatRoom(roomId?: string | number) {
     const lastMessageId = lastMessageIdRef.current;
     if (typeof lastMessageId === 'number') {
       publishRead(client, roomId, lastMessageId);
+      lastReadSentRef.current = lastMessageId;
     }
 
     return () => {
@@ -230,8 +258,11 @@ export default function useChatRoom(roomId?: string | number) {
     const optimistic: Message = {
       id: `temp-${Date.now()}`,
       fromMe: true,
+      messageType: 'TEXT',
       text,
       time: formatMessageTime(now),
+      dateKey: formatMessageDateKey(now),
+      read: false,
       pending: true,
     };
     setMessages((prev) => [...prev, optimistic]);
@@ -280,8 +311,11 @@ export default function useChatRoom(roomId?: string | number) {
       const optimistic: Message = {
         id: tempId,
         fromMe: true,
+        messageType: 'IMAGE',
         text: '',
         time: formatMessageTime(now),
+        dateKey: formatMessageDateKey(now),
+        read: false,
         imageUrls: [objectUrl],
       };
       setMessages((prev) => [...prev, optimistic]);

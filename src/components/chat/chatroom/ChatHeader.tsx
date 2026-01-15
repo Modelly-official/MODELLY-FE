@@ -2,19 +2,30 @@
 
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/common/left-arrow.svg';
-import DropDownArrowIcon from '@/public/icons/common/down-arrow.svg';
+import DropDownArrowIcon from '@/public/icons/common/arrow-down.svg';
 
 type Props = {
   title: string;
+  roleLabel?: string;
   rightLabel?: string;
   showReservation?: boolean;
+  isReservationOpen?: boolean;
+  onReservationClick?: () => void;
 };
 
-export default function ChatHeader({ title, rightLabel = '예약내역', showReservation = false }: Props) {
+export default function ChatHeader({
+  title,
+  roleLabel,
+  rightLabel = '예약 내역',
+  showReservation = false,
+  isReservationOpen = false,
+  onReservationClick,
+}: Props) {
   const router = useRouter();
+  const canShowReservation = showReservation && !!onReservationClick;
 
   return (
-    <header className="relative flex h-[51px] items-center px-4 py-3 safe-area-top">
+    <header className="safe-area-top relative flex h-13 items-center px-4 py-3">
       <button
         type="button"
         onClick={() => router.push('/chat')}
@@ -25,14 +36,26 @@ export default function ChatHeader({ title, rightLabel = '예약내역', showRes
       </button>
 
       <div className="absolute left-1/2 -translate-x-1/2 transform text-center">
-        <div className="text-head-4-medium text-gray-950">{title}</div>
+        <div className="flex items-center justify-center gap-1">
+          <span className="text-head-4-medium text-gray-950">{title}</span>
+          {roleLabel && <span className="text-head-4-medium text-gray-950">{roleLabel}</span>}
+        </div>
       </div>
 
-      {showReservation && (
-        <div className="text-body-2-medium absolute right-4 flex items-center gap-1 text-gray-800">
+      {canShowReservation && (
+        <button
+          type="button"
+          onClick={onReservationClick}
+          aria-expanded={isReservationOpen}
+          className="text-body-2-medium absolute right-4 flex cursor-pointer items-center gap-2 text-gray-800"
+        >
           <span>{rightLabel}</span>
-          <DropDownArrowIcon className="h-5 w-5 text-gray-800" />
-        </div>
+          <DropDownArrowIcon
+            className={`h-[9px] w-4 shrink-0 origin-center scale-[0.9] text-gray-800 transition-transform ${
+              isReservationOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
       )}
     </header>
   );
