@@ -127,7 +127,7 @@ export default function StepConfirm({
         {/* 정보 리스트 */}
         <div className="relative mt-6 flex flex-col gap-3">
           {/* 세로선 - 첫번째 원 중심에서 마지막 원 중심까지 (점선) */}
-          <div className="top-760px] absolute left-[11px] w-0 border-l border-dashed border-gray-500" />
+          <div className="absolute left-[11px] top-[28px] bottom-[28px] w-0 border-l border-dashed border-gray-500" />
 
           {infoItems.map((item, index) => (
             <div key={item.label} className="flex items-center gap-4">

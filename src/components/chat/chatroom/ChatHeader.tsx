@@ -22,6 +22,7 @@ export default function ChatHeader({
   onReservationClick,
 }: Props) {
   const router = useRouter();
+  const canShowReservation = showReservation && !!onReservationClick;
 
   return (
     <header className="safe-area-top relative flex h-13 items-center px-4 py-3">
@@ -41,7 +42,7 @@ export default function ChatHeader({
         </div>
       </div>
 
-      {showReservation && (
+      {canShowReservation && (
         <button
           type="button"
           onClick={onReservationClick}
