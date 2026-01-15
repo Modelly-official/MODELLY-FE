@@ -4,6 +4,7 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLogin } from '@/src/hooks/queries';
 import { useAuthStore } from '@/src/stores';
 import { SOCIAL_LOGIN_URLS, showToast } from '@/src/utils';
@@ -13,6 +14,7 @@ const LoginContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
+  const queryClient = useQueryClient();
   const { setUser } = useAuthStore();
 
   const [loginId, setLoginId] = useState('');
@@ -31,7 +33,20 @@ const LoginContent = () => {
       {
         onSuccess: (response) => {
           if (response.isSuccess && response.result) {
-            const userRole = response.result.userRole.toLowerCase() as 'model' | 'designer';
+            // API 응답의 role을 정규화 (한글/영어 모두 처리)
+            const rawRole = response.result.userRole as string;
+            const lowerRole = rawRole.toLowerCase();
+            let userRole: 'model' | 'designer';
+            if (lowerRole === 'model' || rawRole === '모델') {
+              userRole = 'model';
+            } else if (lowerRole === 'designer' || rawRole === '디자이너') {
+              userRole = 'designer';
+            } else {
+              userRole = 'model'; // 기본값
+            }
+
+            // 이전 사용자의 캐시 클리어
+            queryClient.clear();
 
             // 사용자 정보 저장 (옵션 - 미들웨어가 다시 검증함)
             setUser({

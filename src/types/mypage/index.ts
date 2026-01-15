@@ -48,3 +48,6 @@ export interface MypageDesignerProfileUpdateRequest extends MypageModelProfileUp
 // 공통 API 응답 래퍼
 export type MypageModelProfileResponse = ApiResponse<MypageModelProfile>;
 export type MypageDesignerProfileResponse = ApiResponse<MypageDesignerProfile>;
+
+// 프로필 폼 관련 타입
+export * from './profileForm';

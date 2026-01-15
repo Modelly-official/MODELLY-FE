@@ -88,7 +88,7 @@ export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTi
           onClick={goPrev}
           className="flex size-6 cursor-pointer items-center justify-center"
         >
-          <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={9} height={16} />
+          <Image src="/icons/common/arrow-left.svg" alt="뒤로가기" width={24} height={24} />
         </button>
         <h1 className="text-head-4-medium text-black">{isEdit ? '모집글 수정' : '모집글 등록'}</h1>
         <div className="size-6" /> {/* 균형을 위한 빈 공간 */}

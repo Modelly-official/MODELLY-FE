@@ -15,6 +15,8 @@ import {
 import { useReservationDetail, useConfirmReservation, useRejectReservation } from '@/src/hooks/queries/designerHome';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
+import Link from 'next/link';
+import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
 
 export default function ReservationDetailPage() {
   const router = useRouter();
@@ -111,7 +113,7 @@ export default function ReservationDetailPage() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="h-4 text-black" />
+          <ArrowLeftIcon className="size-6 text-black" />
         </button>
         {/* 우측 여백용 (오른쪽 아이콘 없음) */}
         <div className="size-6 opacity-0" />
@@ -119,13 +121,19 @@ export default function ReservationDetailPage() {
 
       {/* 콘텐츠 */}
       <div className="flex-1 overflow-y-auto px-4 pb-24">
-        {/* 카테고리 배지 */}
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          {[reservation.category, ...reservation.subCategories].map((cat) => (
-            <span key={cat} className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
-              {cat}
-            </span>
-          ))}
+        {/* 카테고리 배지 + 공고 제목 */}
+        <div className="mb-4 flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {[reservation.category, ...reservation.subCategories].map((cat) => (
+              <span key={cat} className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
+                {cat}
+              </span>
+            ))}
+          </div>
+          <Link href={`/myRecruitment/${reservation.recruitmentId}`} className="flex items-center gap-1">
+            <span className="text-head-4-semibold text-gray-900">{reservation.recruitmentTitle}</span>
+            <ArrowRightIcon className="size-5 shrink-0 text-black" />
+          </Link>
         </div>
 
         <div className="flex flex-col gap-4">

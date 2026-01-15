@@ -10,6 +10,8 @@ import type {
 
 export const mypageKeys = {
   all: ['mypage'] as const,
+  profile: () => [...mypageKeys.all, 'profile'] as const,
+  profileByRole: (role: 'model' | 'designer') => [...mypageKeys.profile(), role] as const,
   model: ['mypage', 'model'] as const,
   designer: ['mypage', 'designer'] as const,
 };

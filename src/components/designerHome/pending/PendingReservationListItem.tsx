@@ -38,11 +38,14 @@ export function PendingReservationListItem({ item }: PendingReservationListItemP
       href={`/reservations/${item.reservationId}`}
       className="flex flex-col gap-[14px] rounded-[12px] bg-white py-4 pl-5 pr-4"
     >
-      {/* 카테고리 뱃지 */}
-      <div className="flex items-center">
-        <span className="rounded-lg bg-purple-600 px-2 py-1 text-caption-1-medium text-white">
-          {category}
-        </span>
+      {/* 카테고리 뱃지 + 공고 제목 */}
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center">
+          <span className="rounded-lg bg-purple-600 px-2 py-1 text-caption-1-medium text-white">
+            {category}
+          </span>
+        </div>
+        <p className="text-head-4-semibold text-gray-900">{item.recruitmentTitle}</p>
       </div>
 
       {/* 예약 정보 */}

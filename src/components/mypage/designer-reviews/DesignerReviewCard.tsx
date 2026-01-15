@@ -1,0 +1,248 @@
+'use client';
+
+import { useState } from 'react';
+import Image from 'next/image';
+import DotIcon from '@/public/icons/myRecruitment/dot.svg';
+import PinIcon from '@/public/icons/common/check-circle.svg';
+import type { DesignerReviewItem } from '@/src/types';
+
+interface DesignerReviewCardProps {
+  review: DesignerReviewItem;
+  onPin?: (reviewId: number, isFixed: boolean) => void;
+  onReplyClick?: (reviewId: number) => void;
+  onReplyEdit?: (reviewId: number, replyId: number) => void;
+  isReplying?: boolean;
+  replyContent?: string;
+  onReplyContentChange?: (content: string) => void;
+  onReplySubmit?: () => void;
+  onReplyCancel?: () => void;
+  isSubmittingReply?: boolean;
+}
+
+export default function DesignerReviewCard({
+  review,
+  onPin,
+  onReplyClick,
+  onReplyEdit,
+  isReplying = false,
+  replyContent = '',
+  onReplyContentChange,
+  onReplySubmit,
+  onReplyCancel,
+  isSubmittingReply = false,
+}: DesignerReviewCardProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 날짜 포맷팅 (YYYY-MM-DD → YYYY.MM.DD)
+  const formattedDate = review.createdDate.replace(/-/g, '.');
+
+  // 이미지 배열
+  const images = review.reviewImages ?? [];
+
+  // 더보기 메뉴 클릭
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // 리뷰 고정/해제
+  const handlePin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(false);
+    onPin?.(review.reviewId, !review.isFixed);
+  };
+
+  // 답글 달기 클릭
+  const handleReplyClick = () => {
+    onReplyClick?.(review.reviewId);
+  };
+
+  // 답글 수정 클릭
+  const handleReplyEdit = () => {
+    if (review.replyDto) {
+      onReplyEdit?.(review.reviewId, review.replyDto.replyId);
+    }
+  };
+
+  return (
+    <div className="flex w-full flex-col gap-4 bg-white px-5 pb-5 pt-4">
+      {/* 상단: 프로필 + 정보 */}
+      <div className="flex w-full items-center gap-3">
+        {/* 프로필 이미지 */}
+        <div className="relative size-[42px] shrink-0 overflow-hidden rounded-full bg-gray-200">
+          {review.modelImage ? (
+            <Image
+              src={review.modelImage}
+              alt={review.modelName}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex size-full items-center justify-center text-caption-1-medium text-gray-600">
+              {review.modelName.charAt(0)}
+            </div>
+          )}
+        </div>
+
+        {/* 정보 */}
+        <div className="flex flex-1 flex-col gap-0.5">
+          {/* 이름 + 고정 아이콘 + 더보기 */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <span className="text-body-1-medium text-black">{review.modelName}</span>
+              {review.isFixed && (
+                <PinIcon className="size-6 text-gray-900" />
+              )}
+            </div>
+
+            {/* 더보기 버튼 */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={handleMenuClick}
+                className="flex size-5 cursor-pointer items-center justify-center"
+                aria-label="더보기"
+              >
+                <DotIcon className="size-5 text-gray-900" />
+              </button>
+
+              {/* 드롭다운 메뉴 */}
+              {isMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                    }}
+                  />
+                  <div className="absolute right-0 top-6 z-20 overflow-hidden rounded-[10px] border border-gray-400 bg-white">
+                    <button
+                      type="button"
+                      onClick={handlePin}
+                      className="block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
+                    >
+                      {review.isFixed ? '고정 취소' : '리뷰 고정'}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* 별점 + 날짜 */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Image
+                  key={star}
+                  src={star <= review.rating ? '/icons/common/star.svg' : '/icons/common/star-empty.svg'}
+                  alt=""
+                  width={12}
+                  height={12}
+                />
+              ))}
+            </div>
+            <span className="text-caption-1-medium text-gray-700">{formattedDate}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 이미지 */}
+      {images.length > 0 && (
+        <div className="flex gap-2">
+          {images.map((url, index) => (
+            <div
+              key={index}
+              className="relative h-[99px] w-[98px] shrink-0 overflow-hidden rounded-lg"
+            >
+              <Image
+                src={url}
+                alt={`리뷰 이미지 ${index + 1}`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 리뷰 내용 + 카테고리 */}
+      <div className="flex flex-col gap-2">
+        <p className="text-body-2-regular text-gray-900">{review.content}</p>
+
+        {/* 카테고리 배지 */}
+        {review.summary && (
+          <div className="flex gap-1">
+            <span className="rounded-lg bg-purple-200 px-2 py-1 text-caption-1-medium text-purple-700">
+              {review.summary}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* 답글 입력 모드 */}
+      {isReplying && (
+        <>
+          <div className="flex h-[160px] items-start rounded-xl border border-gray-400 p-4">
+            <textarea
+              value={replyContent}
+              onChange={(e) => onReplyContentChange?.(e.target.value)}
+              placeholder="내용을 입력하세요"
+              className="size-full resize-none text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onReplyCancel}
+              className="flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white text-body-2-medium text-gray-900"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={onReplySubmit}
+              disabled={isSubmittingReply || !replyContent.trim()}
+              className="flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full bg-gray-900 text-body-2-medium text-white disabled:cursor-not-allowed disabled:bg-gray-400"
+            >
+              {isSubmittingReply ? (
+                <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              ) : (
+                '완료'
+              )}
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* 답글이 있는 경우 */}
+      {!isReplying && review.replyDto && (
+        <>
+          <div className="flex flex-col gap-3 rounded-xl bg-gray-100 p-4">
+            <span className="text-caption-1-medium text-gray-600">내가 남긴 답글</span>
+            <p className="text-body-2-regular text-gray-900">{review.replyDto.content}</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleReplyEdit}
+            className="flex h-12 w-full cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white text-body-2-medium text-gray-900"
+          >
+            답글 수정하기
+          </button>
+        </>
+      )}
+
+      {/* 답글이 없고 입력 모드가 아닌 경우 - 답글 달기 버튼만 */}
+      {!isReplying && !review.replyDto && (
+        <button
+          type="button"
+          onClick={handleReplyClick}
+          className="flex h-12 w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 text-body-2-medium text-white"
+        >
+          답글 달기
+        </button>
+      )}
+    </div>
+  );
+}

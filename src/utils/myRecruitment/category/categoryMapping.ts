@@ -34,6 +34,7 @@ export const SUBCATEGORY_KO_TO_CODE_BY_CATEGORY: Record<string, Record<string, s
   NAIL: {
     원컬러: 'ONE_COLOR',
     아트: 'ART',
+    네일아트: 'ART',
     페디큐어: 'PEDICURE',
   },
   EYELASH: {
@@ -42,8 +43,11 @@ export const SUBCATEGORY_KO_TO_CODE_BY_CATEGORY: Record<string, Record<string, s
   },
   TATTOO: {
     '일반 디자인': 'NORMAL_TATTOO',
+    일반아트: 'NORMAL_TATTOO',
     '입술 문신': 'LIP_TATTOO',
+    립: 'LIP_TATTOO',
     '눈썹 문신': 'EYEBROW_TATTOO',
+    눈썹: 'EYEBROW_TATTOO',
   },
 };
 

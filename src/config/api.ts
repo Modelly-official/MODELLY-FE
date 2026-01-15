@@ -5,6 +5,8 @@ export const API_CONFIG = {
     recruitmentDetail: false,
     designers: false,
     designerRecruitments: false,
+    mapShops: false, // map 페이지 전용
+    mapRecruitments: false, // map 페이지 전용
   },
 } as const;
 

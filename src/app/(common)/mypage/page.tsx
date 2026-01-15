@@ -1,157 +1,99 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { isAxiosError } from 'axios';
-import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
 import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
 import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
-import { getDesignerProfile, getModelProfile } from '@/src/apis';
-import { getAccessToken, getUserRole, useAuthStore } from '@/src/stores';
-
-type Role = 'model' | 'designer';
-type QuickAction = { label: string; icon?: ReactNode };
-type ProfileResult = { role: Role; profile: { nickname: string; email?: string; profileImageUrl: string | null } };
-
-const settingLinks = ['알람설정', '고객센터/FAQ'] as const;
-const accountLinks = ['계정 추가하기', '로그아웃', '탈퇴하기'] as const;
+import { useAuthReady, useSimpleProfile } from '@/src/hooks/custom/mypage';
+import { useLogout } from '@/src/hooks/queries/auth';
+import { useToast } from '@/src/hooks/common/useToast';
+import {
+  SETTING_LINKS,
+  ACCOUNT_LINKS,
+  MODEL_QUICK_ACTIONS,
+  DESIGNER_QUICK_ACTIONS,
+  ROLE_FALLBACK_NAMES,
+} from '@/src/constants/mypage';
 
 export default function MypagePage() {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const [role, setRole] = useState<Role>('model');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authReady, setAuthReady] = useState(false);
-  const notificationCount = 1; // 알림 API 연동 시 실제 값으로 교체
+  const { user, role, isLoggedIn, authReady } = useAuthReady();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { showToast } = useToast();
 
-  // 쿠키/스토어 기반으로 인증 상태 동기화 (초기 렌더와 일치하도록 마운트 후 업데이트)
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    const cookieRole = getUserRole();
-    const token = getAccessToken();
-    setRole((user?.role ?? cookieRole ?? 'model') as Role);
-    setIsLoggedIn(!!(user ?? token));
-    setAuthReady(true);
-  }, [user]);
-  /* eslint-enable react-hooks/set-state-in-effect */
-
+  // 프로필 조회
   const {
     data: profileResponse,
-    isLoading: profileQueryLoading,
-    isError: profileQueryError,
-  } = useQuery<ProfileResult>({
-    queryKey: ['mypage', 'profile', role],
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+  } = useSimpleProfile({
+    roleHint: role,
     enabled: authReady && isLoggedIn,
-    retry: false,
-    queryFn: async () => {
-      const cookieRole = getUserRole();
-      const effectiveRole = (user?.role ?? cookieRole ?? role) as Role;
-
-      const fetchDesigner = async (): Promise<ProfileResult> => {
-        const res = await getDesignerProfile();
-        return {
-          role: 'designer',
-          profile: {
-            nickname: res.result.nickname,
-            email: res.result.email,
-            profileImageUrl: res.result.profileImageUrl,
-          },
-        };
-      };
-
-      const fetchModel = async (): Promise<ProfileResult> => {
-        const res = await getModelProfile();
-        return {
-          role: 'model',
-          profile: {
-            nickname: res.result.nickname,
-            email: res.result.email,
-            profileImageUrl: res.result.profileImageUrl,
-          },
-        };
-      };
-
-      try {
-        // 역할이 명확하면 해당 엔드포인트만 호출 (잘못된 엔드포인트로 떨어지는 것 방지)
-        if (effectiveRole === 'designer') return await fetchDesigner();
-        if (effectiveRole === 'model') return await fetchModel();
-
-        // 역할이 불명확하면 모델 우선, 403/404 시 디자이너로 폴백
-        return await fetchModel();
-      } catch (error) {
-        const shouldFallback =
-          isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404);
-
-        if (shouldFallback) {
-          return fetchDesigner();
-        }
-        throw error;
-      }
-    },
   });
 
-  const resolvedRole = (profileResponse?.role ?? role) as Role;
+  // 현재 역할 (API 응답 우선)
+  const currentRole = profileResponse?.role ?? role;
 
-  const { profileImage, fallbackName, quickActions } = useMemo((): {
-    profileImage: string;
-    fallbackName: string;
-    quickActions: QuickAction[];
-  } => {
-    if (resolvedRole === 'designer') {
-      return {
-        profileImage: '',
-        fallbackName: '디자이너',
-        quickActions: [
-          {
-            label: '예약 내역',
-            icon: <Image src="/icons/myPage/reservationList.svg" alt="예약 내역" width={24} height={24} />,
-          },
-          { label: '리뷰 관리', icon: <Image src="/icons/myPage/review.svg" alt="리뷰 관리" width={24} height={24} /> },
-          {
-            label: '포트폴리오',
-            icon: <Image src="/icons/myPage/portfolio.svg" alt="포트폴리오" width={24} height={24} />,
-          },
-        ],
-      };
-    }
-    return {
-      profileImage: '',
-      fallbackName: '모델',
-      quickActions: [
-        {
-          label: '예약 내역',
-          icon: <Image src="/icons/myPage/reservationList.svg" alt="예약 내역" width={24} height={24} />,
-        },
-        { label: '나의 리뷰', icon: <Image src="/icons/myPage/review.svg" alt="나의 리뷰" width={24} height={24} /> },
-        { label: '찜', icon: <Image src="/icons/myPage/heart.svg" alt="찜" width={24} height={24} /> },
-      ],
-    };
-  }, [resolvedRole]);
+  // 퀵 액션 메뉴
+  const quickActions = useMemo(() => {
+    const actions = currentRole === 'designer' ? DESIGNER_QUICK_ACTIONS : MODEL_QUICK_ACTIONS;
+    return actions.map((action) => ({
+      label: action.label,
+      icon: <Image src={action.iconPath} alt={action.label} width={24} height={24} />,
+      onClick: action.href ? () => router.push(action.href!) : undefined,
+    }));
+  }, [currentRole, router]);
 
-  const profileData = profileResponse?.profile;
-  const hasProfileData = Boolean(profileData);
-  const name = isLoggedIn ? (profileData?.nickname ?? fallbackName) : '로그인 및 회원가입';
+  // 프로필 데이터
+  const profile = profileResponse?.profile;
+  const name = isLoggedIn ? (profile?.nickname ?? ROLE_FALLBACK_NAMES[currentRole]) : '로그인 및 회원가입';
   const email = isLoggedIn
-    ? (profileData?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.')
+    ? (profile?.email ?? user?.loginId ?? '이메일 정보를 불러올 수 없습니다.')
     : '더 편리하게 모앤디를 경험해보세요';
-  const profileImageSrc = profileData?.profileImageUrl ?? profileImage;
-  const isProfileLoading =
-    !authReady || (isLoggedIn && (profileQueryError || (!hasProfileData && profileQueryLoading)));
+  const profileImageSrc = profile?.profileImageUrl ?? '';
 
+  // 로딩 상태
+  const isLoading = !authReady || (isLoggedIn && (isProfileError || (!profile && isProfileLoading)));
+
+  // CTA 버튼 (디자이너만)
   const ctaButton = useMemo(() => {
-    if (!isLoggedIn) return undefined;
-    if (resolvedRole === 'designer') return { label: '프로필 보기', onClick: () => router.push('/designer/profile') };
-    return undefined;
-  }, [isLoggedIn, resolvedRole, router]);
+    if (!isLoggedIn || currentRole !== 'designer') return undefined;
+    return { label: '프로필 보기', onClick: () => router.push('/designer/profile') };
+  }, [isLoggedIn, currentRole, router]);
 
-  const shouldShowLoginCta = authReady && !isLoggedIn;
-  const loginNameIcon = shouldShowLoginCta ? <ArrowRightIcon className="h-4 text-gray-400 ml-2" /> : undefined;
+  // 비로그인 상태 UI
+  const showLoginPrompt = authReady && !isLoggedIn;
+  const nameIcon = showLoginPrompt ? <ArrowRightIcon className="h-4 text-gray-400 ml-2" /> : undefined;
+
+  // TODO: 알림 API 연동
+  const notificationCount = 1;
+
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    if (isLoggingOut) return;
+    logout(undefined, {
+      onSuccess: () => {
+        showToast('로그아웃되었습니다.');
+        router.push('/login');
+      },
+      onError: () => {
+        showToast('로그아웃에 실패했습니다.');
+      },
+    });
+  };
+
+  // 계정 메뉴 아이템 (onClick 연결)
+  const accountMenuItems = ACCOUNT_LINKS.map((label) => ({
+    label,
+    onClick: label === '로그아웃' ? handleLogout : undefined,
+  }));
 
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
       <div className="flex flex-col">
+        {/* 헤더 */}
         <header className="flex h-[52px] items-center justify-between py-3 pr-3 pl-5">
           <h1 className="text-head-3-semibold text-gray-900">마이페이지</h1>
           <button
@@ -167,6 +109,8 @@ export default function MypagePage() {
             )}
           </button>
         </header>
+
+        {/* 콘텐츠 */}
         <div className="flex flex-col gap-3 px-4">
           <ProfileCard
             name={name}
@@ -174,14 +118,14 @@ export default function MypagePage() {
             profileImageSrc={profileImageSrc}
             ctaButton={ctaButton}
             editHref={isLoggedIn ? '/mypage/profile/edit' : undefined}
-            nameIcon={loginNameIcon}
-            onCardClick={shouldShowLoginCta ? () => router.push('/login') : undefined}
-            isLoading={isProfileLoading}
+            nameIcon={nameIcon}
+            onCardClick={showLoginPrompt ? () => router.push('/login') : undefined}
+            isLoading={isLoading}
           />
           <MyMenuCard actions={quickActions} />
-          <MenuList items={settingLinks.map((label) => ({ label }))} />
+          <MenuList items={[...SETTING_LINKS]} />
           <div className="-mx-4 h-2 bg-gray-200" />
-          <MenuList items={accountLinks.map((label) => ({ label }))} />
+          <MenuList items={accountMenuItems} />
         </div>
       </div>
       <BottomNav />
