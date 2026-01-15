@@ -7,9 +7,11 @@
 /** 오늘의 예약 아이템 */
 export interface TodayReservationItem {
   reservationId: number;
-  modelName: string;
-  subCategories: string[];
+  recruitmentId: number;
   time: string; // HH:mm
+  modelName: string;
+  imageUrl: string | null;
+  subCategories: string[];
 }
 
 /** 오늘의 예약 목록 응답 */
