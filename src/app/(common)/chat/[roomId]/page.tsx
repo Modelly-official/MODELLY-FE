@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { Fragment, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import ChatHeader from '@/src/components/chat/chatroom/ChatHeader';
 import MessageItem from '@/src/components/chat/chatroom/MessageItem';
@@ -15,16 +15,11 @@ import {
   useChatReservationSummary,
   useRequestReservationChange,
 } from '@/src/hooks/queries/reservation';
+import { useAuthHydration } from '@/src/hooks/custom';
 import useChatRoom from '@/src/hooks/custom/chat/useChatRoom';
-import { getAccessToken, getUserRole, useAuthStore } from '@/src/stores';
+import { getUserRole, useAuthStore } from '@/src/stores';
 import { formatChatDateLabel } from '@/src/utils/chat';
 import type { ReservationCancelRequest, ReservationChangeRequest, ReservationInfo } from '@/src/types/reservation';
-
-const subscribeToAuth = () => () => {};
-const getAuthSnapshot = () => !!getAccessToken();
-const getServerSnapshot = () => false;
-const subscribeToHydration = () => () => {};
-const getHydrationSnapshot = () => true;
 
 export default function ChatRoom() {
   const pathname = usePathname();
@@ -34,8 +29,7 @@ export default function ChatRoom() {
   const roomId = Array.isArray(roomIdParam) ? roomIdParam[0] : roomIdParam;
   const roomIdNumber = roomId ? Number(roomId) : undefined;
   const validRoomId = roomIdNumber != null && !Number.isNaN(roomIdNumber) ? roomIdNumber : undefined;
-  const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
-  const isHydrated = useSyncExternalStore(subscribeToHydration, getHydrationSnapshot, getServerSnapshot);
+  const { isAuthenticated, isHydrated } = useAuthHydration();
   const [modalDismissed, setModalDismissed] = useState(false);
   const showLoginModal = isHydrated && !isAuthenticated && !modalDismissed;
   const callbackUrl = useMemo(() => {

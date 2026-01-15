@@ -5,29 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ProfileIcon from '@/public/icons/chat/profile.svg';
 import type { ChatRoomSummary } from '@/src/types/chat';
-import { formatChatListTime } from '@/src/utils/chat';
-
-const getReservationPreview = (raw: string) => {
-  try {
-    const payload = JSON.parse(raw) as { eventType?: string };
-    switch (payload.eventType) {
-      case 'CHANGE_REQUEST':
-        return '예약 일정 변경 요청드립니다 :)';
-      case 'CHANGE_REJECTED':
-        return '예약 변경 요청이 거절되었습니다.';
-      case 'CHANGE_PROCEED':
-        return '변경 없이 기존 예약 일정으로 진행합니다.';
-      case 'CHANGE_CANCEL':
-        return '예약 변경 요청이 취소되었습니다.';
-      case 'RESERVATION_CANCEL':
-        return '예약이 취소되었습니다.';
-      default:
-        return '예약 관련 알림이 왔습니다.';
-    }
-  } catch {
-    return '예약 관련 알림이 왔습니다.';
-  }
-};
+import { formatChatListTime, getReservationPreviewText } from '@/src/utils/chat';
 
 interface ChatListItemProps {
   chat: ChatRoomSummary;
@@ -39,7 +17,7 @@ export default function ChatListItem({ chat }: ChatListItemProps) {
   const displayCount = chat.unreadMessages > 99 ? '99+' : chat.unreadMessages;
   const previewMessage =
     chat.messageType === 'RESERVATION'
-      ? getReservationPreview(chat.lastMessage)
+      ? getReservationPreviewText(chat.lastMessage)
       : chat.messageType === 'IMAGE'
         ? '사진'
         : chat.lastMessage;

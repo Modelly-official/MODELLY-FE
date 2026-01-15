@@ -1,25 +1,18 @@
 'use client';
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
 import ChatList from '@/src/components/chat/chatlist/ChatList';
 import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
-import { getAccessToken, getUserRole, useAuthStore } from '@/src/stores';
+import { useAuthHydration } from '@/src/hooks/custom';
+import { getUserRole, useAuthStore } from '@/src/stores';
 import { LoginRequiredModal } from '@/src/components/common';
 import BottomNav from '@/src/components/common/BottomNav';
 
-// 클라이언트에서만 인증 상태 확인 (hydration mismatch 방지)
-const subscribeToAuth = () => () => {};
-const getAuthSnapshot = () => !!getAccessToken();
-const getServerSnapshot = () => false;
-const subscribeToHydration = () => () => {};
-const getHydrationSnapshot = () => true;
-
 export default function ChatPage() {
   const { showToast } = useToast();
-  const isAuthenticated = useSyncExternalStore(subscribeToAuth, getAuthSnapshot, getServerSnapshot);
-  const isHydrated = useSyncExternalStore(subscribeToHydration, getHydrationSnapshot, getServerSnapshot);
+  const { isAuthenticated, isHydrated } = useAuthHydration();
   const roleFromStore = useAuthStore((state) => state.user?.role);
   const roleFromCookie = getUserRole();
   const userRole = roleFromCookie ?? roleFromStore;
