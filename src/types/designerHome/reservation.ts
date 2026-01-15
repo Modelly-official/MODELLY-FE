@@ -7,9 +7,11 @@
 /** 오늘의 예약 아이템 */
 export interface TodayReservationItem {
   reservationId: number;
-  modelName: string;
-  subCategories: string[];
+  recruitmentId: number;
   time: string; // HH:mm
+  modelName: string;
+  imageUrl: string | null;
+  subCategories: string[];
 }
 
 /** 오늘의 예약 목록 응답 */
@@ -50,6 +52,7 @@ export type ReservationStatus = '예약대기' | '예약확정' | '예약거절'
 /** 예약 상세 정보 */
 export interface ReservationDetailResult {
   reservationId: number;
+  recruitmentId: number;
   recruitmentTitle: string;
   modelUserId: number;
   modelName: string;

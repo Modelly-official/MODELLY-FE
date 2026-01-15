@@ -15,6 +15,8 @@ import {
 import { useReservationDetail, useConfirmReservation, useRejectReservation } from '@/src/hooks/queries/designerHome';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
+import Link from 'next/link';
+import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
 
 export default function ReservationDetailPage() {
   const router = useRouter();
@@ -116,7 +118,10 @@ export default function ReservationDetailPage() {
               </span>
             ))}
           </div>
-          <p className="text-head-4-semibold text-gray-900">{reservation.recruitmentTitle}</p>
+          <Link href={`/myRecruitment/${reservation.recruitmentId}`} className="flex items-center gap-1">
+            <span className="text-head-4-semibold text-gray-900">{reservation.recruitmentTitle}</span>
+            <ArrowRightIcon className="size-5 shrink-0 text-black" />
+          </Link>
         </div>
 
         <div className="flex flex-col gap-4">

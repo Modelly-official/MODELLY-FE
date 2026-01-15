@@ -19,12 +19,9 @@ export function QuickActionButtons() {
       </Link>
       <Link
         href="/mypage/reviews"
-        className="flex flex-1 items-center justify-center gap-1 rounded-[12px] bg-white py-3 shadow-[0px_0px_11px_0px_rgba(34,34,34,0.04)]"
+        className="flex flex-1 items-center justify-center rounded-[12px] bg-white py-3 shadow-[0px_0px_11px_0px_rgba(34,34,34,0.04)]"
       >
         <span className="text-body-2-semibold text-gray-900">리뷰 관리</span>
-        <span className="flex size-5 items-center justify-center rounded-full bg-purple-600 text-caption-1-medium text-white">
-          7
-        </span>
       </Link>
     </section>
   );
