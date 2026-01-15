@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getModelReservations, getDesignerReservations } from '@/src/apis';
+import { getModelMyReservations, getDesignerMyReservations } from '@/src/apis';
 import type {
   ApiResponse,
   ReservationListType,
@@ -54,7 +54,7 @@ export function useModelReservations(
   >({
     queryKey: myReservationKeys.model(type, filters),
     queryFn: async ({ pageParam }) => {
-      return getModelReservations({
+      return getModelMyReservations({
         type,
         category: filters.category,
         month: filters.month,
@@ -96,7 +96,7 @@ export function useDesignerMyReservations(
   >({
     queryKey: myReservationKeys.designer(type, filters),
     queryFn: async ({ pageParam }) => {
-      return getDesignerReservations({
+      return getDesignerMyReservations({
         type,
         category: filters.category,
         month: filters.month,

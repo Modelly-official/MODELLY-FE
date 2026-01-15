@@ -10,7 +10,6 @@ import {
   ReservationCancelModal,
   ReservationSuccessModal,
 } from '@/src/components/reservation';
-import { MOCK_TIME_SLOTS } from '@/src/mocks/calendar';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
 
@@ -183,7 +182,6 @@ export default function DesignerReservationCard({
         isOpen={isChangeModalOpen}
         onClose={() => setIsChangeModalOpen(false)}
         reservation={reservationInfo}
-        timeSlots={MOCK_TIME_SLOTS}
         onSubmit={handleChangeSubmit}
       />
 

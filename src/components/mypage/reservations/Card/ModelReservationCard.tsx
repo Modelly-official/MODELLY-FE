@@ -14,7 +14,6 @@ import {
   ReservationCancelModal,
   ReservationSuccessModal,
 } from '@/src/components/reservation';
-import { MOCK_TIME_SLOTS } from '@/src/mocks/calendar';
 import { CategoryBadges, ReservationInfo as ReservationInfoComponent, ReservationTitle } from './common';
 
 interface ModelReservationCardProps {
@@ -136,7 +135,6 @@ export default function ModelReservationCard({
         isOpen={isChangeModalOpen}
         onClose={() => setIsChangeModalOpen(false)}
         reservation={reservationInfo}
-        timeSlots={MOCK_TIME_SLOTS}
         onSubmit={handleChangeSubmit}
       />
 

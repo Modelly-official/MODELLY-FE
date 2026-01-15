@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getChatRoomReservationSummary, getDesignerReservations, getModelReservations } from '@/src/apis';
+import { getChatRoomReservationSummary, getDesignerMyReservations, getModelMyReservations } from '@/src/apis';
 import type { ReservationInfo } from '@/src/types';
 
 type UserRole = 'designer' | 'model';
@@ -31,7 +31,7 @@ export function useChatReservationSummary({
 
       if (!reservationId && role) {
         if (role === 'designer') {
-          const listResponse = await getDesignerReservations({ type: 'UPCOMING', size: 50 });
+          const listResponse = await getDesignerMyReservations({ type: 'UPCOMING', size: 50 });
           const items = listResponse.result?.items ?? [];
           const match = items.find(
             (item) =>
@@ -45,7 +45,7 @@ export function useChatReservationSummary({
             recruitmentTitle = match.recruitmentTitle ?? recruitmentTitle;
           }
         } else {
-          const listResponse = await getModelReservations({ type: 'UPCOMING', size: 50 });
+          const listResponse = await getModelMyReservations({ type: 'UPCOMING', size: 50 });
           const items = listResponse.result?.items ?? [];
           const match = items.find(
             (item) =>

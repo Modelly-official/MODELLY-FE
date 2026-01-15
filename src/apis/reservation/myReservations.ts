@@ -8,10 +8,10 @@ import type {
 } from '@/src/types';
 
 /**
- * 모델 예약 목록 조회
+ * 모델 마이페이지 예약 목록 조회
  * GET /models/reservations
  */
-export async function getModelReservations(
+export async function getModelMyReservations(
   params: ReservationsParams
 ): Promise<ApiResponse<ReservationsResponse<ModelReservationItem>>> {
   const { data } = await axiosInstance.get<
@@ -21,10 +21,10 @@ export async function getModelReservations(
 }
 
 /**
- * 디자이너 예약 목록 조회
+ * 디자이너 마이페이지 예약 목록 조회
  * GET /designers/reservations
  */
-export async function getDesignerReservations(
+export async function getDesignerMyReservations(
   params: ReservationsParams
 ): Promise<ApiResponse<ReservationsResponse<DesignerReservationItem>>> {
   const { data } = await axiosInstance.get<
