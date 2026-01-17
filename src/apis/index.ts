@@ -4,6 +4,7 @@ export * from './designer';
 export * from './explore';
 export * from './likes';
 export * from './map';
+export * from './notification';
 export * from './profile';
 export * from './reservation';
 export * from './review';
