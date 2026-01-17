@@ -42,6 +42,9 @@ export default function MyRecruitmentPage() {
   const {
     data: closedData,
     isLoading: isClosedLoading,
+    fetchNextPage: fetchClosedNextPage,
+    hasNextPage: hasClosedNextPage,
+    isFetchingNextPage: isFetchingClosedNextPage,
   } = useDesignerRecruitments({
     status: 'CLOSED',
     month: monthString, // 임시: 백엔드에서 month 필수로 요구
@@ -150,6 +153,9 @@ export default function MyRecruitmentPage() {
             recruitments={closedRecruitments}
             totalCount={closedRecruitments.length}
             onClick={handleCardClick}
+            onLoadMore={fetchClosedNextPage}
+            hasMore={hasClosedNextPage}
+            isLoadingMore={isFetchingClosedNextPage}
           />
         )
       )}
