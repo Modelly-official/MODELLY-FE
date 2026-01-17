@@ -21,7 +21,7 @@ export default function ClosedRecruitmentList({
   }
 
   return (
-    <div className="flex flex-col gap-3 px-4 pt-6">
+    <div className="flex flex-col gap-3 px-4 pt-3">
       {/* 전체 카운트 */}
       <div className="flex items-center gap-1">
         <span className="text-body-2-medium text-black">전체</span>

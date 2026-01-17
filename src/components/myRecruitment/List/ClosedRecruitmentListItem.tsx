@@ -6,6 +6,7 @@ import { useState } from 'react';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import { CategoryBadge } from '@/src/components/common';
 import type { MyRecruitmentListItem } from '@/src/types/myRecruitment/recruitment';
+import { formatPeriodToMonthDay } from '@/src/utils/common';
 
 interface ClosedRecruitmentListItemProps {
   recruitment: MyRecruitmentListItem;
@@ -23,7 +24,7 @@ export default function ClosedRecruitmentListItem({
   };
 
   const subCategories = recruitment.subCategory || [];
-  const dateText = recruitment.period;
+  const dateText = formatPeriodToMonthDay(recruitment.period);
 
   return (
     <div
@@ -57,17 +58,20 @@ export default function ClosedRecruitmentListItem({
 
       {/* 정보 영역 */}
       <div className="flex min-w-0 flex-1 flex-col gap-2">
-        {/* 카테고리 배지 */}
-        {subCategories.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {subCategories.map((category) => (
-              <CategoryBadge key={category} category={category} />
-            ))}
-          </div>
-        )}
+        {/* 카테고리 + 제목 (4px gap) */}
+        <div className="flex flex-col gap-1">
+          {/* 카테고리 배지 */}
+          {subCategories.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {subCategories.map((category) => (
+                <CategoryBadge key={category} category={category} />
+              ))}
+            </div>
+          )}
 
-        {/* 제목 */}
-        <p className="text-body-1-medium line-clamp-1 text-gray-900">{recruitment.title}</p>
+          {/* 제목 */}
+          <p className="text-body-1-medium line-clamp-1 text-gray-900">{recruitment.title}</p>
+        </div>
 
         {/* 날짜 */}
         <div className="flex items-center gap-1">
