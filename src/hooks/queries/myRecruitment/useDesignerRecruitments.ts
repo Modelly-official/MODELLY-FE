@@ -1,15 +1,17 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getDesignerRecruitments } from '@/src/apis';
-import type { ApiResponse, MyRecruitmentListResponse } from '@/src/types';
+import type { ApiResponse, MyRecruitmentListResponse, RecruitmentStatus } from '@/src/types';
 
 export const myRecruitmentKeys = {
   all: ['myRecruitments'] as const,
   lists: () => [...myRecruitmentKeys.all, 'list'] as const,
-  list: (month: string) => [...myRecruitmentKeys.lists(), month] as const,
+  list: (status: RecruitmentStatus, month?: string) =>
+    [...myRecruitmentKeys.lists(), status, month] as const,
 };
 
 interface UseDesignerRecruitmentsParams {
-  month: string;
+  status: RecruitmentStatus;
+  month?: string; // ACTIVE일 때만 필요
   size?: number;
   enabled?: boolean;
 }
@@ -19,7 +21,7 @@ interface UseDesignerRecruitmentsParams {
  * useInfiniteQuery를 사용하여 커서 기반 페이징 지원
  */
 export function useDesignerRecruitments(params: UseDesignerRecruitmentsParams) {
-  const { month, size = 10, enabled = true } = params;
+  const { status, month, size = 10, enabled = true } = params;
 
   type CursorParam = { cursorId?: number; cursorEarliestDate?: string } | undefined;
 
@@ -30,9 +32,10 @@ export function useDesignerRecruitments(params: UseDesignerRecruitmentsParams) {
     ReturnType<typeof myRecruitmentKeys.list>,
     CursorParam
   >({
-    queryKey: myRecruitmentKeys.list(month),
+    queryKey: myRecruitmentKeys.list(status, month),
     queryFn: async ({ pageParam }) => {
       return getDesignerRecruitments({
+        status,
         month,
         size,
         cursorId: pageParam?.cursorId,

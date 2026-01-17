@@ -139,13 +139,22 @@ export async function uploadRecruitmentImages(files: File[]): Promise<ImageUploa
 function getMockDesignerRecruitments(
   params: MyRecruitmentListParams
 ): Promise<ApiResponse<MyRecruitmentListResponse>> {
-  const { month, size = DEFAULT_PAGE_SIZE, cursorId } = params;
+  const { status, month, size = DEFAULT_PAGE_SIZE, cursorId } = params;
 
-  // 해당 월에 맞는 공고 필터링 (_month 필드로 필터링 후 제거)
-  const filteredItems = mockMyRecruitmentItems
-    .filter((item) => item._month === month)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .map(({ _month, ...rest }) => rest);
+  let filteredItems;
+
+  if (status === 'CLOSED') {
+    // 마감 공고: 월 필터 없이 전체 반환 (실제로는 마감된 공고만)
+    filteredItems = mockMyRecruitmentItems
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map(({ _month, ...rest }) => rest);
+  } else {
+    // 모집중 공고: 해당 월에 맞는 공고 필터링
+    filteredItems = mockMyRecruitmentItems
+      .filter((item) => item._month === month)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map(({ _month, ...rest }) => rest);
+  }
 
   // 커서 기반 페이징
   const startIndex = cursorId

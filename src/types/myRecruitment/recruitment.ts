@@ -26,9 +26,13 @@ export interface ImageUploadResult {
 
 // ===== 내 공고 리스트 조회 =====
 
+/** 모집글 상태 */
+export type RecruitmentStatus = 'ACTIVE' | 'CLOSED';
+
 /** 내 공고 리스트 조회 파라미터 */
 export interface MyRecruitmentListParams {
-  month: string; // "2025-11" 형식
+  status?: RecruitmentStatus; // 상태 필터 (ACTIVE: 모집중, CLOSED: 마감)
+  month?: string; // "2025-11" 형식 (ACTIVE일 때만 사용)
   size?: number;
   cursorEarliestDate?: string;
   cursorId?: number;
