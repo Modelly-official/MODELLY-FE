@@ -17,6 +17,8 @@ export interface NotificationItem {
   /** 대상 ID (예약 ID, 채팅방 ID 등) */
   targetId: number;
   isRead: boolean;
+  /** 거절 사유 (예약 거절 시) */
+  rejectReason?: string;
 }
 
 /** 알림 목록 응답 */
