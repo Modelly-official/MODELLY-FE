@@ -5,4 +5,5 @@ export * from './formatTimeWithPeriod';
 export * from './formatDateToShort';
 export * from './formatDateToKorean';
 export * from './formatTimeToKorean';
+export * from './formatPeriodToMonthDay';
 

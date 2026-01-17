@@ -7,6 +7,7 @@ import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import DotIcon from '@/public/icons/myRecruitment/dot.svg';
 import { CategoryBadge } from '@/src/components/common';
 import type { MyRecruitmentListItem } from '@/src/types/myRecruitment/recruitment';
+import { formatPeriodToMonthDay } from '@/src/utils/common';
 
 interface RecruitmentCardProps {
   recruitment: MyRecruitmentListItem;
@@ -49,8 +50,8 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
   // 서브카테고리 배열 (API에서 subCategory로 반환)
   const subCategories = recruitment.subCategory || [];
 
-  // 날짜 표시 (API에서 period 형식으로 제공)
-  const dateText = recruitment.period;
+  // 날짜 표시 (M.D~M.D 형식)
+  const dateText = formatPeriodToMonthDay(recruitment.period);
 
   return (
     <div className="w-[286px] cursor-pointer shadow-[0px_4px_11px_0px_rgba(34,34,34,0.06)]" onClick={handleCardClick}>
