@@ -33,8 +33,8 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification?.title || '새 알림';
   const notificationOptions = {
     body: payload.notification?.body || '',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-72x72.png',
+    icon: '/icons/app/icon-192x192.png',
+    badge: '/icons/app/icon-72x72.png',
     data: payload.data,
     tag: payload.data?.notificationId || 'default',
   };
