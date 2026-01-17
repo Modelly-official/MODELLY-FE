@@ -40,8 +40,8 @@ export default function NotificationItem({ notification, onClick }: Notification
 
         {/* 거절 사유 (있는 경우) */}
         {rejectReason && (
-          <div className="rounded-xl bg-gray-200 px-3 py-2.5">
-            <p className="text-body-2-regular text-gray-700">{rejectReason}</p>
+          <div className="rounded-xl bg-gray-200 px-3 py-[11px]">
+            <p className="text-body-2-regular text-gray-800">{rejectReason}</p>
           </div>
         )}
 

@@ -44,10 +44,10 @@ export default function NotificationFilter({
             key={item.code ?? 'all'}
             type="button"
             onClick={() => onFilterChange(item.code)}
-            className={`text-body-2-medium shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 transition-colors ${
+            className={`shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 transition-colors ${
               isActive
-                ? 'bg-gray-900 text-white'
-                : 'border border-gray-300 text-gray-600'
+                ? 'text-body-2-medium bg-gray-900 text-white'
+                : 'text-body-2-regular border border-gray-400 text-gray-700'
             }`}
           >
             {item.label}
