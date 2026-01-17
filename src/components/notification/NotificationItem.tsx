@@ -26,14 +26,14 @@ export default function NotificationItem({ notification, onClick }: Notification
       className="flex w-full cursor-pointer gap-4 text-left"
     >
       {/* 알림 아이콘 */}
-      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-purple-200">
+      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-purple-500">
         <NotificationBellIcon className="size-5 text-white" />
       </div>
 
       {/* 알림 내용 */}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         {/* 알림 타입 라벨 */}
-        <span className="text-body-2-medium text-purple-500">{title || notificationType}</span>
+        <span className="text-body-2-medium text-purple-600">{title || notificationType}</span>
 
         {/* 알림 내용 */}
         <p className="text-body-2-medium wrap-break-word text-black">{content}</p>
@@ -46,7 +46,7 @@ export default function NotificationItem({ notification, onClick }: Notification
         )}
 
         {/* 시간 */}
-        <span className="text-body-2-regular text-gray-500">{createdAt}</span>
+        <span className="text-body-2-regular text-gray-600">{createdAt}</span>
       </div>
     </button>
   );
