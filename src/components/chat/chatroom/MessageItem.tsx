@@ -41,10 +41,10 @@ export default function MessageItem({
   const bubbleTone = isReservationNotice
     ? isReservationNoticeFromMe
       ? 'bg-purple-300 text-purple-700'
-      : 'border border-gray-300 bg-white text-gray-800'
+      : 'border border-gray-300 bg-white text-gray-900'
     : message.fromMe
       ? 'bg-purple-300 text-purple-700'
-      : 'border border-gray-300 bg-white text-gray-800';
+      : 'border border-gray-300 bg-white text-gray-900';
 
   return (
     <li className={`flex items-end ${message.fromMe ? 'justify-end' : 'justify-start'}`}>

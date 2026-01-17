@@ -221,7 +221,7 @@ export default function ReservationMessageItem({
 
     return (
       <div className={`flex ${CARD_WIDTH} flex-col gap-3 ${tone.container} px-4 py-3`}>
-        <div className={`text-body-2-regular whitespace-pre-line ${tone.text}`}>{payload.notice}</div>
+        <div className={`text-body-2-medium whitespace-pre-line ${tone.text}`}>{payload.notice}</div>
         <div className="flex flex-col gap-2">
           <button
             type="button"
