@@ -32,7 +32,7 @@ export default function MyRecruitmentPage() {
     hasNextPage: hasActiveNextPage,
     isFetchingNextPage: isFetchingActiveNextPage,
   } = useDesignerRecruitments({
-    status: 'ACTIVE',
+    status: 'OPEN',
     month: monthString,
     enabled: activeTab === 'active',
   });

@@ -11,7 +11,7 @@ export const myRecruitmentKeys = {
 
 interface UseDesignerRecruitmentsParams {
   status: RecruitmentStatus;
-  month?: string; // ACTIVE일 때만 필요
+  month?: string; // OPEN일 때만 필요
   size?: number;
   enabled?: boolean;
 }
