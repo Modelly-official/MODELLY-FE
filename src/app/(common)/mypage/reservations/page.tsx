@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
+import { useState, useMemo, useEffect, useSyncExternalStore, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { getAccessToken, getUserRole } from '@/src/stores';
@@ -35,8 +35,19 @@ export default function MyReservationsPage() {
   const role = isClient ? (getUserRole() ?? 'model') : 'model';
   const isLoggedIn = isClient ? !!getAccessToken() : false;
 
-  // 탭 상태 (대기 중 탭이 기본)
-  const [activeTab, setActiveTab] = useState<ReservationListType>('PENDING');
+  // 탭 상태 (디자이너는 UPCOMING이 기본, 모델은 PENDING이 기본)
+  const [activeTab, setActiveTab] = useState<ReservationListType>('UPCOMING');
+  const [isTabInitialized, setIsTabInitialized] = useState(false);
+
+  // 클라이언트에서 role 확인 후 초기 탭 설정 (동기적 실행으로 깜빡임 방지)
+  // hydration 후 한 번만 실행되는 초기화 로직
+  useLayoutEffect(() => {
+    if (!isTabInitialized && role === 'model') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTab('PENDING');
+    }
+    setIsTabInitialized(true);
+  }, [role, isTabInitialized]);
 
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<ReservationCategoryFilter>('ALL');
@@ -124,7 +135,7 @@ export default function MyReservationsPage() {
       </header>
 
       {/* 탭 */}
-      <ReservationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      <ReservationTabs activeTab={activeTab} onTabChange={setActiveTab} role={role} />
 
       {/* 콘텐츠 */}
       <div className="flex flex-1 flex-col gap-4 px-4 py-4">
