@@ -56,7 +56,7 @@ export function useNotificationList(params: UseNotificationListParams = {}) {
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => {
       if (!lastPage.result.hasNext) return undefined;
-      return lastPage.result.nextCursorId ?? undefined;
+      return lastPage.result.nextCursor ?? undefined;
     },
     enabled,
     staleTime: 1000 * 60 * 5, // 5분

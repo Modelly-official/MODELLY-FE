@@ -23,9 +23,9 @@ export interface NotificationItem {
 
 /** 알림 목록 응답 */
 export interface NotificationListResult {
-  notifications: NotificationItem[];
+  items: NotificationItem[];
   hasNext: boolean;
-  nextCursorId: number;
+  nextCursor: number;
 }
 
 /** 알림 설정 */

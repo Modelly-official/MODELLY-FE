@@ -30,7 +30,7 @@ export default function NotificationPage() {
 
   // 알림 데이터 가공
   const notifications = useMemo(() => {
-    return data?.pages.flatMap((page) => page.result?.notifications ?? []) ?? [];
+    return data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
   }, [data?.pages]);
 
   // 무한 스크롤
