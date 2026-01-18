@@ -22,7 +22,7 @@ export default function DesignerReviewTab({ summary, reviews }: DesignerReviewTa
       <DesignerReviewSummary rating={summary.rating} count={summary.count} />
       <DesignerReviewPreviewStrip previewImages={summary.previewImages} moreCount={summary.moreCount} />
 
-      <div className="flex flex-col gap-4 px-4 pt-5">
+      <div className="flex flex-col gap-5 px-4 pt-5">
         {reviews.map((review) => (
           <DesignerReviewCard key={review.id} review={review} />
         ))}
