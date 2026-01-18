@@ -26,6 +26,7 @@ const reviewItems: DesignerReviewItem[] = [
     name: '무무',
     rating: 5,
     date: '2025.11.13',
+    isFixed: true,
     content:
       '레이어드 컷으로 롱헤어 정리했는데 너무 가벼워지고 분위기가 살아났어요! 층이 자연스럽게 떨어져서 드라이만 해도 예쁘게 정리돼요. 만족도 최고 ✨',
     images: ['/images/mocks/portfolio-1.png'],
