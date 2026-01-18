@@ -76,7 +76,7 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
               alt={recruitment.title}
               fill
               sizes="286px"
-              className={`pointer-events-none select-none object-cover transition-opacity ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+              className={`pointer-events-none object-cover transition-opacity select-none ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
               draggable={false}
               onLoad={() => {
                 setIsImageLoading(false);
@@ -123,7 +123,7 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
 
           {/* 날짜 */}
           <div className="flex items-center gap-1">
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="h-4 w-4 text-gray-700" />
             <span className="text-body-2-medium text-gray-700">{dateText}</span>
           </div>
         </div>
@@ -154,14 +154,14 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
                 <button
                   type="button"
                   onClick={handleEdit}
-                  className="text-caption-1-medium block w-full cursor-pointer whitespace-nowrap border-b border-gray-400 px-[13px] py-[6px] text-gray-900 hover:bg-gray-100"
+                  className="text-caption-1-medium block w-full cursor-pointer border-b border-gray-400 px-[13px] py-[6px] whitespace-nowrap text-gray-900 hover:bg-gray-100"
                 >
                   수정
                 </button>
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="text-caption-1-medium block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-gray-900 hover:bg-gray-100"
+                  className="text-caption-1-medium block w-full cursor-pointer px-[13px] py-[6px] whitespace-nowrap text-gray-900 hover:bg-gray-100"
                 >
                   삭제
                 </button>
