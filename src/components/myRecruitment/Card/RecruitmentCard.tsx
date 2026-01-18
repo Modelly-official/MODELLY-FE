@@ -154,14 +154,14 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
                 <button
                   type="button"
                   onClick={handleEdit}
-                  className="text-caption-1-medium block w-full cursor-pointer border-b border-gray-400 px-[13px] py-[6px] whitespace-nowrap text-gray-900 hover:bg-gray-100"
+                  className="text-caption-1-medium block w-full cursor-pointer border-b border-gray-400 px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
                 >
                   수정
                 </button>
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="text-caption-1-medium block w-full cursor-pointer px-[13px] py-[6px] whitespace-nowrap text-gray-900 hover:bg-gray-100"
+                  className="text-caption-1-medium block w-full cursor-pointer px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
                 >
                   삭제
                 </button>

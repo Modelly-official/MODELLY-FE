@@ -39,7 +39,7 @@ export default function DesignerProfileRecruitments({ openRecruitments }: Design
                   alt={recruitment.title}
                   fill
                   sizes="72px"
-                  className="rounded-2xl object-cover"
+                  className="rounded-xl object-cover"
                 />
               </div>
               <div className="flex flex-1 flex-col gap-1 py-[3.5px]">
