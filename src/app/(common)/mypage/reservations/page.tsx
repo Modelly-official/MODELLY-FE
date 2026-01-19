@@ -82,9 +82,10 @@ export default function MyReservationsPage() {
   const isModel = isClient && role === 'model';
 
   // 모델 필터 파라미터 (카테고리 포함)
+  // PENDING, UPCOMING 탭에서는 month를 보내지 않음 (날짜 분류 없음)
   const modelFilterParams = {
     category: currentCategory !== 'ALL' ? currentCategory : undefined,
-    month: selectedMonth,
+    month: activeTab === 'COMPLETED' ? selectedMonth : undefined,
   };
 
   // 디자이너 필터 파라미터 (카테고리 없음)
