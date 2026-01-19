@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ModelReservationItem } from '@/src/types';
 import { ConfirmModal } from '@/src/components/common/Modal';
+import { useCancelReservation } from '@/src/hooks/queries/reservation';
+import { useToast } from '@/src/hooks/common/useToast';
 import { CategoryBadges, ReservationInfo as ReservationInfoComponent, ReservationTitle } from './common';
 
 interface PendingReservationCardProps {
@@ -14,6 +16,8 @@ export default function PendingReservationCard({
   reservation,
 }: PendingReservationCardProps) {
   const router = useRouter();
+  const { showToast } = useToast();
+  const cancelReservation = useCancelReservation();
 
   // 모달 상태 관리
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -31,8 +35,18 @@ export default function PendingReservationCard({
   };
 
   const handleCancelConfirm = () => {
-    // TODO: API 연동 - 신청 취소 처리
-    setIsCancelModalOpen(false);
+    cancelReservation.mutate(
+      {
+        reservationId: reservation.reservationId,
+        payload: { reason: '예약 신청 취소' },
+      },
+      {
+        onSuccess: () => {
+          setIsCancelModalOpen(false);
+          showToast('예약 신청이 취소되었습니다.');
+        },
+      },
+    );
   };
 
   return (
@@ -74,9 +88,12 @@ export default function PendingReservationCard({
         <button
           type="button"
           onClick={handleCancelClick}
-          className="text-body-2-medium flex h-[41px] flex-1 cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-5 py-2.5 text-gray-900"
+          disabled={cancelReservation.isPending}
+          className={`text-body-2-medium flex h-[41px] flex-1 items-center justify-center rounded-full border border-gray-400 bg-white px-5 py-2.5 text-gray-900 ${
+            cancelReservation.isPending ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+          }`}
         >
-          신청 취소
+          {cancelReservation.isPending ? '취소 중...' : '신청 취소'}
         </button>
       </div>
 
