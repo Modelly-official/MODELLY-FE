@@ -2,7 +2,7 @@
 
 /** 설정 메뉴 항목 */
 export const SETTING_LINKS = [
-  { label: '알람설정', href: '/mypage/notification-settings' },
+  { label: '알림설정', href: '/mypage/notification-settings' },
   { label: '고객센터/FAQ' },
 ] as const;
 
