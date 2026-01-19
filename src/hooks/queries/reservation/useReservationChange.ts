@@ -9,6 +9,7 @@ import {
 } from '@/src/apis';
 import { useToast } from '@/src/hooks/common/useToast';
 import { calendarKeys } from '@/src/hooks/queries/calendar';
+import { myReservationKeys } from './useMyReservations';
 import type { ApiResponse, ReservationCancelRequest, ReservationChangeRequest, ReservationChangeResult } from '@/src/types';
 
 type RequestReservationChangeVariables = {
@@ -32,6 +33,7 @@ export function useRequestReservationChange() {
     mutationFn: ({ reservationId, payload, roomId }) => requestReservationChange(reservationId, payload, { roomId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: myReservationKeys.all });
     },
     onError: () => {
       showToast('예약 변경 요청에 실패했습니다.');
@@ -48,6 +50,7 @@ export function useCancelReservation() {
       cancelReservation(reservationId, payload, { roomId, reservationChangeId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: myReservationKeys.all });
     },
     onError: () => {
       showToast('예약 취소에 실패했습니다.');

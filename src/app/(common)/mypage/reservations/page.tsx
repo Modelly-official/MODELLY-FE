@@ -49,8 +49,25 @@ export default function MyReservationsPage() {
     setIsTabInitialized(true);
   }, [role, isTabInitialized]);
 
-  // 카테고리 필터 상태
-  const [selectedCategory, setSelectedCategory] = useState<ReservationCategoryFilter>('ALL');
+  // 카테고리 필터 상태 (탭별로 독립적)
+  const [selectedCategoryByTab, setSelectedCategoryByTab] = useState<
+    Record<ReservationListType, ReservationCategoryFilter>
+  >({
+    PENDING: 'ALL',
+    UPCOMING: 'ALL',
+    COMPLETED: 'ALL',
+  });
+
+  // 카테고리 변경 핸들러 (현재 탭의 카테고리만 변경)
+  const handleCategoryChange = (category: ReservationCategoryFilter) => {
+    setSelectedCategoryByTab((prev) => ({
+      ...prev,
+      [activeTab]: category,
+    }));
+  };
+
+  // 현재 탭의 카테고리
+  const currentCategory = selectedCategoryByTab[activeTab];
 
   // 월 선택 상태 (현재 월로 초기화, yyyy-MM 형식)
   const now = new Date();
@@ -65,9 +82,10 @@ export default function MyReservationsPage() {
   const isModel = isClient && role === 'model';
 
   // 모델 필터 파라미터 (카테고리 포함)
+  // PENDING, UPCOMING 탭에서는 month를 보내지 않음 (날짜 분류 없음)
   const modelFilterParams = {
-    category: selectedCategory !== 'ALL' ? selectedCategory : undefined,
-    month: selectedMonth,
+    category: currentCategory !== 'ALL' ? currentCategory : undefined,
+    month: activeTab === 'COMPLETED' ? selectedMonth : undefined,
   };
 
   // 디자이너 필터 파라미터 (카테고리 없음)
@@ -142,13 +160,13 @@ export default function MyReservationsPage() {
         {/* 카테고리 필터 (모델만) */}
         {isModel && (
           <CategoryChips
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            selectedCategory={currentCategory}
+            onCategoryChange={handleCategoryChange}
           />
         )}
 
-        {/* 월 선택 및 전체 개수 (대기 중 탭에서는 월 선택 숨김) */}
-        {activeTab !== 'PENDING' && (
+        {/* 월 선택 및 전체 개수 (모델: 완료 탭만, 디자이너: 모든 탭) */}
+        {(activeTab === 'COMPLETED' || !isModel) && (
           <div className="flex items-center justify-between">
             <MonthDropdown
               options={monthOptions}

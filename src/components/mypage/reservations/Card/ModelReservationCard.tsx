@@ -1,19 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type {
-  ModelReservationItem,
-  ReservationListType,
-  ReservationInfo,
-  ReservationChangeRequest,
-  ReservationCancelRequest,
-} from '@/src/types';
+import type { ModelReservationItem, ReservationListType, ReservationInfo } from '@/src/types';
 import {
   ReservationChangeModal,
   ReservationCancelModal,
   ReservationSuccessModal,
 } from '@/src/components/reservation';
+import { useReservationActions } from '@/src/hooks/custom/mypage/reservations';
 import { CategoryBadges, ReservationInfo as ReservationInfoComponent, ReservationTitle } from './common';
 
 interface ModelReservationCardProps {
@@ -27,11 +21,21 @@ export default function ModelReservationCard({
 }: ModelReservationCardProps) {
   const router = useRouter();
 
-  // 모달 상태 관리
-  const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const {
+    modalState,
+    openChangeModal,
+    openCancelModal,
+    closeChangeModal,
+    closeCancelModal,
+    closeSuccessModal,
+    handleChangeSubmit,
+    handleCancelSubmit,
+    isChangeLoading,
+    isCancelLoading,
+  } = useReservationActions({
+    reservationId: reservation.reservationId,
+    targetUserId: reservation.designerUserId,
+  });
 
   const isUpcoming = tabType === 'UPCOMING';
   const isCompleted = reservation.status === 'RESERVATION_CANCELLED' || tabType === 'COMPLETED';
@@ -39,6 +43,7 @@ export default function ModelReservationCard({
   // 예약 정보를 모달에 전달할 형식으로 변환
   const reservationInfo: ReservationInfo = {
     reservationId: reservation.reservationId,
+    recruitmentId: reservation.recruitmentId,
     modelUserId: reservation.designerUserId,
     modelName: reservation.designerNickname,
     date: reservation.date,
@@ -47,33 +52,6 @@ export default function ModelReservationCard({
 
   const handleCardClick = () => {
     router.push(`/post/${reservation.recruitmentId}`);
-  };
-
-  const handleChangeClick = () => {
-    setIsChangeModalOpen(true);
-  };
-
-  const handleCancelClick = () => {
-    setIsCancelModalOpen(true);
-  };
-
-  const handleChangeSubmit = (data: ReservationChangeRequest) => {
-    console.log('예약 변경 요청:', data);
-    setIsChangeModalOpen(false);
-    setSuccessMessage('예약 변경이 요청되었습니다');
-    setIsSuccessModalOpen(true);
-  };
-
-  const handleCancelSubmit = (data: ReservationCancelRequest) => {
-    console.log('예약 취소 요청:', data);
-    setIsCancelModalOpen(false);
-    setSuccessMessage('예약 취소가 요청되었습니다');
-    setIsSuccessModalOpen(true);
-  };
-
-  const handleSuccessConfirm = () => {
-    setIsSuccessModalOpen(false);
-    setSuccessMessage('');
   };
 
   return (
@@ -115,14 +93,14 @@ export default function ModelReservationCard({
           </button>
           <button
             type="button"
-            onClick={handleChangeClick}
+            onClick={openChangeModal}
             className="text-body-2-medium flex h-[41px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-5 py-2.5 text-gray-900"
           >
             예약 변경
           </button>
           <button
             type="button"
-            onClick={handleCancelClick}
+            onClick={openCancelModal}
             className="text-body-2-medium flex h-[41px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-5 py-2.5 text-gray-900"
           >
             예약 취소
@@ -132,26 +110,28 @@ export default function ModelReservationCard({
 
       {/* 예약 변경 모달 */}
       <ReservationChangeModal
-        isOpen={isChangeModalOpen}
-        onClose={() => setIsChangeModalOpen(false)}
+        isOpen={modalState.isChangeOpen}
+        onClose={closeChangeModal}
         reservation={reservationInfo}
         onSubmit={handleChangeSubmit}
+        isLoading={isChangeLoading}
       />
 
       {/* 예약 취소 모달 */}
       <ReservationCancelModal
-        isOpen={isCancelModalOpen}
-        onClose={() => setIsCancelModalOpen(false)}
+        isOpen={modalState.isCancelOpen}
+        onClose={closeCancelModal}
         reservation={reservationInfo}
         onSubmit={handleCancelSubmit}
+        isLoading={isCancelLoading}
       />
 
       {/* 성공 모달 */}
       <ReservationSuccessModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
-        message={successMessage}
-        onConfirm={handleSuccessConfirm}
+        isOpen={modalState.isSuccessOpen}
+        onClose={closeSuccessModal}
+        message={modalState.successMessage}
+        onConfirm={closeSuccessModal}
       />
     </div>
   );
