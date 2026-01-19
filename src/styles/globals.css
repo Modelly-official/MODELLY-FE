@@ -112,6 +112,37 @@
     animation: slide-up 0.3s ease-out;
   }
 
+  /* Notification Banner Animations */
+  @keyframes notification-slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes notification-slide-up {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+  }
+
+  .animate-slide-down {
+    animation: notification-slide-down 0.3s ease-out;
+  }
+
+  .animate-notification-exit {
+    animation: notification-slide-up 0.3s ease-out;
+  }
+
   /* Current Location Marker Pulse Animation */
   @keyframes location-pulse {
     0% {
