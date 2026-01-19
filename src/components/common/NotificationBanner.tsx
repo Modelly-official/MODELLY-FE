@@ -93,7 +93,6 @@ export default function NotificationBanner({
           <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-purple-500">
             <BellIcon className="size-5 text-white" />
           </div>
-vv
           {/* 내용 */}
           <div className="min-w-0 flex-1">
             <p className="text-body-2-semibold text-gray-900">{title}</p>
