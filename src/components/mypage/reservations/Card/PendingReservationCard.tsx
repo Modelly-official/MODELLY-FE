@@ -105,6 +105,7 @@ export default function PendingReservationCard({
         message="예약 신청을 취소하시겠습니까?"
         cancelText="아니오"
         confirmText="네"
+        isLoading={cancelReservation.isPending}
       />
     </div>
   );
