@@ -14,6 +14,9 @@ import {
   ReservationCancelModal,
   ReservationSuccessModal,
 } from '@/src/components/reservation';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useRequestReservationChange, useCancelReservation } from '@/src/hooks/queries/reservation';
+import { useToast } from '@/src/hooks/common/useToast';
 import { CategoryBadges, ReservationInfo as ReservationInfoComponent, ReservationTitle } from './common';
 
 interface ModelReservationCardProps {
@@ -26,6 +29,10 @@ export default function ModelReservationCard({
   tabType,
 }: ModelReservationCardProps) {
   const router = useRouter();
+  const { showToast } = useToast();
+  const createChatRoom = useCreateChatRoom();
+  const requestChange = useRequestReservationChange();
+  const cancelReservation = useCancelReservation();
 
   // 모달 상태 관리
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
@@ -39,6 +46,7 @@ export default function ModelReservationCard({
   // 예약 정보를 모달에 전달할 형식으로 변환
   const reservationInfo: ReservationInfo = {
     reservationId: reservation.reservationId,
+    recruitmentId: reservation.recruitmentId,
     modelUserId: reservation.designerUserId,
     modelName: reservation.designerNickname,
     date: reservation.date,
@@ -57,18 +65,36 @@ export default function ModelReservationCard({
     setIsCancelModalOpen(true);
   };
 
-  const handleChangeSubmit = (data: ReservationChangeRequest) => {
-    console.log('예약 변경 요청:', data);
-    setIsChangeModalOpen(false);
-    setSuccessMessage('예약 변경이 요청되었습니다');
-    setIsSuccessModalOpen(true);
+  const handleChangeSubmit = async (data: ReservationChangeRequest) => {
+    try {
+      const response = await createChatRoom.mutateAsync(reservation.designerUserId);
+      const roomId = response.result.chatRoomId;
+      requestChange.mutate(
+        { reservationId: reservation.reservationId, payload: data, roomId },
+        {
+          onSuccess: () => {
+            setIsChangeModalOpen(false);
+            setSuccessMessage('예약 변경이 요청되었습니다');
+            setIsSuccessModalOpen(true);
+          },
+        },
+      );
+    } catch {
+      showToast('채팅방 생성에 실패했습니다.');
+    }
   };
 
   const handleCancelSubmit = (data: ReservationCancelRequest) => {
-    console.log('예약 취소 요청:', data);
-    setIsCancelModalOpen(false);
-    setSuccessMessage('예약 취소가 요청되었습니다');
-    setIsSuccessModalOpen(true);
+    cancelReservation.mutate(
+      { reservationId: reservation.reservationId, payload: data },
+      {
+        onSuccess: () => {
+          setIsCancelModalOpen(false);
+          setSuccessMessage('예약 취소가 요청되었습니다');
+          setIsSuccessModalOpen(true);
+        },
+      },
+    );
   };
 
   const handleSuccessConfirm = () => {
@@ -136,6 +162,7 @@ export default function ModelReservationCard({
         onClose={() => setIsChangeModalOpen(false)}
         reservation={reservationInfo}
         onSubmit={handleChangeSubmit}
+        isLoading={requestChange.isPending || createChatRoom.isPending}
       />
 
       {/* 예약 취소 모달 */}
@@ -144,6 +171,7 @@ export default function ModelReservationCard({
         onClose={() => setIsCancelModalOpen(false)}
         reservation={reservationInfo}
         onSubmit={handleCancelSubmit}
+        isLoading={cancelReservation.isPending}
       />
 
       {/* 성공 모달 */}
