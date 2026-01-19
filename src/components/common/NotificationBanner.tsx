@@ -84,7 +84,7 @@ export default function NotificationBanner({
         isExiting ? 'animate-notification-exit' : 'animate-slide-down'
       }`}
     >
-      <div className="mx-auto max-w-[375px]">
+      <div className="mx-auto max-w-[343px]">
         <div
           onClick={handleClick}
           className="flex cursor-pointer items-start gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-lg"
@@ -104,7 +104,7 @@ export default function NotificationBanner({
           {/* 닫기 버튼 */}
           <button
             onClick={handleClose}
-            className="shrink-0 p-1 text-gray-400 hover:text-gray-600"
+            className="cursor-pointer shrink-0 p-1 text-gray-400 hover:text-gray-600"
           >
             <CloseIcon className="size-3.5" />
           </button>
