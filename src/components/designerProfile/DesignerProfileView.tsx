@@ -6,6 +6,7 @@ import DesignerProfileHero from '@/src/components/designerProfile/DesignerProfil
 import DesignerProfileIntro from '@/src/components/designerProfile/DesignerProfileIntro';
 import DesignerProfileRecruitments from '@/src/components/designerProfile/DesignerProfileRecruitments';
 import DesignerPortfolioReviewSection from '@/src/components/designerProfile/DesignerPortfolioReviewSection';
+import DesignerProfileActionBar from '@/src/components/designerProfile/DesignerProfileActionBar';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
 
 interface DesignerProfileViewProps {
@@ -13,6 +14,7 @@ interface DesignerProfileViewProps {
   openRecruitments: DesignerRecruitmentCard[];
   portfolioImages?: string[];
   actionType?: 'edit' | 'share' | 'none';
+  showActionBar?: boolean;
   onBack?: () => void;
   onAction?: () => void;
 }
@@ -34,11 +36,13 @@ export default function DesignerProfileView({
   openRecruitments,
   portfolioImages = defaultPortfolioImages,
   actionType = 'none',
+  showActionBar = false,
   onBack,
   onAction,
 }: DesignerProfileViewProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'portfolio' | 'review'>('portfolio');
+  const [isLiked, setIsLiked] = useState(profile.isLiked);
   const addressParts = [profile.address.line1, profile.address.line2].filter(Boolean);
   const addressLine = addressParts.join(' ');
 
@@ -60,8 +64,12 @@ export default function DesignerProfileView({
     }
   };
 
+  const handleLikeToggle = () => {
+    setIsLiked((prev) => !prev);
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[76px]' : ''}`}>
       <DesignerProfileHero
         profileImageUrl={profile.profileImageUrl}
         nickname={profile.nickname}
@@ -82,6 +90,8 @@ export default function DesignerProfileView({
         onTabChange={setActiveTab}
         portfolioImages={portfolioImages}
       />
+
+      {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} />}
     </div>
   );
 }
