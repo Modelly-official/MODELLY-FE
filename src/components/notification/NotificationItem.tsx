@@ -13,11 +13,10 @@ interface NotificationItemProps {
 /**
  * 개별 알림 아이템 컴포넌트
  * - 알림 타입별 아이콘 표시
- * - 거절 사유가 있는 경우 박스로 표시
  * - 클릭 시 해당 알림의 타겟 페이지로 이동
  */
 export default function NotificationItem({ notification, onClick }: NotificationItemProps) {
-  const { notificationType, title, content, createdAt, rejectReason } = notification;
+  const { notificationType, title, content, createdAt } = notification;
 
   return (
     <button
@@ -37,13 +36,6 @@ export default function NotificationItem({ notification, onClick }: Notification
 
         {/* 알림 내용 */}
         <p className="text-body-2-medium wrap-break-word text-black">{content}</p>
-
-        {/* 거절 사유 (있는 경우) */}
-        {rejectReason && (
-          <div className="rounded-xl bg-gray-200 px-3 py-[11px]">
-            <p className="text-body-2-regular text-gray-800">{rejectReason}</p>
-          </div>
-        )}
 
         {/* 시간 */}
         <span className="text-body-2-regular text-gray-600">{createdAt}</span>
