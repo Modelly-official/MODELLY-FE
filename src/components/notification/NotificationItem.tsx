@@ -32,10 +32,17 @@ export default function NotificationItem({ notification, onClick }: Notification
       {/* 알림 내용 */}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         {/* 알림 타입 라벨 */}
-        <span className="text-body-2-medium text-purple-600">{title || notificationType}</span>
+        <span className="text-body-2-medium text-purple-600">{notificationType}</span>
 
-        {/* 알림 내용 */}
-        <p className="text-body-2-medium wrap-break-word text-black">{content}</p>
+        {/* 알림 제목 */}
+        <p className="text-body-2-medium wrap-break-word text-black">{title}</p>
+
+        {/* 알림 내용 (회색 박스) */}
+        {content && (
+          <div className="rounded-xl bg-gray-200 px-3 py-[11px]">
+            <p className="text-body-2-regular text-gray-800">{content}</p>
+          </div>
+        )}
 
         {/* 시간 */}
         <span className="text-body-2-regular text-gray-600">{createdAt}</span>
