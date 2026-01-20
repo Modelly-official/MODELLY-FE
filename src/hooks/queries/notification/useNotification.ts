@@ -21,7 +21,7 @@ import type {
 /** Query Key Factory */
 export const notificationKeys = {
   all: ['notification'] as const,
-  list: (type?: NotificationType) => [...notificationKeys.all, 'list', type] as const,
+  list: (type?: NotificationType, size?: number) => [...notificationKeys.all, 'list', type, size] as const,
   settings: () => [...notificationKeys.all, 'settings'] as const,
   unread: () => [...notificationKeys.all, 'unread'] as const,
 };
@@ -45,7 +45,7 @@ export function useNotificationList(params: UseNotificationListParams = {}) {
     ReturnType<typeof notificationKeys.list>,
     number | undefined
   >({
-    queryKey: notificationKeys.list(type),
+    queryKey: notificationKeys.list(type, size),
     queryFn: async ({ pageParam }) => {
       return getNotifications({
         notificationType: type,
