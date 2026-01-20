@@ -5,15 +5,15 @@ import { ToastProvider } from '@/src/providers/ToastProvider';
 import { FCMProvider } from '@/src/providers/FCMProvider';
 
 export const metadata: Metadata = {
-  title: 'Monde',
-  description: '모델과 디자이너 매칭 플랫폼',
+  title: 'Moandi',
+  description: '모델과 디자이너, 서로에게 필요한 기회를 연결해주는 올인원 매칭 플랫폼',
   icons: {
     icon: '/images/favicon.svg',
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Monde',
+    title: 'Moandi',
   },
 };
 

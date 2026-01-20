@@ -44,7 +44,7 @@ export const InstallPrompt = () => {
       <div className="bg-purple-800 px-5 py-4 text-white shadow-lg">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1">
-            <h3 className="text-body-1-semibold mb-1">Monde 앱 설치하기</h3>
+            <h3 className="text-body-1-semibold mb-1">Moandi 앱 설치하기</h3>
             <p className="text-body-2-regular mb-2">홈 화면에 추가하여 앱처럼 사용하세요</p>
             <div className="text-caption-1-medium flex items-center gap-1">
               <span>1. 하단 공유 버튼</span>

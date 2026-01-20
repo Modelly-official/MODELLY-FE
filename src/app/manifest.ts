@@ -3,12 +3,12 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     // 앱 이름 설정
-    name: 'Monde',
-    short_name: 'Monde',
+    name: 'Moandi',
+    short_name: 'Moandi',
     // 앱 설명
-    description: '모델과 디자이너 매칭 플랫폼',
+    description: '모델과 디자이너, 서로에게 필요한 기회를 연결해주는 올인원 매칭 플랫폼',
     // 시작 URL
-    start_url: '/login',
+    start_url: '/',
     // 표시 모드: standalone은 네이티브 앱처럼 표시
     display: 'standalone',
     // 배경색 (theme.css의 white)
