@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/designer-home/moandiLogo.svg';
 import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder.svg';
@@ -12,6 +13,7 @@ import { PendingReservationSection } from './PendingReservationSection';
 import { QuickActionButtons } from './QuickActionButtons';
 import { useTodayReservations, usePendingReservations } from '@/src/hooks/queries/designerHome';
 import { useDesignerProfile } from '@/src/hooks/queries/mypage';
+import { useUnreadNotificationCount } from '@/src/hooks/queries/notification';
 
 // 오늘 날짜를 yyyy-MM-dd 형식으로 반환
 function getTodayDate(): string {
@@ -23,6 +25,7 @@ function getTodayDate(): string {
 }
 
 export function DesignerHomeContent() {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
 
   // 디자이너 프로필 조회
@@ -33,6 +36,10 @@ export function DesignerHomeContent() {
   // 예약 데이터 조회
   const { data: todayData, isLoading: isTodayLoading } = useTodayReservations(selectedDate);
   const { data: pendingData, isLoading: isPendingLoading } = usePendingReservations();
+
+  // 읽지 않은 알림 개수 조회
+  const { data: unreadData } = useUnreadNotificationCount();
+  const unreadCount = unreadData?.result?.unreadCount ?? 0;
 
   const todayReservations = todayData?.result ?? { date: selectedDate, totalCount: 0, reservations: [] };
   const pendingReservations = pendingData?.result ?? {
@@ -50,8 +57,18 @@ export function DesignerHomeContent() {
         {/* 헤더 */}
         <header className="flex h-14 items-center justify-between px-5">
           <MoandiLogo />
-          <button type="button" aria-label="알림">
+          <button
+            type="button"
+            aria-label="알림"
+            onClick={() => router.push('/notification')}
+            className="relative"
+          >
             <BellIcon className="size-6 cursor-pointer" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-purple-500 text-[10px] font-semibold text-white">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </button>
         </header>
 
