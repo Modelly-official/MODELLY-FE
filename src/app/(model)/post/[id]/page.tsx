@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
 
   if (isNaN(recruitmentId)) {
     return {
-      title: '공고를 찾을 수 없습니다 | MODELLY',
+      title: '공고를 찾을 수 없습니다 | Moandi',
     };
   }
 
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
     const imageUrls = detail?.imageUrls ?? [];
 
     return {
-      title: `${title} | MODELLY`,
+      title: `${title} | Moandi`,
       description: content.slice(0, 150),
       openGraph: {
         title,
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: PostDetailPageProps): Promise
     };
   } catch {
     return {
-      title: '공고를 찾을 수 없습니다 | MODELLY',
+      title: '공고를 찾을 수 없습니다 | Moandi',
     };
   }
 }
