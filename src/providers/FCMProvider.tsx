@@ -56,8 +56,14 @@ export function FCMProvider({ children }: FCMProviderProps) {
     const autoRegisterToken = async () => {
       const accessToken = getAccessToken();
 
+      // 로그아웃 상태면 ref 리셋 (다음 로그인 시 재등록 가능하도록)
+      if (!accessToken) {
+        tokenRegisteredRef.current = false;
+        return;
+      }
+
       // 로그인 상태 + 권한 허용 + 아직 등록 안 함
-      if (accessToken && permission === 'granted' && !tokenRegisteredRef.current) {
+      if (permission === 'granted' && !tokenRegisteredRef.current) {
         tokenRegisteredRef.current = true;
 
         const fcmToken = await requestPermission();
