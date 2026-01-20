@@ -64,6 +64,7 @@ export default function NotificationSettingsPage() {
   const { mutate: saveFcmToken, isPending: isSavingToken } = useSaveFcmToken();
   const [permissionModalDismissed, setPermissionModalDismissed] = useState(false);
   const [tokenSaved, setTokenSaved] = useState(false);
+  const [tokenSaveAttempted, setTokenSaveAttempted] = useState(false);
 
   // 권한 상태가 default이고 모달을 닫지 않았을 때 표시
   const isPermissionModalOpen = isClient && permission === 'default' && !permissionModalDismissed;
@@ -71,17 +72,25 @@ export default function NotificationSettingsPage() {
   // 권한이 granted인데 토큰이 저장 안 됐으면 자동 발급/저장
   useEffect(() => {
     const autoRegisterToken = async () => {
-      if (isClient && permission === 'granted' && !tokenSaved && !isSavingToken) {
+      if (isClient && permission === 'granted' && !tokenSaved && !tokenSaveAttempted) {
         const fcmToken = await requestPermission();
         if (fcmToken) {
           saveFcmToken(fcmToken, {
-            onSuccess: () => setTokenSaved(true),
+            onSuccess: () => {
+              setTokenSaved(true);
+              setTokenSaveAttempted(true);
+            },
+            onError: () => {
+              setTokenSaveAttempted(true);
+            },
           });
+        } else {
+          setTokenSaveAttempted(true);
         }
       }
     };
     autoRegisterToken();
-  }, [isClient, permission, tokenSaved, isSavingToken, requestPermission, saveFcmToken]);
+  }, [isClient, permission, tokenSaved, tokenSaveAttempted, requestPermission, saveFcmToken]);
 
   // 권한 요청 모달 확인 핸들러
   const handlePermissionConfirm = async () => {
