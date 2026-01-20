@@ -5,6 +5,7 @@ import { ToastProvider } from '@/src/providers/ToastProvider';
 import { FCMProvider } from '@/src/providers/FCMProvider';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://moandi.co.kr'),
   title: 'Moandi',
   description: '모델과 디자이너, 서로에게 필요한 기회를 연결해주는 올인원 매칭 플랫폼',
   icons: {
@@ -14,6 +15,27 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Moandi',
+  },
+  openGraph: {
+    title: 'Moandi',
+    description: '모델과 디자이너, 서로에게 필요한 기회를 연결해주는 올인원 매칭 플랫폼',
+    url: '/',
+    siteName: 'Moandi',
+    images: [
+      {
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Moandi',
+    description: '모델과 디자이너, 서로에게 필요한 기회를 연결해주는 올인원 매칭 플랫폼',
+    images: ['/images/og-image.png'],
   },
 };
 
