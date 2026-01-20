@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessagePayload } from 'firebase/messaging';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFCM } from '@/src/hooks/custom';
@@ -29,23 +30,37 @@ export function FCMProvider({ children }: FCMProviderProps) {
   const [notification, setNotification] = useState<NotificationState | null>(null);
   const tokenRegisteredRef = useRef(false);
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   /** 포그라운드 메시지 수신 핸들러 */
-  const handleMessage = useCallback((payload: MessagePayload) => {
-    const title = payload.notification?.title || '새 알림';
-    const body = payload.notification?.body || '';
-    const data = payload.data as { targetId?: string; notificationType?: string } | undefined;
+  const handleMessage = useCallback(
+    (payload: MessagePayload) => {
+      const title = payload.notification?.title || '새 알림';
+      const body = payload.notification?.body || '';
+      const data = payload.data as { targetId?: string; notificationType?: string } | undefined;
 
-    setNotification({
-      title,
-      body,
-      targetId: data?.targetId,
-      notificationType: data?.notificationType,
-    });
+      // 현재 해당 채팅방에 있으면 배너 표시 안 함
+      const isChatNotification = data?.notificationType?.includes('채팅');
+      const isInSameChatRoom = pathname === `/chat/${data?.targetId}`;
 
-    // 읽지 않은 알림 개수 갱신
-    queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
-  }, [queryClient]);
+      if (isChatNotification && isInSameChatRoom) {
+        // 읽지 않은 알림 개수만 갱신
+        queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
+        return;
+      }
+
+      setNotification({
+        title,
+        body,
+        targetId: data?.targetId,
+        notificationType: data?.notificationType,
+      });
+
+      // 읽지 않은 알림 개수 갱신
+      queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
+    },
+    [queryClient, pathname]
+  );
 
   /** 알림 배너 닫기 */
   const handleClose = useCallback(() => {

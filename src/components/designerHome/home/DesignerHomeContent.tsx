@@ -65,7 +65,7 @@ export function DesignerHomeContent() {
           >
             <BellIcon className="size-6 cursor-pointer" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-purple-500 text-[10px] font-semibold text-white">
+              <span className="text-caption-1-medium absolute -top-3 -right-3 flex h-6 min-w-6 items-center justify-center rounded-full bg-purple-500 px-1 text-white">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
