@@ -127,20 +127,6 @@ export default function NotificationSettingsPage() {
   const handleSettingChange = (key: keyof NotificationSettings, value: boolean) => {
     const newSettings = { ...settings, [key]: value };
 
-    // 채팅 알림이 꺼지면 모든 하위 항목도 비활성화
-    if (key === 'chattingNotification' && !value) {
-      newSettings.reservationNotification = false;
-      newSettings.scheduleNotification = false;
-      newSettings.reviewNotification = false;
-    }
-
-    // 채팅 알림이 켜지면 모든 하위 항목도 활성화
-    if (key === 'chattingNotification' && value) {
-      newSettings.reservationNotification = true;
-      newSettings.scheduleNotification = true;
-      newSettings.reviewNotification = true;
-    }
-
     updateSettings(newSettings, {
       onSuccess: () => {
         showToast('알림 설정이 변경되었습니다.');
@@ -205,8 +191,12 @@ export default function NotificationSettingsPage() {
 
       {/* 알림 설정 리스트 */}
       <div className={`flex flex-col ${isPermissionDenied ? 'pointer-events-none opacity-50' : ''}`}>
-        {/* 채팅 알림 (마스터 토글) */}
-        <div className="flex items-center justify-between p-4">
+        {/* 채팅 알림 */}
+        <div
+          className={`flex items-center justify-between p-4 transition-opacity ${
+            !settings.chattingNotification ? 'opacity-50' : ''
+          }`}
+        >
           <span className="text-body-1-medium text-gray-900">채팅 알림</span>
           <Toggle
             checked={settings.chattingNotification}
@@ -219,14 +209,14 @@ export default function NotificationSettingsPage() {
         <div className="mx-4 h-px bg-gray-300" />
 
         {/* 하위 알림 항목들 */}
-        <div
-          className={`transition-opacity duration-200 ${
-            !settings.chattingNotification ? 'pointer-events-none opacity-50' : ''
-          }`}
-        >
+        <div>
           {notificationItems.map((item, index) => (
             <div key={item.key}>
-              <div className="flex items-center justify-between p-4">
+              <div
+                className={`flex items-center justify-between p-4 transition-opacity ${
+                  !settings[item.key] ? 'opacity-50' : ''
+                }`}
+              >
                 <div className="flex flex-col gap-0.5">
                   <span className="text-body-1-medium text-gray-900">{item.title}</span>
                   {item.description && (
@@ -236,7 +226,7 @@ export default function NotificationSettingsPage() {
                 <Toggle
                   checked={settings[item.key]}
                   onChange={(checked) => handleSettingChange(item.key, checked)}
-                  disabled={!settings.chattingNotification || isUpdating || isPermissionDenied}
+                  disabled={isUpdating || isPermissionDenied}
                 />
               </div>
               {/* 마지막 항목이 아니면 구분선 */}
