@@ -41,3 +41,6 @@ export * from './review';
 
 // Map types
 export * from './map';
+
+// Notification types
+export * from './notification';

@@ -36,4 +36,5 @@ export const AUTHENTICATED_ROUTES: string[] = [
   '/mypage/reservations',          // 예약 내역
   '/mypage/reviews',               // 나의 리뷰
   '/mypage/notification-settings', // 알림 설정
+  '/notification',                 // 알림 목록
 ];

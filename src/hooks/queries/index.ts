@@ -5,6 +5,7 @@ export * from './likes';
 export * from './map';
 export * from './myRecruitment';
 export * from './chat';
+export * from './notification';
 export * from './profile';
 export * from './reservation';
 export * from './review';

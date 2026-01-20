@@ -8,6 +8,7 @@ import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { useAuthReady, useSimpleProfile } from '@/src/hooks/custom/mypage';
 import { useLogout } from '@/src/hooks/queries/auth';
+import { useUnreadNotificationCount } from '@/src/hooks/queries';
 import { useToast } from '@/src/hooks/common/useToast';
 import {
   SETTING_LINKS,
@@ -67,8 +68,9 @@ export default function MypagePage() {
   const showLoginPrompt = authReady && !isLoggedIn;
   const nameIcon = showLoginPrompt ? <ArrowRightIcon className="h-4 text-gray-400 ml-2" /> : undefined;
 
-  // TODO: 알림 API 연동
-  const notificationCount = 1;
+  // 읽지 않은 알림 개수
+  const { data: unreadData } = useUnreadNotificationCount(authReady && isLoggedIn);
+  const notificationCount = unreadData?.result?.unreadCount ?? 0;
 
   // 로그아웃 핸들러
   const handleLogout = () => {
@@ -99,6 +101,7 @@ export default function MypagePage() {
           <button
             type="button"
             aria-label="알림"
+            onClick={() => router.push('/notification')}
             className="relative flex h-10 w-10 cursor-pointer items-center justify-center"
           >
             <Image src="/icons/myPage/alert.svg" alt="알림" width={24} height={24} />

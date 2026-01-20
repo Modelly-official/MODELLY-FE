@@ -18,3 +18,6 @@ export * from './reservation';
 // Review
 export * from './review';
 
+// Notification
+export * from './notification';
+
