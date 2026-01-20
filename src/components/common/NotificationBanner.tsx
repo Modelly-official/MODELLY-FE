@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import CloseIcon from '@/public/icons/common/close.svg';
 import BellIcon from '@/public/icons/common/notification-bell.svg';
+import { NOTIFICATION_ROUTES } from '@/src/constants';
 
 interface NotificationBannerProps {
   title: string;
@@ -29,38 +30,42 @@ export default function NotificationBanner({
 }: NotificationBannerProps) {
   const router = useRouter();
   const [isExiting, setIsExiting] = useState(false);
+  const exitTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const exitTimer = setTimeout(() => {
+    exitTimerRef.current = setTimeout(() => {
       setIsExiting(true);
     }, 5000);
 
-    const closeTimer = setTimeout(() => {
+    closeTimerRef.current = setTimeout(() => {
       onClose();
     }, 5300);
 
     return () => {
-      clearTimeout(exitTimer);
-      clearTimeout(closeTimer);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     };
   }, [onClose]);
 
+  /** 타이머 정리 헬퍼 */
+  const clearTimers = () => {
+    if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+  };
+
   /** 알림 클릭 시 페이지 이동 */
   const handleClick = () => {
+    clearTimers();
+
+    const type = notificationType || '';
+    const route = NOTIFICATION_ROUTES[type];
     let targetUrl = '/notification';
 
-    if (targetId) {
-      const type = notificationType || '';
-
-      if (type.includes('채팅') || type.includes('메시지')) {
-        targetUrl = `/chat/${targetId}`;
-      } else if (type.includes('예약')) {
-        targetUrl = '/mypage/reservations';
-      } else if (type.includes('리뷰')) {
-        targetUrl = '/mypage/reviews';
-      } else if (type.includes('일정')) {
-        targetUrl = '/mypage/reservations';
-      }
+    if (route === 'chat' && targetId) {
+      targetUrl = `/chat/${targetId}`;
+    } else if (route) {
+      targetUrl = route;
     }
 
     onClose();
@@ -70,6 +75,7 @@ export default function NotificationBanner({
   /** 닫기 버튼 클릭 (이벤트 버블링 방지) */
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
+    clearTimers();
     setIsExiting(true);
     setTimeout(onClose, 300);
   };
