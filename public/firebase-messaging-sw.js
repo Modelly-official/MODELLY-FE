@@ -26,6 +26,27 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 /**
+ * 알림 타입별 라우팅 경로
+ * - 'chat': 채팅 페이지 (/chat/{targetId})
+ * - 'reservation': 예약 상세 페이지 (/reservations/{targetId})
+ * - 나머지: 해당 경로로 직접 이동
+ */
+const NOTIFICATION_ROUTES = {
+  // CHATTING
+  '채팅 알림': 'chat',
+  // RESERVATION
+  '예약 확정': '/mypage/reservations',
+  '예약 취소': '/mypage/reservations',
+  '예약 신청 알림': 'reservation', // DESIGNER → /reservations/{targetId}
+  // SCHEDULE
+  '예약 변경': 'chat', // targetId = 채팅방 id
+  '예약 알림': '/mypage/reservations',
+  // REVIEW
+  '리뷰 알림': '/mypage/reviews',
+  '리뷰 답글 알림': '/mypage/reviews',
+};
+
+/**
  * 백그라운드 메시지 수신 핸들러
  * 앱이 포커스되지 않은 상태에서 푸시를 받으면 실행
  */
@@ -53,18 +74,15 @@ self.addEventListener('notificationclick', (event) => {
   let targetUrl = '/notification'; // 기본: 알림 목록 페이지
 
   // 알림 타입별 이동 경로 결정
-  if (data?.targetId) {
-    const notificationType = data.notificationType || '';
+  const notificationType = data?.notificationType || '';
+  const route = NOTIFICATION_ROUTES[notificationType];
 
-    if (notificationType.includes('채팅') || notificationType.includes('메시지')) {
-      targetUrl = `/chat/${data.targetId}`;
-    } else if (notificationType.includes('예약')) {
-      targetUrl = '/mypage/reservations';
-    } else if (notificationType.includes('리뷰')) {
-      targetUrl = '/mypage/reviews';
-    } else if (notificationType.includes('일정')) {
-      targetUrl = '/mypage/reservations';
-    }
+  if (route === 'chat' && data?.targetId) {
+    targetUrl = `/chat/${data.targetId}`;
+  } else if (route === 'reservation' && data?.targetId) {
+    targetUrl = `/reservations/${data.targetId}`;
+  } else if (route) {
+    targetUrl = route;
   }
 
   // 열린 창이 있으면 포커스, 없으면 새 창 열기

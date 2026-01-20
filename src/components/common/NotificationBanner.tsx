@@ -64,6 +64,8 @@ export default function NotificationBanner({
 
     if (route === 'chat' && targetId) {
       targetUrl = `/chat/${targetId}`;
+    } else if (route === 'reservation' && targetId) {
+      targetUrl = `/reservations/${targetId}`;
     } else if (route) {
       targetUrl = route;
     }

@@ -34,8 +34,10 @@ export default function NotificationList({
 
     if (!route) return;
 
-    if (route === 'chat') {
+    if (route === 'chat' && targetId) {
       router.push(`/chat/${targetId}`);
+    } else if (route === 'reservation' && targetId) {
+      router.push(`/reservations/${targetId}`);
     } else {
       router.push(route);
     }
