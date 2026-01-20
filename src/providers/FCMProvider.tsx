@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState, ReactNode } from 'react';
 import { MessagePayload } from 'firebase/messaging';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFCM } from '@/src/hooks/custom';
-import { useSaveFcmToken } from '@/src/hooks/queries';
+import { useSaveFcmToken, notificationKeys } from '@/src/hooks/queries';
 import { getAccessToken } from '@/src/stores';
 import NotificationBanner from '@/src/components/common/NotificationBanner';
 
@@ -27,6 +28,7 @@ interface NotificationState {
 export function FCMProvider({ children }: FCMProviderProps) {
   const [notification, setNotification] = useState<NotificationState | null>(null);
   const tokenRegisteredRef = useRef(false);
+  const queryClient = useQueryClient();
 
   /** 포그라운드 메시지 수신 핸들러 */
   const handleMessage = useCallback((payload: MessagePayload) => {
@@ -40,7 +42,10 @@ export function FCMProvider({ children }: FCMProviderProps) {
       targetId: data?.targetId,
       notificationType: data?.notificationType,
     });
-  }, []);
+
+    // 읽지 않은 알림 개수 갱신
+    queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
+  }, [queryClient]);
 
   /** 알림 배너 닫기 */
   const handleClose = useCallback(() => {
