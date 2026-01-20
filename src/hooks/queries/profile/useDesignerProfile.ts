@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getPublicDesignerProfile } from '@/src/apis/profile';
+import { getMyDesignerProfile, getPublicDesignerProfile } from '@/src/apis/profile';
 import type { ApiResponse } from '@/src/types';
 import type { DesignerProfileResponse } from '@/src/types/profile';
 
@@ -9,8 +9,17 @@ export const publicProfileKeys = {
   designerDetail: (designerId: number) => [...publicProfileKeys.designer(), designerId] as const,
 };
 
+export const designerProfileKeys = {
+  all: ['designerProfile'] as const,
+  my: () => [...designerProfileKeys.all, 'my'] as const,
+};
+
 interface UsePublicDesignerProfileParams {
   designerId: number | null;
+  enabled?: boolean;
+}
+
+interface UseMyDesignerProfileOptions {
   enabled?: boolean;
 }
 
@@ -23,6 +32,20 @@ export function usePublicDesignerProfile({ designerId, enabled = true }: UsePubl
     queryKey: publicProfileKeys.designerDetail(designerId ?? 0),
     queryFn: () => getPublicDesignerProfile(designerId!),
     enabled: enabled && designerId !== null,
+    staleTime: 1000 * 60 * 5, // 5분
+  });
+}
+
+/**
+ * 디자이너 본인 프로필 조회 Hook
+ */
+export function useMyDesignerProfile(options: UseMyDesignerProfileOptions = {}) {
+  const { enabled = true } = options;
+
+  return useQuery<ApiResponse<DesignerProfileResponse>, Error>({
+    queryKey: designerProfileKeys.my(),
+    queryFn: getMyDesignerProfile,
+    enabled,
     staleTime: 1000 * 60 * 5, // 5분
   });
 }
