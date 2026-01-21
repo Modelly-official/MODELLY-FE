@@ -72,16 +72,13 @@ export default function MypagePage() {
   const { data: unreadData } = useUnreadNotificationCount(authReady && isLoggedIn);
   const notificationCount = unreadData?.result?.unreadCount ?? 0;
 
-  // 로그아웃 핸들러
+  // 로그아웃 핸들러 (API 실패해도 성공으로 처리 - clearAuth는 finally에서 항상 실행됨)
   const handleLogout = () => {
     if (isLoggingOut) return;
     logout(undefined, {
-      onSuccess: () => {
+      onSettled: () => {
         showToast('로그아웃되었습니다.');
-        router.push('/login');
-      },
-      onError: () => {
-        showToast('로그아웃에 실패했습니다.');
+        router.replace('/login'); // 수동 로그아웃은 callbackUrl 없음
       },
     });
   };
