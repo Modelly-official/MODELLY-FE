@@ -83,10 +83,11 @@ export default function MypagePage() {
     });
   };
 
-  // 계정 메뉴 아이템 (onClick 연결)
+  // 계정 메뉴 아이템 (onClick 연결, 비로그인 시 비활성화)
   const accountMenuItems = ACCOUNT_LINKS.map((label) => ({
     label,
     onClick: label === '로그아웃' ? handleLogout : undefined,
+    disabled: !isLoggedIn,
   }));
 
   return (
