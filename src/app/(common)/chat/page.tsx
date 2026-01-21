@@ -5,27 +5,24 @@ import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips'
 import ChatList from '@/src/components/chat/chatlist/ChatList';
 import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
-import { useAuthHydration } from '@/src/hooks/custom';
-import { getUserRole, useAuthStore } from '@/src/stores';
+import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { LoginRequiredModal } from '@/src/components/common';
 import BottomNav from '@/src/components/common/BottomNav';
 
 export default function ChatPage() {
   const { showToast } = useToast();
-  const { isAuthenticated, isHydrated } = useAuthHydration();
-  const roleFromStore = useAuthStore((state) => state.user?.role);
-  const roleFromCookie = getUserRole();
-  const userRole = roleFromCookie ?? roleFromStore;
+  const { isLoggedIn, authReady, role } = useAuthReady();
+  const userRole = role;
   const [modalDismissed, setModalDismissed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const requestCategory = selectedCategory === 'ALL' ? undefined : selectedCategory;
 
   // 비로그인 상태이고 모달을 닫지 않은 경우 표시
-  const showLoginModal = isHydrated && !isAuthenticated && !modalDismissed;
+  const showLoginModal = authReady && !isLoggedIn && !modalDismissed;
 
   // 인증된 경우에만 API 호출 (무한 스크롤)
   const { data, isLoading, isFetching, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatRooms({
-    enabled: isAuthenticated,
+    enabled: isLoggedIn,
     category: requestCategory,
   });
 
@@ -42,7 +39,7 @@ export default function ChatPage() {
   }, [allChats]);
   const resolvedRole = userRole ?? inferredRole;
   const isModelUser = resolvedRole === 'model';
-  const isListLoading = !isHydrated || isLoading || (isFetching && allChats.length === 0);
+  const isListLoading = !authReady || isLoading || (isFetching && allChats.length === 0);
 
   // 채팅방은 생성된 채로 메세지가 없는 경우, 채팅방 리스트에 뜨는 것을 방지
   const visibleChats = useMemo(() => {
