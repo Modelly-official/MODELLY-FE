@@ -4,6 +4,7 @@ type MenuListItem = {
   label: string;
   href?: string;
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 type MenuListProps = {
@@ -14,13 +15,17 @@ type MenuListProps = {
 export const MenuList = ({ items }: MenuListProps) => {
   if (items.length === 0) return null;
 
-  const itemStyle = 'text-body-1-medium w-full cursor-pointer py-3 text-left text-gray-900 block';
+  const baseStyle = 'text-body-1-medium w-full py-3 text-left text-gray-900 block';
+  const enabledStyle = 'cursor-pointer';
+  const disabledStyle = 'opacity-50 cursor-not-allowed';
 
   return (
     <section>
       <div>
-        {items.map(({ label, href, onClick }) => {
-          if (href) {
+        {items.map(({ label, href, onClick, disabled }) => {
+          const itemStyle = `${baseStyle} ${disabled ? disabledStyle : enabledStyle}`;
+
+          if (href && !disabled) {
             return (
               <Link key={label} href={href} className={itemStyle}>
                 {label}
@@ -32,7 +37,9 @@ export const MenuList = ({ items }: MenuListProps) => {
             <button
               key={label}
               type="button"
-              onClick={onClick}
+              disabled={disabled}
+              aria-disabled={disabled}
+              onClick={disabled ? undefined : onClick}
               className={itemStyle}
             >
               {label}

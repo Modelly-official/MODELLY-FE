@@ -15,9 +15,8 @@ import {
   useChatReservationSummary,
   useRequestReservationChange,
 } from '@/src/hooks/queries/reservation';
-import { useAuthHydration } from '@/src/hooks/custom';
+import { useAuthReady } from '@/src/hooks/custom/mypage';
 import useChatRoom from '@/src/hooks/custom/chat/useChatRoom';
-import { getUserRole, useAuthStore } from '@/src/stores';
 import { formatChatDateLabel } from '@/src/utils/chat';
 import type { ReservationCancelRequest, ReservationChangeRequest, ReservationInfo } from '@/src/types/reservation';
 
@@ -29,24 +28,22 @@ export default function ChatRoom() {
   const roomId = Array.isArray(roomIdParam) ? roomIdParam[0] : roomIdParam;
   const roomIdNumber = roomId ? Number(roomId) : undefined;
   const validRoomId = roomIdNumber != null && !Number.isNaN(roomIdNumber) ? roomIdNumber : undefined;
-  const { isAuthenticated, isHydrated } = useAuthHydration();
+  const { isLoggedIn, authReady, role } = useAuthReady();
   const [modalDismissed, setModalDismissed] = useState(false);
-  const showLoginModal = isHydrated && !isAuthenticated && !modalDismissed;
+  const showLoginModal = authReady && !isLoggedIn && !modalDismissed;
   const callbackUrl = useMemo(() => {
     const query = searchParams.toString();
     return query ? `${pathname}?${query}` : pathname;
   }, [pathname, searchParams]);
 
-  const activeRoomId = isAuthenticated ? roomId : undefined;
+  const activeRoomId = isLoggedIn ? roomId : undefined;
   const { messages, opponent, input, setInput, sendMessage, sendImage, fetchPrevMessages, hasNext, loading } =
     useChatRoom(activeRoomId);
   const headerTitle = opponent?.name ?? '';
   const roleLabel = opponent?.role === 'DESIGNER' ? '디자이너' : undefined;
   const requestChange = useRequestReservationChange();
   const cancelReservation = useCancelReservation();
-  const roleFromStore = useAuthStore((state) => state.user?.role);
-  const roleFromCookie = getUserRole();
-  const userRole = roleFromStore ?? roleFromCookie;
+  const userRole = role;
 
   const containerRef = useRef<HTMLElement | null>(null);
   const isInitialScroll = useRef(true);
@@ -93,7 +90,7 @@ export default function ChatRoom() {
   const { data: fetchedReservationInfo } = useChatReservationSummary({
     roomId: validRoomId ?? null,
     role: userRole,
-    enabled: !queryReservationInfo && isAuthenticated,
+    enabled: !queryReservationInfo && isLoggedIn,
   });
 
   const reservationInfo = queryReservationInfo ?? fetchedReservationInfo ?? null;

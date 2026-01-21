@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import '@/src/styles/globals.css';
 import { QueryProvider } from '@/src/providers/QueryProvider';
 import { ToastProvider } from '@/src/providers/ToastProvider';
+import { AuthErrorHandler } from '@/src/providers/AuthErrorHandler';
 import { FCMProvider } from '@/src/providers/FCMProvider';
 
 export const metadata: Metadata = {
@@ -58,9 +59,11 @@ const RootLayout = ({
       <body className="bg-white">
         <QueryProvider>
           <ToastProvider>
-            <FCMProvider>
-              <div className="mx-auto min-h-screen w-full min-w-[375px] overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
-            </FCMProvider>
+            <AuthErrorHandler>
+              <FCMProvider>
+                <div className="mx-auto min-h-screen w-full min-w-[375px] overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
+              </FCMProvider>
+            </AuthErrorHandler>
           </ToastProvider>
         </QueryProvider>
       </body>

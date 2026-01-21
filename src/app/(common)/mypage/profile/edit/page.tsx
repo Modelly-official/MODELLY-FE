@@ -49,7 +49,7 @@ export default function ProfileEditPage() {
         <button
           type="button"
           aria-label="이전으로"
-          onClick={() => router.back()}
+          onClick={() => router.push('/mypage')}
           className="flex size-6 cursor-pointer items-center justify-center"
         >
           <ArrowLeftIcon className="text-black" />

@@ -57,7 +57,7 @@ export default function ReviewWritePage() {
           <h1 className="text-head-4-medium text-center text-black">리뷰 작성하기</h1>
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={() => router.push('/mypage/reviews')}
             className="flex size-6 cursor-pointer items-center justify-center"
             aria-label="닫기"
           >
@@ -79,7 +79,7 @@ export default function ReviewWritePage() {
         <h1 className="text-head-4-medium text-center text-black">리뷰 작성하기</h1>
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push('/mypage/reviews')}
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="닫기"
         >

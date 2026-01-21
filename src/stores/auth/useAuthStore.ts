@@ -55,7 +55,7 @@ export const getAccessToken = (): string | null => {
 export const setAccessToken = (token: string) => {
   if (typeof document === 'undefined') return;
 
-  document.cookie = `access_token=${token}; path=/; max-age=3600; SameSite=Lax${
+  document.cookie = `access_token=${token}; path=/; max-age=604800; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };
@@ -103,7 +103,7 @@ export const setUserRole = (role: 'model' | 'designer' | string) => {
     return;
   }
 
-  document.cookie = `user_role=${normalizedRole}; path=/; max-age=3600; SameSite=Lax${
+  document.cookie = `user_role=${normalizedRole}; path=/; max-age=604800; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };
@@ -141,7 +141,7 @@ export const setUserCategory = (category: Category | string) => {
     return;
   }
 
-  document.cookie = `user_category=${normalizedCategory}; path=/; max-age=3600; SameSite=Lax${
+  document.cookie = `user_category=${normalizedCategory}; path=/; max-age=604800; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 };

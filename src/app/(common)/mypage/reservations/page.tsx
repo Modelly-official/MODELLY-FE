@@ -141,7 +141,7 @@ export default function MyReservationsPage() {
       <header className="flex items-center justify-between bg-white px-4 py-3">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push('/mypage')}
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
