@@ -1,4 +1,4 @@
-import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores';
+import { useAuthStore, getAccessToken, setAccessToken, getUserRole } from '@/src/stores';
 import { apiLogger } from '@/src/utils';
 import { dispatchAuthError } from '@/src/utils/auth/authErrorDispatcher';
 import axios, { AxiosRequestConfig } from 'axios';
@@ -83,8 +83,17 @@ axiosInstance.interceptors.response.use(
     // API 로깅 (에러)
     apiLogger.error(res?.config?.url || '', res?.status || 0, res?.data || error.message);
 
-    // 401이고 아직 재시도 안 했으면 토큰 갱신 시도
-    if (res?.status === 401 && !originalRequest._retry) {
+    // 토큰 갱신이 필요한지 확인
+    // - 401: 토큰 만료
+    // - 403 + Authorization 헤더 없음 + user_role 쿠키 있음: 로그인했던 사용자의 accessToken만 삭제된 경우
+    //   (완전 비로그인 사용자는 user_role 쿠키가 없으므로 불필요한 refresh 요청 방지)
+    const hasUserRole = !!getUserRole();
+    const needsTokenRefresh =
+      res?.status === 401 ||
+      (res?.status === 403 && !originalRequest.headers?.Authorization && hasUserRole);
+
+    // 토큰 갱신이 필요하고 아직 재시도 안 했으면 갱신 시도
+    if (needsTokenRefresh && !originalRequest._retry) {
       originalRequest._retry = true;
 
       // 이미 갱신 중이면 대기
