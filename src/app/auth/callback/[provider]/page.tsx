@@ -34,7 +34,7 @@ const SocialCallbackPage = ({ params }: PageProps) => {
       // 프로바이더 검증
       if (!(provider in PROVIDER_NAMES)) {
         showToast('지원하지 않는 로그인 방식입니다.');
-        router.push('/login');
+        router.replace('/login');
         return;
       }
 
@@ -51,13 +51,13 @@ const SocialCallbackPage = ({ params }: PageProps) => {
       // 에러 체크
       if (error) {
         showToast(`${providerName} 로그인 실패: ${errorDescription || error}`);
-        router.push('/login');
+        router.replace('/login');
         return;
       }
 
       if (!code) {
         showToast('다시 로그인해주세요.');
-        router.push('/login');
+        router.replace('/login');
         return;
       }
 
@@ -96,14 +96,14 @@ const SocialCallbackPage = ({ params }: PageProps) => {
             // registered 값에 따라 분기
             if (registered) {
               // 이미 회원가입된 사용자 → 홈으로 이동
-              router.push('/');
+              router.replace('/');
             } else {
               // 회원가입이 필요한 사용자 → 회원가입 페이지로 이동
-              router.push('/signup?social=true');
+              router.replace('/signup?social=true');
             }
           } else {
             showToast(response.message || '로그인 실패');
-            router.push('/login');
+            router.replace('/login');
           }
         },
         onError: (error: Error) => {
@@ -116,13 +116,13 @@ const SocialCallbackPage = ({ params }: PageProps) => {
           // 409 에러: 이미 가입된 사용자
           if (status === 409) {
             showToast('이미 가입된 사용자입니다.');
-            router.push('/login');
+            router.replace('/login');
             return;
           }
 
           const errorMessage = error.message || `${providerName} 로그인 중 오류가 발생했습니다.`;
           showToast(errorMessage);
-          router.push('/login');
+          router.replace('/login');
         },
       });
     };
