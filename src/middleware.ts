@@ -118,8 +118,8 @@ export async function middleware(request: NextRequest) {
     const newAccessToken = await refreshAccessToken(request);
 
     if (newAccessToken) {
-      // 재발급 성공 - 새 토큰으로 다시 검증
-      isValid = await verifyAccessToken(newAccessToken);
+      // 재발급 성공 - refresh API가 성공하면 토큰은 유효함
+      isValid = true;
       accessToken = newAccessToken;
     }
   }
@@ -132,6 +132,7 @@ export async function middleware(request: NextRequest) {
     // 만료된 쿠키 삭제
     response.cookies.delete('access_token');
     response.cookies.delete('user_role');
+    response.cookies.delete('user_category');
     return response;
   }
 
@@ -142,6 +143,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(loginUrl);
     response.cookies.delete('access_token');
     response.cookies.delete('user_role');
+    response.cookies.delete('user_category');
     return response;
   }
 
@@ -159,7 +161,7 @@ export async function middleware(request: NextRequest) {
   if (accessToken && accessToken !== request.cookies.get('access_token')?.value) {
     response.cookies.set('access_token', accessToken, {
       path: '/',
-      maxAge: 3600, // 1시간
+      maxAge: 604800, // 7일 (refreshToken 유효기간과 동기화)
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
