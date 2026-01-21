@@ -106,17 +106,14 @@ export async function middleware(request: NextRequest) {
   let accessToken = request.cookies.get('access_token')?.value;
   const userRole = request.cookies.get('user_role')?.value as 'model' | 'designer' | undefined;
 
-  // accessToken이 없으면 로그인 페이지로
-  if (!accessToken) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+  let isValid = false;
+
+  if (accessToken) {
+    // accessToken이 있으면 유효성 검증
+    isValid = await verifyAccessToken(accessToken);
   }
 
-  // 백엔드 API로 토큰 유효성 검증
-  let isValid = await verifyAccessToken(accessToken);
-
-  // 토큰이 만료된 경우 refreshToken으로 재발급 시도
+  // accessToken이 없거나 만료된 경우 refreshToken으로 재발급 시도
   if (!isValid) {
     const newAccessToken = await refreshAccessToken(request);
 
@@ -159,7 +156,7 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // 새로운 accessToken이 발급된 경우 쿠키 업데이트
-  if (accessToken !== request.cookies.get('access_token')?.value) {
+  if (accessToken && accessToken !== request.cookies.get('access_token')?.value) {
     response.cookies.set('access_token', accessToken, {
       path: '/',
       maxAge: 3600, // 1시간
