@@ -24,6 +24,12 @@ function onRefreshFailed(error: Error) {
   refreshSubscribers = [];
 }
 
+// SSR-safe redirectUrl 헬퍼 (쿼리 파라미터 포함)
+function getRedirectUrl(): string {
+  if (typeof window === 'undefined') return '/';
+  return `${window.location.pathname}${window.location.search}`;
+}
+
 // _retry 플래그를 위한 타입 확장
 interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
   _retry?: boolean;
@@ -113,22 +119,24 @@ axiosInstance.interceptors.response.use(
 
           // 대기 중인 요청들에게 새 토큰 전달
           onTokenRefreshed(newToken);
-          isRefreshing = false;
 
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
           }
           return axiosInstance(originalRequest); // 재요청
         }
+
+        // isSuccess=false 또는 accessToken 없음 → 실패 처리
+        throw new Error('Token refresh returned no access token');
       } catch (refreshError) {
         // 갱신 실패 - 대기 중인 요청들에게 에러 전달
         onRefreshFailed(refreshError instanceof Error ? refreshError : new Error('Token refresh failed'));
+        clearAuth();
+        dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
+        return Promise.reject(error);
+      } finally {
+        isRefreshing = false;
       }
-
-      isRefreshing = false;
-      clearAuth();
-      dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: window.location.pathname });
-      return Promise.reject(error);
     }
 
     // 400 특정 코드 처리 (토큰 관련 에러)
@@ -137,7 +145,7 @@ axiosInstance.interceptors.response.use(
       (code === 'INVALID_REFRESH_TOKEN' || code === 'INVALID_TOKEN' || code === 'ACCESS_TOKEN_EXPIRED')
     ) {
       clearAuth();
-      dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: window.location.pathname });
+      dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
     }
 
     return Promise.reject(error);
