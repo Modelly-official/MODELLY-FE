@@ -14,7 +14,7 @@ export default function PostHeader({ onBack }: PostHeaderProps) {
     if (onBack) {
       onBack();
     } else {
-      router.back();
+      router.push('/explore');
     }
   };
 
