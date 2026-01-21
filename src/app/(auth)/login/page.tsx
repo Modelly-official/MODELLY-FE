@@ -60,7 +60,7 @@ const LoginContent = () => {
             // Designer: 항상 Designer 홈으로
             // Model: callbackUrl 또는 루트로
             const redirectUrl = userRole === 'designer' ? '/designer/home' : callbackUrl || '/';
-            router.push(redirectUrl);
+            router.replace(redirectUrl); // 로그인 페이지를 히스토리에서 제거
           } else {
             showToast(response.message || '로그인 실패');
           }
