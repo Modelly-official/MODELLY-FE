@@ -43,7 +43,7 @@ export default function ProfileEditPage() {
   const isButtonLoading = isUploading || isLoading;
 
   return (
-    <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)]">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 */}
       <header className="flex items-center justify-between px-4 py-3">
         <button

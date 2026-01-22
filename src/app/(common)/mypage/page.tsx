@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
-import { BottomNav } from '@/src/components/common';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { useAuthReady, useSimpleProfile } from '@/src/hooks/custom/mypage';
 import { useLogout } from '@/src/hooks/queries/auth';
@@ -91,7 +90,7 @@ export default function MypagePage() {
   }));
 
   return (
-    <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)]">
+    <div className="min-h-screen bg-white">
       <div className="flex flex-col">
         {/* 헤더 */}
         <header className="flex h-[52px] items-center justify-between py-3 pr-3 pl-5">
@@ -129,7 +128,6 @@ export default function MypagePage() {
           <MenuList items={accountMenuItems} />
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 }
