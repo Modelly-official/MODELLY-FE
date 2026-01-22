@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DesignerProfileHero from '@/src/components/designerProfile/DesignerProfileHero';
 import DesignerProfileIntro from '@/src/components/designerProfile/DesignerProfileIntro';
 import DesignerProfileRecruitments from '@/src/components/designerProfile/DesignerProfileRecruitments';
 import DesignerPortfolioReviewSection from '@/src/components/designerProfile/DesignerPortfolioReviewSection';
 import DesignerProfileActionBar from '@/src/components/designerProfile/DesignerProfileActionBar';
+import { usePublicDesignerReviewList, usePublicDesignerReviewThumbnails } from '@/src/hooks/queries/review';
+import type { DesignerReviewItem as DesignerReviewCardItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
+import type { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
 
 interface DesignerProfileViewProps {
@@ -45,6 +48,56 @@ export default function DesignerProfileView({
   const [isLiked, setIsLiked] = useState(profile.isLiked);
   const addressParts = [profile.address.line1, profile.address.line2].filter(Boolean);
   const addressLine = addressParts.join(' ');
+  const reviewQueryEnabled = activeTab === 'review';
+
+  const reviewListQuery = usePublicDesignerReviewList({
+    designerId: profile.designerId,
+    params: { size: 10 },
+    enabled: reviewQueryEnabled,
+  });
+
+  const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
+    designerId: profile.designerId,
+    params: { size: 10 },
+    enabled: reviewQueryEnabled,
+  });
+
+  const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
+    const items = reviewListQuery.data?.result?.items ?? [];
+    return items.map((item) => ({
+      id: item.reviewId,
+      name: item.modelName,
+      rating: item.rating,
+      date: item.createdDate.replace(/-/g, '.'),
+      content: item.content,
+      images: item.reviewImages ?? [],
+      category: item.summary,
+      isFixed: item.isFixed,
+    }));
+  }, [reviewListQuery.data?.result?.items]);
+
+  const reviewSummary = useMemo<DesignerReviewSummaryData>(() => {
+    const listResult = reviewListQuery.data?.result;
+    const listItems = listResult?.items ?? [];
+    const totalCount = listResult?.totalCount ?? listItems.length;
+    const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
+    const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
+    const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
+    const thumbnailImages = thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
+    const previewImages = thumbnailImages.slice(0, 3);
+    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? totalCount ?? thumbnailImages.length;
+    const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+
+    return {
+      rating,
+      count: totalCount,
+      previewImages,
+      moreCount,
+    };
+  }, [reviewListQuery.data?.result, reviewThumbnailQuery.data?.result]);
+
+  const isReviewLoading = reviewQueryEnabled && reviewListQuery.isLoading;
+  const isReviewError = reviewQueryEnabled && reviewListQuery.isError;
 
   const handleBack = () => {
     if (onBack) {
@@ -89,6 +142,10 @@ export default function DesignerProfileView({
         activeTab={activeTab}
         onTabChange={setActiveTab}
         portfolioImages={portfolioImages}
+        reviewSummary={reviewSummary}
+        reviewItems={reviewItems}
+        isReviewLoading={isReviewLoading}
+        isReviewError={isReviewError}
       />
 
       {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} />}

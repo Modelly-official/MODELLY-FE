@@ -40,19 +40,13 @@ export default function DesignerReviewCard({ review }: DesignerReviewCardProps) 
         </span>
       </div>
 
-      {review.images.length > 0 ? (
+      {review.images.length > 0 && (
         <div className="flex gap-2">
           {review.images.map((imageUrl, index) => (
             <div key={`${imageUrl}-${index}`} className="relative h-[99px] w-[98px] overflow-hidden rounded-lg">
               <Image src={imageUrl} alt="" fill sizes="92px" className="object-cover" />
             </div>
           ))}
-        </div>
-      ) : (
-        <div className="flex gap-2">
-          <div className="flex h-[42px] w-[42px] items-center justify-center rounded-xl bg-gray-100">
-            <ProfileIcon className="h-7 w-7 text-gray-300" />
-          </div>
         </div>
       )}
 

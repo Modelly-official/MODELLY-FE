@@ -20,12 +20,18 @@ export default function DesignerReviewTab({ summary, reviews }: DesignerReviewTa
   return (
     <div className="bg-gray-100 pt-4 pb-[calc(32px+env(safe-area-inset-bottom))]">
       <DesignerReviewSummary rating={summary.rating} count={summary.count} />
-      <DesignerReviewPreviewStrip previewImages={summary.previewImages} moreCount={summary.moreCount} />
+      {summary.previewImages.length > 0 && (
+        <DesignerReviewPreviewStrip previewImages={summary.previewImages} moreCount={summary.moreCount} />
+      )}
 
       <div className="flex flex-col gap-5 px-4 pt-5">
-        {reviews.map((review) => (
-          <DesignerReviewCard key={review.id} review={review} />
-        ))}
+        {reviews.length > 0 ? (
+          reviews.map((review) => <DesignerReviewCard key={review.id} review={review} />)
+        ) : (
+          <div className="flex items-center justify-center rounded-2xl bg-white px-4 py-6">
+            <p className="text-body-2-medium text-gray-500">등록된 리뷰가 없습니다.</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,42 +11,20 @@ interface DesignerPortfolioReviewSectionProps {
   activeTab: DesignerProfileTab;
   onTabChange: (tab: DesignerProfileTab) => void;
   portfolioImages: string[];
+  reviewSummary: DesignerReviewSummaryData;
+  reviewItems: DesignerReviewItem[];
+  isReviewLoading?: boolean;
+  isReviewError?: boolean;
 }
-
-const reviewSummary: DesignerReviewSummaryData = {
-  rating: 5.0,
-  count: 42,
-  previewImages: ['/images/mocks/portfolio-1.png', '/images/mocks/portfolio-2.png', '/images/mocks/portfolio-3.png'],
-  moreCount: 23,
-};
-
-const reviewItems: DesignerReviewItem[] = [
-  {
-    id: 1,
-    name: '무무',
-    rating: 5,
-    date: '2025.11.13',
-    isFixed: true,
-    content:
-      '레이어드 컷으로 롱헤어 정리했는데 너무 가벼워지고 분위기가 살아났어요! 층이 자연스럽게 떨어져서 드라이만 해도 예쁘게 정리돼요. 만족도 최고 ✨',
-    images: ['/images/mocks/portfolio-1.png'],
-    category: '커트',
-  },
-  {
-    id: 2,
-    name: '듀듀',
-    rating: 5,
-    date: '2025.11.13',
-    content: '컬이 자연스럽고 유지도 오래 가요. 손질법도 자세히 알려주셔서 좋았습니다.',
-    images: ['/images/mocks/portfolio-2.png', '/images/mocks/portfolio-3.png'],
-    category: '펌',
-  },
-];
 
 export default function DesignerPortfolioReviewSection({
   activeTab,
   onTabChange,
   portfolioImages,
+  reviewSummary,
+  reviewItems,
+  isReviewLoading = false,
+  isReviewError = false,
 }: DesignerPortfolioReviewSectionProps) {
   return (
     <section className="border-gray-200">
@@ -105,7 +83,19 @@ export default function DesignerPortfolioReviewSection({
           </div>
         </>
       ) : (
-        <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} />
+        <>
+          {isReviewLoading ? (
+            <div className="flex items-center justify-center bg-gray-100 py-12">
+              <p className="text-body-2-medium text-gray-500">리뷰를 불러오는 중입니다.</p>
+            </div>
+          ) : isReviewError ? (
+            <div className="flex items-center justify-center bg-gray-100 py-12">
+              <p className="text-body-2-medium text-gray-500">리뷰 정보를 불러올 수 없습니다.</p>
+            </div>
+          ) : (
+            <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} />
+          )}
+        </>
       )}
     </section>
   );
