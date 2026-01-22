@@ -198,9 +198,16 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
         newImageFiles = state.imageFiles.filter((_, i) => i !== blobIndexInFiles);
       }
 
+      // 새 이미지 목록
+      const newPreviewUrls = state.imagePreviewUrls.filter((_, i) => i !== index);
+
+      // 첫 번째 이미지 삭제 시 thumbnail 동기화
+      const newThumbnail = index === 0 ? (newPreviewUrls[0] || '') : state.thumbnail;
+
       return {
         imageFiles: newImageFiles,
-        imagePreviewUrls: state.imagePreviewUrls.filter((_, i) => i !== index),
+        imagePreviewUrls: newPreviewUrls,
+        thumbnail: newThumbnail,
       };
     }),
 
