@@ -11,16 +11,28 @@ export interface LikedDesignerItem {
   designerId: number;
   designerName: string;
   designerProfileImage?: string;
-  designerCategory: string; // "헤어", "네일" 등 한글
+  designerCategory: Category;
   shopName: string;
   shopAddress: string;
+  reviewCount: number;
+  averageRating: number;
 }
 
 // ===== 찜한 공고 아이템 =====
 export interface LikedRecruitmentItem {
   recruitmentLikeId: number;
   recruitmentId: number;
-  thumbnail?: string;
+  title: string;
+  designerImage?: string;
+  designerName: string;
+  recruitmentThumbnail?: string;
+  shop: string;
+  shopAddress: string;
+  category: Category;
+  subCategories: string[];
+  reviewCount: number;
+  averageRating: number;
+  createdAt: string;
 }
 
 // ===== 찜 목록 조회 파라미터 =====
@@ -35,10 +47,12 @@ export interface LikedDesignersResponse {
   items: LikedDesignerItem[];
   hasNext: boolean;
   nextCursor: number | null;
+  totalCount: number;
 }
 
 export interface LikedRecruitmentsResponse {
   items: LikedRecruitmentItem[];
   hasNext: boolean;
   nextCursor: number | null;
+  totalCount: number;
 }
