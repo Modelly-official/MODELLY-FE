@@ -37,7 +37,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
   const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
     designerId,
     params: { size: 10 },
-    enabled: !isOwnerMode && canFetchReviews,
+    enabled: canFetchReviews,
   });
 
   const reviewItems = useMemo<DesignerReviewItem[]>(() => {
@@ -60,13 +60,15 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
-    const thumbnailImages = isOwnerMode
-      ? listItems.map((item) => item.reviewImages?.[0]).filter((imageUrl): imageUrl is string => Boolean(imageUrl))
-      : thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
+    const fallbackImages = listItems
+      .map((item) => item.reviewImages?.[0])
+      .filter((imageUrl): imageUrl is string => Boolean(imageUrl));
+    const thumbnailImages =
+      thumbnailItems.length > 0
+        ? thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean)
+        : fallbackImages;
     const previewImages = thumbnailImages.slice(0, 3);
-    const totalPreviewCount = isOwnerMode
-      ? totalCount
-      : (reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount);
+    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
 
     return {
