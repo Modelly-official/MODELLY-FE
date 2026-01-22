@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import ChatHeader from '@/src/components/chat/chatroom/ChatHeader';
 import MessageItem from '@/src/components/chat/chatroom/MessageItem';
@@ -56,6 +56,15 @@ export default function ChatRoom() {
   const [successMessage, setSuccessMessage] = useState('');
   const [pendingCancelChangeId, setPendingCancelChangeId] = useState<number | null>(null);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
+
+  // iOS body 스크롤 잠금
+  useEffect(() => {
+    const originalStyle = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
 
   const queryReservationInfo = useMemo<ReservationInfo | null>(() => {
     const reservationIdParam = searchParams.get('reservationId');
@@ -200,9 +209,9 @@ export default function ChatRoom() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-gray-200">
+    <div className="fixed inset-0 flex flex-col overflow-hidden bg-gray-200">
       {isReservationOpen && (
-        <div className="safe-area-top absolute inset-x-0 top-0 z-20 rounded-b-[20px] bg-white pt-[15.5px] pb-5">
+        <div className="absolute inset-x-0 top-0 z-20 rounded-b-[20px] bg-white pt-[calc(env(safe-area-inset-top)+15.5px)] pb-5">
           <div className="flex justify-end px-4 pb-[15.5px]">
             <button
               type="button"
@@ -244,7 +253,7 @@ export default function ChatRoom() {
           setIsReservationOpen((prev) => !prev);
         }}
       />
-      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto px-4 py-3" onScroll={handleScroll}>
+      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto overscroll-y-contain px-4 py-3" onScroll={handleScroll}>
         <ul className="space-y-3">
           {messages.map((m, idx) => {
             const next = messages[idx + 1];

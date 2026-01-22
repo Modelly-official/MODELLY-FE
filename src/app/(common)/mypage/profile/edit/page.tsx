@@ -52,7 +52,7 @@ export default function ProfileEditPage() {
           onClick={() => router.push('/mypage')}
           className="flex size-6 cursor-pointer items-center justify-center"
         >
-          <ArrowLeftIcon className="text-black" />
+          <ArrowLeftIcon className="size-6" />
         </button>
         <h1 className="text-head-4-medium text-black">프로필 수정</h1>
         {/* 균형을 위한 빈 공간 */}

@@ -151,7 +151,7 @@ export default function NotificationSettingsPage() {
             className="flex size-6 cursor-pointer items-center justify-center"
             aria-label="뒤로가기"
           >
-            <ArrowLeftIcon className="text-black" />
+            <ArrowLeftIcon className="size-6" />
           </button>
           <h1 className="text-head-4-medium text-center text-black">알림 설정</h1>
           <div className="size-6" />
@@ -176,7 +176,7 @@ export default function NotificationSettingsPage() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="text-black" />
+          <ArrowLeftIcon className="size-6" />
         </button>
         <h1 className="text-head-4-medium text-center text-black">알림 설정</h1>
         <div className="size-6" />

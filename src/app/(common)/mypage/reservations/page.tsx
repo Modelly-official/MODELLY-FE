@@ -145,7 +145,7 @@ export default function MyReservationsPage() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="text-black" />
+          <ArrowLeftIcon className="size-6" />
         </button>
         <h1 className="text-head-4-medium text-center text-black">예약 목록</h1>
         {/* 균형을 위한 빈 공간 */}
