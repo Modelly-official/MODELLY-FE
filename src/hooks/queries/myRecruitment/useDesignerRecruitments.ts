@@ -14,6 +14,10 @@ interface UseDesignerRecruitmentsParams {
   month?: string; // OPEN일 때만 필요
   size?: number;
   enabled?: boolean;
+  /** 재시도 횟수 (기본값: 글로벌 설정 사용) */
+  retry?: number;
+  /** 재시도 간격 ms (기본값: 글로벌 설정 사용) */
+  retryDelay?: number;
 }
 
 /**
@@ -21,7 +25,7 @@ interface UseDesignerRecruitmentsParams {
  * useInfiniteQuery를 사용하여 커서 기반 페이징 지원
  */
 export function useDesignerRecruitments(params: UseDesignerRecruitmentsParams) {
-  const { status, month, size = 10, enabled = true } = params;
+  const { status, month, size = 10, enabled = true, retry, retryDelay } = params;
 
   type CursorParam = { cursorId?: number; cursorEarliestDate?: string } | undefined;
 
@@ -66,5 +70,7 @@ export function useDesignerRecruitments(params: UseDesignerRecruitmentsParams) {
     },
     enabled,
     staleTime: 1000 * 60 * 5, // 5분
+    ...(retry !== undefined && { retry }),
+    ...(retryDelay !== undefined && { retryDelay }),
   });
 }
