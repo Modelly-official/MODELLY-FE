@@ -20,7 +20,11 @@ import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
-import { usePublicDesignerReviewList, usePublicDesignerReviewThumbnails } from '@/src/hooks/queries/review';
+import {
+  useDesignerReviews,
+  usePublicDesignerReviewList,
+  usePublicDesignerReviewThumbnails,
+} from '@/src/hooks/queries/review';
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
 
@@ -50,11 +54,22 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const reviewDesignerId = data?.result?.designerProfile.designerId ?? 0;
   const canFetchReviews = Number.isFinite(reviewDesignerId) && reviewDesignerId > 0;
   const reviewQueryEnabled = activeTab === 'review' && canFetchReviews;
+  const myDesignerId = myProfileData?.result?.profile.designerId;
+  const isOwnerFromAuth =
+    authReady && role === 'designer' && user?.userId === data?.result?.designerProfile.userId;
+  const isOwnerFromProfile =
+    role === 'designer' && !!myDesignerId && myDesignerId === data?.result?.designerProfile.designerId;
+  const isOwnerView = isOwner || isOwnerFromAuth || isOwnerFromProfile;
+
+  const ownerReviewListQuery = useDesignerReviews(
+    { size: 10 },
+    { enabled: reviewQueryEnabled && isOwnerView },
+  );
 
   const reviewListQuery = usePublicDesignerReviewList({
     designerId: reviewDesignerId,
     params: { size: 10 },
-    enabled: reviewQueryEnabled,
+    enabled: reviewQueryEnabled && !isOwnerView,
   });
 
   const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
@@ -64,7 +79,9 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   });
 
   const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
-    const items = reviewListQuery.data?.result?.items ?? [];
+    const ownerItems = ownerReviewListQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
+    const publicItems = reviewListQuery.data?.result?.items ?? [];
+    const items = isOwnerView ? ownerItems : publicItems;
     return items.map((item) => ({
       id: item.reviewId,
       name: item.modelName,
@@ -75,11 +92,17 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       category: item.summary,
       isFixed: item.isFixed,
     }));
-  }, [reviewListQuery.data?.result?.items]);
+  }, [isOwnerView, ownerReviewListQuery.data?.pages, reviewListQuery.data?.result?.items]);
 
   const reviewSummary = useMemo<DesignerReviewSummaryData>(() => {
-    const listItems = reviewListQuery.data?.result?.items ?? [];
-    const totalCount = reviewListQuery.data?.result?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
+    const publicResult = reviewListQuery.data?.result;
+    const ownerPages = ownerReviewListQuery.data?.pages ?? [];
+    const ownerItems = ownerPages.flatMap((page) => page.result?.items ?? []);
+    const ownerTotalCount = ownerPages[0]?.result?.totalCount;
+    const listItems = isOwnerView ? ownerItems : publicResult?.items ?? [];
+    const totalCount = isOwnerView
+      ? ownerTotalCount ?? listItems.length
+      : publicResult?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
@@ -97,12 +120,22 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   }, [
     data?.result?.averageRating,
     data?.result?.reviewCount,
+    isOwnerView,
+    ownerReviewListQuery.data?.pages,
     reviewListQuery.data?.result,
     reviewThumbnailQuery.data?.result,
   ]);
 
-  const isReviewLoading = reviewQueryEnabled ? reviewListQuery.isLoading : false;
-  const isReviewError = reviewQueryEnabled ? reviewListQuery.isError || !canFetchReviews : false;
+  const isReviewLoading = reviewQueryEnabled
+    ? isOwnerView
+      ? ownerReviewListQuery.isLoading
+      : reviewListQuery.isLoading
+    : false;
+  const isReviewError = reviewQueryEnabled
+    ? isOwnerView
+      ? ownerReviewListQuery.isError
+      : reviewListQuery.isError || !canFetchReviews
+    : false;
 
   // 서버 값이 변경되면 토글 카운트 리셋 (렌더 중 상태 업데이트 - React 권장 패턴)
   const serverIsLiked = data?.result?.isLiked ?? false;
@@ -125,11 +158,9 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   const detail = data.result;
 
-  const isOwnerFromAuth = authReady && role === 'designer' && user?.userId === detail.designerProfile.userId;
-  const myDesignerId = myProfileData?.result?.profile.designerId;
-  const isOwnerFromProfile =
-    role === 'designer' && !!myDesignerId && myDesignerId === detail.designerProfile.designerId;
-  const isOwnerView = isOwner || isOwnerFromAuth || isOwnerFromProfile;
+  const reviewDetailPath = isOwnerView
+    ? '/myProfile/reviews'
+    : `/designer/${detail.designerProfile.designerId}/reviews`;
 
   // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
   const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
@@ -303,7 +334,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             </div>
           ) : (
             <div className="bg-gray-100 pb-25">
-              <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} />
+              <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} onViewAll={() => router.push(reviewDetailPath)} />
             </div>
           )}
         </>

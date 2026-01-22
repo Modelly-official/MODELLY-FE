@@ -14,14 +14,28 @@ export interface DesignerReviewSummaryData {
 interface DesignerReviewTabProps {
   summary: DesignerReviewSummaryData;
   reviews: DesignerReviewItem[];
+  onViewAll?: () => void;
+  onPreviewMore?: () => void;
+  showPreviewMoreLabel?: boolean;
 }
 
-export default function DesignerReviewTab({ summary, reviews }: DesignerReviewTabProps) {
+export default function DesignerReviewTab({
+  summary,
+  reviews,
+  onViewAll,
+  onPreviewMore,
+  showPreviewMoreLabel = false,
+}: DesignerReviewTabProps) {
   return (
     <div className="bg-gray-100 pt-4 pb-[calc(32px+env(safe-area-inset-bottom))]">
-      <DesignerReviewSummary rating={summary.rating} count={summary.count} />
+      <DesignerReviewSummary rating={summary.rating} count={summary.count} onViewAll={onViewAll} />
       {summary.previewImages.length > 0 && (
-        <DesignerReviewPreviewStrip previewImages={summary.previewImages} moreCount={summary.moreCount} />
+        <DesignerReviewPreviewStrip
+          previewImages={summary.previewImages}
+          moreCount={summary.moreCount}
+          showMoreLabel={showPreviewMoreLabel}
+          onMoreClick={onPreviewMore}
+        />
       )}
 
       <div className="flex flex-col gap-5 px-4 pt-5">

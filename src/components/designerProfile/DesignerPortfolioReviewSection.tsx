@@ -15,6 +15,8 @@ interface DesignerPortfolioReviewSectionProps {
   reviewItems: DesignerReviewItem[];
   isReviewLoading?: boolean;
   isReviewError?: boolean;
+  onReviewViewAll?: () => void;
+  onReviewPreviewMore?: () => void;
 }
 
 export default function DesignerPortfolioReviewSection({
@@ -25,6 +27,8 @@ export default function DesignerPortfolioReviewSection({
   reviewItems,
   isReviewLoading = false,
   isReviewError = false,
+  onReviewViewAll,
+  onReviewPreviewMore,
 }: DesignerPortfolioReviewSectionProps) {
   return (
     <section className="border-gray-200">
@@ -93,7 +97,12 @@ export default function DesignerPortfolioReviewSection({
               <p className="text-body-2-medium text-gray-500">리뷰 정보를 불러올 수 없습니다.</p>
             </div>
           ) : (
-            <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} />
+            <DesignerReviewTab
+              summary={reviewSummary}
+              reviews={reviewItems}
+              onViewAll={onReviewViewAll}
+              onPreviewMore={onReviewPreviewMore}
+            />
           )}
         </>
       )}

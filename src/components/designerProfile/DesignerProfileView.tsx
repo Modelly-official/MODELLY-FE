@@ -124,6 +124,17 @@ export default function DesignerProfileView({
       : reviewListQuery.isError || !canFetchPublicReviews
     : false;
 
+  const reviewDetailPath = isOwnerProfile
+    ? '/myProfile/reviews'
+    : canFetchPublicReviews
+      ? `/designer/${reviewDesignerId}/reviews`
+      : '';
+
+  const handleReviewViewAll = () => {
+    if (!reviewDetailPath) return;
+    router.push(reviewDetailPath);
+  };
+
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -171,6 +182,7 @@ export default function DesignerProfileView({
         reviewItems={reviewItems}
         isReviewLoading={isReviewLoading}
         isReviewError={isReviewError}
+        onReviewViewAll={handleReviewViewAll}
       />
 
       {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} />}
