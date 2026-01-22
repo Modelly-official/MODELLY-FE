@@ -200,9 +200,9 @@ export default function ChatRoom() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-gray-200">
+    <div className="relative flex h-screen h-dvh flex-col overflow-hidden bg-gray-200">
       {isReservationOpen && (
-        <div className="safe-area-top absolute inset-x-0 top-0 z-20 rounded-b-[20px] bg-white pt-[15.5px] pb-5">
+        <div className="absolute inset-x-0 top-0 z-20 rounded-b-[20px] bg-white pt-[calc(env(safe-area-inset-top)+15.5px)] pb-5">
           <div className="flex justify-end px-4 pb-[15.5px]">
             <button
               type="button"
