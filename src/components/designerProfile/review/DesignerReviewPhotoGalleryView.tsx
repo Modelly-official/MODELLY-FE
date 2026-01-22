@@ -42,12 +42,15 @@ export default function DesignerReviewPhotoGalleryView({
 
   const photoItems = useMemo(() => {
     const items = activeQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
-    return items
-      .map((item) => ({
-        reviewId: item.reviewId,
-        imageUrl: item.reviewImages?.[0],
-      }))
-      .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
+    return items.flatMap((item) =>
+      (item.reviewImages ?? [])
+        .filter((imageUrl): imageUrl is string => Boolean(imageUrl))
+        .map((imageUrl, imageIndex) => ({
+          reviewId: item.reviewId,
+          imageUrl,
+          imageIndex,
+        })),
+    );
   }, [activeQuery.data?.pages]);
 
   const { loadMoreRef } = useInfiniteScroll({
@@ -93,7 +96,7 @@ export default function DesignerReviewPhotoGalleryView({
             photoItems.map((item, index) => (
               <Link
                 key={`${item.reviewId}-${index}`}
-                href={`${detailBasePath}/${item.reviewId}`}
+                href={`${detailBasePath}/${item.reviewId}?imageIndex=${item.imageIndex}`}
                 className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100"
               >
                 <Image src={item.imageUrl} alt="" fill sizes="33vw" className="object-cover" />

@@ -5,7 +5,7 @@ import 'swiper/css/pagination';
 
 import { useEffect, useMemo, useId } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
@@ -27,6 +27,7 @@ export default function DesignerReviewPhotoDetailView({
   mode = 'public',
 }: DesignerReviewPhotoDetailViewProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isOwnerMode = mode === 'owner';
   const paginationId = useId().replace(/:/g, '');
   const canFetchReviews = Number.isFinite(designerId) && designerId > 0 && reviewId > 0;
@@ -81,6 +82,12 @@ export default function DesignerReviewPhotoDetailView({
 
   const reviewImages = reviewItem.reviewImages ?? [];
   const displayDate = reviewItem.createdDate.replace(/-/g, '.');
+  const initialIndex = useMemo(() => {
+    const rawIndex = Number(searchParams.get('imageIndex'));
+    if (!Number.isFinite(rawIndex)) return 0;
+    const clamped = Math.max(0, Math.min(rawIndex, reviewImages.length - 1));
+    return Number.isNaN(clamped) ? 0 : clamped;
+  }, [reviewImages.length, searchParams]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -112,6 +119,7 @@ export default function DesignerReviewPhotoDetailView({
                 bulletClass: 'swiper-pagination-bullet !bg-gray-300 !opacity-100',
                 bulletActiveClass: '!bg-gray-900',
               }}
+              initialSlide={initialIndex}
               className="size-full"
             >
               {reviewImages.map((imageUrl, index) => (
