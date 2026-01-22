@@ -160,7 +160,7 @@ export default function DesignerProfileView({
 
       <section className="flex flex-col gap-1 px-4 pt-5 pb-3">
         <DesignerProfileIntro intro={profile.intro} />
-        <DesignerProfileRecruitments openRecruitments={openRecruitments} />
+        <DesignerProfileRecruitments openRecruitments={openRecruitments} isOwner={isOwnerProfile} />
       </section>
 
       <DesignerPortfolioReviewSection

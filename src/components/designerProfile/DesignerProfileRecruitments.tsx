@@ -9,11 +9,15 @@ import type { DesignerRecruitmentCard } from '@/src/types/profile';
 
 interface DesignerProfileRecruitmentsProps {
   openRecruitments: DesignerRecruitmentCard[];
+  isOwner?: boolean;
 }
 
 const isCategoryCode = (value: string) => value.includes('_');
 
-export default function DesignerProfileRecruitments({ openRecruitments }: DesignerProfileRecruitmentsProps) {
+export default function DesignerProfileRecruitments({
+  openRecruitments,
+  isOwner = false,
+}: DesignerProfileRecruitmentsProps) {
   const formatPeriod = (startDate: string, endDate: string) => formatPeriodToMonthDay(`${startDate} ~ ${endDate}`);
 
   return (
@@ -30,7 +34,7 @@ export default function DesignerProfileRecruitments({ openRecruitments }: Design
           {openRecruitments.map((recruitment) => (
             <Link
               key={recruitment.recruitmentId}
-              href={`/post/${recruitment.recruitmentId}`}
+              href={isOwner ? `/myRecruitment/${recruitment.recruitmentId}` : `/post/${recruitment.recruitmentId}`}
               className="flex h-[85px] items-center gap-3 overflow-hidden bg-white"
             >
               <div className="relative h-[85px] w-[85px] shrink-0">
