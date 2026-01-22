@@ -14,8 +14,8 @@ export interface LikedDesignerItem {
   designerCategory: Category;
   shopName: string;
   shopAddress: string;
-  reviewCount: number;
-  averageRating: number;
+  reviewCount?: number;
+  averageRating?: number;
 }
 
 // ===== 찜한 공고 아이템 =====
@@ -30,8 +30,8 @@ export interface LikedRecruitmentItem {
   shopAddress: string;
   category: Category;
   subCategories: string[];
-  reviewCount: number;
-  averageRating: number;
+  reviewCount?: number;
+  averageRating?: number;
   createdAt: string;
 }
 
