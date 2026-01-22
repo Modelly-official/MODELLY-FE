@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import ChatHeader from '@/src/components/chat/chatroom/ChatHeader';
 import MessageItem from '@/src/components/chat/chatroom/MessageItem';
@@ -56,6 +56,15 @@ export default function ChatRoom() {
   const [successMessage, setSuccessMessage] = useState('');
   const [pendingCancelChangeId, setPendingCancelChangeId] = useState<number | null>(null);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
+
+  // iOS body 스크롤 잠금
+  useEffect(() => {
+    const originalStyle = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
 
   const queryReservationInfo = useMemo<ReservationInfo | null>(() => {
     const reservationIdParam = searchParams.get('reservationId');
@@ -244,7 +253,7 @@ export default function ChatRoom() {
           setIsReservationOpen((prev) => !prev);
         }}
       />
-      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto px-4 py-3" onScroll={handleScroll}>
+      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto overscroll-y-contain px-4 py-3" onScroll={handleScroll}>
         <ul className="space-y-3">
           {messages.map((m, idx) => {
             const next = messages[idx + 1];
