@@ -334,7 +334,12 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             </div>
           ) : (
             <div className="bg-gray-100 pb-25">
-              <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} onViewAll={() => router.push(reviewDetailPath)} />
+              <DesignerReviewTab
+                summary={reviewSummary}
+                reviews={reviewItems}
+                onViewAll={() => router.push(reviewDetailPath)}
+                onPreviewMore={() => router.push(`${reviewDetailPath}/photos`)}
+              />
             </div>
           )}
         </>

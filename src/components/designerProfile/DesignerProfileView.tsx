@@ -71,7 +71,7 @@ export default function DesignerProfileView({
   const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
     designerId: reviewDesignerId,
     params: { size: 10 },
-    enabled: reviewQueryEnabled && canFetchPublicReviews,
+    enabled: reviewQueryEnabled && !isOwnerProfile && canFetchPublicReviews,
   });
 
   const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
@@ -100,9 +100,13 @@ export default function DesignerProfileView({
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
-    const thumbnailImages = thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
+    const thumbnailImages = isOwnerProfile
+      ? listItems.map((item) => item.reviewImages?.[0]).filter((imageUrl): imageUrl is string => Boolean(imageUrl))
+      : thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
     const previewImages = thumbnailImages.slice(0, 3);
-    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
+    const totalPreviewCount = isOwnerProfile
+      ? totalCount
+      : reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
 
     return {
@@ -129,10 +133,20 @@ export default function DesignerProfileView({
     : canFetchPublicReviews
       ? `/designer/${reviewDesignerId}/reviews`
       : '';
+  const reviewPhotoPath = isOwnerProfile
+    ? '/myProfile/reviews/photos'
+    : canFetchPublicReviews
+      ? `/designer/${reviewDesignerId}/reviews/photos`
+      : '';
 
   const handleReviewViewAll = () => {
     if (!reviewDetailPath) return;
     router.push(reviewDetailPath);
+  };
+
+  const handleReviewPreviewMore = () => {
+    if (!reviewPhotoPath) return;
+    router.push(reviewPhotoPath);
   };
 
   const handleBack = () => {
@@ -183,6 +197,7 @@ export default function DesignerProfileView({
         isReviewLoading={isReviewLoading}
         isReviewError={isReviewError}
         onReviewViewAll={handleReviewViewAll}
+        onReviewPreviewMore={handleReviewPreviewMore}
       />
 
       {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} />}

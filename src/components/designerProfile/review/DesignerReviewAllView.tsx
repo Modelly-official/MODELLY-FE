@@ -22,11 +22,9 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
   const router = useRouter();
   const isOwnerMode = mode === 'owner';
   const canFetchReviews = Number.isFinite(designerId) && designerId > 0;
+  const photoPath = isOwnerMode ? '/myProfile/reviews/photos' : `/designer/${designerId}/reviews/photos`;
 
-  const ownerReviewListQuery = useDesignerReviews(
-    { size: 8 },
-    { enabled: isOwnerMode && canFetchReviews },
-  );
+  const ownerReviewListQuery = useDesignerReviews({ size: 8 }, { enabled: isOwnerMode && canFetchReviews });
 
   const publicReviewListQuery = usePublicDesignerReviewListInfinite({
     designerId,
@@ -39,7 +37,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
   const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
     designerId,
     params: { size: 10 },
-    enabled: canFetchReviews,
+    enabled: !isOwnerMode && canFetchReviews,
   });
 
   const reviewItems = useMemo<DesignerReviewItem[]>(() => {
@@ -62,9 +60,13 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
-    const thumbnailImages = thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
+    const thumbnailImages = isOwnerMode
+      ? listItems.map((item) => item.reviewImages?.[0]).filter((imageUrl): imageUrl is string => Boolean(imageUrl))
+      : thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
     const previewImages = thumbnailImages.slice(0, 3);
-    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
+    const totalPreviewCount = isOwnerMode
+      ? totalCount
+      : (reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount);
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
 
     return {
@@ -73,7 +75,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
       previewImages,
       moreCount,
     };
-  }, [reviewListQuery.data?.pages, reviewThumbnailQuery.data?.result]);
+  }, [isOwnerMode, reviewListQuery.data?.pages, reviewThumbnailQuery.data?.result]);
 
   const { loadMoreRef } = useInfiniteScroll({
     hasNextPage: reviewListQuery.hasNextPage ?? false,
@@ -113,17 +115,18 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
           <p className="text-body-2-medium text-gray-500">리뷰 정보를 불러올 수 없습니다.</p>
         </div>
       ) : (
-        <div className="flex flex-1 flex-col gap-4 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
+        <div className="flex flex-1 flex-col pt-5 pb-[calc(24px+env(safe-area-inset-bottom))]">
           <DesignerReviewSummary rating={summary.rating} count={summary.count} />
           {summary.previewImages.length > 0 && (
             <DesignerReviewPreviewStrip
               previewImages={summary.previewImages}
               moreCount={summary.moreCount}
               showMoreLabel
+              onMoreClick={() => router.push(photoPath)}
             />
           )}
 
-          <div className="flex flex-col gap-4 px-4">
+          <div className="flex flex-col gap-4 px-4 pt-5">
             {reviewItems.length === 0 ? (
               <div className="flex items-center justify-center rounded-2xl bg-white px-4 py-6">
                 <p className="text-body-2-medium text-gray-500">등록된 리뷰가 없습니다.</p>

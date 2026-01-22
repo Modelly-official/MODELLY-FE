@@ -53,14 +53,12 @@ export default function DesignerReviewPreviewStrip({
                 <button
                   type="button"
                   onClick={onMoreClick}
-                  className="absolute inset-0 flex items-center justify-center bg-black/45"
+                  className="absolute inset-0 flex items-center justify-center bg-black/45 cursor-pointer"
                 >
                   {overlayContent}
                 </button>
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/45">
-                  {overlayContent}
-                </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/45">{overlayContent}</div>
               ))}
           </div>
         );

@@ -15,6 +15,8 @@ export const publicDesignerReviewKeys = {
     [...publicDesignerReviewKeys.all, 'listInfinite', designerId, params] as const,
   thumbnails: (designerId: number, params?: ReviewListParams) =>
     [...publicDesignerReviewKeys.all, 'thumbnails', designerId, params] as const,
+  thumbnailsInfinite: (designerId: number, params?: ReviewListParams) =>
+    [...publicDesignerReviewKeys.all, 'thumbnailsInfinite', designerId, params] as const,
 };
 
 interface UsePublicDesignerReviewListParams {
@@ -36,6 +38,12 @@ interface UsePublicDesignerReviewListInfiniteParams {
 interface UsePublicDesignerReviewThumbnailsParams {
   designerId: number;
   params?: ReviewListParams;
+  enabled?: boolean;
+}
+
+interface UsePublicDesignerReviewThumbnailsInfiniteParams {
+  designerId: number;
+  params?: Omit<ReviewListParams, 'cursorId'>;
   enabled?: boolean;
 }
 
@@ -101,6 +109,41 @@ export function usePublicDesignerReviewThumbnails({
   return useQuery<ApiResponse<DesignerReviewThumbnailsResponse>, Error>({
     queryKey: publicDesignerReviewKeys.thumbnails(designerId, params),
     queryFn: () => getPublicDesignerReviewThumbnails(designerId, params),
+    enabled,
+    staleTime: 1000 * 60 * 2, // 2분
+  });
+}
+
+/**
+ * 디자이너 리뷰 썸네일 리스트 조회 Hook (공개, 무한 스크롤)
+ */
+export function usePublicDesignerReviewThumbnailsInfinite({
+  designerId,
+  params,
+  enabled = true,
+}: UsePublicDesignerReviewThumbnailsInfiniteParams) {
+  return useInfiniteQuery<
+    ApiResponse<DesignerReviewThumbnailsResponse>,
+    Error,
+    { pages: ApiResponse<DesignerReviewThumbnailsResponse>[]; pageParams: ReviewCursor[] },
+    ReturnType<typeof publicDesignerReviewKeys.thumbnailsInfinite>,
+    ReviewCursor
+  >({
+    queryKey: publicDesignerReviewKeys.thumbnailsInfinite(designerId, params),
+    queryFn: async ({ pageParam }) => {
+      const apiParams = {
+        ...params,
+        cursorId: pageParam?.cursorId,
+      };
+      return getPublicDesignerReviewThumbnails(designerId, apiParams);
+    },
+    initialPageParam: {},
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.result?.hasNext) return undefined;
+      return {
+        cursorId: lastPage.result.nextCursor ?? undefined,
+      };
+    },
     enabled,
     staleTime: 1000 * 60 * 2, // 2분
   });

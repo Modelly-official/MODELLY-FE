@@ -21,7 +21,7 @@ export default function DesignerReviewSummary({ rating, count, onViewAll }: Desi
         <button
           type="button"
           onClick={onViewAll}
-          className="text-body-2-medium flex items-center justify-center gap-0.5 text-gray-800 cursor-pointer"
+          className="text-body-2-medium flex cursor-pointer items-center justify-center gap-0.5 text-gray-800"
         >
           전체보기
           <ChevronRightIcon className="h-5 w-5 -translate-y-px text-gray-800" />
