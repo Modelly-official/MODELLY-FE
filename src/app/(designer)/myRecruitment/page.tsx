@@ -77,6 +77,10 @@ export default function MyRecruitmentPage() {
     });
   }, [closedData]);
 
+  // totalCount 추출 (첫 페이지에서 가져옴)
+  const activeTotalCount = activeData?.pages[0]?.result?.totalCount ?? 0;
+  const closedTotalCount = closedData?.pages[0]?.result?.totalCount ?? 0;
+
   // 카드 클릭 핸들러
   const handleCardClick = (id: number) => {
     router.push(`/myRecruitment/${id}`);
@@ -110,7 +114,7 @@ export default function MyRecruitmentPage() {
       <RecruitmentTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        activeCount={activeRecruitments.length}
+        activeCount={activeTotalCount}
       />
 
       {/* 모집중 탭 */}
@@ -151,7 +155,7 @@ export default function MyRecruitmentPage() {
         ) : (
           <ClosedRecruitmentList
             recruitments={closedRecruitments}
-            totalCount={closedRecruitments.length}
+            totalCount={closedTotalCount}
             onClick={handleCardClick}
             onLoadMore={fetchClosedNextPage}
             hasMore={hasClosedNextPage}
