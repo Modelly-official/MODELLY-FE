@@ -77,7 +77,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
       previewImages,
       moreCount,
     };
-  }, [isOwnerMode, reviewListQuery.data?.pages, reviewThumbnailQuery.data?.result]);
+  }, [reviewListQuery.data?.pages, reviewThumbnailQuery.data?.result]);
 
   const { loadMoreRef } = useInfiniteScroll({
     hasNextPage: reviewListQuery.hasNextPage ?? false,
