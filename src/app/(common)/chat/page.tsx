@@ -7,7 +7,6 @@ import { useChatRooms } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { LoginRequiredModal } from '@/src/components/common';
-import BottomNav from '@/src/components/common/BottomNav';
 
 export default function ChatPage() {
   const { showToast } = useToast();
@@ -56,7 +55,7 @@ export default function ChatPage() {
   }, [error, showToast]);
 
   return (
-    <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-20">
+    <div className="min-h-screen bg-white">
       <h1 className="text-head-3-semibold px-5 py-3">채팅</h1>
       {isModelUser && <ChatCategoryChips selectedCategory={selectedCategory} onChange={setSelectedCategory} />}
       <ChatList
@@ -66,7 +65,6 @@ export default function ChatPage() {
         isFetchingNextPage={isFetchingNextPage}
         onLoadMore={fetchNextPage}
       />
-      <BottomNav />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setModalDismissed(true)} callbackUrl="/chat" />
     </div>
   );
