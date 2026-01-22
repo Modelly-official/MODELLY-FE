@@ -54,6 +54,7 @@ export interface MyRecruitmentListResponse {
   items: MyRecruitmentListItem[];
   hasNext: boolean;
   nextCursor: number;
+  totalCount: number;
 }
 
 // ===== 공고 생성/수정 =====
