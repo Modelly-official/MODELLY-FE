@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
+import CircleArrowIcon from '@/public/icons/review/circle_arrow.svg';
 
 interface DesignerReviewPreviewStripProps {
   previewImages: string[];
@@ -36,10 +36,8 @@ export default function DesignerReviewPreviewStrip({
         const showOverlay = isLastPreview && moreCount > 0;
         const overlayContent = showMoreLabel ? (
           <div className="flex flex-col items-center gap-1 text-white">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-white/70">
-              <ArrowRightIcon className="h-4 w-4 text-white" />
-            </span>
-            <span className="text-caption-1-medium">더보기</span>
+            <CircleArrowIcon className="h-6 w-6 text-white" />
+            <span className="text-body-2-medium">더보기</span>
           </div>
         ) : (
           <span className="text-body-1-semibold text-white">+{moreCount}</span>
@@ -53,7 +51,7 @@ export default function DesignerReviewPreviewStrip({
                 <button
                   type="button"
                   onClick={onMoreClick}
-                  className="absolute inset-0 flex items-center justify-center bg-black/45 cursor-pointer"
+                  className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/45"
                 >
                   {overlayContent}
                 </button>
