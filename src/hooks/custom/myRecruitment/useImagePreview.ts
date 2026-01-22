@@ -35,13 +35,14 @@ export function useImagePreview({ imageFiles, existingUrls, onUrlsChange }: UseI
       }
     });
 
-    // 새 blob URL 생성
-    const newUrls = imageFiles.map((file) => URL.createObjectURL(file));
-    onUrlsChange(newUrls);
+    // 기존 서버 URL 유지 + 새 blob URL 추가
+    const serverUrls = existingUrls.filter((url) => !url.startsWith('blob:'));
+    const newBlobUrls = imageFiles.map((file) => URL.createObjectURL(file));
+    onUrlsChange([...serverUrls, ...newBlobUrls]);
 
     // cleanup: 컴포넌트 언마운트 시 URL revoke
     return () => {
-      newUrls.forEach((url) => URL.revokeObjectURL(url));
+      newBlobUrls.forEach((url) => URL.revokeObjectURL(url));
     };
     // imageFilesKey를 의존성으로 사용하여 파일 교체도 감지
     // eslint-disable-next-line react-hooks/exhaustive-deps
