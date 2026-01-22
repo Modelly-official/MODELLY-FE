@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
@@ -13,10 +13,14 @@ import {
   PostPageSkeleton,
 } from '@/src/components/post';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
+import DesignerReviewTab from '@/src/components/designerProfile/review/DesignerReviewTab';
+import type { DesignerReviewItem as DesignerReviewCardItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
+import type { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
+import { usePublicDesignerReviewList, usePublicDesignerReviewThumbnails } from '@/src/hooks/queries/review';
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
 
@@ -43,6 +47,63 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   // Like mutation
   const { mutate: toggleLike } = useToggleRecruitmentLike();
 
+  const reviewDesignerId = data?.result?.designerProfile.designerId ?? 0;
+  const canFetchReviews = Number.isFinite(reviewDesignerId) && reviewDesignerId > 0;
+  const reviewQueryEnabled = activeTab === 'review' && canFetchReviews;
+
+  const reviewListQuery = usePublicDesignerReviewList({
+    designerId: reviewDesignerId,
+    params: { size: 10 },
+    enabled: reviewQueryEnabled,
+  });
+
+  const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
+    designerId: reviewDesignerId,
+    params: { size: 10 },
+    enabled: reviewQueryEnabled,
+  });
+
+  const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
+    const items = reviewListQuery.data?.result?.items ?? [];
+    return items.map((item) => ({
+      id: item.reviewId,
+      name: item.modelName,
+      rating: item.rating,
+      date: item.createdDate.replace(/-/g, '.'),
+      content: item.content,
+      images: item.reviewImages ?? [],
+      category: item.summary,
+      isFixed: item.isFixed,
+    }));
+  }, [reviewListQuery.data?.result?.items]);
+
+  const reviewSummary = useMemo<DesignerReviewSummaryData>(() => {
+    const listItems = reviewListQuery.data?.result?.items ?? [];
+    const totalCount = reviewListQuery.data?.result?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
+    const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
+    const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
+    const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
+    const thumbnailImages = thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
+    const previewImages = thumbnailImages.slice(0, 3);
+    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
+    const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+
+    return {
+      rating,
+      count: totalCount,
+      previewImages,
+      moreCount,
+    };
+  }, [
+    data?.result?.averageRating,
+    data?.result?.reviewCount,
+    reviewListQuery.data?.result,
+    reviewThumbnailQuery.data?.result,
+  ]);
+
+  const isReviewLoading = reviewQueryEnabled ? reviewListQuery.isLoading : false;
+  const isReviewError = reviewQueryEnabled ? reviewListQuery.isError || !canFetchReviews : false;
+
   // 서버 값이 변경되면 토글 카운트 리셋 (렌더 중 상태 업데이트 - React 권장 패턴)
   const serverIsLiked = data?.result?.isLiked ?? false;
   if (trackedServerValue !== null && trackedServerValue !== serverIsLiked) {
@@ -66,7 +127,8 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   const isOwnerFromAuth = authReady && role === 'designer' && user?.userId === detail.designerProfile.userId;
   const myDesignerId = myProfileData?.result?.profile.designerId;
-  const isOwnerFromProfile = role === 'designer' && !!myDesignerId && myDesignerId === detail.designerProfile.designerId;
+  const isOwnerFromProfile =
+    role === 'designer' && !!myDesignerId && myDesignerId === detail.designerProfile.designerId;
   const isOwnerView = isOwner || isOwnerFromAuth || isOwnerFromProfile;
 
   // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
@@ -230,9 +292,21 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           )}
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center p-8 pb-33">
-          <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
-        </div>
+        <>
+          {isReviewLoading ? (
+            <div className="flex items-center justify-center bg-gray-100 py-12">
+              <p className="text-body-2-medium text-gray-500">리뷰를 불러오는 중입니다.</p>
+            </div>
+          ) : isReviewError ? (
+            <div className="flex items-center justify-center bg-gray-100 py-12">
+              <p className="text-body-2-medium text-gray-500">리뷰 정보를 불러올 수 없습니다.</p>
+            </div>
+          ) : (
+            <div className="bg-gray-100 pb-25">
+              <DesignerReviewTab summary={reviewSummary} reviews={reviewItems} />
+            </div>
+          )}
+        </>
       )}
 
       {/* 하단 액션 버튼 */}
