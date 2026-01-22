@@ -9,6 +9,7 @@ export interface DesignerReviewSummaryData {
   count: number;
   previewImages: string[];
   moreCount: number;
+  overlayCount?: number;
 }
 
 interface DesignerReviewTabProps {
@@ -33,6 +34,7 @@ export default function DesignerReviewTab({
         <DesignerReviewPreviewStrip
           previewImages={summary.previewImages}
           moreCount={summary.moreCount}
+          overlayCount={summary.overlayCount}
           showMoreLabel={showPreviewMoreLabel}
           onMoreClick={onPreviewMore}
         />

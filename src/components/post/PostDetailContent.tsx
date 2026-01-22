@@ -75,7 +75,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
     designerId: reviewDesignerId,
     params: { size: 10 },
-    enabled: reviewQueryEnabled,
+    enabled: reviewQueryEnabled && !isOwnerView,
   });
 
   const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
@@ -106,16 +106,31 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
-    const thumbnailImages = thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
-    const previewImages = thumbnailImages.slice(0, 3);
-    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
+    const reviewImageCountMap = new Map(
+      listItems.map((item) => [item.reviewId, item.reviewImages?.length ?? 0]),
+    );
+    const previewSourceItems = isOwnerView
+      ? listItems
+          .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImages?.[0] }))
+          .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl))
+      : thumbnailItems
+          .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewThumbnail }))
+          .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
+    const previewImages = previewSourceItems.slice(0, 3).map((item) => item.imageUrl);
+    const totalPreviewCount = isOwnerView
+      ? totalCount
+      : reviewThumbnailQuery.data?.result?.totalCount ?? previewSourceItems.length ?? totalCount;
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+    const lastPreviewItem = previewSourceItems[previewImages.length - 1];
+    const lastReviewImageCount = lastPreviewItem ? reviewImageCountMap.get(lastPreviewItem.reviewId) ?? 0 : 0;
+    const overlayCount = Math.max(lastReviewImageCount - 1, 0);
 
     return {
       rating,
       count: totalCount,
       previewImages,
       moreCount,
+      overlayCount,
     };
   }, [
     data?.result?.averageRating,
@@ -338,7 +353,6 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
                 summary={reviewSummary}
                 reviews={reviewItems}
                 onViewAll={() => router.push(reviewDetailPath)}
-                onPreviewMore={() => router.push(`${reviewDetailPath}/photos`)}
               />
             </div>
           )}

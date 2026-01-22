@@ -9,6 +9,7 @@ interface DesignerReviewPreviewStripProps {
   totalSlots?: number;
   showMoreLabel?: boolean;
   onMoreClick?: () => void;
+  overlayCount?: number;
 }
 
 export default function DesignerReviewPreviewStrip({
@@ -17,6 +18,7 @@ export default function DesignerReviewPreviewStrip({
   totalSlots = 3,
   showMoreLabel = false,
   onMoreClick,
+  overlayCount,
 }: DesignerReviewPreviewStripProps) {
   const slots = Array.from({ length: totalSlots });
   const lastPreviewIndex = previewImages.length > 0 ? previewImages.length - 1 : -1;
@@ -33,14 +35,15 @@ export default function DesignerReviewPreviewStrip({
           );
         }
 
-        const showOverlay = isLastPreview && moreCount > 0;
+        const overlayValue = overlayCount ?? moreCount;
+        const showOverlay = isLastPreview && overlayValue > 0;
         const overlayContent = showMoreLabel ? (
           <div className="flex flex-col items-center gap-1 text-white">
             <CircleArrowIcon className="h-6 w-6 text-white" />
             <span className="text-body-2-medium">더보기</span>
           </div>
         ) : (
-          <span className="text-body-1-semibold text-white">+{moreCount}</span>
+          <span className="text-body-1-semibold text-white">+{overlayValue}</span>
         );
 
         return (

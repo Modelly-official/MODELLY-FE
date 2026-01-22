@@ -100,20 +100,31 @@ export default function DesignerProfileView({
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
-    const thumbnailImages = isOwnerProfile
-      ? listItems.map((item) => item.reviewImages?.[0]).filter((imageUrl): imageUrl is string => Boolean(imageUrl))
-      : thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
-    const previewImages = thumbnailImages.slice(0, 3);
+    const reviewImageCountMap = new Map(
+      listItems.map((item) => [item.reviewId, item.reviewImages?.length ?? 0]),
+    );
+    const previewSourceItems = isOwnerProfile
+      ? listItems
+          .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImages?.[0] }))
+          .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl))
+      : thumbnailItems
+          .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewThumbnail }))
+          .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
+    const previewImages = previewSourceItems.slice(0, 3).map((item) => item.imageUrl);
     const totalPreviewCount = isOwnerProfile
       ? totalCount
-      : reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
+      : reviewThumbnailQuery.data?.result?.totalCount ?? previewSourceItems.length ?? totalCount;
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+    const lastPreviewItem = previewSourceItems[previewImages.length - 1];
+    const lastReviewImageCount = lastPreviewItem ? reviewImageCountMap.get(lastPreviewItem.reviewId) ?? 0 : 0;
+    const overlayCount = Math.max(lastReviewImageCount - 1, 0);
 
     return {
       rating,
       count: totalCount,
       previewImages,
       moreCount,
+      overlayCount,
     };
   }, [designerReviewsQuery.data?.pages, isOwnerProfile, reviewListQuery.data?.result, reviewThumbnailQuery.data?.result]);
 
@@ -133,21 +144,12 @@ export default function DesignerProfileView({
     : canFetchPublicReviews
       ? `/designer/${reviewDesignerId}/reviews`
       : '';
-  const reviewPhotoPath = isOwnerProfile
-    ? '/myProfile/reviews/photos'
-    : canFetchPublicReviews
-      ? `/designer/${reviewDesignerId}/reviews/photos`
-      : '';
 
   const handleReviewViewAll = () => {
     if (!reviewDetailPath) return;
     router.push(reviewDetailPath);
   };
 
-  const handleReviewPreviewMore = () => {
-    if (!reviewPhotoPath) return;
-    router.push(reviewPhotoPath);
-  };
 
   const handleBack = () => {
     if (onBack) {
@@ -197,7 +199,6 @@ export default function DesignerProfileView({
         isReviewLoading={isReviewLoading}
         isReviewError={isReviewError}
         onReviewViewAll={handleReviewViewAll}
-        onReviewPreviewMore={handleReviewPreviewMore}
       />
 
       {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} />}
