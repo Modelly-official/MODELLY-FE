@@ -57,6 +57,7 @@ export interface CursorPaginationResponse<T> {
   items: T[];
   hasNext: boolean;
   nextCursor: number;
+  totalCount: number;
 }
 
 // ===== 공고 리스트 응답 =====
