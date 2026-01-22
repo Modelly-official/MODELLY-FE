@@ -15,6 +15,8 @@ import {
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
+import { useAuthReady } from '@/src/hooks/custom/mypage';
+import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
 
@@ -30,6 +32,10 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   // Optimistic update를 위한 토글 카운트 (홀수면 반전)
   const [toggleCount, setToggleCount] = useState(0);
   const [trackedServerValue, setTrackedServerValue] = useState<boolean | null>(null);
+  const { authReady, role, user, isLoggedIn } = useAuthReady();
+  const { data: myProfileData } = useMyDesignerProfile({
+    enabled: authReady && isLoggedIn && role === 'designer' && !isOwner,
+  });
 
   // Query hook
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
@@ -58,6 +64,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   const detail = data.result;
 
+  const isOwnerFromAuth = authReady && role === 'designer' && user?.userId === detail.designerProfile.userId;
+  const myDesignerId = myProfileData?.result?.profile.designerId;
+  const isOwnerFromProfile = role === 'designer' && !!myDesignerId && myDesignerId === detail.designerProfile.designerId;
+  const isOwnerView = isOwner || isOwnerFromAuth || isOwnerFromProfile;
+
   // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
   const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
 
@@ -74,7 +85,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       {/* 제목 및 찜하기 */}
       <div className="flex items-center justify-between gap-4 px-4 pt-4">
         <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
-        {!isOwner && (
+        {!isOwnerView && (
           <button
             type="button"
             onClick={handleFavoriteClick}
@@ -92,7 +103,10 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
-        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
+        <Link
+          href={isOwnerView ? '/myProfile' : `/designer/${detail.designerProfile.designerId}`}
+          className="flex flex-col gap-1"
+        >
           <div className="flex w-fit items-center gap-1 rounded-lg border border-gray-400 px-2.5 py-1">
             <span className="text-body-2-medium text-black">{detail.designerProfile.designerName} 디자이너</span>
             <span className="text-body-2-medium text-black">·</span>

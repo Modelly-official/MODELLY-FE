@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useAuthReady } from '@/src/hooks/custom/mypage';
 
 interface PostHeaderProps {
   onBack?: () => void;
@@ -9,13 +10,25 @@ interface PostHeaderProps {
 
 export default function PostHeader({ onBack }: PostHeaderProps) {
   const router = useRouter();
+  const { role, authReady } = useAuthReady();
 
   const handleBack = () => {
     if (onBack) {
       onBack();
-    } else {
-      router.push('/explore');
+      return;
     }
+
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    if (authReady && role === 'designer') {
+      router.push('/myRecruitment');
+      return;
+    }
+
+    router.push('/explore');
   };
 
   return (

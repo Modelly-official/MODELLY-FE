@@ -7,7 +7,11 @@ import DesignerProfileIntro from '@/src/components/designerProfile/DesignerProfi
 import DesignerProfileRecruitments from '@/src/components/designerProfile/DesignerProfileRecruitments';
 import DesignerPortfolioReviewSection from '@/src/components/designerProfile/DesignerPortfolioReviewSection';
 import DesignerProfileActionBar from '@/src/components/designerProfile/DesignerProfileActionBar';
-import { usePublicDesignerReviewList, usePublicDesignerReviewThumbnails } from '@/src/hooks/queries/review';
+import {
+  useDesignerReviews,
+  usePublicDesignerReviewList,
+  usePublicDesignerReviewThumbnails,
+} from '@/src/hooks/queries/review';
 import type { DesignerReviewItem as DesignerReviewCardItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
 import type { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
@@ -48,22 +52,32 @@ export default function DesignerProfileView({
   const [isLiked, setIsLiked] = useState(profile.isLiked);
   const addressParts = [profile.address.line1, profile.address.line2].filter(Boolean);
   const addressLine = addressParts.join(' ');
+  const isOwnerProfile = actionType === 'edit';
   const reviewQueryEnabled = activeTab === 'review';
+  const reviewDesignerId = Number(profile.designerId ?? profile.designerUserId);
+  const canFetchPublicReviews = Number.isFinite(reviewDesignerId) && reviewDesignerId > 0;
+
+  const designerReviewsQuery = useDesignerReviews(
+    { size: 10 },
+    { enabled: reviewQueryEnabled && isOwnerProfile },
+  );
 
   const reviewListQuery = usePublicDesignerReviewList({
-    designerId: profile.designerId,
+    designerId: reviewDesignerId,
     params: { size: 10 },
-    enabled: reviewQueryEnabled,
+    enabled: reviewQueryEnabled && !isOwnerProfile && canFetchPublicReviews,
   });
 
   const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
-    designerId: profile.designerId,
+    designerId: reviewDesignerId,
     params: { size: 10 },
-    enabled: reviewQueryEnabled,
+    enabled: reviewQueryEnabled && canFetchPublicReviews,
   });
 
   const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
-    const items = reviewListQuery.data?.result?.items ?? [];
+    const publicItems = reviewListQuery.data?.result?.items ?? [];
+    const ownerItems = designerReviewsQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
+    const items = isOwnerProfile ? ownerItems : publicItems;
     return items.map((item) => ({
       id: item.reviewId,
       name: item.modelName,
@@ -74,18 +88,21 @@ export default function DesignerProfileView({
       category: item.summary,
       isFixed: item.isFixed,
     }));
-  }, [reviewListQuery.data?.result?.items]);
+  }, [designerReviewsQuery.data?.pages, isOwnerProfile, reviewListQuery.data?.result?.items]);
 
   const reviewSummary = useMemo<DesignerReviewSummaryData>(() => {
-    const listResult = reviewListQuery.data?.result;
-    const listItems = listResult?.items ?? [];
-    const totalCount = listResult?.totalCount ?? listItems.length;
+    const publicResult = reviewListQuery.data?.result;
+    const ownerPages = designerReviewsQuery.data?.pages ?? [];
+    const ownerItems = ownerPages.flatMap((page) => page.result?.items ?? []);
+    const ownerTotalCount = ownerPages[0]?.result?.totalCount;
+    const listItems = isOwnerProfile ? ownerItems : publicResult?.items ?? [];
+    const totalCount = isOwnerProfile ? ownerTotalCount ?? listItems.length : publicResult?.totalCount ?? listItems.length;
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
     const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
     const thumbnailImages = thumbnailItems.map((item) => item.reviewThumbnail).filter(Boolean);
     const previewImages = thumbnailImages.slice(0, 3);
-    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? totalCount ?? thumbnailImages.length;
+    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? thumbnailImages.length ?? totalCount;
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
 
     return {
@@ -94,10 +111,18 @@ export default function DesignerProfileView({
       previewImages,
       moreCount,
     };
-  }, [reviewListQuery.data?.result, reviewThumbnailQuery.data?.result]);
+  }, [designerReviewsQuery.data?.pages, isOwnerProfile, reviewListQuery.data?.result, reviewThumbnailQuery.data?.result]);
 
-  const isReviewLoading = reviewQueryEnabled && reviewListQuery.isLoading;
-  const isReviewError = reviewQueryEnabled && reviewListQuery.isError;
+  const isReviewLoading = reviewQueryEnabled
+    ? isOwnerProfile
+      ? designerReviewsQuery.isLoading
+      : reviewListQuery.isLoading
+    : false;
+  const isReviewError = reviewQueryEnabled
+    ? isOwnerProfile
+      ? designerReviewsQuery.isError
+      : reviewListQuery.isError || !canFetchPublicReviews
+    : false;
 
   const handleBack = () => {
     if (onBack) {
