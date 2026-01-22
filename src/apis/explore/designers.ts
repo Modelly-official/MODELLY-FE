@@ -76,6 +76,7 @@ function getMockDesigners(
       items,
       hasNext,
       nextCursor,
+      totalCount: filtered.length,
     },
   });
 }

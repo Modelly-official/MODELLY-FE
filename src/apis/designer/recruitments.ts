@@ -172,6 +172,7 @@ function getMockDesignerRecruitments(
       items,
       hasNext,
       nextCursor,
+      totalCount: filteredItems.length,
     },
   });
 }

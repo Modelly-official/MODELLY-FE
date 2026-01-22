@@ -238,6 +238,7 @@ export const mockRecruitmentListResponse: RecruitmentListResponse = {
   items: mockRecruitmentItems.slice(0, 6),
   hasNext: true,
   nextCursor: 6,
+  totalCount: mockRecruitmentItems.length,
 };
 
 // Mock 공고 리스트 응답 (두 번째 페이지)
@@ -245,4 +246,5 @@ export const mockRecruitmentListResponse2: RecruitmentListResponse = {
   items: mockRecruitmentItems.slice(6, 8),
   hasNext: false,
   nextCursor: 8,
+  totalCount: mockRecruitmentItems.length,
 };
