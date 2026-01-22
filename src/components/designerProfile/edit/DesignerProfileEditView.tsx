@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import DesignerProfileEditHero from '@/src/components/designerProfile/edit/DesignerProfileEditHero';
 import DesignerProfileEditRecruitments from '@/src/components/designerProfile/edit/DesignerProfileEditRecruitments';
 import DesignerProfileEditPortfolio from '@/src/components/designerProfile/edit/DesignerProfileEditPortfolio';
+import { AddressInput } from '@/src/components/signup';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
 
 interface DesignerProfileEditViewProps {
@@ -54,6 +55,14 @@ export default function DesignerProfileEditView({
     (field: keyof DesignerProfileEditFormState) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((prev) => ({ ...prev, [field]: event.target.value }));
 
+  const handleAddressSearch = (address: string) => {
+    setForm((prev) => ({ ...prev, addressLine1: address }));
+  };
+
+  const handleDetailAddressChange = (value: string) => {
+    setForm((prev) => ({ ...prev, addressLine2: value }));
+  };
+
   const displayForm = isEditing ? form : initialForm;
   const addressLine = [displayForm.addressLine1, displayForm.addressLine2].filter(Boolean).join(' ');
   const handleStartEdit = () => {
@@ -72,13 +81,13 @@ export default function DesignerProfileEditView({
       <section className="px-4 pt-4 pb-6">
         {isEditing ? (
           <div className="rounded-2xl bg-white px-4 py-4">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
                 <label className="text-body-2-semibold text-gray-900">이름</label>
                 <input
                   value={form.nickname}
                   onChange={handleChange('nickname')}
-                  className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900"
+                  className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 focus:outline-none"
                 />
               </div>
 
@@ -87,7 +96,7 @@ export default function DesignerProfileEditView({
                 <textarea
                   value={form.intro}
                   onChange={handleChange('intro')}
-                  className="text-body-2-medium min-h-[120px] resize-none rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900"
+                  className="text-body-2-medium min-h-[120px] resize-none rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 focus:outline-none"
                 />
               </div>
 
@@ -96,29 +105,25 @@ export default function DesignerProfileEditView({
                 <input
                   value={form.shop}
                   onChange={handleChange('shop')}
-                  className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900"
+                  className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 focus:outline-none"
                 />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-body-2-semibold text-gray-900">매장 주소</label>
-                <input
-                  value={form.addressLine1}
-                  onChange={handleChange('addressLine1')}
-                  className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900"
-                />
-                <input
-                  value={form.addressLine2}
-                  onChange={handleChange('addressLine2')}
-                  className="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900"
-                />
-              </div>
+              <AddressInput
+                address={form.addressLine1}
+                detailAddress={form.addressLine2}
+                onAddressSearch={handleAddressSearch}
+                onDetailAddressChange={handleDetailAddressChange}
+                labelClassName="text-body-2-semibold text-gray-900"
+                inputClassName="text-body-2-medium w-full cursor-pointer rounded-xl bg-gray-100 px-4 py-3.5 pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+                detailInputClassName="text-body-2-medium rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              />
             </div>
 
             <button
               type="button"
               onClick={() => setIsEditing(false)}
-              className="text-body-1-semibold mt-5 flex h-12 w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 text-white"
+              className="text-body-1-semibold mt-4 flex h-12 w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 text-white"
             >
               저장
             </button>
