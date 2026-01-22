@@ -1,11 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DesignerProfileEditHero from '@/src/components/designerProfile/edit/DesignerProfileEditHero';
 import DesignerProfileEditRecruitments from '@/src/components/designerProfile/edit/DesignerProfileEditRecruitments';
 import DesignerProfileEditPortfolio from '@/src/components/designerProfile/edit/DesignerProfileEditPortfolio';
 import { AddressInput } from '@/src/components/signup';
+import { uploadProfileImage } from '@/src/apis';
+import { useToast } from '@/src/hooks/common/useToast';
+import { useUpdateMyDesignerProfile } from '@/src/hooks/queries/profile';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
 
 interface DesignerProfileEditViewProps {
@@ -21,6 +24,7 @@ interface DesignerProfileEditFormState {
   shop: string;
   addressLine1: string;
   addressLine2: string;
+  profileImageUrl: string;
 }
 
 export default function DesignerProfileEditView({
@@ -30,18 +34,21 @@ export default function DesignerProfileEditView({
   onBack,
 }: DesignerProfileEditViewProps) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const initialForm = useMemo(
-    () => ({
-      nickname: profile.nickname,
-      intro: profile.intro,
-      shop: profile.shop,
-      addressLine1: profile.address.line1,
-      addressLine2: profile.address.line2,
-    }),
-    [profile],
-  );
-  const [form, setForm] = useState<DesignerProfileEditFormState>(initialForm);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [profileImagePreviewUrl, setProfileImagePreviewUrl] = useState<string | null>(null);
+  const [profileImageVersion, setProfileImageVersion] = useState<number>(0);
+  const [form, setForm] = useState<DesignerProfileEditFormState>({
+    nickname: profile.nickname,
+    intro: profile.intro,
+    shop: profile.shop,
+    addressLine1: profile.address.line1,
+    addressLine2: profile.address.line2,
+    profileImageUrl: profile.profileImageUrl,
+  });
+  const updateProfileMutation = useUpdateMyDesignerProfile();
 
   const handleBack = () => {
     if (onBack) {
@@ -63,20 +70,100 @@ export default function DesignerProfileEditView({
     setForm((prev) => ({ ...prev, addressLine2: value }));
   };
 
-  const displayForm = isEditing ? form : initialForm;
-  const addressLine = [displayForm.addressLine1, displayForm.addressLine2].filter(Boolean).join(' ');
-  const handleStartEdit = () => {
-    setForm(initialForm);
-    setIsEditing(true);
+  const handleEditImage = () => {
+    if (isUploadingImage) return;
+    fileInputRef.current?.click();
   };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    event.target.value = '';
+    setIsUploadingImage(true);
+    const previousImageUrl = form.profileImageUrl;
+    const localPreviewUrl = URL.createObjectURL(file);
+    setProfileImagePreviewUrl(localPreviewUrl);
+    try {
+      const imageUrl = await uploadProfileImage(file);
+      setForm((prev) => ({ ...prev, profileImageUrl: imageUrl }));
+      setProfileImageVersion(Date.now());
+      updateProfileMutation.mutate(
+        {
+          nickname: form.nickname,
+          intro: form.intro,
+          shop: form.shop,
+          addressLine1: form.addressLine1,
+          addressLine2: form.addressLine2,
+        profileImageUrl: imageUrl,
+      },
+      {
+        onSuccess: (data) => {
+          const serverImageUrl = data.result?.profile?.profileImageUrl;
+          const nextImageUrl =
+            serverImageUrl && serverImageUrl !== previousImageUrl ? serverImageUrl : imageUrl;
+          setForm((prev) => ({ ...prev, profileImageUrl: nextImageUrl }));
+          setProfileImagePreviewUrl(null);
+          setProfileImageVersion(Date.now());
+        },
+          onError: () => {
+            setForm((prev) => ({ ...prev, profileImageUrl: previousImageUrl }));
+            setProfileImagePreviewUrl(null);
+            showToast('프로필 이미지 저장에 실패했습니다.');
+          },
+        },
+      );
+    } catch {
+      setForm((prev) => ({ ...prev, profileImageUrl: previousImageUrl }));
+      setProfileImagePreviewUrl(null);
+      showToast('이미지 업로드에 실패했습니다.');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!profileImagePreviewUrl?.startsWith('blob:')) return;
+    return () => {
+      URL.revokeObjectURL(profileImagePreviewUrl);
+    };
+  }, [profileImagePreviewUrl]);
+
+  const addressLine = [form.addressLine1, form.addressLine2].filter(Boolean).join(' ');
+
+  const handleSave = () => {
+    updateProfileMutation.mutate(
+      {
+        nickname: form.nickname,
+        intro: form.intro,
+        shop: form.shop,
+        addressLine1: form.addressLine1,
+        addressLine2: form.addressLine2,
+        profileImageUrl: form.profileImageUrl,
+      },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+        },
+      },
+    );
+  };
+
+  const resolvedProfileImageUrl = (() => {
+    if (profileImagePreviewUrl) return profileImagePreviewUrl;
+    if (!profileImageVersion) return form.profileImageUrl;
+    const separator = form.profileImageUrl.includes('?') ? '&' : '?';
+    return `${form.profileImageUrl}${separator}v=${profileImageVersion}`;
+  })();
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
       <DesignerProfileEditHero
-        profileImageUrl={profile.profileImageUrl}
+        profileImageUrl={resolvedProfileImageUrl}
         nickname={profile.nickname}
         onBack={handleBack}
+        onEditImage={handleEditImage}
       />
+      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
 
       <section className="px-4 pt-4 pb-6">
         {isEditing ? (
@@ -122,7 +209,7 @@ export default function DesignerProfileEditView({
 
             <button
               type="button"
-              onClick={() => setIsEditing(false)}
+              onClick={handleSave}
               className="text-body-1-semibold mt-4 flex h-12 w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 text-white"
             >
               저장
@@ -133,15 +220,15 @@ export default function DesignerProfileEditView({
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-body-2-semibold text-gray-900">이름</span>
-                <span className="text-body-2-medium text-gray-900">{displayForm.nickname}</span>
+                <span className="text-body-2-medium text-gray-900">{form.nickname}</span>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-body-2-semibold text-gray-900">한 줄 소개</span>
-                <p className="text-body-2-medium whitespace-pre-line text-gray-900">{displayForm.intro}</p>
+                <p className="text-body-2-medium whitespace-pre-line text-gray-900">{form.intro}</p>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-body-2-semibold text-gray-900">매장 이름</span>
-                <span className="text-body-2-medium text-gray-900">{displayForm.shop}</span>
+                <span className="text-body-2-medium text-gray-900">{form.shop}</span>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-body-2-semibold text-gray-900">매장 주소</span>
@@ -151,7 +238,7 @@ export default function DesignerProfileEditView({
 
             <button
               type="button"
-              onClick={handleStartEdit}
+              onClick={() => setIsEditing(true)}
               className="text-body-1-semibold mt-5 flex h-12 w-full cursor-pointer items-center justify-center rounded-full border border-gray-400 text-gray-900"
             >
               수정하기

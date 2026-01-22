@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { getMyDesignerProfile, getPublicDesignerProfile } from '@/src/apis/profile';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getMyDesignerProfile, getPublicDesignerProfile, updateMyDesignerProfile } from '@/src/apis/profile';
+import { useToast } from '@/src/hooks/common/useToast';
 import type { ApiResponse } from '@/src/types';
-import type { DesignerProfileResponse } from '@/src/types/profile';
+import type { DesignerProfileResponse, DesignerProfileUpdateRequest } from '@/src/types/profile';
 
 export const publicProfileKeys = {
   all: ['publicProfile'] as const,
@@ -47,5 +48,25 @@ export function useMyDesignerProfile(options: UseMyDesignerProfileOptions = {}) 
     queryFn: getMyDesignerProfile,
     enabled,
     staleTime: 1000 * 60 * 5, // 5분
+  });
+}
+
+/**
+ * 디자이너 본인 공개 프로필 수정 Hook
+ */
+export function useUpdateMyDesignerProfile() {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
+  return useMutation<ApiResponse<DesignerProfileResponse>, Error, DesignerProfileUpdateRequest>({
+    mutationFn: (payload) => updateMyDesignerProfile(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: designerProfileKeys.all });
+      queryClient.invalidateQueries({ queryKey: publicProfileKeys.all });
+      showToast('프로필이 저장되었습니다.');
+    },
+    onError: () => {
+      showToast('프로필 저장에 실패했습니다.');
+    },
   });
 }

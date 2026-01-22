@@ -30,3 +30,13 @@ export interface DesignerProfileResponse {
   profile: DesignerProfileInfo;
   openRecruitments: DesignerRecruitmentCard[];
 }
+
+// ===== 디자이너 공개 프로필 수정 요청 =====
+export interface DesignerProfileUpdateRequest {
+  nickname?: string | null;
+  intro?: string | null;
+  shop?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  profileImageUrl?: string | null;
+}

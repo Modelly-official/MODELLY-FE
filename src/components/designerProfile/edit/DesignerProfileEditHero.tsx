@@ -16,6 +16,8 @@ export default function DesignerProfileEditHero({
   onBack,
   onEditImage,
 }: DesignerProfileEditHeroProps) {
+  const isLocalPreview = profileImageUrl.startsWith('blob:') || profileImageUrl.startsWith('data:');
+
   return (
     <section className="relative h-[374px] w-full overflow-hidden rounded-b-[20px]">
       <Image
@@ -25,6 +27,7 @@ export default function DesignerProfileEditHero({
         sizes="100vw"
         priority
         className="object-cover"
+        unoptimized={isLocalPreview}
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_32%,var(--color-black)_100%)]" />
 
