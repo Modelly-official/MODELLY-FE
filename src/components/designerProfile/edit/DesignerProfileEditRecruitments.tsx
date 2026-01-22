@@ -4,9 +4,9 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
-import DotIcon from '@/public/icons/myRecruitment/dot.svg';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
+import DesignerProfileEditMenu from '@/src/components/designerProfile/edit/DesignerProfileEditMenu';
 import { formatPeriodToMonthDay } from '@/src/utils/common';
 import type { DesignerRecruitmentCard } from '@/src/types/profile';
 
@@ -100,44 +100,14 @@ export default function DesignerProfileEditRecruitments({
                   </div>
                 </Link>
 
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleMenu(recruitment.recruitmentId)}
-                    className="flex h-5 w-5 cursor-pointer items-center justify-center"
-                    aria-label="모집글 메뉴"
-                  >
-                    <DotIcon className="h-5 w-5" />
-                  </button>
-
-                  {isMenuOpen && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-10"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleCloseMenu();
-                        }}
-                      />
-                      <div className="absolute top-8 right-0 z-20 min-w-[47px] overflow-hidden rounded-[10px] border border-gray-400 bg-white">
-                        <button
-                          type="button"
-                          onClick={() => handleEdit(recruitment.recruitmentId)}
-                          className="text-caption-1-medium block w-full cursor-pointer border-b border-gray-400 px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
-                        >
-                          수정
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(recruitment.recruitmentId)}
-                          className="text-caption-1-medium block w-full cursor-pointer px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
+                <DesignerProfileEditMenu
+                  isOpen={isMenuOpen}
+                  onToggle={() => handleToggleMenu(recruitment.recruitmentId)}
+                  onClose={handleCloseMenu}
+                  onEdit={() => handleEdit(recruitment.recruitmentId)}
+                  onDelete={() => handleDelete(recruitment.recruitmentId)}
+                  ariaLabel="모집글 메뉴"
+                />
               </div>
             );
           })}

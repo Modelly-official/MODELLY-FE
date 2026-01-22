@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
-import DotIcon from '@/public/icons/myRecruitment/dot.svg';
+import DesignerProfileEditMenu from '@/src/components/designerProfile/edit/DesignerProfileEditMenu';
 
 interface DesignerProfileEditPortfolioProps {
   images: string[];
@@ -65,46 +65,20 @@ export default function DesignerProfileEditPortfolio({
                 />
               </div>
 
-              <button
-                type="button"
-                onClick={() => handleToggleMenu(index)}
-                className="absolute top-2 right-2 flex h-5 w-5 cursor-pointer items-center justify-center"
-                aria-label="포트폴리오 메뉴"
-              >
-                <DotIcon className="h-5 w-5" />
-              </button>
-
-              {isMenuOpen && (
-                <div className="absolute top-10 right-2 z-20 min-w-[47px] overflow-hidden rounded-xl border border-gray-400 bg-white">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(index)}
-                    className="text-caption-1-medium block w-full cursor-pointer border-b border-gray-400 px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
-                  >
-                    수정
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(index)}
-                    className="text-caption-1-medium block w-full cursor-pointer px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
-                  >
-                    삭제
-                  </button>
-                </div>
-              )}
+              <DesignerProfileEditMenu
+                isOpen={isMenuOpen}
+                onToggle={() => handleToggleMenu(index)}
+                onClose={handleCloseMenu}
+                onEdit={() => handleEdit(index)}
+                onDelete={() => handleDelete(index)}
+                ariaLabel="포트폴리오 메뉴"
+                wrapperClassName="absolute top-2 right-2"
+                buttonClassName="flex h-5 w-5 cursor-pointer items-center justify-center"
+                menuPositionClassName="top-8 right-0"
+              />
             </div>
           );
         })}
-
-        {openMenuIndex !== null && (
-          <div
-            className="fixed inset-0 z-10"
-            onClick={(event) => {
-              event.stopPropagation();
-              handleCloseMenu();
-            }}
-          />
-        )}
       </div>
     </section>
   );
