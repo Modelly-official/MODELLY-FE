@@ -64,7 +64,8 @@ export function useUpdateRecruitmentSubmit(recruitmentId: number) {
         {
           onSuccess: () => {
             reset();
-            router.push('/myRecruitment');
+            // 상세 페이지로 이동 (백엔드 처리 지연 대응 + 수정 결과 확인)
+            router.push(`/myRecruitment/${recruitmentId}`);
           },
           onError: () => {
             setIsSubmitting(false);
