@@ -25,7 +25,7 @@ export default function LoginRequiredModal({ isOpen, onClose, callbackUrl }: Log
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(28,28,30,0.4)]">
+    <div className="fixed inset-0 z-60 flex items-center justify-center bg-[rgba(28,28,30,0.4)]">
       <div className="relative w-[311px] rounded-[20px] bg-white px-5 py-6">
         {/* 안내 텍스트 */}
         <div className="mb-6 text-center">
