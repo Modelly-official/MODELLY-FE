@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation';
 import DesignerProfileEditHero from '@/src/components/designerProfile/edit/DesignerProfileEditHero';
 import DesignerProfileEditRecruitments from '@/src/components/designerProfile/edit/DesignerProfileEditRecruitments';
 import DesignerProfileEditPortfolio from '@/src/components/designerProfile/edit/DesignerProfileEditPortfolio';
+import { ConfirmModal } from '@/src/components/common';
 import { AddressInput } from '@/src/components/signup';
 import { uploadProfileImage } from '@/src/apis';
 import { useToast } from '@/src/hooks/common/useToast';
+import { useDeleteModal } from '@/src/hooks/custom/myRecruitment';
+import { useDeleteRecruitment } from '@/src/hooks/queries/myRecruitment';
 import { useUpdateMyDesignerProfile } from '@/src/hooks/queries/profile';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
 
@@ -48,7 +51,10 @@ export default function DesignerProfileEditView({
     addressLine2: profile.address.line2,
     profileImageUrl: profile.profileImageUrl,
   });
+  const [recruitments, setRecruitments] = useState(openRecruitments);
   const updateProfileMutation = useUpdateMyDesignerProfile();
+  const { isOpen: deleteModalOpen, selectedId: selectedRecruitmentId, openModal, closeModal } = useDeleteModal<number>();
+  const { mutate: deleteRecruitment, isPending: isDeleting } = useDeleteRecruitment();
 
   const handleBack = () => {
     if (onBack) {
@@ -146,6 +152,23 @@ export default function DesignerProfileEditView({
         },
       },
     );
+  };
+
+  const handleRecruitmentEdit = (recruitmentId: number) => {
+    router.push(`/myRecruitment/${recruitmentId}/edit`);
+  };
+
+  const handleRecruitmentDeleteConfirm = () => {
+    if (!selectedRecruitmentId) return;
+    const previousRecruitments = recruitments;
+    setRecruitments((prev) => prev.filter((item) => item.recruitmentId !== selectedRecruitmentId));
+    deleteRecruitment(selectedRecruitmentId, {
+      onSuccess: closeModal,
+      onError: () => {
+        setRecruitments(previousRecruitments);
+        closeModal();
+      },
+    });
   };
 
   const resolvedProfileImageUrl = (() => {
@@ -248,12 +271,26 @@ export default function DesignerProfileEditView({
       </section>
 
       <section className="px-4">
-        <DesignerProfileEditRecruitments openRecruitments={openRecruitments} />
+        <DesignerProfileEditRecruitments
+          openRecruitments={recruitments}
+          onEdit={handleRecruitmentEdit}
+          onDelete={openModal}
+          onViewAll={() => router.push('/myRecruitment')}
+        />
       </section>
 
       <section className="px-4 pt-6 pb-[calc(24px+env(safe-area-inset-bottom))]">
         <DesignerProfileEditPortfolio images={portfolioImages} />
       </section>
+
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={closeModal}
+        onConfirm={handleRecruitmentDeleteConfirm}
+        message="모집글을 삭제하시겠습니까?"
+        confirmText="삭제"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
