@@ -2,12 +2,13 @@
 
 import { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { useInfiniteScroll } from '@/src/hooks/common/useInfiniteScroll';
 import {
   useDesignerReviews,
-  usePublicDesignerReviewThumbnailsInfinite,
+  usePublicDesignerReviewListInfinite,
 } from '@/src/hooks/queries/review';
 
 interface DesignerReviewPhotoGalleryViewProps {
@@ -28,27 +29,26 @@ export default function DesignerReviewPhotoGalleryView({
     { enabled: isOwnerMode && canFetchPhotos },
   );
 
-  const publicThumbnailQuery = usePublicDesignerReviewThumbnailsInfinite({
+  const publicReviewQuery = usePublicDesignerReviewListInfinite({
     designerId,
     params: { size: 12 },
     enabled: !isOwnerMode && canFetchPhotos,
   });
 
-  const activeQuery = isOwnerMode ? ownerReviewQuery : publicThumbnailQuery;
+  const activeQuery = isOwnerMode ? ownerReviewQuery : publicReviewQuery;
+  const detailBasePath = isOwnerMode
+    ? '/myProfile/reviews/photos'
+    : `/designer/${designerId}/reviews/photos`;
 
-  const images = useMemo(() => {
-    if (isOwnerMode) {
-      const items = ownerReviewQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
-      return items
-        .map((item) => item.reviewImages?.[0])
-        .filter((imageUrl): imageUrl is string => Boolean(imageUrl));
-    }
-
-    const items = publicThumbnailQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
+  const photoItems = useMemo(() => {
+    const items = activeQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
     return items
-      .map((item) => item.reviewThumbnail)
-      .filter((imageUrl): imageUrl is string => Boolean(imageUrl));
-  }, [isOwnerMode, ownerReviewQuery.data?.pages, publicThumbnailQuery.data?.pages]);
+      .map((item) => ({
+        reviewId: item.reviewId,
+        imageUrl: item.reviewImages?.[0],
+      }))
+      .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
+  }, [activeQuery.data?.pages]);
 
   const { loadMoreRef } = useInfiniteScroll({
     hasNextPage: activeQuery.hasNextPage ?? false,
@@ -85,15 +85,19 @@ export default function DesignerReviewPhotoGalleryView({
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-2.5 px-4 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
-          {images.length === 0 ? (
+          {photoItems.length === 0 ? (
             <div className="col-span-3 flex items-center justify-center rounded-2xl bg-gray-100 py-8">
               <p className="text-body-2-medium text-gray-500">등록된 사진이 없습니다.</p>
             </div>
           ) : (
-            images.map((imageUrl, index) => (
-              <div key={`${imageUrl}-${index}`} className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100">
-                <Image src={imageUrl} alt="" fill sizes="33vw" className="object-cover" />
-              </div>
+            photoItems.map((item, index) => (
+              <Link
+                key={`${item.reviewId}-${index}`}
+                href={`${detailBasePath}/${item.reviewId}`}
+                className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100"
+              >
+                <Image src={item.imageUrl} alt="" fill sizes="33vw" className="object-cover" />
+              </Link>
             ))
           )}
 
