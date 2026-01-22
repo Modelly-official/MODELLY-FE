@@ -165,7 +165,7 @@ export default function DesignerProfileView({
       return;
     }
     if (actionType === 'edit') {
-      router.push('/mypage/profile/edit');
+      router.push('/myProfile/edit');
     }
   };
 
