@@ -34,8 +34,8 @@ export default function DesignerReviewsPage() {
     return designerReviewsQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
   }, [designerReviewsQuery.data?.pages]);
 
-  // 전체 개수
-  const totalCount = reviews.length;
+  // 전체 개수 (API 응답의 totalCount 사용)
+  const totalCount = designerReviewsQuery.data?.pages[0]?.result?.totalCount ?? 0;
 
   // 답글 달기 클릭
   const handleReplyClick = (reviewId: number) => {

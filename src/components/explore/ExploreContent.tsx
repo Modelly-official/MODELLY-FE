@@ -28,6 +28,8 @@ export default function ExploreContent() {
   const {
     recruitments,
     designers,
+    recruitmentTotalCount,
+    designerTotalCount,
     isLoading,
     isFetchingNext,
     infiniteScrollProps,
@@ -46,8 +48,8 @@ export default function ExploreContent() {
   // Infinite scroll
   const { loadMoreRef } = useInfiniteScroll(infiniteScrollProps);
 
-  // Total count
-  const totalCount = filters.view === 'recruitment' ? recruitments.length : designers.length;
+  // Total count (API 응답의 totalCount 사용)
+  const totalCount = filters.view === 'recruitment' ? recruitmentTotalCount : designerTotalCount;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">

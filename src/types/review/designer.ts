@@ -27,6 +27,7 @@ export interface DesignerReviewsResponse {
   items: DesignerReviewItem[];
   hasNext: boolean;
   nextCursor?: number | null;
+  totalCount: number;
 }
 
 // ===== 답글 작성 요청 =====
