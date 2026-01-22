@@ -7,6 +7,7 @@ import { formatDistrict } from '@/src/utils/common';
 import { useToggleDesignerLike } from '@/src/hooks/queries/likes';
 import LocationIcon from '@/public/icons/explore/location.svg';
 import ProfileIcon from '@/public/icons/myRecruitment/mypage-active.svg';
+import StarIcon from '@/public/icons/common/star.svg';
 
 interface LikedDesignerCardProps {
   designer: LikedDesignerItem;
@@ -56,6 +57,16 @@ export default function LikedDesignerCard({ designer }: LikedDesignerCardProps) 
               <span>·</span>
               <span className="truncate">{designer.shopName}</span>
             </div>
+
+            {/* 별점 */}
+            {designer.averageRating != null && (
+              <div className="flex items-center gap-1">
+                <StarIcon className="size-3.5 text-star" />
+                <span className="text-caption-1-medium text-gray-800">
+                  {designer.averageRating.toFixed(1)} ({designer.reviewCount?.toLocaleString() ?? 0})
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
