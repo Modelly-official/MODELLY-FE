@@ -37,7 +37,7 @@ export default function ChatInput({
   };
 
   return (
-    <div className="bg-transparent px-4 py-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+    <div className="bg-transparent px-4 py-3">
       <div className="flex items-center gap-2">
         <button
           type="button"

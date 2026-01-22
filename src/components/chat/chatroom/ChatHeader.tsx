@@ -25,7 +25,7 @@ export default function ChatHeader({
   const canShowReservation = showReservation && !!onReservationClick;
 
   return (
-    <header className="relative flex min-h-13 items-center px-4 pt-[calc(env(safe-area-inset-top)+12px)] pb-3">
+    <header className="safe-area-top relative flex h-13 items-center px-4 py-3">
       <button
         type="button"
         onClick={() => router.push('/chat')}
