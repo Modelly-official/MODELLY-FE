@@ -65,10 +65,7 @@ export default function DesignerProfileView({
   const reviewDesignerId = Number(profile.designerId ?? profile.designerUserId);
   const canFetchPublicReviews = Number.isFinite(reviewDesignerId) && reviewDesignerId > 0;
 
-  const designerReviewsQuery = useDesignerReviews(
-    { size: 10 },
-    { enabled: reviewQueryEnabled && isOwnerProfile },
-  );
+  const designerReviewsQuery = useDesignerReviews({ size: 10 }, { enabled: reviewQueryEnabled && isOwnerProfile });
 
   const reviewListQuery = usePublicDesignerReviewList({
     designerId: reviewDesignerId,
@@ -103,8 +100,10 @@ export default function DesignerProfileView({
     const ownerPages = designerReviewsQuery.data?.pages ?? [];
     const ownerItems = ownerPages.flatMap((page) => page.result?.items ?? []);
     const ownerTotalCount = ownerPages[0]?.result?.totalCount;
-    const listItems = isOwnerProfile ? ownerItems : publicResult?.items ?? [];
-    const totalCount = isOwnerProfile ? ownerTotalCount ?? listItems.length : publicResult?.totalCount ?? listItems.length;
+    const listItems = isOwnerProfile ? ownerItems : (publicResult?.items ?? []);
+    const totalCount = isOwnerProfile
+      ? (ownerTotalCount ?? listItems.length)
+      : (publicResult?.totalCount ?? listItems.length);
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
     const thumbnailResult = reviewThumbnailQuery.data?.result;
@@ -122,9 +121,9 @@ export default function DesignerProfileView({
     const totalPreviewCount =
       thumbnailItems.length > 0
         ? thumbnailResult?.hasNext
-          ? thumbnailResult?.totalCount ?? previewSourceItems.length ?? totalCount
+          ? (thumbnailResult?.totalCount ?? previewSourceItems.length ?? totalCount)
           : previewSourceItems.length
-        : previewSourceItems.length ?? totalCount;
+        : (previewSourceItems.length ?? totalCount);
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
 
     return {
@@ -133,7 +132,12 @@ export default function DesignerProfileView({
       previewImages,
       moreCount,
     };
-  }, [designerReviewsQuery.data?.pages, isOwnerProfile, reviewListQuery.data?.result, reviewThumbnailQuery.data?.result]);
+  }, [
+    designerReviewsQuery.data?.pages,
+    isOwnerProfile,
+    reviewListQuery.data?.result,
+    reviewThumbnailQuery.data?.result,
+  ]);
 
   const isReviewLoading = reviewQueryEnabled
     ? isOwnerProfile
@@ -157,7 +161,6 @@ export default function DesignerProfileView({
     router.push(reviewDetailPath);
   };
 
-
   const handleBack = () => {
     if (onBack) {
       onBack();
@@ -173,6 +176,25 @@ export default function DesignerProfileView({
     }
     if (actionType === 'edit') {
       router.push('/myProfile/edit');
+      return;
+    }
+    if (actionType === 'share') {
+      if (typeof window === 'undefined') return;
+      const shareUrl = window.location.href;
+      if (navigator.share) {
+        navigator.share({ url: shareUrl }).catch(() => {
+          // 사용자가 공유 시트 닫아도 에러 토스트 띄우지 않음
+        });
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard
+          .writeText(shareUrl)
+          .then(() => showToast('공유 링크가 복사되었습니다.'))
+          .catch(() => showToast('공유 링크 복사에 실패했습니다.'));
+        return;
+      }
+      showToast('공유 링크를 복사할 수 없습니다.');
     }
   };
 
