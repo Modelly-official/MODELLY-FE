@@ -185,10 +185,31 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
     })),
 
   removeImageFile: (index) =>
-    set((state) => ({
-      imageFiles: state.imageFiles.filter((_, i) => i !== index),
-      imagePreviewUrls: state.imagePreviewUrls.filter((_, i) => i !== index),
-    })),
+    set((state) => {
+      const urlToRemove = state.imagePreviewUrls[index];
+
+      // blob URL 삭제 시에만 imageFiles에서도 제거
+      let newImageFiles = state.imageFiles;
+      if (urlToRemove?.startsWith('blob:')) {
+        // 해당 index 이전의 blob URL 개수 = imageFiles에서의 실제 인덱스
+        const blobIndexInFiles = state.imagePreviewUrls
+          .slice(0, index)
+          .filter((url) => url.startsWith('blob:')).length;
+        newImageFiles = state.imageFiles.filter((_, i) => i !== blobIndexInFiles);
+      }
+
+      // 새 이미지 목록
+      const newPreviewUrls = state.imagePreviewUrls.filter((_, i) => i !== index);
+
+      // 첫 번째 이미지 삭제 시 thumbnail 동기화
+      const newThumbnail = index === 0 ? (newPreviewUrls[0] || '') : state.thumbnail;
+
+      return {
+        imageFiles: newImageFiles,
+        imagePreviewUrls: newPreviewUrls,
+        thumbnail: newThumbnail,
+      };
+    }),
 
   setImagePreviewUrls: (urls) => set({ imagePreviewUrls: urls }),
 

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateRecruitment } from '@/src/apis';
 import { useToast } from '@/src/hooks/common/useToast';
 import { myRecruitmentKeys } from './useDesignerRecruitments';
+import { recruitmentKeys } from '../explore/useRecruitments';
 import type { ApiResponse, UpdateRecruitmentRequest, RecruitmentMutationResponse } from '@/src/types';
 
 interface UpdateRecruitmentParams {
@@ -24,9 +25,13 @@ export function useUpdateRecruitment() {
     mutationFn: ({ recruitmentId, request }: UpdateRecruitmentParams) => {
       return updateRecruitment(recruitmentId, request);
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       // 내 공고 목록 쿼리 갱신
       queryClient.invalidateQueries({ queryKey: myRecruitmentKeys.lists() });
+      // 공고 상세 쿼리 갱신
+      queryClient.invalidateQueries({
+        queryKey: recruitmentKeys.detail(variables.recruitmentId),
+      });
       showToast('공고가 수정되었습니다.');
     },
     onError: () => {

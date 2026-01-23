@@ -35,9 +35,15 @@ export function useCreateRecruitmentSubmit() {
 
       // 3. API 호출
       createRecruitment(request, {
-        onSuccess: () => {
+        onSuccess: (response) => {
           reset();
-          router.push('/myRecruitment');
+          // 상세 페이지로 이동 (썸네일 생성 지연 대응 + 생성 결과 확인)
+          const newRecruitmentId = response.result?.recruitmentId;
+          if (newRecruitmentId) {
+            router.push(`/myRecruitment/${newRecruitmentId}`);
+          } else {
+            router.push('/myRecruitment');
+          }
         },
         onError: () => {
           setIsSubmitting(false);
