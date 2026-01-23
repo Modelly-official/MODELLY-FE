@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toggleRecruitmentLike, toggleDesignerLike } from '@/src/apis';
-import { useAuthStore } from '@/src/stores';
+import { getAccessToken } from '@/src/stores';
 import { useToast } from '@/src/hooks/common/useToast';
 import { recruitmentKeys } from '../explore/useRecruitments';
 import { designerKeys } from '../explore/useDesigners';
@@ -13,12 +13,11 @@ import type { ApiResponse } from '@/src/types';
  */
 export function useToggleRecruitmentLike() {
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuthStore();
   const { showToast } = useToast();
 
   return useMutation<ApiResponse<string>, Error, number>({
     mutationFn: (recruitmentId: number) => {
-      if (!isAuthenticated) {
+      if (!getAccessToken()) {
         showToast('로그인이 필요한 기능입니다.');
         return Promise.reject(new Error('Unauthorized'));
       }
@@ -40,12 +39,11 @@ export function useToggleRecruitmentLike() {
  */
 export function useToggleDesignerLike() {
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuthStore();
   const { showToast } = useToast();
 
   return useMutation<ApiResponse<string>, Error, number>({
     mutationFn: (designerId: number) => {
-      if (!isAuthenticated) {
+      if (!getAccessToken()) {
         showToast('로그인이 필요한 기능입니다.');
         return Promise.reject(new Error('Unauthorized'));
       }
