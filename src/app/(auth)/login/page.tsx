@@ -55,8 +55,10 @@ const LoginContent = () => {
             });
 
             // 로그인 성공 시 원래 경로로 이동 (fallback: 홈)
+            // Open Redirect 방지: 단일 슬래시로 시작하는 경로만 허용 (//evil.com 차단)
             const callbackUrl = searchParams.get('callbackUrl');
-            const redirectUrl = callbackUrl && callbackUrl.startsWith('/') ? callbackUrl : '/';
+            const isValidCallback = callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//');
+            const redirectUrl = isValidCallback ? callbackUrl : '/';
             window.location.replace(redirectUrl); // 전체 페이지 리로드로 쿠키 동기화 보장
           } else {
             showToast(response.message || '로그인 실패');
