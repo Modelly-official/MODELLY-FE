@@ -12,6 +12,10 @@ import {
   usePublicDesignerReviewList,
   usePublicDesignerReviewThumbnails,
 } from '@/src/hooks/queries/review';
+import { useToggleDesignerLike } from '@/src/hooks/queries/likes';
+import { useCreateChatRoom } from '@/src/hooks/queries/chat';
+import { useToast } from '@/src/hooks/common/useToast';
+import { useAuthReady } from '@/src/hooks/custom/mypage';
 import type { DesignerReviewItem as DesignerReviewCardItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
 import type { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
@@ -50,6 +54,10 @@ export default function DesignerProfileView({
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'portfolio' | 'review'>('portfolio');
   const [isLiked, setIsLiked] = useState(profile.isLiked);
+  const { mutate: toggleLike } = useToggleDesignerLike();
+  const createChatRoom = useCreateChatRoom();
+  const { showToast } = useToast();
+  const { authReady, isLoggedIn } = useAuthReady();
   const addressParts = [profile.address.line1, profile.address.line2].filter(Boolean);
   const addressLine = addressParts.join(' ');
   const isOwnerProfile = actionType === 'edit';
@@ -170,7 +178,33 @@ export default function DesignerProfileView({
   };
 
   const handleLikeToggle = () => {
+    if (!Number.isFinite(profile.designerId) || profile.designerId <= 0) return;
     setIsLiked((prev) => !prev);
+    toggleLike(profile.designerId, {
+      onError: () => {
+        setIsLiked((prev) => !prev);
+      },
+    });
+  };
+
+  const handleChat = () => {
+    if (!authReady) return;
+    if (!isLoggedIn) {
+      showToast('로그인이 필요한 기능입니다.');
+      return;
+    }
+    if (!Number.isFinite(profile.designerUserId) || profile.designerUserId <= 0) {
+      showToast('채팅 대상 정보를 찾을 수 없습니다.');
+      return;
+    }
+    createChatRoom.mutate(profile.designerUserId, {
+      onSuccess: (response) => {
+        router.push(`/chat/${response.result.chatRoomId}`);
+      },
+      onError: () => {
+        showToast('채팅방 생성에 실패했습니다');
+      },
+    });
   };
 
   return (
@@ -201,7 +235,7 @@ export default function DesignerProfileView({
         onReviewViewAll={handleReviewViewAll}
       />
 
-      {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} />}
+      {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} onChat={handleChat} />}
     </div>
   );
 }
