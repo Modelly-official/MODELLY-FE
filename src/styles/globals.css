@@ -18,6 +18,13 @@
 
 /* Base Styles */
 @layer base {
+  /* iOS Safari input 자동 확대 방지 - !important로 유틸리티 클래스 오버라이드 */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
   html,
   body {
     width: 100%;
