@@ -46,6 +46,7 @@ export default function DesignerProfileEditPortfolio({
           className="flex cursor-pointer items-center justify-center text-gray-800"
           aria-label="포트폴리오 전체보기"
         >
+          {/* 포트폴리오 페이지 구현 후 연결 해야함 */}
           <ChevronRightIcon className="h-5 w-5" />
         </button>
       </div>
