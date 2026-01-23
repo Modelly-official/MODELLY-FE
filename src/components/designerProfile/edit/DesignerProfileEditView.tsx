@@ -92,39 +92,14 @@ export default function DesignerProfileEditView({
     try {
       const imageUrl = await uploadProfileImage(file);
       setForm((prev) => ({ ...prev, profileImageUrl: imageUrl }));
+      setProfileImagePreviewUrl(null);
       setProfileImageVersion(Date.now());
-      updateProfileMutation.mutate(
-        {
-          nickname: form.nickname,
-          intro: form.intro,
-          shop: form.shop,
-          addressLine1: form.addressLine1,
-          addressLine2: form.addressLine2,
-        profileImageUrl: imageUrl,
-      },
-      {
-        onSuccess: (data) => {
-          const serverImageUrl = data.result?.profile?.profileImageUrl;
-          const nextImageUrl =
-            serverImageUrl && serverImageUrl !== previousImageUrl ? serverImageUrl : imageUrl;
-          setForm((prev) => ({ ...prev, profileImageUrl: nextImageUrl }));
-          setProfileImagePreviewUrl(null);
-          setProfileImageVersion(Date.now());
-        },
-          onError: () => {
-            setForm((prev) => ({ ...prev, profileImageUrl: previousImageUrl }));
-            setProfileImagePreviewUrl(null);
-            showToast('프로필 이미지 저장에 실패했습니다.');
-          },
-        },
-      );
     } catch {
       setForm((prev) => ({ ...prev, profileImageUrl: previousImageUrl }));
       setProfileImagePreviewUrl(null);
       showToast('이미지 업로드에 실패했습니다.');
-    } finally {
-      setIsUploadingImage(false);
     }
+    setIsUploadingImage(false);
   };
 
   useEffect(() => {
