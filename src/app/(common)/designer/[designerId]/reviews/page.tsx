@@ -1,14 +1,10 @@
 'use client';
 
-import { use } from 'react';
+import { useParams } from 'next/navigation';
 import DesignerReviewAllView from '@/src/components/designerProfile/review/DesignerReviewAllView';
 
-interface PageProps {
-  params: Promise<{ designerId: string }>;
-}
-
-export default function DesignerReviewsPage({ params }: PageProps) {
-  const { designerId } = use(params);
+export default function DesignerReviewsPage() {
+  const { designerId } = useParams<{ designerId: string }>();
   const numericDesignerId = Number(designerId);
 
   return <DesignerReviewAllView designerId={Number.isNaN(numericDesignerId) ? 0 : numericDesignerId} />;

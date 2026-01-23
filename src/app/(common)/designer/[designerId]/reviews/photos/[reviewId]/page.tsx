@@ -1,14 +1,10 @@
 'use client';
 
-import { use } from 'react';
+import { useParams } from 'next/navigation';
 import DesignerReviewPhotoDetailView from '@/src/components/designerProfile/review/DesignerReviewPhotoDetailView';
 
-interface PageProps {
-  params: Promise<{ designerId: string; reviewId: string }>;
-}
-
-export default function DesignerReviewPhotoDetailPage({ params }: PageProps) {
-  const { designerId, reviewId } = use(params);
+export default function DesignerReviewPhotoDetailPage() {
+  const { designerId, reviewId } = useParams<{ designerId: string; reviewId: string }>();
   const numericDesignerId = Number(designerId);
   const numericReviewId = Number(reviewId);
 
