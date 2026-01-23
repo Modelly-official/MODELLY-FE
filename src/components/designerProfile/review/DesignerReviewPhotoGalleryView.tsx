@@ -98,8 +98,15 @@ export default function DesignerReviewPhotoGalleryView({
                 key={`${item.reviewId}-${index}`}
                 href={`${detailBasePath}/${item.reviewId}?imageIndex=${item.imageIndex}`}
                 className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100"
+                aria-label={`리뷰 사진 ${index + 1} 보기`}
               >
-                <Image src={item.imageUrl} alt="" fill sizes="33vw" className="object-cover" />
+                <Image
+                  src={item.imageUrl}
+                  alt={`리뷰 사진 ${index + 1}`}
+                  fill
+                  sizes="33vw"
+                  className="object-cover"
+                />
               </Link>
             ))
           )}
