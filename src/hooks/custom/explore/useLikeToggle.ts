@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useAuthStore } from '@/src/stores';
+import { getAccessToken } from '@/src/stores';
 
 interface UseLikeToggleOptions {
   serverValue: boolean;
@@ -21,8 +21,6 @@ interface UseLikeToggleReturn {
  * optimistic update와 서버 동기화를 모두 지원
  */
 export function useLikeToggle({ serverValue, onToggle }: UseLikeToggleOptions): UseLikeToggleReturn {
-  const { isAuthenticated } = useAuthStore();
-
   // 토글 카운트: 홀수면 서버 값 반전
   const [toggleCount, setToggleCount] = useState(0);
   const [trackedServerValue, setTrackedServerValue] = useState(serverValue);
@@ -42,7 +40,7 @@ export function useLikeToggle({ serverValue, onToggle }: UseLikeToggleOptions): 
       e.stopPropagation();
 
       // 로그인하지 않은 경우: UI 토글 없이 콜백만 실행 (Toast 표시용)
-      if (!isAuthenticated) {
+      if (!getAccessToken()) {
         onToggle?.();
         return;
       }
@@ -50,7 +48,7 @@ export function useLikeToggle({ serverValue, onToggle }: UseLikeToggleOptions): 
       setToggleCount((prev) => prev + 1);
       onToggle?.();
     },
-    [onToggle, isAuthenticated]
+    [onToggle]
   );
 
   return { isLiked, handleClick };

@@ -19,6 +19,7 @@ import type { DesignerReviewSummaryData } from '@/src/components/designerProfile
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
+import { getAccessToken } from '@/src/stores';
 import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
 import {
   useDesignerReviews,
@@ -180,6 +181,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
 
   const handleFavoriteClick = () => {
+    // 비로그인 시: UI 토글 없이 mutation만 호출 (Toast 표시용)
+    if (!getAccessToken()) {
+      toggleLike(recruitmentId);
+      return;
+    }
     setToggleCount((prev) => prev + 1); // Optimistic update
     toggleLike(recruitmentId);
   };
