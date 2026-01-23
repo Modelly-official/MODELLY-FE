@@ -17,6 +17,8 @@ const DEFAULT_PAGE_SIZE = 6;
 interface GetRecruitmentsOptions {
   /** mock endpoint 오버라이드 (기본: 'recruitments') */
   mockEndpoint?: MockEndpoint;
+  /** SSR에서 쿠키로 전달받은 토큰 (선택) */
+  accessToken?: string;
 }
 
 /**
@@ -27,15 +29,22 @@ export async function getRecruitments(
   params: RecruitmentListParams = {},
   options: GetRecruitmentsOptions = {}
 ): Promise<ApiResponse<RecruitmentListResponse>> {
-  const { mockEndpoint = 'recruitments' } = options;
+  const { mockEndpoint = 'recruitments', accessToken } = options;
   if (isMockEnabled(mockEndpoint)) {
     return getMockRecruitments(params);
   }
 
   const { size = DEFAULT_PAGE_SIZE, ...restParams } = params;
+
+  // SSR에서 전달받은 토큰이 있으면 헤더에 추가
+  const headers: Record<string, string> = {};
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+
   const { data } = await axiosInstance.get<ApiResponse<RecruitmentListResponse>>(
     '/recruitments',
-    { params: { ...restParams, size } }
+    { params: { ...restParams, size }, headers }
   );
   return data;
 }
