@@ -122,6 +122,7 @@ function getMockRecruitments(
       items,
       hasNext,
       nextCursor,
+      totalCount: filtered.length,
     },
   });
 }

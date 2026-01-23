@@ -54,16 +54,17 @@ export default function ModelReviewsPage() {
     return unreviewedQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
   }, [unreviewedQuery.data?.pages]);
 
-  // 리뷰 미작성 개수
-  const unreviewedCount = unreviewedReservations.length;
+  // 리뷰 미작성 개수 (API 응답의 totalCount 사용)
+  const unreviewedCount = unreviewedQuery.data?.pages[0]?.result?.totalCount ?? 0;
 
   // 작성한 리뷰 목록 데이터 가공
   const writtenReviews = useMemo(() => {
     return writtenQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
   }, [writtenQuery.data?.pages]);
 
-  // 현재 탭에 따른 총 개수
-  const totalCount = activeTab === 'unreviewed' ? unreviewedCount : writtenReviews.length;
+  // 현재 탭에 따른 총 개수 (API 응답의 totalCount 사용)
+  const writtenCount = writtenQuery.data?.pages[0]?.result?.totalCount ?? 0;
+  const totalCount = activeTab === 'unreviewed' ? unreviewedCount : writtenCount;
 
   // 리뷰 수정 핸들러
   const handleEditReview = (reviewId: number) => {

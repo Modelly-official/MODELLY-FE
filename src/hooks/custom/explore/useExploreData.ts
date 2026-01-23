@@ -71,6 +71,10 @@ export function useExploreData({
     });
   }, [designerData]);
 
+  // totalCount 추출 (첫 페이지에서 가져옴)
+  const recruitmentTotalCount = recruitmentData?.pages[0]?.result?.totalCount ?? 0;
+  const designerTotalCount = designerData?.pages[0]?.result?.totalCount ?? 0;
+
   // Loading states
   const isWaitingForLocation = needsLocation && !hasLocation && isLocationLoading;
   const isLoading = isWaitingForLocation || (view === 'recruitment' ? isLoadingRecruitments : isLoadingDesigners);
@@ -86,6 +90,8 @@ export function useExploreData({
   return {
     recruitments,
     designers,
+    recruitmentTotalCount,
+    designerTotalCount,
     isLoading,
     isFetchingNext,
     infiniteScrollProps,

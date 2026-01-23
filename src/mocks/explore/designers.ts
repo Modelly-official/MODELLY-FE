@@ -115,6 +115,7 @@ export const mockDesignerListResponse: DesignerListResponse = {
   items: mockDesignerItems.slice(0, 6),
   hasNext: true,
   nextCursor: 6,
+  totalCount: mockDesignerItems.length,
 };
 
 // Mock 디자이너 리스트 응답 (두 번째 페이지)
@@ -122,4 +123,5 @@ export const mockDesignerListResponse2: DesignerListResponse = {
   items: mockDesignerItems.slice(6, 8),
   hasNext: false,
   nextCursor: 8,
+  totalCount: mockDesignerItems.length,
 };

@@ -43,7 +43,7 @@ export interface DesignerReviewThumbnailsResponse {
   items: DesignerReviewThumbnailItem[];
   hasNext: boolean;
   nextCursor?: number | null;
-  totalCount?: number;
+  totalCount: number;
 }
 
 // ===== 디자이너 리뷰 상세 응답 =====

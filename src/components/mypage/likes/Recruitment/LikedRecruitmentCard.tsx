@@ -3,11 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { LikedRecruitmentItem } from '@/src/types';
-import { useRecruitmentDetail } from '@/src/hooks/queries/explore/useRecruitmentDetail';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 import { formatDistrict } from '@/src/utils/common';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
-import { Skeleton } from '@/src/components/common/Skeleton';
 import LocationIcon from '@/public/icons/explore/location.svg';
 import StarIcon from '@/public/icons/common/star.svg';
 
@@ -22,12 +20,6 @@ export default function LikedRecruitmentCard({
 }: LikedRecruitmentCardProps) {
   const { mutate: toggleLike, isPending } = useToggleRecruitmentLike();
 
-  // 공고 상세 정보 조회
-  const { data: detailResponse, isLoading: isDetailLoading } = useRecruitmentDetail(
-    recruitment.recruitmentId
-  );
-  const detail = detailResponse?.result;
-
   const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -36,17 +28,14 @@ export default function LikedRecruitmentCard({
     }
   };
 
-  // 썸네일 (찜 목록 API 또는 상세 API에서)
-  const thumbnailSrc = recruitment.thumbnail || detail?.imageUrls?.[0];
-
   return (
     <Link href={`/post/${recruitment.recruitmentId}`} className="flex flex-col gap-2.5">
       {/* 이미지 */}
       <div className="relative h-[210px] w-full overflow-hidden bg-gray-200">
-        {thumbnailSrc ? (
+        {recruitment.recruitmentThumbnail ? (
           <Image
-            src={thumbnailSrc}
-            alt={detail?.title ?? '공고 이미지'}
+            src={recruitment.recruitmentThumbnail}
+            alt={recruitment.title}
             fill
             sizes="50vw"
             className="object-cover"
@@ -75,57 +64,40 @@ export default function LikedRecruitmentCard({
 
       {/* 정보 */}
       <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pr-[9px] pl-4' : 'pr-4 pl-[10px]'}`}>
-        {isDetailLoading ? (
-          // 로딩 상태
-          <div className="flex flex-col gap-1">
-            <Skeleton className="h-5 w-3/4" />
-            <div className="flex flex-col gap-0.5">
-              <Skeleton className="h-4 w-2/3" />
-              <Skeleton className="h-4 w-1/2" />
+        <div className="flex flex-col gap-1">
+          {/* 제목 */}
+          <h3 className="text-body-1-semibold truncate text-black">{recruitment.title}</h3>
+
+          {/* 디자이너 정보 */}
+          <div className="flex flex-col gap-0.5">
+            <p className="text-caption-1-medium text-gray-800">
+              {recruitment.designerName} · {recruitment.shop}
+            </p>
+
+            {/* 위치 */}
+            <div className="flex items-center gap-1 px-px">
+              <LocationIcon className="shrink-0" />
+              <span className="text-caption-1-medium text-gray-800">
+                {formatDistrict(recruitment.shopAddress)}
+              </span>
             </div>
-          </div>
-        ) : detail ? (
-          // 상세 정보 표시
-          <div className="flex flex-col gap-1">
-            {/* 제목 */}
-            <h3 className="text-body-1-semibold truncate text-black">{detail.title}</h3>
 
-            {/* 디자이너 정보 */}
-            <div className="flex flex-col gap-0.5">
-              <p className="text-caption-1-medium text-gray-800">
-                {detail.designerProfile.designerName} · {detail.designerProfile.shop}
-              </p>
-
-              {/* 위치 */}
-              <div className="flex items-center gap-1 px-px">
-                <LocationIcon className="shrink-0" />
+            {/* 별점 */}
+            {recruitment.averageRating != null && (
+              <div className="flex items-center gap-1">
+                <StarIcon className="size-3.5 text-star" />
                 <span className="text-caption-1-medium text-gray-800">
-                  {formatDistrict(detail.designerProfile.shopAddress)}
+                  {recruitment.averageRating.toFixed(1)} ({recruitment.reviewCount?.toLocaleString() ?? 0})
                 </span>
               </div>
-
-              {/* 별점 */}
-              {detail.averageRating != null && (
-                <div className="flex items-center gap-1">
-                  <StarIcon className="size-3.5 text-star" />
-                  <span className="text-caption-1-medium text-gray-800">
-                    {detail.averageRating.toFixed(1)} ({detail.reviewCount?.toLocaleString() ?? 0})
-                  </span>
-                </div>
-              )}
-            </div>
+            )}
           </div>
-        ) : (
-          // 정보 없음
-          <div className="flex flex-col gap-1">
-            <span className="text-caption-1-medium text-gray-500">정보를 불러올 수 없습니다</span>
-          </div>
-        )}
+        </div>
 
         {/* 서비스 태그 */}
-        {detail?.subCategories && detail.subCategories.length > 0 && (
+        {recruitment.subCategories && recruitment.subCategories.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {detail.subCategories.slice(0, 2).map((subCategory) => (
+            {recruitment.subCategories.slice(0, 2).map((subCategory) => (
               <CategoryBadge key={subCategory} category={subCategory} />
             ))}
           </div>

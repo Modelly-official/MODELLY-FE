@@ -56,6 +56,7 @@ export interface WrittenReviewsResponse {
   items: WrittenReviewItem[];
   hasNext: boolean;
   nextCursor: number | null;
+  totalCount: number;
 }
 
 // ===== 리뷰 작성 요청 =====
