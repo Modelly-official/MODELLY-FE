@@ -105,10 +105,8 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       : publicResult?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
-    const thumbnailItems = reviewThumbnailQuery.data?.result?.items ?? [];
-    const reviewImageCountMap = new Map(
-      listItems.map((item) => [item.reviewId, item.reviewImages?.length ?? 0]),
-    );
+    const thumbnailResult = reviewThumbnailQuery.data?.result;
+    const thumbnailItems = thumbnailResult?.items ?? [];
     const fallbackPreviewItems = listItems
       .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImages?.[0] }))
       .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
@@ -119,18 +117,19 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
             .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl))
         : fallbackPreviewItems;
     const previewImages = previewSourceItems.slice(0, 3).map((item) => item.imageUrl);
-    const totalPreviewCount = reviewThumbnailQuery.data?.result?.totalCount ?? previewSourceItems.length ?? totalCount;
+    const totalPreviewCount =
+      thumbnailItems.length > 0
+        ? thumbnailResult?.hasNext
+          ? thumbnailResult?.totalCount ?? previewSourceItems.length ?? totalCount
+          : previewSourceItems.length
+        : previewSourceItems.length ?? totalCount;
     const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
-    const lastPreviewItem = previewSourceItems[previewImages.length - 1];
-    const lastReviewImageCount = lastPreviewItem ? reviewImageCountMap.get(lastPreviewItem.reviewId) ?? 0 : 0;
-    const overlayCount = Math.max(lastReviewImageCount - 1, 0);
 
     return {
       rating,
       count: totalCount,
       previewImages,
       moreCount,
-      overlayCount,
     };
   }, [
     data?.result?.averageRating,
