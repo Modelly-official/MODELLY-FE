@@ -50,8 +50,9 @@ const AUTH_REQUIRED_ENDPOINTS = ['/auth/logout', '/auth/validate'];
 axiosInstance.interceptors.request.use(
   (config) => {
     const url = config.url || '';
-    const isAuthEndpoint = url.startsWith('/auth/');
-    const requiresToken = AUTH_REQUIRED_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+    const pathname = url.split('?')[0]; // 쿼리스트링 제거
+    const isAuthEndpoint = pathname.startsWith('/auth/');
+    const requiresToken = AUTH_REQUIRED_ENDPOINTS.includes(pathname);
 
     // /auth/ 엔드포인트가 아니거나, 인증이 필요한 /auth/ 엔드포인트인 경우만 토큰 추가
     if (!isAuthEndpoint || requiresToken) {
