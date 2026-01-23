@@ -182,7 +182,7 @@ export default function DesignerProfileEditView({
     <div className="flex min-h-screen flex-col bg-gray-100">
       <DesignerProfileEditHero
         profileImageUrl={resolvedProfileImageUrl}
-        nickname={profile.nickname}
+        nickname={form.nickname}
         onBack={handleBack}
         onEditImage={handleEditImage}
       />
