@@ -13,7 +13,6 @@ import { InstallPrompt } from '@/src/components/common';
 const LoginContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl');
   const queryClient = useQueryClient();
   const { setUser } = useAuthStore();
 
@@ -56,10 +55,9 @@ const LoginContent = () => {
               loginId,
             });
 
-            // role에 따른 리다이렉트
-            // Designer: 항상 Designer 홈으로
-            // Model: callbackUrl 또는 루트로
-            const redirectUrl = userRole === 'designer' ? '/designer/home' : callbackUrl || '/';
+            // 로그인 성공 시 원래 경로로 이동 (fallback: 홈)
+            const callbackUrl = searchParams.get('callbackUrl');
+            const redirectUrl = callbackUrl && callbackUrl.startsWith('/') ? callbackUrl : '/';
             router.replace(redirectUrl); // 로그인 페이지를 히스토리에서 제거
           } else {
             showToast(response.message || '로그인 실패');

@@ -15,6 +15,7 @@ export const PUBLIC_ROUTES = [
   '/chat', // 채팅 - 비로그인 시 모달 표시
   '/mypage', // 마이페이지 - 비로그인 시 블러+모달 표시
   '/post', // 공고 상세
+  '/designer', // 디자이너 공개 프로필
 ];
 
 // ===== 모델 전용 라우트 =====
@@ -27,14 +28,15 @@ export const DESIGNER_ONLY_ROUTES = [
   '/myRecruitment', // 내 공고 관리 (목록, 생성, 수정, 상세)
   '/calendar', // 캘린더
   '/reservations', // 예약 관리 (목록, 상세)
+  '/myProfile', // 디자이너 내 프로필
 ];
 
 // ===== 인증된 사용자 공통 라우트 =====
 export const AUTHENTICATED_ROUTES: string[] = [
-  '/mypage/profile',               // 프로필 수정
-  '/mypage/likes',                 // 찜 목록
-  '/mypage/reservations',          // 예약 내역
-  '/mypage/reviews',               // 나의 리뷰
+  '/mypage/profile', // 프로필 수정
+  '/mypage/likes', // 찜 목록
+  '/mypage/reservations', // 예약 내역
+  '/mypage/reviews', // 나의 리뷰
   '/mypage/notification-settings', // 알림 설정
   '/notification',                 // 알림 목록
 ];

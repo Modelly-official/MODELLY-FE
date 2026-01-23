@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
@@ -13,8 +13,18 @@ import {
   PostPageSkeleton,
 } from '@/src/components/post';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
+import DesignerReviewTab from '@/src/components/designerProfile/review/DesignerReviewTab';
+import type { DesignerReviewItem as DesignerReviewCardItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
+import type { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
 import { useRecruitmentDetail } from '@/src/hooks/queries/explore';
 import { useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
+import { useAuthReady } from '@/src/hooks/custom/mypage';
+import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
+import {
+  useDesignerReviews,
+  usePublicDesignerReviewList,
+  usePublicDesignerReviewThumbnails,
+} from '@/src/hooks/queries/review';
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
 
@@ -30,12 +40,116 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   // Optimistic update를 위한 토글 카운트 (홀수면 반전)
   const [toggleCount, setToggleCount] = useState(0);
   const [trackedServerValue, setTrackedServerValue] = useState<boolean | null>(null);
+  const { authReady, role, user, isLoggedIn } = useAuthReady();
+  const { data: myProfileData } = useMyDesignerProfile({
+    enabled: authReady && isLoggedIn && role === 'designer' && !isOwner,
+  });
 
   // Query hook
   const { data, isLoading, isError } = useRecruitmentDetail(recruitmentId);
 
   // Like mutation
   const { mutate: toggleLike } = useToggleRecruitmentLike();
+
+  const reviewDesignerId = data?.result?.designerProfile.designerId ?? 0;
+  const canFetchReviews = Number.isFinite(reviewDesignerId) && reviewDesignerId > 0;
+  const reviewQueryEnabled = activeTab === 'review' && canFetchReviews;
+  const myDesignerId = myProfileData?.result?.profile.designerId;
+  const isOwnerFromAuth =
+    authReady && role === 'designer' && user?.userId === data?.result?.designerProfile.userId;
+  const isOwnerFromProfile =
+    role === 'designer' && !!myDesignerId && myDesignerId === data?.result?.designerProfile.designerId;
+  const isOwnerView = isOwner || isOwnerFromAuth || isOwnerFromProfile;
+
+  const ownerReviewListQuery = useDesignerReviews(
+    { size: 10 },
+    { enabled: reviewQueryEnabled && isOwnerView },
+  );
+
+  const reviewListQuery = usePublicDesignerReviewList({
+    designerId: reviewDesignerId,
+    params: { size: 10 },
+    enabled: reviewQueryEnabled && !isOwnerView,
+  });
+
+  const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
+    designerId: reviewDesignerId,
+    params: { size: 10 },
+    enabled: reviewQueryEnabled && canFetchReviews,
+  });
+
+  const reviewItems = useMemo<DesignerReviewCardItem[]>(() => {
+    const ownerItems = ownerReviewListQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
+    const publicItems = reviewListQuery.data?.result?.items ?? [];
+    const items = isOwnerView ? ownerItems : publicItems;
+    return items.map((item) => ({
+      id: item.reviewId,
+      name: item.modelName,
+      rating: item.rating,
+      date: item.createdDate.replace(/-/g, '.'),
+      content: item.content,
+      images: item.reviewImages ?? [],
+      category: item.summary,
+      isFixed: item.isFixed,
+    }));
+  }, [isOwnerView, ownerReviewListQuery.data?.pages, reviewListQuery.data?.result?.items]);
+
+  const reviewSummary = useMemo<DesignerReviewSummaryData>(() => {
+    const publicResult = reviewListQuery.data?.result;
+    const ownerPages = ownerReviewListQuery.data?.pages ?? [];
+    const ownerItems = ownerPages.flatMap((page) => page.result?.items ?? []);
+    const ownerTotalCount = ownerPages[0]?.result?.totalCount;
+    const listItems = isOwnerView ? ownerItems : publicResult?.items ?? [];
+    const totalCount = isOwnerView
+      ? ownerTotalCount ?? listItems.length
+      : publicResult?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
+    const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
+    const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
+    const thumbnailResult = reviewThumbnailQuery.data?.result;
+    const thumbnailItems = thumbnailResult?.items ?? [];
+    const fallbackPreviewItems = listItems
+      .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImages?.[0] }))
+      .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
+    const previewSourceItems =
+      thumbnailItems.length > 0
+        ? thumbnailItems
+            .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewThumbnail }))
+            .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl))
+        : fallbackPreviewItems;
+    const previewImages = previewSourceItems.slice(0, 3).map((item) => item.imageUrl);
+    const totalPreviewCount =
+      thumbnailItems.length > 0
+        ? thumbnailResult?.hasNext
+          ? thumbnailResult?.totalCount ?? previewSourceItems.length ?? totalCount
+          : previewSourceItems.length
+        : previewSourceItems.length ?? totalCount;
+    const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+
+    return {
+      rating,
+      count: totalCount,
+      previewImages,
+      moreCount,
+    };
+  }, [
+    data?.result?.averageRating,
+    data?.result?.reviewCount,
+    isOwnerView,
+    ownerReviewListQuery.data?.pages,
+    reviewListQuery.data?.result,
+    reviewThumbnailQuery.data?.result,
+  ]);
+
+  const isReviewLoading = reviewQueryEnabled
+    ? isOwnerView
+      ? ownerReviewListQuery.isLoading
+      : reviewListQuery.isLoading
+    : false;
+  const isReviewError = reviewQueryEnabled
+    ? isOwnerView
+      ? ownerReviewListQuery.isError
+      : reviewListQuery.isError || !canFetchReviews
+    : false;
 
   // 서버 값이 변경되면 토글 카운트 리셋 (렌더 중 상태 업데이트 - React 권장 패턴)
   const serverIsLiked = data?.result?.isLiked ?? false;
@@ -58,6 +172,10 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
   const detail = data.result;
 
+  const reviewDetailPath = isOwnerView
+    ? '/myProfile/reviews'
+    : `/designer/${detail.designerProfile.designerId}/reviews`;
+
   // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
   const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
 
@@ -74,7 +192,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       {/* 제목 및 찜하기 */}
       <div className="flex items-center justify-between gap-4 px-4 pt-4">
         <h1 className="text-head-2-semibold flex-1 text-gray-900">{detail.title}</h1>
-        {!isOwner && (
+        {!isOwnerView && (
           <button
             type="button"
             onClick={handleFavoriteClick}
@@ -92,7 +210,10 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
 
       {/* 디자이너 정보 */}
       <div className="px-4 pt-2">
-        <Link href={`/designer/${detail.designerProfile.designerId}`} className="flex flex-col gap-1">
+        <Link
+          href={isOwnerView ? '/myProfile' : `/designer/${detail.designerProfile.designerId}`}
+          className="flex flex-col gap-1"
+        >
           <div className="flex w-fit items-center gap-1 rounded-lg border border-gray-400 px-2.5 py-1">
             <span className="text-body-2-medium text-black">{detail.designerProfile.designerName} 디자이너</span>
             <span className="text-body-2-medium text-black">·</span>
@@ -216,9 +337,25 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
           )}
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center p-8 pb-33">
-          <p className="text-body-2-medium text-gray-600">디자이너 리뷰는 추후 구현 예정입니다.</p>
-        </div>
+        <>
+          {isReviewLoading ? (
+            <div className="flex items-center justify-center bg-gray-100 py-12">
+              <p className="text-body-2-medium text-gray-500">리뷰를 불러오는 중입니다.</p>
+            </div>
+          ) : isReviewError ? (
+            <div className="flex items-center justify-center bg-gray-100 py-12">
+              <p className="text-body-2-medium text-gray-500">리뷰 정보를 불러올 수 없습니다.</p>
+            </div>
+          ) : (
+            <div className="bg-gray-100 pb-25">
+              <DesignerReviewTab
+                summary={reviewSummary}
+                reviews={reviewItems}
+                onViewAll={() => router.push(reviewDetailPath)}
+              />
+            </div>
+          )}
+        </>
       )}
 
       {/* 하단 액션 버튼 */}

@@ -61,7 +61,7 @@ export default function MypagePage() {
   // CTA 버튼 (디자이너만)
   const ctaButton = useMemo(() => {
     if (!isLoggedIn || currentRole !== 'designer') return undefined;
-    return { label: '프로필 보기', onClick: () => router.push('/designer/profile') };
+    return { label: '프로필 보기', onClick: () => router.push('/myProfile') };
   }, [isLoggedIn, currentRole, router]);
 
   // 비로그인 상태 UI

@@ -18,6 +18,9 @@ interface AddressInputProps {
   detailAddress: string;
   onAddressSearch: (address: string) => void;
   onDetailAddressChange: (value: string) => void;
+  labelClassName?: string;
+  inputClassName?: string;
+  detailInputClassName?: string;
 }
 
 export const AddressInput: React.FC<AddressInputProps> = ({
@@ -25,6 +28,9 @@ export const AddressInput: React.FC<AddressInputProps> = ({
   detailAddress,
   onAddressSearch,
   onDetailAddressChange,
+  labelClassName,
+  inputClassName,
+  detailInputClassName,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -38,11 +44,14 @@ export const AddressInput: React.FC<AddressInputProps> = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-body-1-medium text-gray-900">매장 주소</label>
+      <label className={labelClassName ?? 'text-body-1-medium text-gray-900'}>매장 주소</label>
       <div className="relative">
         <input
           type="text"
-          className="text-body-2-medium w-full cursor-pointer rounded-xl border border-gray-400 px-4 py-3.5 pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+          className={
+            inputClassName ??
+            'text-body-2-medium w-full cursor-pointer rounded-xl border border-gray-400 px-4 py-3.5 pr-10 text-gray-900 placeholder:text-gray-600 focus:outline-none'
+          }
           placeholder="매장 주소를 입력해주세요"
           value={address}
           readOnly
@@ -58,7 +67,10 @@ export const AddressInput: React.FC<AddressInputProps> = ({
       </div>
       <input
         type="text"
-        className="text-body-2-medium rounded-xl border border-gray-400 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none"
+        className={
+          detailInputClassName ??
+          'text-body-2-medium rounded-xl border border-gray-400 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none'
+        }
         placeholder="상세주소"
         value={detailAddress}
         onChange={(e) => onDetailAddressChange(e.target.value)}

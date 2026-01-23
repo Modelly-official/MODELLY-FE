@@ -19,6 +19,7 @@ export interface DesignerReviewItem {
   content: string;
   reviewImages: string[];
   summary: string;
+  isMine?: boolean;
   replyDto?: DesignerReviewReply;
 }
 
@@ -27,7 +28,33 @@ export interface DesignerReviewsResponse {
   items: DesignerReviewItem[];
   hasNext: boolean;
   nextCursor?: number | null;
+  totalCount?: number;
+}
+
+// ===== 디자이너 리뷰 썸네일 아이템 =====
+export interface DesignerReviewThumbnailItem {
+  reviewId: number;
+  reviewThumbnail: string;
+  isFixed: boolean;
+}
+
+// ===== 디자이너 리뷰 썸네일 목록 응답 =====
+export interface DesignerReviewThumbnailsResponse {
+  items: DesignerReviewThumbnailItem[];
+  hasNext: boolean;
+  nextCursor?: number | null;
   totalCount: number;
+}
+
+// ===== 디자이너 리뷰 상세 응답 =====
+export interface DesignerReviewDetailResponse {
+  reviewId: number;
+  rating: number;
+  content: string;
+  summary: string;
+  thumbnail: string;
+  imageUrls: string[];
+  isMine: boolean;
 }
 
 // ===== 답글 작성 요청 =====
