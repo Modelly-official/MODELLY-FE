@@ -36,7 +36,7 @@ export default function MyRecruitmentPage() {
     month: monthString,
     enabled: activeTab === 'active',
     retry: 2,
-    retryDelay: 3000, // 3초 간격으로 재시도
+    retryDelay: 4000, // 4초 간격으로 재시도
   });
 
   // API Hooks - 마감 공고
