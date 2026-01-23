@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+import { getUserRole } from '@/src/stores/auth/useAuthStore';
+
 interface PostHeaderProps {
   onBack?: () => void;
 }
@@ -14,7 +16,8 @@ export default function PostHeader({ onBack }: PostHeaderProps) {
     if (onBack) {
       onBack();
     } else {
-      router.push('/myRecruitment');
+      const role = getUserRole();
+      router.push(role === 'designer' ? '/myRecruitment' : '/explore');
     }
   };
 
