@@ -28,9 +28,10 @@ export default function MapControls({
     ? LAYOUT.SELECTED_CARD_HEIGHT_WITH_IMAGES
     : LAYOUT.SELECTED_CARD_HEIGHT_NO_IMAGES;
 
+  const safeAreaBottom = 'env(safe-area-inset-bottom, 0px)';
   const gpsButtonBottom = isSelectedShopCard
-    ? `${LAYOUT.BOTTOM_NAV_HEIGHT + selectedCardHeight + 18 - selectedCardDragOffset}px`
-    : `calc(${bottomSheetHeight}vh + ${LAYOUT.BOTTOM_NAV_HEIGHT}px + 18px)`;
+    ? `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + ${safeAreaBottom} + ${selectedCardHeight}px + 18px - ${selectedCardDragOffset}px)`
+    : `calc(${bottomSheetHeight}dvh + ${LAYOUT.BOTTOM_NAV_HEIGHT}px + ${safeAreaBottom} + 18px)`;
 
   return (
     <>

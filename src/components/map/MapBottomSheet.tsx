@@ -334,7 +334,7 @@ export default function MapBottomSheet({
       className="fixed right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)] sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2"
       style={{
         height: `${SHEET_HEIGHTS.max}dvh`,
-        bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
+        bottom: `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px))`,
         transform: `translateY(${getTranslateY(sheetState)}dvh)`,
         willChange: 'transform',
       }}

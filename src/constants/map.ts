@@ -11,7 +11,7 @@ export const MAP_DEFAULTS = {
 
 // ===== 레이아웃 상수 =====
 export const LAYOUT = {
-  /** BottomNav 높이 (px) - safe-area 포함 */
+  /** BottomNav 높이 (px) - safe-area 미포함 */
   BOTTOM_NAV_HEIGHT: 76,
   /** SelectedShopCard 높이 - 공고 있을 때 (이미지 갤러리 포함) */
   SELECTED_CARD_HEIGHT_WITH_IMAGES: 340,
