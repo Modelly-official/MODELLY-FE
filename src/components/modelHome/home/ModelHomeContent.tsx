@@ -17,10 +17,7 @@ import LocationIcon from '@/public/icons/common/location-current.svg';
 import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder.svg';
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
-import {
-  MOCK_NEARBY_RECRUITMENTS,
-  MOCK_POPULAR_DESIGNERS,
-} from '@/src/mocks/modelHome/homeMock';
+import { MOCK_NEARBY_RECRUITMENTS, MOCK_POPULAR_DESIGNERS } from '@/src/mocks/modelHome/homeMock';
 import type { HomeCategory } from '@/src/types/modelHome';
 
 export function ModelHomeContent() {
@@ -28,7 +25,6 @@ export function ModelHomeContent() {
   const [nearbyCategory, setNearbyCategory] = useState<HomeCategory>('ALL');
   const [topCategory, setTopCategory] = useState<HomeCategory>('ALL');
   const [designerCategory, setDesignerCategory] = useState<HomeCategory>('ALL');
-  const [topActiveIndex, setTopActiveIndex] = useState(0);
   const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
 
   const { modelName, profileImageUrl, reservationSummary, hasReservation } = useModelHomeSummary();
@@ -122,7 +118,6 @@ export function ModelHomeContent() {
                   selectedCategory={topCategory}
                   onChange={(category) => {
                     setTopCategory(category as HomeCategory);
-                    setTopActiveIndex(0);
                   }}
                 />
               </div>
@@ -130,38 +125,38 @@ export function ModelHomeContent() {
             <div className="mt-2">
               {isTopLoading ? (
                 <div className="flex gap-2 px-4">
-                  <div className="h-[200px] w-[clamp(200px,62vw,640px)] shrink-0 animate-skeleton rounded-2xl bg-gray-200" />
-                  <div className="h-[200px] w-[clamp(200px,62vw,640px)] shrink-0 animate-skeleton rounded-2xl bg-gray-200" />
+                  <div className="animate-skeleton aspect-260/286 w-[clamp(200px,62vw,640px)] shrink-0 rounded-2xl bg-gray-200" />
+                  <div className="animate-skeleton aspect-260/286 w-[clamp(200px,62vw,640px)] shrink-0 rounded-2xl bg-gray-200" />
                 </div>
               ) : topRecruitments.length > 0 ? (
                 <>
-                  <Swiper
-                    key={topCategory}
-                    spaceBetween={8}
-                    slidesPerView="auto"
-                    onSlideChange={(swiper) => setTopActiveIndex(swiper.activeIndex)}
-                    className="-mx-4 px-4!"
-                  >
+                  <Swiper key={topCategory} spaceBetween={8} slidesPerView="auto" className="-mx-4 px-4!">
                     {topRecruitments.map((item) => (
                       <SwiperSlide key={item.recruitmentId} className="w-[clamp(200px,62vw,640px)]!">
                         <TopRecruitmentCard recruitment={item} />
                       </SwiperSlide>
                     ))}
                   </Swiper>
-                  <div className="mt-5 flex items-center justify-center gap-1.5">
-                    {topRecruitments.map((item, index) => (
-                      <span
-                        key={item.recruitmentId}
-                        className={`h-1.5 rounded-full ${
-                          topActiveIndex === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
-                        }`}
-                      />
-                    ))}
-                  </div>
                 </>
               ) : (
-                <p className="text-body-2-medium px-4 text-gray-500">표시할 모집글이 없습니다.</p>
+                <div className="px-4">
+                  <div className="flex items-center justify-center">
+                    <div className="flex aspect-260/286 w-[clamp(200px,62vw,640px)] items-center justify-center">
+                      <p className="text-body-2-medium text-gray-600">표시할 모집글이 없습니다.</p>
+                    </div>
+                  </div>
+                </div>
               )}
+              <div className="mt-5 flex items-center justify-center gap-1.5">
+                {categoryIndicators.map((category) => (
+                  <span
+                    key={category}
+                    className={`h-1.5 rounded-full ${
+                      topCategory === category ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </section>
 

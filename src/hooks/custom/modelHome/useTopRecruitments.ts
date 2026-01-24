@@ -6,13 +6,19 @@ import type { Category } from '@/src/types/recruitment';
 import type { RecruitmentListItem } from '@/src/types';
 import type { HomeCategory } from '@/src/types/modelHome';
 
-export function useTopRecruitments(category: HomeCategory) {
+interface UseTopRecruitmentsOptions {
+  enabled?: boolean;
+}
+
+export function useTopRecruitments(category: HomeCategory, options: UseTopRecruitmentsOptions = {}) {
+  const { enabled = true } = options;
   const queryCategory: Category | undefined = category === 'ALL' ? undefined : (category as Category);
 
   const query = useRecruitments({
     category: queryCategory,
     sortOption: 'MOST_REVIEWS',
     size: 10,
+    enabled,
   });
 
   const items = useMemo<RecruitmentListItem[]>(() => {
