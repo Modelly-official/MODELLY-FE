@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,10 +9,7 @@ import { BottomNav } from '@/src/components/common';
 import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
 import RecruitmentCard from '@/src/components/explore/Cards/RecruitmentCard';
 import DesignerCard from '@/src/components/explore/Cards/DesignerCard';
-import { useModelReservations } from '@/src/hooks/queries/reservation';
-import { useModelProfile } from '@/src/hooks/queries/mypage';
-import { getAccessToken } from '@/src/stores';
-import { formatDateToKorean, formatTimeWithPeriod } from '@/src/utils/common';
+import { useModelHomeSummary } from '@/src/hooks/custom/modelHome/useModelHomeSummary';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
 import LocationIcon from '@/public/icons/common/location-current.svg';
@@ -24,18 +21,7 @@ import {
   MOCK_POPULAR_DESIGNERS,
   MOCK_TOP_RECRUITMENTS,
 } from '@/src/mocks/modelHome/homeMock';
-import type { HomeCategory, ReservationSummary } from '@/src/types/modelHome';
-import type { ModelReservationItem } from '@/src/types';
-
-function getDdayLabel(dateStr: string) {
-  const target = new Date(`${dateStr}T00:00:00`);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diffMs = target.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays <= 0) return 'D-day';
-  return `D-${diffDays}`;
-}
+import type { HomeCategory } from '@/src/types/modelHome';
 
 export function ModelHomeContent() {
   const router = useRouter();
@@ -45,53 +31,7 @@ export function ModelHomeContent() {
   const [topActiveIndex, setTopActiveIndex] = useState(0);
   const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
 
-  const isClient = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
-
-  const isLoggedIn = isClient && !!getAccessToken();
-
-  const { data: profileData } = useModelProfile(isLoggedIn);
-  const profile = profileData?.result ?? null;
-
-  const modelName = profile?.nickname ?? '모델';
-  const profileImageUrl = profile?.profileImageUrl ?? null;
-
-  const reservationsQuery = useModelReservations('UPCOMING', {}, { enabled: isLoggedIn });
-  const reservationItems = useMemo<ModelReservationItem[]>(() => {
-    return reservationsQuery.data?.pages.flatMap((page) => page.result.items) ?? [];
-  }, [reservationsQuery.data?.pages]);
-
-  const confirmedReservation = useMemo(() => {
-    const confirmedItems = reservationItems.filter((item) => item.status === 'RESERVATION_CONFIRMED');
-    if (confirmedItems.length === 0) return null;
-
-    return [...confirmedItems].sort((a, b) => {
-      const aTime = new Date(`${a.date}T${a.startTime}:00`).getTime();
-      const bTime = new Date(`${b.date}T${b.startTime}:00`).getTime();
-      return aTime - bTime;
-    })[0];
-  }, [reservationItems]);
-
-  const reservationSummary = useMemo<ReservationSummary | null>(() => {
-    if (!confirmedReservation) return null;
-    const dateLabel = formatDateToKorean(confirmedReservation.date);
-    const timeLabel = formatTimeWithPeriod(confirmedReservation.startTime).replace(' ', '');
-    return {
-      id: confirmedReservation.reservationId,
-      designerName: confirmedReservation.designerNickname,
-      shop: confirmedReservation.shop,
-      recruitmentTitle: confirmedReservation.recruitmentTitle,
-      date: dateLabel,
-      time: timeLabel,
-      dday: getDdayLabel(confirmedReservation.date),
-      tags: [confirmedReservation.category, ...confirmedReservation.subCategories],
-    };
-  }, [confirmedReservation]);
-
-  const hasReservation = Boolean(reservationSummary);
+  const { modelName, profileImageUrl, reservationSummary, hasReservation } = useModelHomeSummary();
 
   return (
     <>
