@@ -47,8 +47,13 @@ export function ReservationCard({ reservation }: ReservationCardProps) {
           </div>
         </div>
 
-        <div className="px-6">
-          <div className="border-t border-dashed border-gray-300" />
+        <div className="-my-px px-7 relative z-10">
+          <div
+            className="h-px w-full"
+            style={{
+              backgroundImage: 'repeating-linear-gradient(to right, #CED0D7 0 6px, #ffffff 6px 14px)',
+            }}
+          />
         </div>
 
         <div className="rounded-xl bg-white px-5 py-5">
