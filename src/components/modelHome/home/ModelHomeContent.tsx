@@ -30,7 +30,7 @@ export function ModelHomeContent() {
   const [designerCategory, setDesignerCategory] = useState<HomeCategory>('ALL');
   const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
 
-  const { modelName, profileImageUrl, reservationSummary, hasReservation } = useModelHomeSummary();
+  const { isLoggedIn, modelName, profileImageUrl, reservationSummary, hasReservation } = useModelHomeSummary();
   const { items: topRecruitments, isLoading: isTopLoading } = useTopRecruitments(topCategory);
   const {
     items: nearbyRecruitments,
@@ -44,7 +44,7 @@ export function ModelHomeContent() {
   return (
     <>
       <div className="min-h-screen bg-white">
-        <div className="rounded-b-3xl bg-gray-200 pb-7">
+        <div className={`rounded-b-3xl bg-gray-200 ${isLoggedIn ? 'pb-7' : 'pb-5'}`}>
           {/* 헤더 */}
           <header className="flex h-13 items-center justify-between px-4">
             <MoandiLogo />
@@ -53,40 +53,52 @@ export function ModelHomeContent() {
             </button>
           </header>
 
-          {/* 프로필 */}
-          <div className="flex items-start justify-between px-4 pt-2 pb-5">
-            <div className="max-w-60">
+          {isLoggedIn ? (
+            <>
+              {/* 프로필 */}
+              <div className="flex items-start justify-between px-4 pt-2 pb-5">
+                <div className="max-w-60">
+                  <p className="text-head-3-semibold text-gray-900">
+                    {hasReservation ? (
+                      <>
+                        {modelName}님, 예약 내역을
+                        <br />
+                        확인해보세요
+                      </>
+                    ) : (
+                      <>
+                        {modelName}님, 나에게 딱 맞는
+                        <br />
+                        디자이너를 찾아보세요!
+                      </>
+                    )}
+                  </p>
+                </div>
+                <div className="relative size-16 shrink-0 overflow-hidden rounded-full bg-gray-300">
+                  {profileImageUrl ? (
+                    <Image src={profileImageUrl} alt="프로필" fill sizes="64px" className="object-cover" />
+                  ) : (
+                    <div className="flex size-full items-center justify-center text-gray-500">
+                      <ProfilePlaceholderIcon className="size-6" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 예약 카드 */}
+              <section className="px-4">
+                <ReservationCard reservation={reservationSummary} />
+              </section>
+            </>
+          ) : (
+            <div className="px-4 pt-2">
               <p className="text-head-3-semibold text-gray-900">
-                {hasReservation ? (
-                  <>
-                    {modelName}님, 예약 내역을
-                    <br />
-                    확인해보세요
-                  </>
-                ) : (
-                  <>
-                    {modelName}님, 나에게 딱 맞는
-                    <br />
-                    디자이너를 찾아보세요!
-                  </>
-                )}
+                로그인 후 원하는 공고를
+                <br />
+                예약해보세요
               </p>
             </div>
-            <div className="relative size-16 shrink-0 overflow-hidden rounded-full bg-gray-300">
-              {profileImageUrl ? (
-                <Image src={profileImageUrl} alt="프로필" fill sizes="64px" className="object-cover" />
-              ) : (
-                <div className="flex size-full items-center justify-center text-gray-500">
-                  <ProfilePlaceholderIcon className="size-6" />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 예약 카드 */}
-          <section className="px-4">
-            <ReservationCard reservation={reservationSummary} />
-          </section>
+          )}
         </div>
 
         <div className="flex flex-col gap-13 bg-white pb-[calc(87px+env(safe-area-inset-bottom)+58px)]">
