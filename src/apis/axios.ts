@@ -43,13 +43,24 @@ export const axiosInstance = axios.create({
   withCredentials: true, // refreshToken 쿠키 자동 전송
 });
 
+// /auth/ 엔드포인트 중 인증이 필요한 것만 명시 (나머지는 토큰 주입 제외)
+const AUTH_REQUIRED_ENDPOINTS = ['/auth/logout', '/auth/validate'];
+
 // Request Interceptor: 쿠키에서 accessToken 읽어서 헤더에 추가 + 로깅
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = getAccessToken();
-    if (token) {
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+    const url = config.url || '';
+    const pathname = url.split('?')[0]; // 쿼리스트링 제거
+    const isAuthEndpoint = pathname.startsWith('/auth/');
+    const requiresToken = AUTH_REQUIRED_ENDPOINTS.includes(pathname);
+
+    // /auth/ 엔드포인트가 아니거나, 인증이 필요한 /auth/ 엔드포인트인 경우만 토큰 추가
+    if (!isAuthEndpoint || requiresToken) {
+      const token = getAccessToken();
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
     // API 로깅 (NEXT_PUBLIC_API_LOGGING=true 일 때만 활성화)
