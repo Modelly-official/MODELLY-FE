@@ -19,7 +19,7 @@ export function useModelHomeSummary() {
 
   const isLoggedIn = isClient && !!getAccessToken();
 
-  const { data: profileData } = useModelProfile(isLoggedIn);
+  const { data: profileData, isLoading: isProfileLoading } = useModelProfile(isLoggedIn);
   const profile = profileData?.result ?? null;
 
   const reservationsQuery = useModelReservations('UPCOMING', {}, { enabled: isLoggedIn });
@@ -43,8 +43,12 @@ export function useModelHomeSummary() {
     return buildReservationSummary(confirmedReservation);
   }, [confirmedReservation]);
 
+  const isReservationLoading = isLoggedIn && (reservationsQuery.isLoading || !reservationsQuery.data);
+
   return {
+    authReady: isClient,
     isLoggedIn,
+    isSummaryLoading: isLoggedIn && (isProfileLoading || isReservationLoading),
     modelName: profile?.nickname ?? '모델',
     profileImageUrl: profile?.profileImageUrl ?? null,
     reservationSummary,
