@@ -29,10 +29,9 @@ export default function MapControls({
     : LAYOUT.SELECTED_CARD_HEIGHT_NO_IMAGES;
 
   // GPS 버튼은 BottomSheet/SelectedCard 상단에서 18px 위에 위치
-  const baseBottom = `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px))`;
   const gpsButtonBottom = isSelectedShopCard
-    ? `calc(${baseBottom} + ${selectedCardHeight}px + 18px - ${selectedCardDragOffset}px)`
-    : `calc(${baseBottom} + ${bottomSheetHeight}dvh + 18px)`;
+    ? `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px) + ${selectedCardHeight}px + 18px - ${selectedCardDragOffset}px)`
+    : `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px) + ${bottomSheetHeight}dvh + 18px)`;
 
   return (
     <>
