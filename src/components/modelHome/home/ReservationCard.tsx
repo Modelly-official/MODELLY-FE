@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { CategoryBadge } from '@/src/components/common';
-import type { ReservationSummary } from '@/src/types/modelHome/modelHome';
+import type { ReservationSummary } from '@/src/types/modelHome';
 
 interface ReservationCardProps {
   reservation?: ReservationSummary | null;
@@ -11,8 +11,8 @@ interface ReservationCardProps {
 export function ReservationCard({ reservation }: ReservationCardProps) {
   if (!reservation) {
     return (
-      <div className="flex h-[76px] items-center justify-center rounded-xl bg-white">
-        <p className="text-body-2-medium text-gray-600">아직 예약 내역이 없어요</p>
+      <div className="flex items-center justify-center rounded-xl bg-white py-12">
+        <p className="text-body-1-medium text-gray-600">아직 예약 내역이 없어요</p>
       </div>
     );
   }
@@ -27,7 +27,7 @@ export function ReservationCard({ reservation }: ReservationCardProps) {
               {reservation.tags.map((tag, index) => (
                 <CategoryBadge
                   key={`${reservation.id}-${tag}`}
-                  label={tag}
+                  category={tag}
                   variant={index === 0 ? 'filled' : 'default'}
                   className={index === 0 ? 'bg-purple-500!' : ''}
                 />

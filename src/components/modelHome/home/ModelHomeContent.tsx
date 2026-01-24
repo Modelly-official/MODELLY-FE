@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,19 +9,33 @@ import { BottomNav } from '@/src/components/common';
 import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
 import RecruitmentCard from '@/src/components/explore/Cards/RecruitmentCard';
 import DesignerCard from '@/src/components/explore/Cards/DesignerCard';
+import { useModelReservations } from '@/src/hooks/queries/reservation';
+import { useModelProfile } from '@/src/hooks/queries/mypage';
+import { getAccessToken } from '@/src/stores';
+import { formatDateToKorean, formatTimeWithPeriod } from '@/src/utils/common';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
 import LocationIcon from '@/public/icons/common/location-current.svg';
+import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder.svg';
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
 import {
   MOCK_NEARBY_RECRUITMENTS,
   MOCK_POPULAR_DESIGNERS,
-  MOCK_RESERVATIONS,
   MOCK_TOP_RECRUITMENTS,
-  MOCK_USER,
 } from '@/src/mocks/modelHome/homeMock';
-import type { HomeCategory } from '@/src/types/modelHome';
+import type { HomeCategory, ReservationSummary } from '@/src/types/modelHome';
+import type { ModelReservationItem } from '@/src/types';
+
+function getDdayLabel(dateStr: string) {
+  const target = new Date(`${dateStr}T00:00:00`);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffMs = target.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays <= 0) return 'D-day';
+  return `D-${diffDays}`;
+}
 
 export function ModelHomeContent() {
   const router = useRouter();
@@ -31,8 +45,53 @@ export function ModelHomeContent() {
   const [topActiveIndex, setTopActiveIndex] = useState(0);
   const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
 
-  const reservation = MOCK_RESERVATIONS[0] ?? null;
-  const hasReservation = Boolean(reservation);
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
+  const isLoggedIn = isClient && !!getAccessToken();
+
+  const { data: profileData } = useModelProfile(isLoggedIn);
+  const profile = profileData?.result ?? null;
+
+  const modelName = profile?.nickname ?? '모델';
+  const profileImageUrl = profile?.profileImageUrl ?? null;
+
+  const reservationsQuery = useModelReservations('UPCOMING', {}, { enabled: isLoggedIn });
+  const reservationItems = useMemo<ModelReservationItem[]>(() => {
+    return reservationsQuery.data?.pages.flatMap((page) => page.result.items) ?? [];
+  }, [reservationsQuery.data?.pages]);
+
+  const confirmedReservation = useMemo(() => {
+    const confirmedItems = reservationItems.filter((item) => item.status === 'RESERVATION_CONFIRMED');
+    if (confirmedItems.length === 0) return null;
+
+    return [...confirmedItems].sort((a, b) => {
+      const aTime = new Date(`${a.date}T${a.startTime}:00`).getTime();
+      const bTime = new Date(`${b.date}T${b.startTime}:00`).getTime();
+      return aTime - bTime;
+    })[0];
+  }, [reservationItems]);
+
+  const reservationSummary = useMemo<ReservationSummary | null>(() => {
+    if (!confirmedReservation) return null;
+    const dateLabel = formatDateToKorean(confirmedReservation.date);
+    const timeLabel = formatTimeWithPeriod(confirmedReservation.startTime).replace(' ', '');
+    return {
+      id: confirmedReservation.reservationId,
+      designerName: confirmedReservation.designerNickname,
+      shop: confirmedReservation.shop,
+      recruitmentTitle: confirmedReservation.recruitmentTitle,
+      date: dateLabel,
+      time: timeLabel,
+      dday: getDdayLabel(confirmedReservation.date),
+      tags: [confirmedReservation.category, ...confirmedReservation.subCategories],
+    };
+  }, [confirmedReservation]);
+
+  const hasReservation = Boolean(reservationSummary);
 
   return (
     <>
@@ -49,19 +108,36 @@ export function ModelHomeContent() {
           {/* 프로필 */}
           <div className="flex items-start justify-between px-4 pt-2 pb-5">
             <div className="max-w-60">
-              <h1 className="text-head-3-semibold text-gray-900">{MOCK_USER.name}님,</h1>
               <p className="text-head-3-semibold text-gray-900">
-                {hasReservation ? '예약 내역을 확인해보세요' : '나에게 딱 맞는 디자이너를 찾아보세요!'}
+                {hasReservation ? (
+                  <>
+                    {modelName}님, 예약 내역을
+                    <br />
+                    확인해보세요
+                  </>
+                ) : (
+                  <>
+                    {modelName}님, 나에게 딱 맞는
+                    <br />
+                    디자이너를 찾아보세요!
+                  </>
+                )}
               </p>
             </div>
             <div className="relative size-16 shrink-0 overflow-hidden rounded-full bg-gray-300">
-              <Image src={MOCK_USER.profileImageUrl} alt="프로필" fill sizes="64px" className="object-cover" />
+              {profileImageUrl ? (
+                <Image src={profileImageUrl} alt="프로필" fill sizes="64px" className="object-cover" />
+              ) : (
+                <div className="flex size-full items-center justify-center text-gray-500">
+                  <ProfilePlaceholderIcon className="size-6" />
+                </div>
+              )}
             </div>
           </div>
 
           {/* 예약 카드 */}
           <section className="px-4">
-            <ReservationCard reservation={reservation} />
+            <ReservationCard reservation={reservationSummary} />
           </section>
         </div>
 
