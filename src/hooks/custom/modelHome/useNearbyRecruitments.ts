@@ -28,7 +28,7 @@ export function useNearbyRecruitments(category: HomeCategory) {
   );
 
   const { location, isLoading: isLocationLoading, requestLocation } = useUserLocation({
-    autoRequest: false,
+    autoRequest: true,
     onError: handleLocationError,
   });
 
@@ -51,10 +51,7 @@ export function useNearbyRecruitments(category: HomeCategory) {
     let cancelled = false;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    if (!location) {
-      setLocationLabel(FALLBACK_LOCATION.label);
-      return;
-    }
+    if (!location) return;
 
     const updateLabel = async (attempt = 0) => {
       try {
