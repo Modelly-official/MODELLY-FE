@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
 import type { BottomSheetState } from '@/src/types/map';
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
@@ -22,6 +23,7 @@ interface MapBottomSheetProps {
   onSubCategoryChange: (subCategory: SubCategory | 'ALL') => void;
   onSortChange: (sortOption: SortOption) => void;
   onHeightChange?: (height: number) => void;
+  onCurrentLocation?: () => void;
   // 무한 스크롤 props
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
@@ -43,6 +45,7 @@ export default function MapBottomSheet({
   onSubCategoryChange,
   onSortChange,
   onHeightChange,
+  onCurrentLocation,
   hasNextPage,
   isFetchingNextPage,
   onLoadMore,
@@ -339,6 +342,17 @@ export default function MapBottomSheet({
         willChange: 'transform',
       }}
     >
+      {/* GPS 버튼 - 시트 상단 18px 위에 배치 */}
+      {onCurrentLocation && (
+        <button
+          type="button"
+          onClick={onCurrentLocation}
+          className="absolute -top-[56px] right-4 z-10 cursor-pointer"
+        >
+          <Image src="/icons/map/gps.svg" alt="현재 위치" width={38} height={38} />
+        </button>
+      )}
+
       {/* 헤더 영역 - 전체 드래그 가능 */}
       <div
         onTouchStart={handleHeaderTouchStart}

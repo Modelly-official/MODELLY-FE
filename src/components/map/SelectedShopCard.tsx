@@ -26,6 +26,7 @@ interface SelectedShopCardProps {
   onClose: () => void;
   onDesignerLikeToggle?: () => void;
   onDragOffsetChange?: (offset: number) => void;
+  onCurrentLocation?: () => void;
 }
 
 export default function SelectedShopCard({
@@ -35,6 +36,7 @@ export default function SelectedShopCard({
   onClose,
   onDesignerLikeToggle,
   onDragOffsetChange,
+  onCurrentLocation,
 }: SelectedShopCardProps) {
   // 첫 번째 공고 (대표 공고)
   const firstRecruitment = recruitments[0] ?? null;
@@ -252,6 +254,17 @@ export default function SelectedShopCard({
       onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
     >
+      {/* GPS 버튼 - 카드 상단 18px 위에 배치 */}
+      {onCurrentLocation && (
+        <button
+          type="button"
+          onClick={onCurrentLocation}
+          className="absolute -top-[56px] right-4 z-10 cursor-pointer"
+        >
+          <Image src="/icons/map/gps.svg" alt="현재 위치" width={38} height={38} />
+        </button>
+      )}
+
       {/* 드래그 핸들 */}
       <div className="mb-3 flex cursor-grab justify-center py-1 active:cursor-grabbing">
         <div className="h-1.5 w-14 rounded-[9px] bg-gray-400" />

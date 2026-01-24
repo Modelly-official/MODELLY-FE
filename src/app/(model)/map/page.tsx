@@ -27,9 +27,7 @@ function MapContent() {
   // 지도 상태 관리
   const {
     zoom,
-    bottomSheetHeight,
     selectedShop,
-    selectedCardDragOffset,
     displayCenter,
     userLocationAsMapPosition,
     handleCenterChanged,
@@ -115,15 +113,10 @@ function MapContent() {
         onShopClick={handleShopClick}
       />
 
-      {/* 지도 컨트롤 버튼 */}
+      {/* 새로고침 버튼 */}
       <MapControls
         onRefreshSearch={handleRefreshSearch}
-        onCurrentLocation={handleCurrentLocation}
         showRefreshButton={!isLocationLoading}
-        bottomSheetHeight={bottomSheetHeight}
-        isSelectedShopCard={!!selectedShop && !!designerProfile}
-        hasRecruitmentImages={designerRecruitments.some((r) => r.thumbnailUrl)}
-        selectedCardDragOffset={selectedCardDragOffset}
       />
 
       {/* 로딩 인디케이터 */}
@@ -143,6 +136,7 @@ function MapContent() {
           onClose={handleCloseSelectedShop}
           onDesignerLikeToggle={() => toggleDesignerLike(selectedShop.designerId)}
           onDragOffsetChange={setSelectedCardDragOffset}
+          onCurrentLocation={handleCurrentLocation}
         />
       ) : !selectedShop ? (
         <MapBottomSheet
@@ -154,6 +148,7 @@ function MapContent() {
           onSubCategoryChange={setSubCategory}
           onSortChange={setSortOption}
           onHeightChange={setBottomSheetHeight}
+          onCurrentLocation={handleCurrentLocation}
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           onLoadMore={fetchNextPage}
