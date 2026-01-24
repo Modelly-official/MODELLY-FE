@@ -27,6 +27,7 @@ function MapContent() {
   // 지도 상태 관리
   const {
     zoom,
+    bottomSheetHeight,
     selectedShop,
     displayCenter,
     userLocationAsMapPosition,
@@ -108,6 +109,7 @@ function MapContent() {
         shops={shops}
         selectedDesignerId={selectedShop?.designerId}
         userLocation={userLocationAsMapPosition}
+        bottomOffset={selectedShop ? 0 : bottomSheetHeight}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}
         onShopClick={handleShopClick}

@@ -24,6 +24,7 @@ interface NaverMapViewProps {
   shops?: MapShopItem[];
   selectedDesignerId?: number;
   userLocation?: MapPosition | null; // 현재 사용자 위치
+  bottomOffset?: number; // BottomSheet 높이 (vh 단위)
   onCenterChanged?: (center: MapPosition) => void;
   onZoomChanged?: (zoom: number) => void;
   onShopClick?: (shop: MapShopItem) => void;
@@ -36,6 +37,7 @@ export default function NaverMapView({
   shops = [],
   selectedDesignerId,
   userLocation,
+  bottomOffset,
   onCenterChanged,
   onZoomChanged,
   onShopClick,
@@ -210,12 +212,29 @@ export default function NaverMapView({
       Math.abs(currentLng - center.lng) < 0.0001;
 
     if (!isSameAsMapCenter) {
-      mapInstance.panTo(new naver.maps.LatLng(center.lat, center.lng), {
+      let targetCoord: naver.maps.LatLng | naver.maps.Coord = new naver.maps.LatLng(
+        center.lat,
+        center.lng
+      );
+
+      // BottomSheet 오프셋 보정
+      if (bottomOffset && bottomOffset > 0) {
+        const offsetPx = ((bottomOffset / 100) * window.innerHeight) / 2;
+        const projection = mapInstance.getProjection();
+        const pixelOffset = projection.fromCoordToOffset(targetCoord);
+
+        // Y축 상향 이동 (화면 좌표계는 위가 0)
+        pixelOffset.y -= offsetPx;
+
+        targetCoord = projection.fromOffsetToCoord(pixelOffset);
+      }
+
+      mapInstance.panTo(targetCoord, {
         duration: 300,
         easing: 'easeOutCubic',
       });
     }
-  }, [mapInstance, center]);
+  }, [mapInstance, center, bottomOffset]);
 
   // zoom 변경 시 지도 줌 변경
   useEffect(() => {
