@@ -1,0 +1,1 @@
+export { ModelHomeContent } from './ModelHomeContent';

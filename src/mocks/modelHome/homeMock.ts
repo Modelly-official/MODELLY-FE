@@ -1,0 +1,132 @@
+import type { DesignerListItem, RecruitmentListItem } from '@/src/types';
+import type { ReservationSummary } from '@/src/types/modelHome/modelHome';
+
+export const MOCK_USER = {
+  name: '유나',
+  profileImageUrl: '/images/mocks/profile-1.png',
+};
+
+export const MOCK_RESERVATIONS: ReservationSummary[] = [
+  {
+    id: 1,
+    designerName: '문현진',
+    shop: '준우헤어 신촌점',
+    recruitmentTitle: '헤어 컨셉별 모델 모집합니다',
+    date: '11월 30일',
+    time: '09:00am',
+    dday: 'D-3',
+    tags: ['헤어', '염색'],
+  },
+];
+
+export const MOCK_NEARBY_RECRUITMENTS: RecruitmentListItem[] = [
+  {
+    recruitmentId: 1,
+    title: '이미지 변신 헤어 모델 모집합니다',
+    designerImage: '/images/mocks/profile-1.png',
+    designerName: '서아',
+    recruitmentThumbnail: '/images/mocks/hair-1.png',
+    shop: '두드림 스튜디오',
+    shopAddress: '서울특별시 마포구 상수동 123-45',
+    category: 'HAIR',
+    subCategories: ['HAIR_PERM'],
+    reviewCount: 1128,
+    distance: 1200,
+    isLiked: true,
+    createdAt: '2024-11-01T00:00:00.000Z',
+    averageRating: 4.9,
+  },
+  {
+    recruitmentId: 2,
+    title: '네일 모델 구합니다',
+    designerImage: '/images/mocks/profile-2.png',
+    designerName: '하민',
+    recruitmentThumbnail: '/images/mocks/portfolio-1.png',
+    shop: '주네일',
+    shopAddress: '서울특별시 마포구 공덕동 88-1',
+    category: 'NAIL',
+    subCategories: ['ONE_COLOR'],
+    reviewCount: 423,
+    distance: 200,
+    isLiked: false,
+    createdAt: '2024-11-02T00:00:00.000Z',
+    averageRating: 4.5,
+  },
+];
+
+export const MOCK_TOP_RECRUITMENTS: RecruitmentListItem[] = [
+  {
+    recruitmentId: 3,
+    title: '속눈썹 펌 모델 모집합니다',
+    designerImage: '/images/mocks/profile-3.png',
+    designerName: '서희',
+    recruitmentThumbnail: '/images/mocks/portfolio-2.png',
+    shop: '뷰티플래닛',
+    shopAddress: '서울특별시 서대문구 홍제동 77-10',
+    category: 'EYELASH',
+    subCategories: ['EYELASH_PERM'],
+    reviewCount: 512,
+    distance: 800,
+    isLiked: true,
+    createdAt: '2024-11-03T00:00:00.000Z',
+    averageRating: 4.8,
+  },
+  {
+    recruitmentId: 4,
+    title: '바쁜 직장인도 가능한 네일 모델',
+    designerImage: '/images/mocks/profile-1.png',
+    designerName: '지은',
+    recruitmentThumbnail: '/images/mocks/portfolio-3.png',
+    shop: '유앤네일',
+    shopAddress: '서울특별시 마포구 합정동 51-2',
+    category: 'NAIL',
+    subCategories: ['ART'],
+    reviewCount: 289,
+    distance: 1100,
+    isLiked: false,
+    createdAt: '2024-11-04T00:00:00.000Z',
+    averageRating: 4.7,
+  },
+];
+
+export const MOCK_POPULAR_DESIGNERS: DesignerListItem[] = [
+  {
+    designerId: 1,
+    designerName: '아린',
+    thumbnail: '/images/mocks/profile-1.png',
+    shop: '우연디 살롱',
+    shopAddress: '서울특별시 서대문구 홍제동 40-1',
+    category: 'HAIR',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: true,
+    createdAt: '2024-10-01T00:00:00.000Z',
+    averageRating: 4.9,
+  },
+  {
+    designerId: 2,
+    designerName: '소아',
+    thumbnail: '/images/mocks/profile-2.png',
+    shop: 'S 라운지',
+    shopAddress: '서울특별시 서대문구 창천동 81-4',
+    category: 'TATTOO',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: false,
+    createdAt: '2024-10-02T00:00:00.000Z',
+    averageRating: 4.9,
+  },
+  {
+    designerId: 3,
+    designerName: '제이',
+    thumbnail: '/images/mocks/profile-3.png',
+    shop: 'S 라운지',
+    shopAddress: '서울특별시 서대문구 창천동 81-4',
+    category: 'NAIL',
+    reviewCount: 128,
+    distance: 440,
+    isLiked: false,
+    createdAt: '2024-10-03T00:00:00.000Z',
+    averageRating: 4.9,
+  },
+];
