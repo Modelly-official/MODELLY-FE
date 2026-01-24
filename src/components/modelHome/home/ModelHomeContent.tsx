@@ -10,8 +10,10 @@ import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips'
 import RecruitmentCard from '@/src/components/explore/Cards/RecruitmentCard';
 import DesignerCard from '@/src/components/explore/Cards/DesignerCard';
 import RecruitmentCardSkeleton from '@/src/components/explore/Skeleton/RecruitmentCardSkeleton';
+import DesignerCardSkeleton from '@/src/components/explore/Skeleton/DesignerCardSkeleton';
 import { useModelHomeSummary } from '@/src/hooks/custom/modelHome/useModelHomeSummary';
 import { useNearbyRecruitments } from '@/src/hooks/custom/modelHome/useNearbyRecruitments';
+import { usePopularDesigners } from '@/src/hooks/custom/modelHome/usePopularDesigners';
 import { useTopRecruitments } from '@/src/hooks/custom/modelHome/useTopRecruitments';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
@@ -19,7 +21,6 @@ import LocationIcon from '@/public/icons/common/location-current.svg';
 import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder.svg';
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
-import { MOCK_POPULAR_DESIGNERS } from '@/src/mocks/modelHome/homeMock';
 import type { HomeCategory } from '@/src/types/modelHome';
 
 export function ModelHomeContent() {
@@ -38,6 +39,7 @@ export function ModelHomeContent() {
     showLocationCta,
     requestLocation,
   } = useNearbyRecruitments(nearbyCategory);
+  const { items: popularDesigners, isLoading: isPopularLoading } = usePopularDesigners(designerCategory);
 
   return (
     <>
@@ -211,13 +213,36 @@ export function ModelHomeContent() {
               </div>
             </div>
             <div className="">
-              <div className="flex flex-col">
-                {MOCK_POPULAR_DESIGNERS.map((item) => (
-                  <div key={item.designerId} className="rounded-2xl bg-white px-4 py-2">
-                    <DesignerCard designer={item} />
+              {isPopularLoading ? (
+                <div className="flex flex-col">
+                  {[0, 1, 2].map((index) => (
+                    <div key={`popular-designer-skeleton-${index}`} className="rounded-2xl bg-white px-4 py-2">
+                      <DesignerCardSkeleton />
+                    </div>
+                  ))}
+                </div>
+              ) : popularDesigners.length > 0 ? (
+                <div className="flex flex-col">
+                  {popularDesigners.map((item) => (
+                    <div key={item.designerId} className="rounded-2xl bg-white px-4 py-2">
+                      <DesignerCard designer={item} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className="invisible flex flex-col">
+                    {[0, 1, 2].map((index) => (
+                      <div key={`popular-designer-empty-${index}`} className="rounded-2xl bg-white px-4 py-2">
+                        <DesignerCardSkeleton />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <p className="text-body-2-medium absolute inset-0 flex items-center justify-center px-4 text-gray-500">
+                    표시할 디자이너가 없습니다.
+                  </p>
+                </div>
+              )}
               <div className="mt-2 flex items-center justify-center gap-1.5">
                 {categoryIndicators.map((category) => (
                   <span

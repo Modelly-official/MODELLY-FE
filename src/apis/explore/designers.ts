@@ -9,9 +9,7 @@ const DEFAULT_PAGE_SIZE = 8;
  * 디자이너 목록 조회
  * GET /designers
  */
-export async function getDesigners(
-  params: DesignerListParams = {}
-): Promise<ApiResponse<DesignerListResponse>> {
+export async function getDesigners(params: DesignerListParams = {}): Promise<ApiResponse<DesignerListResponse>> {
   if (isMockEnabled('designers')) {
     return getMockDesigners(params);
   }
@@ -25,9 +23,7 @@ export async function getDesigners(
 
 // ===== Mock 함수 =====
 
-function getMockDesigners(
-  params: DesignerListParams
-): Promise<ApiResponse<DesignerListResponse>> {
+function getMockDesigners(params: DesignerListParams): Promise<ApiResponse<DesignerListResponse>> {
   const { category, keyword, sortOption, cursorId, size = DEFAULT_PAGE_SIZE } = params;
 
   // 필터링
@@ -41,8 +37,7 @@ function getMockDesigners(
     const lowerKeyword = keyword.toLowerCase();
     filtered = filtered.filter(
       (item) =>
-        item.designerName.toLowerCase().includes(lowerKeyword) ||
-        item.shop.toLowerCase().includes(lowerKeyword)
+        item.designerName.toLowerCase().includes(lowerKeyword) || item.shop.toLowerCase().includes(lowerKeyword),
     );
   }
 
@@ -61,9 +56,7 @@ function getMockDesigners(
   }
 
   // 커서 기반 페이징
-  const startIndex = cursorId
-    ? filtered.findIndex((item) => item.designerId === cursorId) + 1
-    : 0;
+  const startIndex = cursorId ? filtered.findIndex((item) => item.designerId === cursorId) + 1 : 0;
   const items = filtered.slice(startIndex, startIndex + size);
   const hasNext = startIndex + size < filtered.length;
   const nextCursor = hasNext ? items[items.length - 1]?.designerId : 0;

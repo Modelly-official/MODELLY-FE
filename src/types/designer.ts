@@ -8,7 +8,7 @@ export interface DesignerListItem {
   designerName: string;
   shop: string;
   shopAddress: string;
-  thumbnail: string;
+  designerProfileImage: string;
   category: Category;
   reviewCount: number;
   distance: number;
