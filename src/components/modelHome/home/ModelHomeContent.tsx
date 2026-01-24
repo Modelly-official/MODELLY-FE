@@ -9,7 +9,9 @@ import { BottomNav } from '@/src/components/common';
 import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
 import RecruitmentCard from '@/src/components/explore/Cards/RecruitmentCard';
 import DesignerCard from '@/src/components/explore/Cards/DesignerCard';
+import RecruitmentCardSkeleton from '@/src/components/explore/Skeleton/RecruitmentCardSkeleton';
 import { useModelHomeSummary } from '@/src/hooks/custom/modelHome/useModelHomeSummary';
+import { useNearbyRecruitments } from '@/src/hooks/custom/modelHome/useNearbyRecruitments';
 import { useTopRecruitments } from '@/src/hooks/custom/modelHome/useTopRecruitments';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
@@ -17,7 +19,7 @@ import LocationIcon from '@/public/icons/common/location-current.svg';
 import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder.svg';
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
-import { MOCK_NEARBY_RECRUITMENTS, MOCK_POPULAR_DESIGNERS } from '@/src/mocks/modelHome/homeMock';
+import { MOCK_POPULAR_DESIGNERS } from '@/src/mocks/modelHome/homeMock';
 import type { HomeCategory } from '@/src/types/modelHome';
 
 export function ModelHomeContent() {
@@ -29,6 +31,13 @@ export function ModelHomeContent() {
 
   const { modelName, profileImageUrl, reservationSummary, hasReservation } = useModelHomeSummary();
   const { items: topRecruitments, isLoading: isTopLoading } = useTopRecruitments(topCategory);
+  const {
+    items: nearbyRecruitments,
+    isLoading: isNearbyLoading,
+    locationLabel,
+    showLocationCta,
+    requestLocation,
+  } = useNearbyRecruitments(nearbyCategory);
 
   return (
     <>
@@ -82,9 +91,20 @@ export function ModelHomeContent() {
           {/* 내 주위 모집글 */}
           <section className="mt-8">
             <div className="px-4">
-              <div className="text-body-2-semibold flex items-center gap-1 text-purple-500">
-                <LocationIcon className="translate-y-px text-purple-500" />
-                <span className="leading-none">마포구 상수동</span>
+              <div className="text-body-2-semibold flex items-center gap-2">
+                <div className="flex min-w-0 items-center gap-2">
+                  <LocationIcon className="translate-y-px text-purple-500" />
+                  <span className="min-w-0 truncate text-purple-500">{locationLabel}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={requestLocation}
+                  className={`text-caption-1-medium shrink-0 cursor-pointer text-gray-700 underline underline-offset-2 ${
+                    showLocationCta ? '' : 'pointer-events-none invisible'
+                  }`}
+                >
+                  내 주변으로 보기
+                </button>
               </div>
               <h2 className="text-head-4-semibold mt-2 text-gray-900">내 주위 모집글</h2>
               <div className="-mx-4 mt-1">
@@ -94,11 +114,30 @@ export function ModelHomeContent() {
                 />
               </div>
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {MOCK_NEARBY_RECRUITMENTS.map((item, index) => (
-                <RecruitmentCard key={item.recruitmentId} recruitment={item} isLeftColumn={index % 2 === 0} />
-              ))}
-            </div>
+            {isNearbyLoading ? (
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {[0, 1].map((index) => (
+                  <RecruitmentCardSkeleton key={`nearby-skeleton-${index}`} isLeftColumn={index % 2 === 0} />
+                ))}
+              </div>
+            ) : nearbyRecruitments.length > 0 ? (
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {nearbyRecruitments.map((item, index) => (
+                  <RecruitmentCard key={item.recruitmentId} recruitment={item} isLeftColumn={index % 2 === 0} />
+                ))}
+              </div>
+            ) : (
+              <div className="relative mt-2 h-[341px]">
+                <div className="invisible grid grid-cols-2 gap-2">
+                  {[0, 1].map((index) => (
+                    <RecruitmentCardSkeleton key={`nearby-empty-${index}`} isLeftColumn={index % 2 === 0} />
+                  ))}
+                </div>
+                <p className="text-body-2-medium absolute inset-0 flex items-center justify-center px-4 text-gray-600">
+                  표시할 모집글이 없습니다.
+                </p>
+              </div>
+            )}
             <div className="mt-5 flex items-center justify-center gap-1.5">
               {categoryIndicators.map((category) => (
                 <span
