@@ -28,10 +28,11 @@ export default function MapControls({
     ? LAYOUT.SELECTED_CARD_HEIGHT_WITH_IMAGES
     : LAYOUT.SELECTED_CARD_HEIGHT_NO_IMAGES;
 
-  const safeAreaBottom = 'env(safe-area-inset-bottom, 0px)';
+  // GPS 버튼은 BottomSheet/SelectedCard 상단에서 18px 위에 위치
+  const baseBottom = `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px))`;
   const gpsButtonBottom = isSelectedShopCard
-    ? `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + ${safeAreaBottom} + ${selectedCardHeight}px + 18px - ${selectedCardDragOffset}px)`
-    : `calc(${bottomSheetHeight}dvh + ${LAYOUT.BOTTOM_NAV_HEIGHT}px + ${safeAreaBottom} + 18px)`;
+    ? `calc(${baseBottom} + ${selectedCardHeight}px + 18px - ${selectedCardDragOffset}px)`
+    : `calc(${baseBottom} + ${bottomSheetHeight}dvh + 18px)`;
 
   return (
     <>
