@@ -33,6 +33,8 @@ export const DRAG = {
   CARD_CONTENT_HEIGHT: 230,
   /** SelectedShopCard 접힘 임계값 (px) */
   COLLAPSE_THRESHOLD: 100,
+  /** SelectedShopCard 전체 높이 (px) - 핸들 + 콘텐츠 */
+  CARD_FULL_HEIGHT: 260,
 } as const;
 
 // ===== 타입 export =====

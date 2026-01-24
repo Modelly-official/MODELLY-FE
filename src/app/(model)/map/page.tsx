@@ -14,6 +14,7 @@ import {
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useMapState, useMapFilters, useSearchCenter, useMapData } from '@/src/hooks/custom/map';
 import { useToast } from '@/src/hooks/common/useToast';
+import { LAYOUT, DRAG } from '@/src/constants/map';
 
 function MapContent() {
   const { showToast } = useToast();
@@ -109,7 +110,8 @@ function MapContent() {
         shops={shops}
         selectedDesignerId={selectedShop?.designerId}
         userLocation={userLocationAsMapPosition}
-        bottomOffset={selectedShop ? 0 : bottomSheetHeight}
+        bottomOffset={selectedShop ? undefined : bottomSheetHeight}
+        bottomOffsetPx={selectedShop ? DRAG.CARD_FULL_HEIGHT + LAYOUT.BOTTOM_NAV_HEIGHT : undefined}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}
         onShopClick={handleShopClick}
