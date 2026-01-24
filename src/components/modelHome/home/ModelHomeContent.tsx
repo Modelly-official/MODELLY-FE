@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import { BottomNav } from '@/src/components/common';
 import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
 import RecruitmentCard from '@/src/components/explore/Cards/RecruitmentCard';
@@ -19,13 +21,14 @@ import {
   MOCK_TOP_RECRUITMENTS,
   MOCK_USER,
 } from '@/src/mocks/modelHome/homeMock';
-import type { HomeCategory } from '@/src/types/modelHome/modelHome';
+import type { HomeCategory } from '@/src/types/modelHome';
 
 export function ModelHomeContent() {
   const router = useRouter();
   const [nearbyCategory, setNearbyCategory] = useState<HomeCategory>('ALL');
   const [topCategory, setTopCategory] = useState<HomeCategory>('ALL');
   const [designerCategory, setDesignerCategory] = useState<HomeCategory>('ALL');
+  const [topActiveIndex, setTopActiveIndex] = useState(0);
   const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
 
   const reservation = MOCK_RESERVATIONS[0] ?? null;
@@ -62,7 +65,7 @@ export function ModelHomeContent() {
           </section>
         </div>
 
-        <div className="flex flex-col gap-8 bg-white pb-[calc(87px+env(safe-area-inset-bottom)+16px)]">
+        <div className="flex flex-col gap-13 bg-white pb-[calc(87px+env(safe-area-inset-bottom)+16px)]">
           {/* 내 주위 모집글 */}
           <section className="mt-8">
             <div className="px-4">
@@ -96,27 +99,34 @@ export function ModelHomeContent() {
           {/* 실시간 인기 TOP 모집글 */}
           <section>
             <div className="px-4">
-              <h2 className="text-body-1-semibold text-gray-900">실시간 인기 TOP 모집글</h2>
-              <div className="-mx-4 mt-3">
+              <h2 className="text-head-4-semibold text-gray-900">실시간 인기 TOP 모집글</h2>
+              <div className="-mx-4 mt-1">
                 <ChatCategoryChips
                   selectedCategory={topCategory}
                   onChange={(category) => setTopCategory(category as HomeCategory)}
                 />
               </div>
             </div>
-            <div className="mt-4 px-4">
-              <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2">
+            <div className="mt-2">
+              <Swiper
+                spaceBetween={8}
+                slidesPerView="auto"
+                onSlideChange={(swiper) => setTopActiveIndex(swiper.activeIndex)}
+                className="-mx-4 px-4!"
+              >
                 {MOCK_TOP_RECRUITMENTS.map((item) => (
-                  <div key={item.recruitmentId} className="w-[260px] shrink-0">
+                  <SwiperSlide key={item.recruitmentId} className="w-[clamp(200px,62vw,640px)]!">
                     <TopRecruitmentCard recruitment={item} />
-                  </div>
+                  </SwiperSlide>
                 ))}
-              </div>
-              <div className="mt-2 flex items-center justify-center gap-1">
+              </Swiper>
+              <div className="mt-5 flex items-center justify-center gap-1.5">
                 {MOCK_TOP_RECRUITMENTS.map((item, index) => (
                   <span
                     key={item.recruitmentId}
-                    className={`h-1.5 w-1.5 rounded-full ${index === 0 ? 'bg-gray-800' : 'bg-gray-300'}`}
+                    className={`h-1.5 rounded-full ${
+                      topActiveIndex === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
+                    }`}
                   />
                 ))}
               </div>

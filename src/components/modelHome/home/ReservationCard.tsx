@@ -47,7 +47,7 @@ export function ReservationCard({ reservation }: ReservationCardProps) {
           </div>
         </div>
 
-        <div className="-my-px px-7 relative z-10">
+        <div className="relative z-10 -my-px px-7">
           <div
             className="h-px w-full"
             style={{

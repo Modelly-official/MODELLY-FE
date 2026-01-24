@@ -42,7 +42,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
       </div>
 
       {/* 정보 */}
-      <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pr-[9px] pl-4' : 'pr-4 pl-[10px]'}`}>
+      <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pr-[9px] pl-4' : 'pr-4 pl-2.5'}`}>
         <div className="flex flex-col gap-1">
           {/* 제목 */}
           <h3 className="text-body-1-semibold truncate text-black">{recruitment.title}</h3>
