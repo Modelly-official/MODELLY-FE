@@ -65,7 +65,7 @@ export function ModelHomeContent() {
           </section>
         </div>
 
-        <div className="flex flex-col gap-13 bg-white pb-[calc(87px+env(safe-area-inset-bottom)+16px)]">
+        <div className="flex flex-col gap-13 bg-white pb-[calc(87px+env(safe-area-inset-bottom)+58px)]">
           {/* 내 주위 모집글 */}
           <section className="mt-8">
             <div className="px-4">
@@ -136,20 +136,32 @@ export function ModelHomeContent() {
           {/* 시술별 인기 디자이너 */}
           <section>
             <div className="px-4">
-              <h2 className="text-body-1-semibold text-gray-900">시술별 인기 디자이너</h2>
-              <div className="-mx-4 mt-3">
+              <h2 className="text-head-4-semibold text-gray-900">시술별 인기 디자이너</h2>
+              <div className="-mx-4 mt-2">
                 <ChatCategoryChips
                   selectedCategory={designerCategory}
                   onChange={(category) => setDesignerCategory(category as HomeCategory)}
                 />
               </div>
             </div>
-            <div className="mt-4 flex flex-col gap-3 px-4">
-              {MOCK_POPULAR_DESIGNERS.map((item) => (
-                <div key={item.designerId} className="rounded-2xl bg-white px-4 py-3">
-                  <DesignerCard designer={item} />
-                </div>
-              ))}
+            <div className="">
+              <div className="flex flex-col">
+                {MOCK_POPULAR_DESIGNERS.map((item) => (
+                  <div key={item.designerId} className="rounded-2xl bg-white px-4 py-2">
+                    <DesignerCard designer={item} />
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 flex items-center justify-center gap-1.5">
+                {categoryIndicators.map((category) => (
+                  <span
+                    key={category}
+                    className={`h-1.5 rounded-full ${
+                      designerCategory === category ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </section>
         </div>
