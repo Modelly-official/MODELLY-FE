@@ -223,8 +223,8 @@ export default function NaverMapView({
         const projection = mapInstance.getProjection();
         const pixelOffset = projection.fromCoordToOffset(targetCoord);
 
-        // Y축 상향 이동 (화면 좌표계는 위가 0)
-        pixelOffset.y -= offsetPx;
+        // 지도 중심을 아래로 이동 → 사용자 위치가 보이는 영역 중앙으로 올라감
+        pixelOffset.y += offsetPx;
 
         targetCoord = projection.fromOffsetToCoord(pixelOffset);
       }
