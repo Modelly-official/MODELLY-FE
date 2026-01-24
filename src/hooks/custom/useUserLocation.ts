@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 export interface UserLocation {
   latitude: number;
@@ -26,11 +26,13 @@ interface UseUserLocationReturn {
 export function useUserLocation(options: UseUserLocationOptions = {}): UseUserLocationReturn {
   const { onError, autoRequest = false } = options;
   const [location, setLocation] = useState<UserLocation | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(autoRequest);
+  const autoRequestedRef = useRef(false);
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
       onError?.('브라우저가 위치 정보를 지원하지 않습니다.');
+      setIsLoading(false);
       return;
     }
 
@@ -83,7 +85,8 @@ export function useUserLocation(options: UseUserLocationOptions = {}): UseUserLo
 
   // autoRequest가 true면 마운트 시 자동으로 위치 요청
   useEffect(() => {
-    if (autoRequest && !location && !isLoading) {
+    if (autoRequest && !location && !autoRequestedRef.current) {
+      autoRequestedRef.current = true;
       requestLocation();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

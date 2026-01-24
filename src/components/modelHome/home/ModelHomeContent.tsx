@@ -55,7 +55,7 @@ export function ModelHomeContent() {
           </header>
 
           {!authReady ? (
-            <div className="px-4 pt-2 pb-5">
+            <div className="h-70.5 px-4 pt-2 pb-5">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col gap-2">
                   <Skeleton variant="text" className="h-5 w-36" />
@@ -63,11 +63,11 @@ export function ModelHomeContent() {
                 </div>
                 <Skeleton variant="circular" className="size-16" />
               </div>
-              <Skeleton className="h-47.5 rounded-xl" />
+              <Skeleton className="mt-5 h-28 rounded-xl" />
             </div>
           ) : isLoggedIn ? (
             isSummaryLoading ? (
-              <div className="px-4 pt-2 pb-5">
+              <div className="h-70.5 px-4 pt-2 pb-5">
                 <div className="flex items-start justify-between">
                   <div className="flex flex-col gap-2">
                     <Skeleton variant="text" className="h-5 w-36" />

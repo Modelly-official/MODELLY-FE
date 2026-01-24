@@ -14,10 +14,11 @@ const FALLBACK_LOCATION = {
   latitude: 37.5112,
   longitude: 127.0284,
 };
+const LOCATION_LOADING_LABEL = '위치 확인 중';
 
 export function useNearbyRecruitments(category: HomeCategory) {
   const { showToast } = useToast();
-  const [locationLabel, setLocationLabel] = useState(FALLBACK_LOCATION.label);
+  const [locationLabel, setLocationLabel] = useState(LOCATION_LOADING_LABEL);
 
   const handleLocationError = useCallback(
     (message: string) => {
@@ -96,16 +97,22 @@ export function useNearbyRecruitments(category: HomeCategory) {
   }, [location, showToast]);
 
   const handleRequestLocation = useCallback(() => {
-    setLocationLabel('위치 확인 중');
+    setLocationLabel(LOCATION_LOADING_LABEL);
     requestLocation();
   }, [requestLocation]);
+
+  const displayLocationLabel = useMemo(() => {
+    if (location) return locationLabel;
+    if (isLocationLoading) return LOCATION_LOADING_LABEL;
+    return FALLBACK_LOCATION.label;
+  }, [isLocationLoading, location, locationLabel]);
 
   return {
     items,
     isLoading: query.isLoading,
     isLocationLoading,
-    locationLabel,
-    showLocationCta: !location && !isLocationLoading,
+    locationLabel: displayLocationLabel,
+    showLocationCta: !location && !isLocationLoading && displayLocationLabel !== LOCATION_LOADING_LABEL,
     requestLocation: handleRequestLocation,
   };
 }
