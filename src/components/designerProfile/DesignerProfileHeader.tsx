@@ -17,7 +17,7 @@ export default function DesignerProfileHeader({ actionType = 'none', onBack, onA
   const ActionIcon = actionType === 'edit' ? EditIcon : ShareIcon;
 
   return (
-    <header className="absolute top-0 right-0 left-0 z-10 flex h-13 items-center justify-between px-4 py-3.5">
+    <header className="safe-area-top absolute top-0 right-0 left-0 z-10 flex h-13 items-center justify-between px-4 py-3.5">
       <button
         type="button"
         aria-label="뒤로가기"
