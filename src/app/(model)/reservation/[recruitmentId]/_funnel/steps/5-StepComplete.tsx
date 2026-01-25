@@ -26,7 +26,7 @@ export default function StepComplete() {
       <button
         type="button"
         onClick={handleConfirm}
-        className="text-body-1-medium fixed bottom-3 left-1/2 w-[calc(100%-2rem)] max-w-[343px] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 text-white"
+        className="text-body-1-medium fixed bottom-[calc(12px+env(safe-area-inset-bottom))] left-1/2 w-[calc(100%-2rem)] max-w-[343px] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 text-white"
       >
         확인
       </button>
