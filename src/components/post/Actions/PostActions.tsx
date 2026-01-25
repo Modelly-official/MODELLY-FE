@@ -26,7 +26,6 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
   };
 
   const handleReservation = () => {
-    // TODO: 예약 페이지로 이동 (추후 구현)
     router.push(`/reservation/${recruitmentId}`);
   };
 
