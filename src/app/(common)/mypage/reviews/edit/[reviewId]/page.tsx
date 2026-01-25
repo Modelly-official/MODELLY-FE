@@ -156,7 +156,7 @@ export default function ReviewEditPage() {
           type="button"
           onClick={handleSubmit}
           disabled={!isValidForm || isSubmitting}
-          className={`flex h-14 w-full cursor-pointer items-center justify-center rounded-full text-body-1-semibold transition-colors ${
+          className={`flex h-[56px] w-full cursor-pointer items-center justify-center rounded-full text-body-1-semibold transition-colors ${
             isValidForm && !isSubmitting
               ? 'bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-600'

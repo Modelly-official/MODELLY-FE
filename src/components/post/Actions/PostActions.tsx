@@ -37,7 +37,7 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
           type="button"
           onClick={handleChat}
           disabled={createChatRoom.isPending}
-          className={`text-body-1-semibold flex-1 rounded-full border h-14 ${
+          className={`text-body-1-semibold flex-1 rounded-full border h-[56px] ${
             createChatRoom.isPending
               ? 'cursor-not-allowed border-gray-300 text-gray-400'
               : 'cursor-pointer border-gray-400 text-gray-900'
@@ -48,7 +48,7 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
         <button
           type="button"
           onClick={handleReservation}
-          className="text-body-1-semibold flex-1 cursor-pointer rounded-full bg-gray-900 h-14 text-white"
+          className="text-body-1-semibold flex-1 cursor-pointer rounded-full bg-gray-900 h-[56px] text-white"
         >
           예약하기
         </button>

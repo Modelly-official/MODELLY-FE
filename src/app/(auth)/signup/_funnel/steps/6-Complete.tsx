@@ -25,7 +25,7 @@ export const StepComplete: React.FC = () => {
       <FixedBottomContainer>
         <button
           onClick={handleStart}
-          className="text-body-1-semibold h-14 w-full cursor-pointer rounded-full bg-gray-900 text-white"
+          className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
         >
           {SIGNUP_MESSAGES.COMPLETE.BUTTON}
         </button>

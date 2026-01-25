@@ -24,7 +24,7 @@ export const StepComplete: React.FC = () => {
       <FixedBottomContainer>
         <button
           onClick={handleGoToLogin}
-          className="text-body-1-semibold h-14 w-full cursor-pointer rounded-full bg-gray-900 text-white"
+          className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
         >
           로그인 화면으로 이동
         </button>

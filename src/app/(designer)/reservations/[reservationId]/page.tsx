@@ -159,14 +159,14 @@ export default function ReservationDetailPage() {
             <button
               type="button"
               onClick={handleReject}
-              className="text-body-1-semibold h-14 flex-1 cursor-pointer rounded-full border border-gray-400 bg-white text-gray-900"
+              className="text-body-1-semibold h-[56px] flex-1 cursor-pointer rounded-full border border-gray-400 bg-white text-gray-900"
             >
               예약 거절
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className="text-body-1-semibold h-14 flex-1 cursor-pointer rounded-full bg-gray-900 text-white"
+              className="text-body-1-semibold h-[56px] flex-1 cursor-pointer rounded-full bg-gray-900 text-white"
             >
               예약 확정
             </button>
