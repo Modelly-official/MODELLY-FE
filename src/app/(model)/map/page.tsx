@@ -14,6 +14,7 @@ import {
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useMapState, useMapFilters, useSearchCenter, useMapData } from '@/src/hooks/custom/map';
 import { useToast } from '@/src/hooks/common/useToast';
+import { LAYOUT, DRAG } from '@/src/constants/map';
 
 function MapContent() {
   const { showToast } = useToast();
@@ -29,7 +30,6 @@ function MapContent() {
     zoom,
     bottomSheetHeight,
     selectedShop,
-    selectedCardDragOffset,
     displayCenter,
     userLocationAsMapPosition,
     handleCenterChanged,
@@ -110,20 +110,17 @@ function MapContent() {
         shops={shops}
         selectedDesignerId={selectedShop?.designerId}
         userLocation={userLocationAsMapPosition}
+        bottomOffset={selectedShop ? undefined : bottomSheetHeight}
+        bottomOffsetPx={selectedShop ? DRAG.CARD_FULL_HEIGHT + LAYOUT.BOTTOM_NAV_HEIGHT : undefined}
         onCenterChanged={handleCenterChanged}
         onZoomChanged={handleZoomChanged}
         onShopClick={handleShopClick}
       />
 
-      {/* 지도 컨트롤 버튼 */}
+      {/* 새로고침 버튼 */}
       <MapControls
         onRefreshSearch={handleRefreshSearch}
-        onCurrentLocation={handleCurrentLocation}
         showRefreshButton={!isLocationLoading}
-        bottomSheetHeight={bottomSheetHeight}
-        isSelectedShopCard={!!selectedShop && !!designerProfile}
-        hasRecruitmentImages={designerRecruitments.some((r) => r.thumbnailUrl)}
-        selectedCardDragOffset={selectedCardDragOffset}
       />
 
       {/* 로딩 인디케이터 */}
@@ -143,6 +140,7 @@ function MapContent() {
           onClose={handleCloseSelectedShop}
           onDesignerLikeToggle={() => toggleDesignerLike(selectedShop.designerId)}
           onDragOffsetChange={setSelectedCardDragOffset}
+          onCurrentLocation={handleCurrentLocation}
         />
       ) : !selectedShop ? (
         <MapBottomSheet
@@ -154,6 +152,7 @@ function MapContent() {
           onSubCategoryChange={setSubCategory}
           onSortChange={setSortOption}
           onHeightChange={setBottomSheetHeight}
+          onCurrentLocation={handleCurrentLocation}
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           onLoadMore={fetchNextPage}

@@ -11,12 +11,8 @@ export const MAP_DEFAULTS = {
 
 // ===== 레이아웃 상수 =====
 export const LAYOUT = {
-  /** BottomNav 높이 (px) - safe-area 포함 */
+  /** BottomNav 높이 (px) - safe-area 미포함 */
   BOTTOM_NAV_HEIGHT: 76,
-  /** SelectedShopCard 높이 - 공고 있을 때 (이미지 갤러리 포함) */
-  SELECTED_CARD_HEIGHT_WITH_IMAGES: 340,
-  /** SelectedShopCard 높이 - 공고 없을 때 */
-  SELECTED_CARD_HEIGHT_NO_IMAGES: 160,
 } as const;
 
 // ===== BottomSheet 높이 설정 (vh 기준) =====
@@ -37,6 +33,8 @@ export const DRAG = {
   CARD_CONTENT_HEIGHT: 230,
   /** SelectedShopCard 접힘 임계값 (px) */
   COLLAPSE_THRESHOLD: 100,
+  /** SelectedShopCard 전체 높이 (px) - 핸들 + 콘텐츠 */
+  CARD_FULL_HEIGHT: 260,
 } as const;
 
 // ===== 타입 export =====

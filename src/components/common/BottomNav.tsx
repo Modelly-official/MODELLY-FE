@@ -112,7 +112,7 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-200 bg-white pt-2 pb-[calc(16px+env(safe-area-inset-bottom))] sm:w-[375px]">
+    <nav className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-200 bg-white pt-2 pb-[calc(16px+env(safe-area-inset-bottom))] touch-none sm:w-[375px]">
       <div className="flex">
         {navItems.map((item) => {
           const active = isActive(item.href);

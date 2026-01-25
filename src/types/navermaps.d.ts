@@ -9,7 +9,16 @@ declare namespace naver.maps {
     getZoom(): number;
     getBounds(): LatLngBounds;
     panTo(coord: LatLng | Coord, options?: PanOptions): void;
+    panBy(point: Point, options?: PanOptions): void;
+    getProjection(): MapSystemProjection;
     destroy(): void;
+  }
+
+  interface MapSystemProjection {
+    fromCoordToOffset(coord: Coord | LatLng): Point;
+    fromOffsetToCoord(offset: Point): LatLng;
+    fromCoordToPoint(coord: Coord | LatLng): Point;
+    fromPointToCoord(point: Point): LatLng;
   }
 
   class LatLng {
