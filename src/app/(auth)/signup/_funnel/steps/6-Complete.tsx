@@ -21,12 +21,14 @@ export const StepComplete: React.FC = () => {
           {SIGNUP_MESSAGES.COMPLETE.TITLE}
         </p>
       </div>
-      <button
-        onClick={handleStart}
-        className="text-body-1-medium fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-1/2 w-[calc(100%-2rem)] max-w-[343px] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 text-white sm:w-[343px]"
-      >
-        {SIGNUP_MESSAGES.COMPLETE.BUTTON}
-      </button>
+      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+        <button
+          onClick={handleStart}
+          className="text-body-1-semibold h-14 w-full cursor-pointer rounded-full bg-gray-900 text-white"
+        >
+          {SIGNUP_MESSAGES.COMPLETE.BUTTON}
+        </button>
+      </div>
     </div>
   );
 };
