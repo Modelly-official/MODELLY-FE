@@ -142,7 +142,7 @@ export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTi
       </div>
 
       {/* 하단 다음 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] bg-white px-4 py-3">
+      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] bg-white px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={goNext}
