@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface PostActionsProps {
   recruitmentId: number;
@@ -30,7 +31,7 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+    <FixedBottomContainer hasBorder>
       <div className="flex gap-2">
         <button
           type="button"
@@ -52,6 +53,6 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
           예약하기
         </button>
       </div>
-    </div>
+    </FixedBottomContainer>
   );
 }
