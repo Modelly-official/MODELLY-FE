@@ -12,6 +12,7 @@ import { EffectCards, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/portfolio/straigh-arrow-left.svg';
 import ArrowRightIcon from '@/public/icons/portfolio/straight-arrow-right.svg';
+import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
 import { mockPortfolioImages } from '@/src/mocks/profile/designerProfile';
 
 type PortfolioCategory = 'ALL' | 'CUT' | 'PERM' | 'COLOR' | 'MAGIC';
@@ -131,7 +132,7 @@ export default function PortfolioPage() {
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
-          <ArrowLeftIcon className="size-6" />
+          <LeftArrowIcon className="size-6" />
         </button>
         <h1 className="text-head-3-medium text-center text-black">포트폴리오</h1>
         <div className="size-6" />
@@ -193,7 +194,7 @@ export default function PortfolioPage() {
                 >
                   {filteredItems.map((item) => (
                     <SwiperSlide key={item.id} className="flex! items-center justify-center">
-                      <div className="relative h-96 w-[288px] overflow-hidden rounded-[20px] bg-gray-100">
+                      <div className="relative h-96 w-[288px] overflow-hidden rounded-[20px] bg-gray-100 shadow-2xs">
                         <Image
                           src={item.imageUrl}
                           alt={item.title}
@@ -224,7 +225,7 @@ export default function PortfolioPage() {
                   }`}
                   aria-label="이전 슬라이드"
                 >
-                  <ArrowLeftIcon className="size-6" />
+                  <ArrowLeftIcon className="size-6 cursor-pointer" />
                 </button>
                 <div>
                   <span className="text-body-1-semibold text-purple-600">{activeIndex + 1}</span>
@@ -239,7 +240,7 @@ export default function PortfolioPage() {
                   }`}
                   aria-label="다음 슬라이드"
                 >
-                  <ArrowRightIcon className="size-6" />
+                  <ArrowRightIcon className="size-6 cursor-pointer" />
                 </button>
               </div>
             </>
