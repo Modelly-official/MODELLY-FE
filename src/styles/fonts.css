@@ -11,7 +11,7 @@
 /* Spoqa Han Sans Neo Font - 숫자 전용 폰트 */
 @font-face {
   font-family: 'Spoqa Han Sans Neo';
-  src: url('/fonts/SpoqaHanSansNeo-Medium.woff2') format('woff2');
+  src: url('/fonts/SpoqaHanSansNeo-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
