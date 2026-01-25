@@ -367,7 +367,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       {/* 하단 액션 버튼 */}
       {isOwner ? (
         // 본인 공고: 수정하기 버튼
-        <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] sm:w-[375px]">
+        <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
           <button
             type="button"
             onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}

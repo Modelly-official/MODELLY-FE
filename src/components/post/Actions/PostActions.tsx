@@ -30,13 +30,13 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(8px+env(safe-area-inset-bottom))] sm:w-[375px]">
+    <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
       <div className="flex gap-2">
         <button
           type="button"
           onClick={handleChat}
           disabled={createChatRoom.isPending}
-          className={`text-body-1-semibold flex-1 rounded-full border py-4 ${
+          className={`text-body-1-semibold flex-1 rounded-full border h-14 ${
             createChatRoom.isPending
               ? 'cursor-not-allowed border-gray-300 text-gray-400'
               : 'cursor-pointer border-gray-400 text-gray-900'
@@ -47,7 +47,7 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
         <button
           type="button"
           onClick={handleReservation}
-          className="text-body-1-semibold flex-1 cursor-pointer rounded-full bg-gray-900 py-4 text-white"
+          className="text-body-1-semibold flex-1 cursor-pointer rounded-full bg-gray-900 h-14 text-white"
         >
           예약하기
         </button>
