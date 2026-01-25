@@ -29,6 +29,7 @@
 
   /* Font Family */
   --font-sans: 'Pretendard', sans-serif;
+  --font-number: 'Spoqa Han Sans Neo', sans-serif;
 
   /* Font Sizes */
   --text-head-1: 24px;
@@ -39,6 +40,13 @@
   --text-body-2: 14px;
   --text-caption-1: 12px;
   --text-caption-2: 11px;
+
+  /* Number Font Sizes */
+  --text-number-1: 24px;
+  --text-number-2: 22px;
+  --text-number-3: 20px;
+  --text-number-4: 16px;
+  --text-number-5: 14px;
 
   /* Font Weights */
   --font-weight-semibold: 600;

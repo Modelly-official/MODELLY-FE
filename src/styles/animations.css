@@ -1,0 +1,152 @@
+/* animations.css - 애니메이션 정의 */
+
+@layer utilities {
+  /* Scrollbar Hide */
+  .scrollbar-hide {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none;
+  }
+
+  /* Toast Animations */
+  @keyframes toast-slide-up-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes toast-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .animate-toast-enter {
+    animation: toast-slide-up-in 0.3s ease-out;
+  }
+
+  .animate-toast-exit {
+    animation: toast-fade-out 0.3s ease-out;
+  }
+
+  /* Skeleton Shimmer Animation */
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-skeleton {
+    background: linear-gradient(90deg, var(--color-gray-200) 25%, var(--color-gray-300) 50%, var(--color-gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* FAB Float Animation */
+  @keyframes fab-float {
+    0%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(-6px);
+    }
+  }
+
+  .animate-fab-float {
+    animation: fab-float 2s ease-in-out infinite;
+  }
+
+  /* BottomSheet Slide Up Animation */
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  /* Notification Banner Animations */
+  @keyframes notification-slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes notification-slide-up {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+  }
+
+  .animate-slide-down {
+    animation: notification-slide-down 0.3s ease-out;
+  }
+
+  .animate-notification-exit {
+    animation: notification-slide-up 0.3s ease-out;
+  }
+
+  /* Current Location Marker Pulse Animation */
+  @keyframes location-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes accuracy-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.35;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.55;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.35;
+    }
+  }
+
+  .current-location-pulse {
+    animation: location-pulse 2s ease-in-out infinite;
+  }
+
+  .current-location-accuracy {
+    animation: accuracy-pulse 2s ease-in-out infinite;
+  }
+}

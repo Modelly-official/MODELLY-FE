@@ -1,0 +1,17 @@
+/* fonts.css - 웹폰트 정의 */
+
+/* Pretendard Font - 기본 본문 폰트 */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/PretendardVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Spoqa Han Sans Neo Font - 숫자 전용 폰트 */
+@font-face {
+  font-family: 'Spoqa Han Sans Neo';
+  src: url('/fonts/SpoqaHanSansNeo-Medium.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
