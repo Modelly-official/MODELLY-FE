@@ -22,7 +22,7 @@ export const StepComplete: React.FC = () => {
       </div>
       <button
         onClick={handleGoToLogin}
-        className="text-body-1-medium fixed bottom-3 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 tracking-tight text-white sm:w-[343px]"
+        className="text-body-1-medium fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 tracking-tight text-white sm:w-[343px]"
       >
         로그인 화면으로 이동
       </button>
