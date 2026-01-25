@@ -32,6 +32,7 @@ export const DESIGNER_ONLY_ROUTES = [
   '/calendar', // 캘린더
   '/reservations', // 예약 관리 (목록, 상세)
   '/myProfile', // 디자이너 내 프로필
+  '/mypage/portfolio', // 포트폴리오 관리
 ];
 
 // ===== 인증된 사용자 공통 라우트 =====

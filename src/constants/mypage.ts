@@ -35,7 +35,7 @@ export const MODEL_QUICK_ACTIONS: QuickActionConfig[] = [
 export const DESIGNER_QUICK_ACTIONS: QuickActionConfig[] = [
   { label: '예약 내역', iconPath: '/icons/myPage/reservationList.svg', href: '/mypage/reservations' },
   { label: '리뷰 관리', iconPath: '/icons/myPage/review.svg', href: '/mypage/reviews' },
-  { label: '포트폴리오', iconPath: '/icons/myPage/portfolio.svg' },
+  { label: '포트폴리오', iconPath: '/icons/myPage/portfolio.svg', href: '/mypage/portfolio' },
 ];
 
 /** 역할별 기본 폴백 이름 */
