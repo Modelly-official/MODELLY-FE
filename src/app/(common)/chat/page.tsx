@@ -42,10 +42,9 @@ export default function ChatPage() {
   const isListLoading = !authReady || isLoading || (isFetching && allChats.length === 0);
 
   // 채팅방은 생성된 채로 메세지가 없는 경우, 채팅방 리스트에 뜨는 것을 방지
+  // IMAGE 타입의 경우 lastMessage가 null일 수 있으므로 lastMessage 조건 제거
   const visibleChats = useMemo(() => {
-    return allChats.filter(
-      (chat) => chat.lastMessageTime != null && chat.lastMessage != null && chat.messageType != null,
-    );
+    return allChats.filter((chat) => chat.lastMessageTime != null && chat.messageType != null);
   }, [allChats]);
 
   // 에러 처리
