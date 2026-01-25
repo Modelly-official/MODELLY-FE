@@ -89,7 +89,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-6 px-4">
+      <div className="flex flex-1 flex-col gap-6 px-4 pb-[100px]">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
           <p className="text-[20px] leading-[1.4] font-normal tracking-[-0.4px]">
@@ -128,7 +128,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       </div>
 
       {/* 하단 버튼 */}
-      <div className="bg-white p-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-0 right-0 z-10 bg-white p-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={goNext}
