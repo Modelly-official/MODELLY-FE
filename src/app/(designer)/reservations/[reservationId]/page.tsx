@@ -12,6 +12,7 @@ import {
   ReservationRejectModal,
   ReservationDetailSkeleton,
 } from '@/src/components/designerHome';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { useReservationDetail, useConfirmReservation, useRejectReservation } from '@/src/hooks/queries/designerHome';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
 import { useToast } from '@/src/hooks/common/useToast';
@@ -153,22 +154,24 @@ export default function ReservationDetailPage() {
 
       {/* 하단 버튼 (예약대기 상태에서만 표시) */}
       {reservation.status === '예약대기' && (
-        <div className="fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 gap-3 border-t border-gray-300 bg-white px-4 py-3 sm:w-[375px]">
-          <button
-            type="button"
-            onClick={handleReject}
-            className="text-body-1-semibold flex-1 cursor-pointer rounded-full border border-gray-400 bg-white py-4 text-gray-900"
-          >
-            예약 거절
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            className="text-body-1-semibold flex-1 cursor-pointer rounded-full bg-gray-900 py-4 text-white"
-          >
-            예약 확정
-          </button>
-        </div>
+        <FixedBottomContainer hasBorder>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleReject}
+              className="text-body-1-semibold h-14 flex-1 cursor-pointer rounded-full border border-gray-400 bg-white text-gray-900"
+            >
+              예약 거절
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="text-body-1-semibold h-14 flex-1 cursor-pointer rounded-full bg-gray-900 text-white"
+            >
+              예약 확정
+            </button>
+          </div>
+        </FixedBottomContainer>
       )}
 
       {/* 예약 확정 완료 모달 */}
