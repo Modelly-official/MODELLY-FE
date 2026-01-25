@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import CloseIcon from '@/public/icons/common/close.svg';
 import { StarRatingInput } from '@/src/components/review';
@@ -13,12 +13,11 @@ export default function ReviewEditPage() {
   const router = useRouter();
   const params = useParams();
   const reviewId = Number(params.reviewId);
-  const isInitializedRef = useRef(false);
 
-  // 작성한 리뷰 목록에서 현재 리뷰 정보 가져오기
+  // 작성한 리뷰 목록에서 현재 리뷰 정보 가져오기 (TanStack Query 캐시 활용)
   const { data: writtenData, isLoading: isLoadingReview } = useWrittenReviews();
 
-  // 현재 리뷰 정보 찾기 (무한 스크롤 pages에서 검색)
+  // 현재 리뷰 정보 찾기 (캐시된 pages에서 검색)
   const review: WrittenReviewItem | undefined = useMemo(() => {
     const allItems = writtenData?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
     return allItems.find((item) => item.reviewId === reviewId);
