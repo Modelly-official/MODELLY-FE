@@ -128,7 +128,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       </div>
 
       {/* 하단 버튼 */}
-      <div className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
+      <div className="bg-white p-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={goNext}

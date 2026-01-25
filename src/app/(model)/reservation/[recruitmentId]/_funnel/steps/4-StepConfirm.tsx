@@ -147,7 +147,7 @@ export default function StepConfirm({
       </div>
 
       {/* 하단 버튼 */}
-      <div className="px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+      <div className="bg-white px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={handleReservation}
