@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCreateReview, useUpdateReview } from '@/src/hooks/queries/review';
+import { useToast } from '@/src/hooks/common/useToast';
 import { uploadReviewImages } from '@/src/apis';
 import type { UnreviewedReservation, WrittenReviewItem } from '@/src/types';
 
@@ -61,6 +62,7 @@ interface UseReviewFormReturn {
  */
 export function useReviewForm(options: UseReviewFormOptions): UseReviewFormReturn {
   const router = useRouter();
+  const { showToast } = useToast();
   const createReviewMutation = useCreateReview();
   const updateReviewMutation = useUpdateReview();
 
@@ -140,10 +142,20 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
         let thumbnail = existingUrls[0] || '';
         let imageFolderId = '';
 
-        // 새 이미지가 있으면 업로드 (reservationId가 없으므로 새 이미지 업로드 불가 - 기존 이미지만 수정 가능)
-        // TODO: 리뷰 수정용 이미지 업로드 API 확인 필요
+        // 새 이미지가 있으면 업로드
         if (newFiles.length > 0) {
-          console.warn('리뷰 수정 시 새 이미지 업로드는 현재 지원되지 않습니다.');
+          const reservationId = (options as UseReviewFormEditOptions).review?.reservationId;
+          if (reservationId) {
+            const uploadResult = await uploadReviewImages(reservationId, newFiles);
+            if (uploadResult) {
+              finalImageUrls = [...existingUrls, ...uploadResult.imageUrls];
+              thumbnail = uploadResult.thumbnail || existingUrls[0] || '';
+              imageFolderId = uploadResult.imageFolderId;
+            }
+          } else {
+            showToast('이미지를 업로드할 수 없습니다.');
+            return;
+          }
         }
 
         // 리뷰 수정 API 호출
@@ -186,7 +198,7 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
     } finally {
       setIsSubmitting(false);
     }
-  }, [isValidForm, isSubmitting, isEditMode, options, previewUrls, imageFiles, rating, content, createReviewMutation, updateReviewMutation, router]);
+  }, [isValidForm, isSubmitting, isEditMode, options, previewUrls, imageFiles, rating, content, createReviewMutation, updateReviewMutation, router, showToast]);
 
   return {
     // 폼 상태
