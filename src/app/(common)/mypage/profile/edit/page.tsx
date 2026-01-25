@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { AddressInput, FixedBottomButton, GenderSelect, ProfileImageUpload } from '@/src/components/signup';
 import { Dropdown, TextInput } from '@/src/components/common';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { useProfileEditForm } from '@/src/hooks/custom/mypage';
 import { CATEGORY_OPTIONS } from '@/src/constants/mypage';
 
@@ -61,7 +62,7 @@ export default function ProfileEditPage() {
 
       {/* 폼 */}
       <form
-        className="mx-4 mt-4 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 pb-6 sm:w-[343px]"
+        className="mx-4 mt-4 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 pb-24 sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
         {/* 프로필 이미지 */}
@@ -147,20 +148,21 @@ export default function ProfileEditPage() {
           )}
         </div>
 
-        {/* 제출 버튼 */}
-        <div className="mt-auto mb-3">
-          <FixedBottomButton
-            disabled={!isFormValid || isLoading}
-            onClick={handleSubmit}
-          >
-            {isButtonLoading ? (
-              <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              '완료'
-            )}
-          </FixedBottomButton>
-        </div>
       </form>
+
+      {/* 하단 버튼 */}
+      <FixedBottomContainer>
+        <FixedBottomButton
+          disabled={!isFormValid || isLoading}
+          onClick={handleSubmit}
+        >
+          {isButtonLoading ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            '완료'
+          )}
+        </FixedBottomButton>
+      </FixedBottomContainer>
     </div>
   );
 }
