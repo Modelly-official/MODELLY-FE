@@ -64,7 +64,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 bg-white px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-1/2 z-10 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
         <button
           type="button"
           onClick={goNext}
