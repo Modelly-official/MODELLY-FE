@@ -208,6 +208,10 @@ export default function DesignerProfileView({
     });
   };
 
+  const handlePortfolioViewAll = () => {
+    router.push('/designer/portfolio');
+  };
+
   const handleChat = () => {
     if (!authReady) return;
     if (!isLoggedIn) {
@@ -253,6 +257,7 @@ export default function DesignerProfileView({
         reviewItems={reviewItems}
         isReviewLoading={isReviewLoading}
         isReviewError={isReviewError}
+        onPortfolioViewAll={handlePortfolioViewAll}
         onReviewViewAll={handleReviewViewAll}
       />
 

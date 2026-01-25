@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
-import DesignerReviewTab, { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
+import DesignerReviewTab, {
+  DesignerReviewSummaryData,
+} from '@/src/components/designerProfile/review/DesignerReviewTab';
 import type { DesignerReviewItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
 
 type DesignerProfileTab = 'portfolio' | 'review';
@@ -15,6 +17,7 @@ interface DesignerPortfolioReviewSectionProps {
   reviewItems: DesignerReviewItem[];
   isReviewLoading?: boolean;
   isReviewError?: boolean;
+  onPortfolioViewAll?: () => void;
   onReviewViewAll?: () => void;
   onReviewPreviewMore?: () => void;
 }
@@ -27,6 +30,7 @@ export default function DesignerPortfolioReviewSection({
   reviewItems,
   isReviewLoading = false,
   isReviewError = false,
+  onPortfolioViewAll,
   onReviewViewAll,
   onReviewPreviewMore,
 }: DesignerPortfolioReviewSectionProps) {
@@ -64,7 +68,12 @@ export default function DesignerPortfolioReviewSection({
               <span className="text-body-1-medium text-black">전체</span>
               <span className="text-body-1-semibold text-gray-600">{portfolioImages.length}</span>
             </div>
-            <button type="button" className="text-body-2-medium flex items-center justify-center gap-0.5 text-gray-800">
+            <button
+              type="button"
+              onClick={onPortfolioViewAll}
+              disabled={!onPortfolioViewAll}
+              className="text-body-2-medium flex cursor-pointer items-center justify-center gap-0.5 text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+            >
               자세히 보기
               <ChevronRightIcon className="h-5 w-5 -translate-y-px text-gray-800" />
             </button>

@@ -255,7 +255,7 @@ export default function DesignerProfileEditView({
       </section>
 
       <section className="px-4 pt-6 pb-[calc(24px+env(safe-area-inset-bottom))]">
-        <DesignerProfileEditPortfolio images={portfolioImages} />
+        <DesignerProfileEditPortfolio images={portfolioImages} onViewAll={() => router.push('/mypage/portfolio')} />
       </section>
 
       <ConfirmModal
