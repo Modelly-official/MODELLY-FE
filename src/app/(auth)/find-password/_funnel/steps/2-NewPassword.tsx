@@ -96,7 +96,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
 
       </form>
       {/* 하단 버튼 */}
-      <div className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-4 right-4">
+      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
         <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
           {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
         </FixedBottomButton>
