@@ -1,6 +1,7 @@
 'use client';
 
 import { SignupHeader, SignupTitle, FixedBottomButton } from '@/src/components/signup';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { PasswordInput } from '@/src/components/common';
 import { useSignupStore } from '@/src/stores';
 import { useCheckLoginId } from '@/src/hooks/queries';
@@ -158,11 +159,11 @@ export const StepLoginInfo: React.FC<StepLoginInfoProps> = ({ goPrev, goNext, is
         </div>
 
       </form>
-      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+      <FixedBottomContainer>
         <FixedBottomButton disabled={!isFormValid} onClick={goNext}>
           {SIGNUP_MESSAGES.BUTTON.NEXT}
         </FixedBottomButton>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 };

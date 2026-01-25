@@ -9,6 +9,7 @@ import {
   SignupTitle,
   FixedBottomButton,
 } from '@/src/components/signup';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { useSignupStore } from '@/src/stores';
 import { useSendSmsCode, useVerifySmsCode } from '@/src/hooks/queries';
 import { validatePhoneNumber } from '@/src/utils';
@@ -124,11 +125,11 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
           </div>
         </div>
       </form>
-      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+      <FixedBottomContainer>
         <FixedBottomButton disabled={!name || !email || !phoneNumber || !authCodeValid} onClick={goNext}>
           {SIGNUP_MESSAGES.BUTTON.NEXT}
         </FixedBottomButton>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 };

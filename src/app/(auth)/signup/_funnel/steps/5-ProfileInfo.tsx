@@ -11,6 +11,7 @@ import {
   PhoneInputWithAuth,
   AuthCodeInput,
 } from '@/src/components/signup';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { TextInput, Dropdown } from '@/src/components/common';
 import { useSignupStore } from '@/src/stores';
 import { useSignup, useSocialSignup, useSendSmsCode, useVerifySmsCode } from '@/src/hooks/queries';
@@ -365,11 +366,11 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
         </div>
 
       </form>
-      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+      <FixedBottomContainer>
         <FixedBottomButton disabled={!isFormValid || isSubmitting || isUploading} onClick={handleSubmit}>
           {isUploading ? '이미지 업로드 중...' : isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
         </FixedBottomButton>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 };
