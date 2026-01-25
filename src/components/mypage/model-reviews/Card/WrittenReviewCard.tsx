@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import DotIcon from '@/public/icons/myRecruitment/dot.svg';
+import StarDisplay from '@/src/components/common/StarDisplay';
 import type { WrittenReviewItem } from '@/src/types';
 
 interface WrittenReviewCardProps {
@@ -161,17 +162,7 @@ export default function WrittenReviewCard({
           {/* 별점 */}
           <div className="flex items-center gap-1">
             <span className="text-body-2-medium text-gray-900">{review.rating.toFixed(1)}</span>
-            <div className="flex items-center gap-0.5">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Image
-                  key={star}
-                  src={star <= review.rating ? '/icons/common/star.svg' : '/icons/common/star-empty.svg'}
-                  alt=""
-                  width={20}
-                  height={20}
-                />
-              ))}
-            </div>
+            <StarDisplay rating={review.rating} size={20} />
           </div>
         </div>
 

@@ -1,6 +1,4 @@
-'use client';
-
-import Image from 'next/image';
+import StarDisplay from '@/src/components/common/StarDisplay';
 
 interface DesignerReviewStarsProps {
   rating: number;
@@ -8,24 +6,14 @@ interface DesignerReviewStarsProps {
   className?: string;
 }
 
+/**
+ * 별점 표시 컴포넌트 (읽기 전용)
+ * StarDisplay 컴포넌트를 래핑하여 기존 인터페이스 유지
+ */
 export default function DesignerReviewStars({
   rating,
   size = 14,
   className = '',
 }: DesignerReviewStarsProps) {
-  const filledCount = Math.round(rating);
-
-  return (
-    <div className={`flex items-center gap-0.5 ${className}`}>
-      {Array.from({ length: 5 }, (_, index) => (
-        <Image
-          key={`star-${index}`}
-          src={index < filledCount ? '/icons/common/star.svg' : '/icons/common/star-empty.svg'}
-          alt=""
-          width={size}
-          height={size}
-        />
-      ))}
-    </div>
-  );
+  return <StarDisplay rating={rating} size={size} className={className} />;
 }
