@@ -99,7 +99,7 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
       <SignupHeader onBack={goPrev} totalSteps={SIGNUP_STEPS.REGULAR} currentStep={3} />
       <SignupTitle line1={SIGNUP_MESSAGES.BASIC_INFO.TITLE_1} line2={SIGNUP_MESSAGES.BASIC_INFO.TITLE_2} />
       <form
-        className="mx-4 mt-8 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
+        className="mx-4 mt-8 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 pb-[100px] sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
         <div className="flex flex-col">
@@ -123,12 +123,12 @@ export const StepBasicInfo: React.FC<StepBasicInfoProps> = ({ goPrev, goNext, is
             />
           </div>
         </div>
-        <div className="mt-auto mb-3">
-          <FixedBottomButton disabled={!name || !email || !phoneNumber || !authCodeValid} onClick={goNext}>
-            {SIGNUP_MESSAGES.BUTTON.NEXT}
-          </FixedBottomButton>
-        </div>
       </form>
+      <div className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-4 right-4">
+        <FixedBottomButton disabled={!name || !email || !phoneNumber || !authCodeValid} onClick={goNext}>
+          {SIGNUP_MESSAGES.BUTTON.NEXT}
+        </FixedBottomButton>
+      </div>
     </div>
   );
 };

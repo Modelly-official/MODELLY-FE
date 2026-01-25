@@ -275,7 +275,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
       <SignupTitle line1={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_1} line2={SIGNUP_MESSAGES.PROFILE_INFO.TITLE_2} />
 
       <form
-        className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 sm:w-[343px]"
+        className="mx-4 mt-10 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 pb-[100px] sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
         <ProfileImageUpload profileImage={profileImage} onImageUpload={handleImageUpload} />
@@ -364,12 +364,12 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
           )}
         </div>
 
-        <div className={`mb-3 ${isDesigner ? 'mt-[45px]' : 'mt-auto'}`}>
-          <FixedBottomButton disabled={!isFormValid || isSubmitting || isUploading} onClick={handleSubmit}>
-            {isUploading ? '이미지 업로드 중...' : isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
-          </FixedBottomButton>
-        </div>
       </form>
+      <div className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-4 right-4">
+        <FixedBottomButton disabled={!isFormValid || isSubmitting || isUploading} onClick={handleSubmit}>
+          {isUploading ? '이미지 업로드 중...' : isSubmitting ? '처리 중...' : SIGNUP_MESSAGES.BUTTON.NEXT}
+        </FixedBottomButton>
+      </div>
     </div>
   );
 };

@@ -35,7 +35,7 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
           </button>
         ))}
       </div>
-      <div className="mx-4 mt-auto mb-3">
+      <div className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-4 right-4">
         <FixedBottomButton
           disabled={!selectedRole}
           onClick={() => {
