@@ -155,7 +155,7 @@ export default function ReviewEditPage() {
           type="button"
           onClick={handleSubmit}
           disabled={!isValidForm || isSubmitting}
-          className={`flex w-full items-center justify-center rounded-full py-4 text-body-1-semibold transition-colors ${
+          className={`flex w-full cursor-pointer items-center justify-center rounded-full py-4 text-body-1-semibold transition-colors ${
             isValidForm && !isSubmitting
               ? 'bg-gray-900 text-white'
               : 'bg-gray-200 text-gray-600'
