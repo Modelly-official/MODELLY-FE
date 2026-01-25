@@ -7,6 +7,7 @@ import { useSendFindIdCode, useVerifyEmailCode, useFindId } from '@/src/hooks/qu
 import { validateEmail } from '@/src/utils/auth/find-id';
 import { useTimer } from '@/src/hooks/auth/find-id';
 import { AuthHeader, Spinner, AuthCodeInputWithTimer } from '@/src/components/auth';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { showToast } from '@/src/utils';
 
 interface StepInputProps {
@@ -199,11 +200,11 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
 
       </form>
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+      <FixedBottomContainer>
         <FixedBottomButton disabled={!isVerified || findIdMutation.isPending} onClick={handleFindId}>
           {findIdMutation.isPending ? '조회 중...' : '아이디 찾기'}
         </FixedBottomButton>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 };
