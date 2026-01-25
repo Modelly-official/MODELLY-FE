@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import DotIcon from '@/public/icons/myRecruitment/dot.svg';
 import PinIcon from '@/public/icons/common/check-circle.svg';
+import StarDisplay from '@/src/components/common/StarDisplay';
 import type { DesignerReviewItem } from '@/src/types';
 
 interface DesignerReviewCardProps {
@@ -132,17 +133,7 @@ export default function DesignerReviewCard({
 
           {/* 별점 + 날짜 */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Image
-                  key={star}
-                  src={star <= review.rating ? '/icons/common/star.svg' : '/icons/common/star-empty.svg'}
-                  alt=""
-                  width={12}
-                  height={12}
-                />
-              ))}
-            </div>
+            <StarDisplay rating={review.rating} size={12} />
             <span className="text-caption-1-medium text-gray-700">{formattedDate}</span>
           </div>
         </div>

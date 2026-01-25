@@ -4,6 +4,7 @@ import { QueryProvider } from '@/src/providers/QueryProvider';
 import { ToastProvider } from '@/src/providers/ToastProvider';
 import { AuthErrorHandler } from '@/src/providers/AuthErrorHandler';
 import { FCMProvider } from '@/src/providers/FCMProvider';
+import { AgentationProvider } from '@/src/providers/AgentationProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://moandi.co.kr'),
@@ -62,6 +63,7 @@ const RootLayout = ({
             <AuthErrorHandler>
               <FCMProvider>
                 <div className="mx-auto min-h-screen w-full min-w-[375px] overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
+                <AgentationProvider />
               </FCMProvider>
             </AuthErrorHandler>
           </ToastProvider>
