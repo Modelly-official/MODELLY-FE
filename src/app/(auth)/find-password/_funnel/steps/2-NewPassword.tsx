@@ -63,7 +63,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
       </div>
 
       {/* 입력 폼 */}
-      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[100px]" onSubmit={(e) => e.preventDefault()}>
         {/* 새 비밀번호 입력 */}
         <PasswordInput
           label="새로운 비밀번호"
@@ -94,13 +94,13 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           }
         />
 
-        {/* 하단 버튼 */}
-        <div className="mt-auto mb-3">
-          <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
-            {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
-          </FixedBottomButton>
-        </div>
       </form>
+      {/* 하단 버튼 */}
+      <div className="fixed bottom-[calc(20px+env(safe-area-inset-bottom))] left-4 right-4">
+        <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
+          {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
+        </FixedBottomButton>
+      </div>
     </div>
   );
 };
