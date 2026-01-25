@@ -199,12 +199,12 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
       </div>
 
       {/* 하단 등록 버튼 (Fixed) */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(8px+env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-1/2 z-10 w-full -translate-x-1/2 border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
         <button
           type="button"
           onClick={goNext}
           disabled={!isSubmitButtonEnabled || isSubmitting}
-          className={`text-body-1-semibold flex w-full items-center justify-center rounded-full py-4 ${
+          className={`text-body-1-semibold flex h-14 w-full items-center justify-center rounded-full ${
             isSubmitButtonEnabled && !isSubmitting
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
