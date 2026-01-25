@@ -98,32 +98,61 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
   }, [rating, content]);
 
   // 이미지 추가 핸들러
-  const handleImagesAdd = useCallback((files: File[]) => {
-    setImageFiles((prevFiles) => {
-      const newFiles = [...prevFiles, ...files].slice(0, MAX_IMAGES);
+  const handleImagesAdd = useCallback(
+    (files: File[]) => {
+      // 기존 서버 URL 추출 (blob: 아닌 URL만)
+      const serverUrls = previewUrls.filter((url) => !url.startsWith('blob:'));
 
-      // 미리보기 URL 생성 (이전 URL들은 컴포넌트에서 cleanup)
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-
-      // 이전 URL들 해제
-      setPreviewUrls((prevUrls) => {
-        prevUrls.forEach((url) => URL.revokeObjectURL(url));
-        return newPreviews;
+      // 기존 blob URL들만 revoke
+      previewUrls.forEach((url) => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
       });
 
-      return newFiles;
-    });
-  }, []);
+      // 새 파일 배열 생성 (기존 imageFiles + 새 files)
+      const newImageFiles = [...imageFiles, ...files];
+
+      // 최대 이미지 수 체크 (기존 서버 URL 개수 포함)
+      const totalCount = serverUrls.length + newImageFiles.length;
+      const filesToAdd =
+        totalCount > MAX_IMAGES
+          ? newImageFiles.slice(0, MAX_IMAGES - serverUrls.length)
+          : newImageFiles;
+
+      // 새 blob URL 생성
+      const newBlobUrls = filesToAdd.map((file) => URL.createObjectURL(file));
+
+      // 상태 업데이트
+      setImageFiles(filesToAdd);
+      setPreviewUrls([...serverUrls, ...newBlobUrls]); // 기존 서버 URL + 새 blob URL
+    },
+    [previewUrls, imageFiles]
+  );
 
   // 이미지 삭제 핸들러
-  const handleImageRemove = useCallback((index: number) => {
-    setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  const handleImageRemove = useCallback(
+    (index: number) => {
+      const urlToRemove = previewUrls[index];
 
-    setPreviewUrls((prevUrls) => {
-      URL.revokeObjectURL(prevUrls[index]);
-      return prevUrls.filter((_, i) => i !== index);
-    });
-  }, []);
+      // blob URL인 경우에만 imageFiles에서 삭제
+      if (urlToRemove?.startsWith('blob:')) {
+        // previewUrls에서 해당 index 이전의 blob URL 개수 = imageFiles에서의 실제 인덱스
+        const blobIndexInFiles = previewUrls
+          .slice(0, index)
+          .filter((url) => url.startsWith('blob:')).length;
+
+        setImageFiles((prevFiles) =>
+          prevFiles.filter((_, i) => i !== blobIndexInFiles)
+        );
+        URL.revokeObjectURL(urlToRemove);
+      }
+      // 서버 URL인 경우 imageFiles는 건드리지 않음
+
+      setPreviewUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
+    },
+    [previewUrls]
+  );
 
   // 폼 제출 핸들러
   const handleSubmit = useCallback(async () => {
