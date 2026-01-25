@@ -6,6 +6,7 @@ import { useReservationStore } from '@/src/stores/reservation/useReservationStor
 import { getReservationPresignedUrl } from '@/src/apis/reservation/model';
 import { uploadImageToS3 } from '@/src/apis/auth/profile';
 import { useToast } from '@/src/hooks/common/useToast';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepPhotoProps {
   category: string;
@@ -128,7 +129,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 z-10 w-full -translate-x-1/2 bg-white px-4 pt-3 pb-[calc(4px+env(safe-area-inset-bottom))] sm:w-[375px]">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={goNext}
@@ -139,7 +140,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
         >
           다음
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }
