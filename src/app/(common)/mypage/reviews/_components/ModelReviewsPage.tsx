@@ -169,7 +169,6 @@ export default function ModelReviewsPage() {
         confirmText="삭제"
         cancelText="취소"
         isLoading={deleteReviewMutation.isPending}
-        variant="danger"
       />
     </div>
   );
