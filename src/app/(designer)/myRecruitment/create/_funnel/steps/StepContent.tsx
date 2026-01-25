@@ -199,7 +199,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
       </div>
 
       {/* 하단 등록 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(8px+env(safe-area-inset-bottom))]">
+      <div className="fixed bottom-0 left-0 right-0 z-10 border-t border-gray-100 bg-white px-4 pt-3 pb-[calc(8px+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={goNext}
