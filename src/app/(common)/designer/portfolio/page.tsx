@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueries, type UseQueryResult } from '@tanstack/react-query';
 import type { Swiper as SwiperType } from 'swiper';
-import { EffectCards } from 'swiper/modules';
+import { EffectCards, Keyboard } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/portfolio/straigh-arrow-left.svg';
 import ArrowRightIcon from '@/public/icons/portfolio/straight-arrow-right.svg';
@@ -55,10 +55,7 @@ export default function PortfolioPage() {
     enabled: isValidDesignerId,
   });
 
-  const listItems = useMemo(
-    () => listData?.pages.flatMap((page) => page.result.items) ?? [],
-    [listData]
-  );
+  const listItems = useMemo(() => listData?.pages.flatMap((page) => page.result.items) ?? [], [listData]);
 
   const detailQueries = useQueries({
     queries: listItems.map((item) => ({
@@ -128,10 +125,7 @@ export default function PortfolioPage() {
   };
 
   const loadedCount = filteredItems.length;
-  const totalCount =
-    activeCategory === 'ALL'
-      ? (listData?.pages?.[0]?.result.totalCount ?? loadedCount)
-      : loadedCount;
+  const totalCount = activeCategory === 'ALL' ? (listData?.pages?.[0]?.result.totalCount ?? loadedCount) : loadedCount;
   const currentItem = filteredItems[activeIndex] ?? filteredItems[0];
   const canGoPrev = activeIndex > 0;
   const canGoNext = activeIndex < loadedCount - 1;
@@ -207,14 +201,15 @@ export default function PortfolioPage() {
                   key={`${activeCategory}-${initialIndex}`}
                   effect="cards"
                   grabCursor
-                  modules={[EffectCards]}
+                  modules={[EffectCards, Keyboard]}
+                  keyboard={{ enabled: true, onlyInViewport: true }}
                   initialSlide={initialIndex}
                   cardsEffect={{
                     perSlideOffset: 6,
                     perSlideRotate: 2.55,
                     slideShadows: false,
                   }}
-                  className="portfolio-swiper h-[420px]"
+                  className="portfolio-swiper h-[384px]"
                   onSwiper={(swiper) => {
                     swiperRef.current = swiper;
                     setActiveIndex(swiper.activeIndex);
