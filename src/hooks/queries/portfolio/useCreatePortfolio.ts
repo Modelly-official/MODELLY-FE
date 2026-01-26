@@ -2,7 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPortfolio } from '@/src/apis';
 import { useToast } from '@/src/hooks/common/useToast';
 import { portfolioKeys } from './useDesignerPortfolios';
-import type { ApiResponse, CreatePortfolioRequest, PortfolioMutationResponse } from '@/src/types';
+import type {
+  ApiResponse,
+  CreatePortfolioRequest,
+  DesignerPortfolioListResponse,
+  PortfolioMutationResponse,
+} from '@/src/types';
 
 /**
  * 포트폴리오 생성 Mutation Hook
@@ -19,8 +24,36 @@ export function useCreatePortfolio() {
     mutationFn: (request: CreatePortfolioRequest) => {
       return createPortfolio(request);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: portfolioKeys.lists() });
+    onSuccess: (_data, variables) => {
+      queryClient.setQueriesData(
+        { queryKey: portfolioKeys.lists() },
+        (oldData: { pages: ApiResponse<DesignerPortfolioListResponse>[]; pageParams: unknown[] } | undefined) => {
+          if (!oldData) return oldData;
+          const nextThumbnail = variables.imageUrls?.[0] ?? variables.thumbnail;
+          const firstPage = oldData.pages[0];
+          if (!firstPage) return oldData;
+
+          const nextPages = [
+            {
+              ...firstPage,
+              result: {
+                ...firstPage.result,
+                items: [
+                  {
+                    portfolioId: Math.max(0, ...firstPage.result.items.map((item) => item.portfolioId)) + 1,
+                    thumbnail: nextThumbnail,
+                  },
+                  ...firstPage.result.items,
+                ],
+                totalCount: firstPage.result.totalCount + 1,
+              },
+            },
+            ...oldData.pages.slice(1),
+          ];
+
+          return { ...oldData, pages: nextPages };
+        }
+      );
       showToast('포트폴리오가 등록되었습니다.');
     },
     onError: () => {
