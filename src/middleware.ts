@@ -5,6 +5,16 @@ import { ValidateResponse } from '@/src/types/auth/auth';
 import { ApiResponse } from '@/src/types';
 
 /**
+ * refreshAccessToken 결과 타입
+ * - accessToken: 새로 발급된 accessToken
+ * - setCookieHeader: 백엔드에서 전달하는 Set-Cookie 헤더 (refresh_token 갱신)
+ */
+interface RefreshResult {
+  accessToken: string | null;
+  setCookieHeader: string | null;
+}
+
+/**
  * 백엔드 API로 accessToken 유효성 검증
  * @param accessToken - 검증할 액세스 토큰
  * @returns 토큰 유효 여부 (true: 유효, false: 무효)
@@ -41,22 +51,23 @@ async function verifyAccessToken(accessToken: string): Promise<boolean> {
 
 /**
  * refreshToken으로 새로운 accessToken 발급
+ * - 백엔드에서 Set-Cookie 헤더로 새로운 refresh_token을 전달하므로 함께 반환
  * @param request - NextRequest 객체 (refreshToken 쿠키 포함)
- * @returns 새로운 accessToken 또는 null
+ * @returns RefreshResult (accessToken과 setCookieHeader)
  */
-async function refreshAccessToken(request: NextRequest): Promise<string | null> {
+async function refreshAccessToken(request: NextRequest): Promise<RefreshResult> {
   try {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     if (!apiBaseUrl) {
       console.error('NEXT_PUBLIC_API_BASE_URL is not defined');
-      return null;
+      return { accessToken: null, setCookieHeader: null };
     }
 
     const refreshToken = request.cookies.get('refresh_token')?.value;
 
     if (!refreshToken) {
-      return null;
+      return { accessToken: null, setCookieHeader: null };
     }
 
     const response = await fetch(`${apiBaseUrl}/api/auth/refresh`, {
@@ -68,19 +79,25 @@ async function refreshAccessToken(request: NextRequest): Promise<string | null> 
 
     if (!response.ok) {
       console.error('Token refresh failed:', response.status);
-      return null;
+      return { accessToken: null, setCookieHeader: null };
     }
 
     const data = await response.json();
 
+    // 백엔드에서 전달하는 Set-Cookie 헤더 (새로운 refresh_token)
+    const setCookieHeader = response.headers.get('set-cookie');
+
     if (data.isSuccess && data.result?.accessToken) {
-      return data.result.accessToken;
+      return {
+        accessToken: data.result.accessToken,
+        setCookieHeader,
+      };
     }
 
-    return null;
+    return { accessToken: null, setCookieHeader: null };
   } catch (error) {
     console.error('Token refresh error:', error);
-    return null;
+    return { accessToken: null, setCookieHeader: null };
   }
 }
 
@@ -97,8 +114,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 공개 라우트는 통과
+  // 공개 라우트: soft refresh 시도 (실패해도 통과)
   if (isPublicRoute(pathname)) {
+    const currentAccessToken = request.cookies.get('access_token')?.value;
+    const userRole = request.cookies.get('user_role')?.value;
+
+    // user_role 있고 accessToken 없으면 갱신 시도 (이전에 로그인했던 사용자)
+    if (userRole && !currentAccessToken) {
+      const refreshResult = await refreshAccessToken(request);
+      if (refreshResult.accessToken) {
+        const response = NextResponse.next();
+        response.cookies.set('access_token', refreshResult.accessToken, {
+          path: '/',
+          maxAge: 604800,
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+        });
+        // 백엔드에서 새로운 refresh_token을 Set-Cookie로 보냈다면 클라이언트에 전달
+        if (refreshResult.setCookieHeader) {
+          response.headers.append('Set-Cookie', refreshResult.setCookieHeader);
+        }
+        return response;
+      }
+    }
     return NextResponse.next();
   }
 
@@ -107,6 +145,7 @@ export async function middleware(request: NextRequest) {
   const userRole = request.cookies.get('user_role')?.value as 'model' | 'designer' | undefined;
 
   let isValid = false;
+  let refreshSetCookieHeader: string | null = null;
 
   if (accessToken) {
     // accessToken이 있으면 유효성 검증
@@ -115,12 +154,13 @@ export async function middleware(request: NextRequest) {
 
   // accessToken이 없거나 만료된 경우 refreshToken으로 재발급 시도
   if (!isValid) {
-    const newAccessToken = await refreshAccessToken(request);
+    const refreshResult = await refreshAccessToken(request);
 
-    if (newAccessToken) {
+    if (refreshResult.accessToken) {
       // 재발급 성공 - refresh API가 성공하면 토큰은 유효함
       isValid = true;
-      accessToken = newAccessToken;
+      accessToken = refreshResult.accessToken;
+      refreshSetCookieHeader = refreshResult.setCookieHeader;
     }
   }
 
@@ -165,6 +205,11 @@ export async function middleware(request: NextRequest) {
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
+  }
+
+  // 백엔드에서 새로운 refresh_token을 Set-Cookie로 보냈다면 클라이언트에 전달
+  if (refreshSetCookieHeader) {
+    response.headers.append('Set-Cookie', refreshSetCookieHeader);
   }
 
   // 요청 헤더에 사용자 정보 추가 (서버 컴포넌트에서 활용 가능)
