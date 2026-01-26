@@ -162,7 +162,11 @@ export default function PortfolioEditPage() {
     }
 
     try {
-      await updatePortfolio({ portfolioId: numericId, request });
+      await updatePortfolio({
+        portfolioId: numericId,
+        request,
+        shouldUpdateThumbnail: Boolean(payload.imageFile),
+      });
       router.push('/mypage/portfolio');
     } catch {
       // useUpdatePortfolio에서 토스트 처리

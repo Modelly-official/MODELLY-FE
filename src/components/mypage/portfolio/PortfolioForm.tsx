@@ -73,13 +73,18 @@ export default function PortfolioForm({
     setImagePreviewUrl(nextPreviewUrl);
   };
 
-  const isSubmitEnabled = Boolean((imageFile || imagePreviewUrl) && title.trim() && description.trim() && subCategory);
+  const trimmedTitle = titleInput.value.trim();
+  const trimmedDescription = descriptionInput.value.trim();
+  const hasValidSubCategory = subCategoryOptions.some((option) => option.value === subCategory);
+  const isSubmitEnabled = Boolean(
+    (imageFile || imagePreviewUrl) && trimmedTitle && trimmedDescription && hasValidSubCategory
+  );
 
   const handleSubmit = () => {
     if (!isSubmitEnabled || !subCategory) return;
     onSubmit({
-      title: title.trim(),
-      description: description.trim(),
+      title: trimmedTitle,
+      description: trimmedDescription,
       imageFile,
       imagePreviewUrl,
       subCategory,

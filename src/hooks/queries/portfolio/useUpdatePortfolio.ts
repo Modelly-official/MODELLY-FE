@@ -13,6 +13,7 @@ import type {
 interface UpdatePortfolioParams {
   portfolioId: number;
   request: UpdatePortfolioRequest;
+  shouldUpdateThumbnail?: boolean;
 }
 
 /**
@@ -31,7 +32,6 @@ export function useUpdatePortfolio() {
       return updatePortfolio(portfolioId, request);
     },
     onSuccess: (_data, variables) => {
-      const nextThumbnail = variables.request.imageUrls?.[0] ?? variables.request.thumbnail;
       queryClient.setQueryData<ApiResponse<DesignerPortfolioDetail>>(
         portfolioKeys.detail(variables.portfolioId),
         (oldData) => {
@@ -49,26 +49,29 @@ export function useUpdatePortfolio() {
           };
         }
       );
-      queryClient.setQueriesData(
-        { queryKey: portfolioKeys.lists() },
-        (oldData: { pages: ApiResponse<DesignerPortfolioListResponse>[]; pageParams: unknown[] } | undefined) => {
-          if (!oldData) return oldData;
+      if (variables.shouldUpdateThumbnail !== false) {
+        const nextThumbnail = variables.request.imageUrls?.[0] ?? variables.request.thumbnail;
+        queryClient.setQueriesData(
+          { queryKey: portfolioKeys.lists() },
+          (oldData: { pages: ApiResponse<DesignerPortfolioListResponse>[]; pageParams: unknown[] } | undefined) => {
+            if (!oldData) return oldData;
 
-          const nextPages = oldData.pages.map((page) => ({
-            ...page,
-            result: {
-              ...page.result,
-              items: page.result.items.map((item) =>
-                item.portfolioId === variables.portfolioId
-                  ? { ...item, thumbnail: nextThumbnail }
-                  : item
-              ),
-            },
-          }));
+            const nextPages = oldData.pages.map((page) => ({
+              ...page,
+              result: {
+                ...page.result,
+                items: page.result.items.map((item) =>
+                  item.portfolioId === variables.portfolioId
+                    ? { ...item, thumbnail: nextThumbnail }
+                    : item
+                ),
+              },
+            }));
 
-          return { ...oldData, pages: nextPages };
-        }
-      );
+            return { ...oldData, pages: nextPages };
+          }
+        );
+      }
       showToast('포트폴리오가 수정되었습니다.');
     },
     onError: () => {
