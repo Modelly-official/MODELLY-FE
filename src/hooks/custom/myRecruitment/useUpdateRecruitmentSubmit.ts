@@ -43,12 +43,19 @@ export function useUpdateRecruitmentSubmit(recruitmentId: number) {
 
       if (imageChanged && formState.imagePreviewUrls.length > 0) {
         // 이미지가 변경됨 → 모든 이미지를 새 폴더에 재업로드
+        let allFiles: File[];
         try {
-          const allFiles = await prepareAllImagesAsFiles(
+          allFiles = await prepareAllImagesAsFiles(
             formState.imagePreviewUrls,
             formState.imageFiles
           );
+        } catch {
+          showToast('기존 이미지를 불러오는 중 오류가 발생했습니다.');
+          setIsSubmitting(false);
+          return;
+        }
 
+        try {
           const newUpload = await uploadRecruitmentImages(allFiles);
           uploadResult = {
             thumbnail: newUpload.thumbnail,
@@ -56,7 +63,7 @@ export function useUpdateRecruitmentSubmit(recruitmentId: number) {
             imageFolderId: newUpload.imageFolderId,
           };
         } catch {
-          showToast('이미지 처리 중 오류가 발생했습니다.');
+          showToast('이미지 업로드에 실패했습니다.');
           setIsSubmitting(false);
           return;
         }

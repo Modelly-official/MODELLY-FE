@@ -190,10 +190,17 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
             return;
           }
 
+          // 기존 URL은 fetch, 새 파일은 그대로 사용
+          let allFiles: File[];
           try {
-            // 기존 URL은 fetch, 새 파일은 그대로 사용
-            const allFiles = await prepareAllImagesAsFiles(previewUrls, imageFiles);
+            allFiles = await prepareAllImagesAsFiles(previewUrls, imageFiles);
+          } catch {
+            showToast('기존 이미지를 불러오는 중 오류가 발생했습니다.');
+            setIsSubmitting(false);
+            return;
+          }
 
+          try {
             const uploadResult = await uploadReviewImages(reservationId, allFiles);
             if (uploadResult) {
               finalImageUrls = uploadResult.imageUrls;
@@ -201,7 +208,7 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
               imageFolderId = uploadResult.imageFolderId;
             }
           } catch {
-            showToast('이미지 처리 중 오류가 발생했습니다.');
+            showToast('이미지 업로드에 실패했습니다.');
             setIsSubmitting(false);
             return;
           }
