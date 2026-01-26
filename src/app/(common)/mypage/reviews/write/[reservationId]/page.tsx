@@ -128,7 +128,7 @@ export default function ReviewWritePage() {
                     setContent(e.target.value);
                   }
                 }}
-                placeholder="스타일, 직원 응대, 분위기 등 좋았던 점을 들려주세요!"
+                placeholder="스타일, 직원 응대, 분위기 등 좋았던 점을 들려주세요! (10자 이상 작성)"
                 className="h-[91px] w-full resize-none text-body-2-regular text-gray-900 placeholder:text-gray-600 focus:outline-none"
               />
               <div className="text-right">
