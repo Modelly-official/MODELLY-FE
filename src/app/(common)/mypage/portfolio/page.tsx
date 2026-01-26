@@ -55,6 +55,8 @@ export default function PortfolioManagePage() {
             images={portfolioImages}
             onEditImage={handleEditImage}
             onDeleteImage={handleDeleteImage}
+            title="내 포트폴리오"
+            gridClassName="relative mt-4 grid grid-cols-3 gap-2.5"
           />
         )}
       </div>

@@ -10,6 +10,9 @@ interface DesignerProfileEditPortfolioProps {
   onViewAll?: () => void;
   onEditImage?: (index: number) => void;
   onDeleteImage?: (index: number) => void;
+  title?: string;
+  sectionClassName?: string;
+  gridClassName?: string;
 }
 
 export default function DesignerProfileEditPortfolio({
@@ -17,13 +20,16 @@ export default function DesignerProfileEditPortfolio({
   onViewAll,
   onEditImage,
   onDeleteImage,
+  title = '포트폴리오',
+  sectionClassName = 'rounded-lg bg-white px-4 py-4',
+  gridClassName = 'relative mt-3 grid grid-cols-3 gap-2.5',
 }: DesignerProfileEditPortfolioProps) {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
   return (
-    <section className="rounded-lg bg-white px-4 py-4">
+    <section className={sectionClassName}>
       <div className="flex items-center justify-between">
-        <h2 className="text-body-1-semibold text-gray-900">내 포트폴리오</h2>
+        <h2 className="text-body-1-semibold text-gray-900">{title}</h2>
         {onViewAll && (
           <button
             type="button"
@@ -36,7 +42,7 @@ export default function DesignerProfileEditPortfolio({
         )}
       </div>
 
-      <div className="relative mt-3 grid grid-cols-3 gap-2.5">
+      <div className={gridClassName}>
         {images.map((imageUrl, index) => {
           const isMenuOpen = openMenuIndex === index;
           return (
