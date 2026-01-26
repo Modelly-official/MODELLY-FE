@@ -14,6 +14,7 @@ import ArrowLeftIcon from '@/public/icons/portfolio/straigh-arrow-left.svg';
 import ArrowRightIcon from '@/public/icons/portfolio/straight-arrow-right.svg';
 import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
 import { getPublicPortfolioDetail } from '@/src/apis';
+import PaginationDots from '@/src/components/common/PaginationDots';
 import { usePublicDesignerPortfoliosInfinite } from '@/src/hooks/queries/portfolio';
 import { portfolioKeys } from '@/src/hooks/queries/portfolio/useDesignerPortfolios';
 import { getCategoryLabel } from '@/src/constants/explore';
@@ -130,14 +131,6 @@ export default function PortfolioPage() {
   const canGoPrev = activeIndex > 0;
   const canGoNext = activeIndex < loadedCount - 1;
 
-  const paginationState = useMemo(() => {
-    if (totalCount <= 0) return { startIndex: 0, count: 0 };
-    if (totalCount <= 3) return { startIndex: 0, count: totalCount };
-    if (activeIndex <= 1) return { startIndex: 0, count: 3 };
-    if (activeIndex >= totalCount - 2) return { startIndex: totalCount - 3, count: 3 };
-    return { startIndex: activeIndex - 1, count: 3 };
-  }, [activeIndex, totalCount]);
-
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* 헤더 */}
@@ -235,25 +228,18 @@ export default function PortfolioPage() {
                   ))}
                 </Swiper>
               </div>
-              {paginationState.count > 0 && (
-                <div className="mt-3 flex items-center justify-center gap-2">
-                  {Array.from({ length: paginationState.count }).map((_, position) => {
-                    const slideIndex = paginationState.startIndex + position;
-                    const isActive = slideIndex === activeIndex;
-                    return (
-                      <button
-                        key={`portfolio-pagination-pos-${position}`}
-                        type="button"
-                        onClick={() => swiperRef.current?.slideTo(slideIndex)}
-                        className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                          isActive ? 'bg-gray-900' : 'bg-gray-300'
-                        }`}
-                        aria-label={`포트폴리오 ${slideIndex + 1}번으로 이동`}
-                      />
-                    );
-                  })}
-                </div>
-              )}
+              <div className="mt-3">
+                <PaginationDots
+                  totalCount={totalCount}
+                  activeIndex={activeIndex}
+                  maxVisible={3}
+                  onSelect={(index) => swiperRef.current?.slideTo(index)}
+                  className="flex items-center justify-center gap-2"
+                  dotClassName="h-1.5 w-1.5 rounded-full bg-gray-300 transition-colors"
+                  activeDotClassName="bg-gray-900"
+                  ariaLabelPrefix="포트폴리오"
+                />
+              </div>
 
               <div className="mt-5 text-center">
                 <h2 className="text-head-2-semibold text-gray-900">{currentItem?.title}</h2>
