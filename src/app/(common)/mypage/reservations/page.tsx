@@ -6,7 +6,8 @@ import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { getAccessToken, getUserRole } from '@/src/stores';
 import { useModelReservations, useDesignerMyReservations } from '@/src/hooks/queries/reservation';
 import { useToast } from '@/src/hooks/common';
-import { ReservationTabs, CategoryChips, MonthDropdown, ReservationList } from '@/src/components/mypage/reservations';
+import { ReservationTabs, CategoryChips, ReservationList } from '@/src/components/mypage/reservations';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import { generateMonthOptions } from '@/src/constants';
 import type {
   ReservationListType,
@@ -168,10 +169,15 @@ export default function MyReservationsPage() {
         {/* 월 선택 및 전체 개수 (모델: 완료 탭만, 디자이너: 모든 탭) */}
         {(activeTab === 'COMPLETED' || !isModel) && (
           <div className="flex items-center justify-between">
-            <MonthDropdown
-              options={monthOptions}
-              selectedMonth={selectedMonth}
-              onMonthChange={setSelectedMonth}
+            <Dropdown
+              variant="inline"
+              size="lg"
+              scrollToSelected
+              maxHeight={200}
+              ariaLabel="월 선택"
+              options={monthOptions.map((opt) => ({ value: opt.code, label: opt.name }))}
+              value={selectedMonth}
+              onChange={setSelectedMonth}
             />
             <div className="flex items-center gap-1">
               <span className="text-body-2-medium text-black">전체</span>

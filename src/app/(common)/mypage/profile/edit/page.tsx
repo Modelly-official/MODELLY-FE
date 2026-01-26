@@ -4,9 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { AddressInput, FixedBottomButton, GenderSelect, ProfileImageUpload } from '@/src/components/signup';
-import { Dropdown, TextInput } from '@/src/components/common';
+import { TextInput } from '@/src/components/common';
 import { useProfileEditForm } from '@/src/hooks/custom/mypage';
-import { CATEGORY_OPTIONS } from '@/src/constants/mypage';
 
 export default function ProfileEditPage() {
   const router = useRouter();
@@ -133,15 +132,6 @@ export default function ProfileEditPage() {
                 detailAddress={form.detailAddress}
                 onAddressSearch={(value) => updateField('address', value)}
                 onDetailAddressChange={(value) => updateField('detailAddress', value)}
-              />
-
-              {/* 카테고리 */}
-              <Dropdown
-                label="카테고리"
-                value={form.category || null}
-                onChange={(value) => updateField('category', value ?? '')}
-                placeholder="헤어/네일/타투/속눈썹"
-                options={[...CATEGORY_OPTIONS]}
               />
             </>
           )}

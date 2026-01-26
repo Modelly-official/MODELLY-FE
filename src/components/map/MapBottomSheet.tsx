@@ -6,7 +6,8 @@ import type { Category, SubCategory, SortOption } from '@/src/types/recruitment'
 import type { BottomSheetState } from '@/src/types/map';
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
 import { LAYOUT, SHEET_HEIGHTS, DRAG } from '@/src/constants/map';
-import { CategoryTabs, SubCategoryChips, SortDropdown } from '@/src/components/explore';
+import { CategoryTabs, SubCategoryChips } from '@/src/components/explore';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 
 // re-export for backward compatibility
 export { SHEET_HEIGHTS } from '@/src/constants/map';
@@ -392,10 +393,12 @@ export default function MapBottomSheet({
               <span className="text-body-2-medium text-black">전체</span>
               <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
             </div>
-            <SortDropdown
-              sortOptions={SORT_OPTIONS}
-              selectedSort={sortOption}
-              onSortChange={(s) => onSortChange(s as SortOption)}
+            <Dropdown
+              variant="inline"
+              ariaLabel="정렬 방식 선택"
+              options={SORT_OPTIONS.map((opt) => ({ value: opt.code, label: opt.name }))}
+              value={sortOption}
+              onChange={(value) => onSortChange(value as SortOption)}
             />
           </div>
         </div>

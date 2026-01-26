@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import DotIcon from '@/public/icons/myRecruitment/dot.svg';
 import StarDisplay from '@/src/components/common/StarDisplay';
+import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 import type { WrittenReviewItem } from '@/src/types';
 
 interface WrittenReviewCardProps {
@@ -25,7 +25,6 @@ export default function WrittenReviewCard({
   isLastInMonth = false,
   isFirstItem = false,
 }: WrittenReviewCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -65,23 +64,6 @@ export default function WrittenReviewCard({
     setIsDragging(false);
   };
 
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onEdit?.(review.reviewId);
-  };
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onDelete?.(review.reviewId);
-  };
-
   return (
     <div className={`flex ${needsTopGap ? 'mt-4' : ''}`}>
       {/* 날짜 + 세로선 영역 (왼쪽) */}
@@ -118,45 +100,12 @@ export default function WrittenReviewCard({
             </div>
 
             {/* 더보기 버튼 */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={handleMenuClick}
-                className="flex size-5 cursor-pointer items-center justify-center"
-                aria-label="더보기"
-              >
-                <DotIcon className="size-5 text-gray-900" />
-              </button>
-
-              {/* 드롭다운 메뉴 */}
-              {isMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                    }}
-                  />
-                  <div className="absolute right-0 top-6 z-20 overflow-hidden rounded-[10px] border border-gray-400 bg-white">
-                    <button
-                      type="button"
-                      onClick={handleEdit}
-                      className="block w-full cursor-pointer whitespace-nowrap border-b border-gray-400 px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
-                    >
-                      수정
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className="block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <KebabMenu
+              items={[
+                { label: '수정', onClick: () => onEdit?.(review.reviewId) },
+                { label: '삭제', onClick: () => onDelete?.(review.reviewId) },
+              ]}
+            />
           </div>
 
           {/* 별점 */}

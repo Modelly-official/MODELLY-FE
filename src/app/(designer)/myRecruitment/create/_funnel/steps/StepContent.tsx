@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import TextArea from '@/src/components/myRecruitment/Form/TextArea';
-import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import ImageUploader from '@/src/components/myRecruitment/Form/ImageUploader';
 import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCheckbox';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
@@ -80,10 +80,12 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
 
   // 디자이너 카테고리에 맞는 서브카테고리 옵션
   const designerCategory = getUserCategory();
-  const subCategoryOptions = designerCategory ? getSubCategoryOptions(designerCategory) : [];
+  const subCategoryOptions = designerCategory
+    ? getSubCategoryOptions(designerCategory).map((opt) => ({ value: opt.code, label: opt.name }))
+    : [];
 
   // 목적 옵션
-  const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
+  const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ value: opt.code, label: opt.name }));
 
   // 등록 버튼 활성화 조건
   const isSubmitButtonEnabled = isStep2Valid(

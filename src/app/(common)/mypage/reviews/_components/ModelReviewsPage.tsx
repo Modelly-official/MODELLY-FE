@@ -9,9 +9,9 @@ import {
   ReviewCategoryChips,
   UnreviewedList,
   WrittenReviewList,
-  YearDropdown,
 } from '@/src/components/mypage/model-reviews';
 import ConfirmModal from '@/src/components/common/Modal/ConfirmModal';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import type { ReviewTabType, ReviewCategoryFilter, UnreviewedReservation } from '@/src/types';
 
 export default function ModelReviewsPage() {
@@ -127,7 +127,14 @@ export default function ModelReviewsPage() {
         {/* 년도 선택 및 전체 개수 (작성한 리뷰 탭에서만 표시) */}
         {activeTab === 'written' && (
           <div className="flex items-center justify-between">
-            <YearDropdown years={yearOptions} selectedYear={selectedYear} onYearChange={setSelectedYear} />
+            <Dropdown<number>
+              variant="inline"
+              size="lg"
+              ariaLabel="연도 선택"
+              options={yearOptions.map((year) => ({ value: year, label: String(year) }))}
+              value={selectedYear}
+              onChange={setSelectedYear}
+            />
             <div className="flex items-center gap-1">
               <span className="text-body-2-medium text-black">전체</span>
               <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
