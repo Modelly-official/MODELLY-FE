@@ -4,6 +4,7 @@ import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitme
 import { useUpdateRecruitment } from '@/src/hooks/queries/myRecruitment';
 import { uploadRecruitmentImages } from '@/src/apis/designer/recruitments';
 import { transformFormToRequest } from '@/src/utils/myRecruitment';
+import { prepareAllImagesAsFiles, hasImageChanges } from '@/src/utils/image';
 import { useToast } from '@/src/hooks/common/useToast';
 import type { ImageUploadResult } from '@/src/types/myRecruitment';
 
@@ -28,37 +29,57 @@ export function useUpdateRecruitmentSubmit(recruitmentId: number) {
 
     setIsSubmitting(true);
     try {
-      // 1. 기존 이미지 URL과 새 이미지 파일 분리
-      const { existingUrls, newFiles } = separateImages(
+      // 원본 이미지 URL (수정 모드 초기화 시 저장됨)
+      const originalUrls = formState.imageUrls;
+
+      // 이미지 변경 여부 확인
+      const imageChanged = hasImageChanges(
+        originalUrls,
         formState.imagePreviewUrls,
         formState.imageFiles
       );
 
       let uploadResult: ImageUploadResult;
 
-      if (newFiles.length > 0) {
-        // 2. 새 이미지가 있으면 업로드
-        const newUpload = await uploadRecruitmentImages(newFiles);
+      if (imageChanged && formState.imagePreviewUrls.length > 0) {
+        // 이미지가 변경됨 → 모든 이미지를 새 폴더에 재업로드
+        try {
+          const allFiles = await prepareAllImagesAsFiles(
+            formState.imagePreviewUrls,
+            formState.imageFiles
+          );
 
-        // 3. 기존 URL + 새 URL 합치기
+          const newUpload = await uploadRecruitmentImages(allFiles);
+          uploadResult = {
+            thumbnail: newUpload.thumbnail,
+            imageUrls: newUpload.imageUrls,
+            imageFolderId: newUpload.imageFolderId,
+          };
+        } catch {
+          showToast('이미지 처리 중 오류가 발생했습니다.');
+          setIsSubmitting(false);
+          return;
+        }
+      } else if (!imageChanged && formState.imagePreviewUrls.length > 0) {
+        // 이미지 변경 없음 → 기존 URL 유지, imageFolderId 전송 안함
         uploadResult = {
-          thumbnail: existingUrls[0] || newUpload.thumbnail,
-          imageUrls: [...existingUrls, ...newUpload.imageUrls],
-          imageFolderId: newUpload.imageFolderId,
+          thumbnail: formState.imagePreviewUrls[0] || formState.thumbnail,
+          imageUrls: formState.imagePreviewUrls,
+          imageFolderId: '', // 빈 문자열 → transformFormToRequest에서 제외 처리 필요
         };
       } else {
-        // 4. 이미지 변경 없음 → 기존 URL 유지
+        // 이미지 없음
         uploadResult = {
-          thumbnail: existingUrls[0] || formState.thumbnail,
-          imageUrls: existingUrls,
-          imageFolderId: '', // 백엔드가 정상 처리 (API 테스트 확인됨)
+          thumbnail: '',
+          imageUrls: [],
+          imageFolderId: '',
         };
       }
 
-      // 5. 폼 데이터 -> API Request 변환
+      // 폼 데이터 -> API Request 변환
       const request = transformFormToRequest(formState, uploadResult);
 
-      // 6. 수정 API 호출
+      // 수정 API 호출
       updateRecruitment(
         { recruitmentId, request },
         {
@@ -83,37 +104,4 @@ export function useUpdateRecruitmentSubmit(recruitmentId: number) {
     handleSubmit,
     reset,
   };
-}
-
-/**
- * imagePreviewUrls에서 기존 URL과 새 파일 분리
- * - https:// 또는 http:// URL → 기존 이미지 (서버에 이미 있음)
- * - blob: URL → 새 이미지 (업로드 필요)
- *
- * @param previewUrls - 미리보기 URL 배열 (기존 https + 새 blob 혼합)
- * @param imageFiles - 새로 추가된 이미지 File 배열 (blob URL과 1:1 매칭)
- * @returns { existingUrls: 기존 이미지 URL[], newFiles: 업로드할 File[] }
- */
-function separateImages(
-  previewUrls: string[],
-  imageFiles: File[]
-): { existingUrls: string[]; newFiles: File[] } {
-  const existingUrls: string[] = [];
-  const newFiles: File[] = [];
-
-  let blobIndex = 0;
-  for (const url of previewUrls) {
-    if (url.startsWith('blob:')) {
-      // 새 이미지 - File 객체 추가
-      if (blobIndex < imageFiles.length) {
-        newFiles.push(imageFiles[blobIndex]);
-        blobIndex++;
-      }
-    } else {
-      // 기존 이미지 (https://, http://) - URL 유지
-      existingUrls.push(url);
-    }
-  }
-
-  return { existingUrls, newFiles };
 }

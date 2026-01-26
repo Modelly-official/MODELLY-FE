@@ -4,17 +4,18 @@ import type { RecruitmentSchedule, SubCategory } from '@/src/types/recruitment';
 import {
   PURPOSE_OPTIONS,
   type RecruitmentFormState,
-  type CreateRecruitmentRequest,
+  type UpdateRecruitmentRequest,
   type ImageUploadResult,
 } from '@/src/types/myRecruitment';
 
 /**
  * Store 폼 상태 + 이미지 업로드 결과를 API Request로 변환
+ * (생성/수정 모두 사용, imageFolderId는 이미지 변경 시에만 포함)
  */
 export function transformFormToRequest(
   formState: RecruitmentFormState,
   uploadResult: ImageUploadResult
-): CreateRecruitmentRequest {
+): UpdateRecruitmentRequest {
   // 날짜/시간 -> recruitmentSchedule
   const recruitmentSchedule: RecruitmentSchedule[] = formState.selectedDates.map((date) => ({
     recruitmentDate: date,
@@ -36,7 +37,8 @@ export function transformFormToRequest(
     goal1,
     thumbnail: uploadResult.thumbnail,
     imageUrls: uploadResult.imageUrls,
-    imageFolderId: uploadResult.imageFolderId,
+    // imageFolderId가 빈 문자열이면 제외 (이미지 변경 없음 → 기존 폴더 유지)
+    ...(uploadResult.imageFolderId && { imageFolderId: uploadResult.imageFolderId }),
     agreeVideo: formState.agreeVideo,
     agreeInsta: formState.agreeInsta,
     agreeMosaic: formState.agreeMosaic,
