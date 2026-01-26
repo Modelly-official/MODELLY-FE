@@ -2,35 +2,47 @@
 
 import { useEffect, useRef, useState } from 'react';
 import PortfolioImageUploader from '@/src/components/mypage/portfolio/PortfolioImageUploader';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 
 const MAX_TITLE_LENGTH = 20;
 const MAX_DESCRIPTION_LENGTH = 25;
 
+interface SubCategoryOption {
+  value: string;
+  label: string;
+}
+
 interface PortfolioFormProps {
   submitLabel: string;
+  subCategoryOptions: SubCategoryOption[];
   initialTitle?: string;
   initialDescription?: string;
   initialImageUrl?: string | null;
+  initialSubCategory?: string | null;
   onSubmit: (payload: {
     title: string;
     description: string;
     imageFile: File | null;
     imagePreviewUrl: string | null;
+    subCategory: string;
   }) => void;
 }
 
 export default function PortfolioForm({
   submitLabel,
+  subCategoryOptions,
   initialTitle = '',
   initialDescription = '',
   initialImageUrl = null,
+  initialSubCategory = null,
   onSubmit,
 }: PortfolioFormProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(initialImageUrl);
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
+  const [subCategory, setSubCategory] = useState<string | null>(initialSubCategory);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const titleInput = useIMEInput(title, setTitle, { maxLength: MAX_TITLE_LENGTH });
@@ -61,17 +73,21 @@ export default function PortfolioForm({
     setImagePreviewUrl(nextPreviewUrl);
   };
 
-  const isSubmitEnabled = Boolean((imageFile || imagePreviewUrl) && title.trim() && description.trim());
+  const isSubmitEnabled = Boolean((imageFile || imagePreviewUrl) && title.trim() && description.trim() && subCategory);
 
   const handleSubmit = () => {
-    if (!isSubmitEnabled) return;
+    if (!isSubmitEnabled || !subCategory) return;
     onSubmit({
       title: title.trim(),
       description: description.trim(),
       imageFile,
       imagePreviewUrl,
+      subCategory,
     });
   };
+
+  const subCategoryPlaceholder =
+    subCategoryOptions.length > 0 ? '카테고리를 선택해주세요' : '카테고리 정보를 불러오는 중입니다.';
 
   return (
     <div className="flex flex-1 flex-col">
@@ -103,6 +119,17 @@ export default function PortfolioForm({
               placeholder="25자 이내로 작성해주세요"
               rows={1}
               className="text-body-2-medium w-full resize-none overflow-hidden rounded-[10px] bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
+            />
+          </div>
+
+          <div className="focus-within:pb-24">
+            <Dropdown
+              label="세부 카테고리"
+              options={subCategoryOptions}
+              value={subCategory}
+              onChange={setSubCategory}
+              placeholder={subCategoryPlaceholder}
+              disabled={subCategoryOptions.length === 0}
             />
           </div>
         </div>
