@@ -209,7 +209,7 @@ export default function PortfolioPage() {
                     perSlideRotate: 2.55,
                     slideShadows: false,
                   }}
-                  className="portfolio-swiper h-[384px]"
+                  className="portfolio-swiper h-96"
                   onSwiper={(swiper) => {
                     swiperRef.current = swiper;
                     setActiveIndex(swiper.activeIndex);
@@ -292,23 +292,6 @@ export default function PortfolioPage() {
           )}
         </div>
       </div>
-
-      <style jsx global>{`
-        .portfolio-swiper {
-          padding-bottom: 0;
-        }
-        .portfolio-swiper .swiper-wrapper {
-          align-items: center;
-        }
-        .portfolio-swiper .swiper-slide {
-          opacity: 0;
-        }
-        .portfolio-swiper .swiper-slide-active,
-        .portfolio-swiper .swiper-slide-next,
-        .portfolio-swiper .swiper-slide-prev {
-          opacity: 1;
-        }
-      `}</style>
     </div>
   );
 }

@@ -111,3 +111,26 @@
     radial-gradient(90.86% 110.91% at 23.75% -3.12%, #a5a8ff 0%, #c0c8ff 71.53%, #dee9ff 100%),
     linear-gradient(180deg, #c9d4ff 0%, #797f99 100%);
 }
+
+/* ========================================
+   Portfolio Swiper
+   ======================================== */
+@layer utilities {
+  .portfolio-swiper {
+    padding-bottom: 0;
+  }
+
+  .portfolio-swiper .swiper-wrapper {
+    align-items: center;
+  }
+
+  .portfolio-swiper .swiper-slide {
+    opacity: 0;
+  }
+
+  .portfolio-swiper .swiper-slide-active,
+  .portfolio-swiper .swiper-slide-next,
+  .portfolio-swiper .swiper-slide-prev {
+    opacity: 1;
+  }
+}
