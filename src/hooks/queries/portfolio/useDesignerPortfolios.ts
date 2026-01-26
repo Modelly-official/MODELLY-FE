@@ -12,6 +12,11 @@ export const portfolioKeys = {
   list: (size?: number) => [...portfolioKeys.lists(), size] as const,
   details: () => [...portfolioKeys.all, 'detail'] as const,
   detail: (portfolioId: number) => [...portfolioKeys.details(), portfolioId] as const,
+  publicLists: () => [...portfolioKeys.all, 'public', 'list'] as const,
+  publicList: (designerId: number, params?: { cursorId?: number; size?: number }) =>
+    [...portfolioKeys.publicLists(), designerId, params] as const,
+  publicDetails: () => [...portfolioKeys.all, 'public', 'detail'] as const,
+  publicDetail: (portfolioId: number) => [...portfolioKeys.publicDetails(), portfolioId] as const,
 };
 
 interface UseDesignerPortfoliosParams {

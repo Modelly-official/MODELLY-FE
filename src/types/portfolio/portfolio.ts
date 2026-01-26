@@ -28,13 +28,16 @@ export interface PortfolioImageUploadResult {
 // ===== 포트폴리오 상세 =====
 
 /** 디자이너 포트폴리오 상세 */
-export interface DesignerPortfolioDetail {
+export interface PortfolioDetail {
   portfolioId: number;
   title: string;
   subCategoryList: SubCategory[];
   content: string;
   imageList: string[];
 }
+
+export type DesignerPortfolioDetail = PortfolioDetail;
+export type PublicPortfolioDetail = PortfolioDetail;
 
 // ===== 내 포트폴리오 리스트 =====
 
