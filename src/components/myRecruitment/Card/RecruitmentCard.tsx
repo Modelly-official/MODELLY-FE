@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
-import DotIcon from '@/public/icons/myRecruitment/dot.svg';
 import { CategoryBadge } from '@/src/components/common';
+import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 import type { MyRecruitmentListItem } from '@/src/types/myRecruitment/recruitment';
 import { formatPeriodToMonthDay } from '@/src/utils/common';
 
@@ -20,28 +20,10 @@ const MAX_RETRY_COUNT = 3;
 const RETRY_DELAY_MS = 2000;
 
 export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick }: RecruitmentCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const [imageKey, setImageKey] = useState(0); // 이미지 리렌더링용 key
-
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onEdit?.(recruitment.recruitmentId);
-  };
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onDelete?.(recruitment.recruitmentId);
-  };
 
   const handleCardClick = () => {
     onClick?.(recruitment.recruitmentId);
@@ -129,46 +111,12 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
         </div>
 
         {/* 더보기 버튼 */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={handleMenuClick}
-            className="flex h-5 w-5 cursor-pointer items-center justify-center"
-            aria-label="더보기"
-          >
-            <DotIcon className="h-5 w-5" />
-          </button>
-
-          {/* 드롭다운 메뉴 */}
-          {isMenuOpen && (
-            <>
-              {/* 배경 클릭 시 메뉴 닫기 */}
-              <div
-                className="fixed inset-0 z-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen(false);
-                }}
-              />
-              <div className="absolute top-6 right-0 z-20 overflow-hidden rounded-[10px] border border-gray-400 bg-white">
-                <button
-                  type="button"
-                  onClick={handleEdit}
-                  className="text-caption-1-medium block w-full cursor-pointer border-b border-gray-400 px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
-                >
-                  수정
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  className="text-caption-1-medium block w-full cursor-pointer px-[13px] py-1.5 whitespace-nowrap text-gray-900 hover:bg-gray-100"
-                >
-                  삭제
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+        <KebabMenu
+          items={[
+            { label: '수정', onClick: () => onEdit?.(recruitment.recruitmentId) },
+            { label: '삭제', onClick: () => onDelete?.(recruitment.recruitmentId) },
+          ]}
+        />
       </div>
     </div>
   );

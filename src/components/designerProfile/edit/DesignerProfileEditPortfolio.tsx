@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
-import DesignerProfileEditMenu from '@/src/components/designerProfile/edit/DesignerProfileEditMenu';
+import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 
 interface DesignerProfileEditPortfolioProps {
   images: string[];
@@ -19,22 +19,6 @@ export default function DesignerProfileEditPortfolio({
   onDeleteImage,
 }: DesignerProfileEditPortfolioProps) {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
-
-  const handleToggleMenu = (index: number) => {
-    setOpenMenuIndex((prev) => (prev === index ? null : index));
-  };
-
-  const handleCloseMenu = () => setOpenMenuIndex(null);
-
-  const handleEdit = (index: number) => {
-    onEditImage?.(index);
-    setOpenMenuIndex(null);
-  };
-
-  const handleDelete = (index: number) => {
-    onDeleteImage?.(index);
-    setOpenMenuIndex(null);
-  };
 
   return (
     <section className="rounded-2xl bg-white px-4 py-4">
@@ -66,16 +50,14 @@ export default function DesignerProfileEditPortfolio({
                 />
               </div>
 
-              <DesignerProfileEditMenu
+              <KebabMenu
                 isOpen={isMenuOpen}
-                onToggle={() => handleToggleMenu(index)}
-                onClose={handleCloseMenu}
-                onEdit={() => handleEdit(index)}
-                onDelete={() => handleDelete(index)}
-                ariaLabel="포트폴리오 메뉴"
+                onOpenChange={(open) => setOpenMenuIndex(open ? index : null)}
+                items={[
+                  { label: '수정', onClick: () => onEditImage?.(index) },
+                  { label: '삭제', onClick: () => onDeleteImage?.(index) },
+                ]}
                 wrapperClassName="absolute top-2 right-2"
-                buttonClassName="flex h-5 w-5 cursor-pointer items-center justify-center"
-                menuPositionClassName="top-8 right-0"
               />
             </div>
           );
