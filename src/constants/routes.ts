@@ -23,6 +23,9 @@ export const MODEL_ONLY_ROUTES: string[] = [
   '/reservation', // 예약
 ];
 
+// ===== 디자이너 접근 차단 라우트 (모델/비로그인만 허용) =====
+export const DESIGNER_BLOCKED_ROUTES = ['/explore', '/map', '/post'];
+
 // ===== 디자이너 전용 라우트 =====
 export const DESIGNER_ONLY_ROUTES = [
   '/myRecruitment', // 내 공고 관리 (목록, 생성, 수정, 상세)
