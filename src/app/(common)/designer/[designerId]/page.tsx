@@ -1,12 +1,12 @@
 'use client';
 
-import { use } from 'react';
+import { use, useMemo } from 'react';
 import { notFound } from 'next/navigation';
 import DesignerProfileSkeleton from '@/src/components/designerProfile/DesignerProfileSkeleton';
 import DesignerProfileView from '@/src/components/designerProfile/DesignerProfileView';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { usePublicDesignerProfile } from '@/src/hooks/queries/profile';
-import { mockPortfolioImages } from '@/src/mocks/profile/designerProfile';
+import { usePublicDesignerPortfolios } from '@/src/hooks/queries/portfolio';
 
 interface PageProps {
   params: Promise<{ designerId: string }>;
@@ -22,6 +22,17 @@ export default function DesignerProfilePage({ params }: PageProps) {
     designerId: validDesignerId,
     enabled: validDesignerId !== null,
   });
+  const portfolioListParams = useMemo(() => ({ size: 12 }), []);
+  const { data: portfolioData } = usePublicDesignerPortfolios({
+    designerId: validDesignerId,
+    params: portfolioListParams,
+    enabled: validDesignerId !== null,
+  });
+
+  const portfolioImages = useMemo(
+    () => portfolioData?.result.items.map((item) => item.thumbnail) ?? [],
+    [portfolioData]
+  );
 
   if (validDesignerId === null) {
     return (
@@ -46,7 +57,7 @@ export default function DesignerProfilePage({ params }: PageProps) {
     <DesignerProfileView
       profile={profile}
       openRecruitments={openRecruitments}
-      portfolioImages={mockPortfolioImages}
+      portfolioImages={portfolioImages}
       actionType="share"
       showActionBar={showActionBar}
     />

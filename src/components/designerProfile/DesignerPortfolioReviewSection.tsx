@@ -13,11 +13,13 @@ interface DesignerPortfolioReviewSectionProps {
   activeTab: DesignerProfileTab;
   onTabChange: (tab: DesignerProfileTab) => void;
   portfolioImages: string[];
+  portfolioIds?: number[];
   reviewSummary: DesignerReviewSummaryData;
   reviewItems: DesignerReviewItem[];
   isReviewLoading?: boolean;
   isReviewError?: boolean;
   onPortfolioViewAll?: () => void;
+  onPortfolioSelect?: (portfolioId: number) => void;
   onReviewViewAll?: () => void;
   onReviewPreviewMore?: () => void;
 }
@@ -26,11 +28,13 @@ export default function DesignerPortfolioReviewSection({
   activeTab,
   onTabChange,
   portfolioImages,
+  portfolioIds,
   reviewSummary,
   reviewItems,
   isReviewLoading = false,
   isReviewError = false,
   onPortfolioViewAll,
+  onPortfolioSelect,
   onReviewViewAll,
   onReviewPreviewMore,
 }: DesignerPortfolioReviewSectionProps) {
@@ -79,20 +83,34 @@ export default function DesignerPortfolioReviewSection({
             </button>
           </div>
           <div className="grid grid-cols-3 gap-2.5 px-4 pt-3 pb-[calc(32px+env(safe-area-inset-bottom))]">
-            {portfolioImages.map((imageUrl, index) => (
-              <div
-                key={`${imageUrl}-${index}`}
-                className="relative h-[151px] w-full overflow-hidden rounded-lg bg-gray-200"
-              >
-                <Image
-                  src={imageUrl}
-                  alt={`포트폴리오 이미지 ${index + 1}`}
-                  fill
-                  sizes="33vw"
-                  className="object-cover"
-                />
-              </div>
-            ))}
+            {portfolioImages.map((imageUrl, index) => {
+              const portfolioId = portfolioIds?.[index];
+              const isClickable = typeof portfolioId === 'number' && !!onPortfolioSelect;
+
+              return (
+                <button
+                  key={`${imageUrl}-${index}`}
+                  type="button"
+                  onClick={() => {
+                    if (!isClickable) return;
+                    onPortfolioSelect?.(portfolioId);
+                  }}
+                  className={`border-0 p-0 relative h-[151px] w-full overflow-hidden rounded-lg bg-gray-200 ${
+                    isClickable ? 'cursor-pointer' : 'cursor-default'
+                  }`}
+                  disabled={!isClickable}
+                  aria-label={isClickable ? '포트폴리오 상세 보기' : undefined}
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={`포트폴리오 이미지 ${index + 1}`}
+                    fill
+                    sizes="33vw"
+                    className="object-cover"
+                  />
+                </button>
+              );
+            })}
           </div>
         </>
       ) : (

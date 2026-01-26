@@ -19,10 +19,12 @@ import { useAuthReady } from '@/src/hooks/custom/mypage';
 import type { DesignerReviewItem as DesignerReviewCardItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
 import type { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
+import type { DesignerPortfolioListItem } from '@/src/types/portfolio';
 
 interface DesignerProfileViewProps {
   profile: DesignerProfileInfo;
   openRecruitments: DesignerRecruitmentCard[];
+  portfolioItems?: DesignerPortfolioListItem[];
   portfolioImages?: string[];
   actionType?: 'edit' | 'share' | 'none';
   showActionBar?: boolean;
@@ -45,6 +47,7 @@ const defaultPortfolioImages = [
 export default function DesignerProfileView({
   profile,
   openRecruitments,
+  portfolioItems,
   portfolioImages = defaultPortfolioImages,
   actionType = 'none',
   showActionBar = false,
@@ -208,8 +211,26 @@ export default function DesignerProfileView({
     });
   };
 
+  const resolvedPortfolioImages = useMemo(() => {
+    if (portfolioItems && portfolioItems.length > 0) {
+      return portfolioItems.map((item) => item.thumbnail);
+    }
+    return portfolioImages;
+  }, [portfolioItems, portfolioImages]);
+
+  const resolvedPortfolioIds = useMemo(() => {
+    if (!portfolioItems || portfolioItems.length === 0) return undefined;
+    return portfolioItems.map((item) => item.portfolioId);
+  }, [portfolioItems]);
+
   const handlePortfolioViewAll = () => {
-    router.push('/designer/portfolio');
+    if (!Number.isFinite(profile.designerId) || profile.designerId <= 0) return;
+    router.push(`/designer/portfolio?designerId=${profile.designerId}`);
+  };
+
+  const handlePortfolioSelect = (portfolioId: number) => {
+    if (!Number.isFinite(profile.designerId) || profile.designerId <= 0) return;
+    router.push(`/designer/portfolio?designerId=${profile.designerId}&portfolioId=${portfolioId}`);
   };
 
   const handleChat = () => {
@@ -252,12 +273,14 @@ export default function DesignerProfileView({
       <DesignerPortfolioReviewSection
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        portfolioImages={portfolioImages}
+        portfolioImages={resolvedPortfolioImages}
+        portfolioIds={resolvedPortfolioIds}
         reviewSummary={reviewSummary}
         reviewItems={reviewItems}
         isReviewLoading={isReviewLoading}
         isReviewError={isReviewError}
         onPortfolioViewAll={handlePortfolioViewAll}
+        onPortfolioSelect={handlePortfolioSelect}
         onReviewViewAll={handleReviewViewAll}
       />
 

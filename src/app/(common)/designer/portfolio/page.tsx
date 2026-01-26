@@ -6,113 +6,98 @@ import 'swiper/css/pagination';
 
 import { useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useQueries, type UseQueryResult } from '@tanstack/react-query';
 import type { Swiper as SwiperType } from 'swiper';
 import { EffectCards, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/portfolio/straigh-arrow-left.svg';
 import ArrowRightIcon from '@/public/icons/portfolio/straight-arrow-right.svg';
 import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
-import { mockPortfolioImages } from '@/src/mocks/profile/designerProfile';
-
-type PortfolioCategory = 'ALL' | 'CUT' | 'PERM' | 'COLOR' | 'MAGIC';
+import { getPublicPortfolioDetail } from '@/src/apis';
+import { usePublicDesignerPortfolios } from '@/src/hooks/queries/portfolio';
+import { portfolioKeys } from '@/src/hooks/queries/portfolio/useDesignerPortfolios';
+import { getCategoryLabel } from '@/src/constants/explore';
+import type { ApiResponse, PublicPortfolioDetail } from '@/src/types';
 
 type PortfolioItem = {
   id: number;
   title: string;
   description: string;
-  category: Exclude<PortfolioCategory, 'ALL'>;
+  subCategoryList: string[];
   imageUrl: string;
 };
 
-const PORTFOLIO_CATEGORIES: Array<{ id: PortfolioCategory; label: string }> = [
-  { id: 'ALL', label: '전체' },
-  { id: 'CUT', label: '컷트' },
-  { id: 'PERM', label: '펌' },
-  { id: 'COLOR', label: '염색' },
-  { id: 'MAGIC', label: '매직' },
-];
-
-const PORTFOLIO_ITEMS: PortfolioItem[] = [
-  {
-    id: 1,
-    title: '애쉬 레이어드컷',
-    description: '레이어드 컷으로 자연스러운 볼륨을 살린 스타일입니다.',
-    category: 'CUT',
-    imageUrl: mockPortfolioImages[0],
-  },
-  {
-    id: 2,
-    title: '시스루 뱅 컷',
-    description: '가벼운 시스루 뱅으로 얼굴형을 부드럽게 표현했습니다.',
-    category: 'CUT',
-    imageUrl: mockPortfolioImages[1],
-  },
-  {
-    id: 3,
-    title: '내추럴 C컬 펌',
-    description: '과하지 않은 C컬로 손질이 쉬운 데일리 펌입니다.',
-    category: 'PERM',
-    imageUrl: mockPortfolioImages[2],
-  },
-  {
-    id: 4,
-    title: '볼륨 웨이브 펌',
-    description: '입체적인 웨이브로 풍성한 실루엣을 완성했습니다.',
-    category: 'PERM',
-    imageUrl: mockPortfolioImages[3],
-  },
-  {
-    id: 5,
-    title: '애쉬 브라운 컬러',
-    description: '부드러운 애쉬 톤으로 고급스러운 무드를 연출했습니다.',
-    category: 'COLOR',
-    imageUrl: mockPortfolioImages[4],
-  },
-  {
-    id: 6,
-    title: '카키 브라운 염색',
-    description: '차분한 카키 브라운으로 세련된 느낌을 강조했습니다.',
-    category: 'COLOR',
-    imageUrl: mockPortfolioImages[5],
-  },
-  {
-    id: 7,
-    title: '매직 스트레이트',
-    description: '깔끔한 스트레이트 라인으로 윤기 있는 모발을 완성했습니다.',
-    category: 'MAGIC',
-    imageUrl: mockPortfolioImages[6],
-  },
-  {
-    id: 8,
-    title: '복구 매직',
-    description: '손상모를 고려한 복구 매직으로 탄력을 살렸습니다.',
-    category: 'MAGIC',
-    imageUrl: mockPortfolioImages[7],
-  },
-  {
-    id: 9,
-    title: '내추럴 레이어드',
-    description: '일상에 자연스럽게 어울리는 레이어드 컷입니다.',
-    category: 'CUT',
-    imageUrl: mockPortfolioImages[8],
-  },
-];
-
 export default function PortfolioPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const designerIdParam = searchParams.get('designerId');
+  const numericDesignerId = designerIdParam ? Number(designerIdParam) : NaN;
+  const isValidDesignerId = Number.isFinite(numericDesignerId) && numericDesignerId > 0;
   const swiperRef = useRef<SwiperType | null>(null);
 
-  const [selectedCategory, setSelectedCategory] = useState<PortfolioCategory>('ALL');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const filteredItems = useMemo(() => {
-    if (selectedCategory === 'ALL') return PORTFOLIO_ITEMS;
-    return PORTFOLIO_ITEMS.filter((item) => item.category === selectedCategory);
-  }, [selectedCategory]);
+  const listParams = useMemo(() => ({ size: 12 }), []);
+  const { data: listData, isLoading: isListLoading, isError: isListError } =
+    usePublicDesignerPortfolios({
+      designerId: isValidDesignerId ? numericDesignerId : null,
+      params: listParams,
+      enabled: isValidDesignerId,
+    });
 
-  const handleCategoryChange = (category: PortfolioCategory) => {
-    if (category === selectedCategory) return;
+  const listItems = listData?.result.items ?? [];
+
+  const detailQueries = useQueries({
+    queries: listItems.map((item) => ({
+      queryKey: portfolioKeys.publicDetail(item.portfolioId),
+      queryFn: () => getPublicPortfolioDetail(item.portfolioId),
+      enabled: listItems.length > 0,
+      staleTime: 1000 * 60 * 2,
+    })),
+  }) as UseQueryResult<ApiResponse<PublicPortfolioDetail>, Error>[];
+
+  const portfolioItems = useMemo<PortfolioItem[]>(
+    () =>
+      listItems.map((item, index) => {
+        const detail = detailQueries[index]?.data?.result;
+        const subCategoryList = detail?.subCategoryList ?? [];
+        return {
+          id: item.portfolioId,
+          title: detail?.title ?? '',
+          description: detail?.content ?? '',
+          subCategoryList,
+          imageUrl: detail?.imageList?.[0] ?? item.thumbnail,
+        };
+      }),
+    [listItems, detailQueries]
+  );
+
+  const categoryOptions = useMemo(() => {
+    const codes = new Set<string>();
+    portfolioItems.forEach((item) => {
+      item.subCategoryList.forEach((code) => codes.add(code));
+    });
+    const options = Array.from(codes).map((code) => ({
+      id: code,
+      label: getCategoryLabel(code),
+    }));
+    return [{ id: 'ALL', label: '전체' }, ...options];
+  }, [portfolioItems]);
+
+  const activeCategory =
+    selectedCategory === 'ALL' || categoryOptions.some((option) => option.id === selectedCategory)
+      ? selectedCategory
+      : 'ALL';
+
+  const filteredItems = useMemo(() => {
+    if (activeCategory === 'ALL') return portfolioItems;
+    return portfolioItems.filter((item) => item.subCategoryList.includes(activeCategory));
+  }, [activeCategory, portfolioItems]);
+
+  const handleCategoryChange = (category: string) => {
+    if (category === activeCategory) return;
     setSelectedCategory(category);
     setActiveIndex(0);
   };
@@ -141,8 +126,8 @@ export default function PortfolioPage() {
       <div className="flex flex-1 flex-col gap-12 px-4">
         {/* 카테고리 필터 */}
         <div className="scrollbar-hide flex gap-2 overflow-x-auto">
-          {PORTFOLIO_CATEGORIES.map((category) => {
-            const isActive = selectedCategory === category.id;
+          {categoryOptions.map((category) => {
+            const isActive = activeCategory === category.id;
             return (
               <button
                 key={category.id}
@@ -162,7 +147,19 @@ export default function PortfolioPage() {
 
         {/* 콘텐츠 */}
         <div className="flex flex-1 flex-col items-center">
-          {totalCount === 0 ? (
+          {!isValidDesignerId ? (
+            <div className="flex w-full flex-1 items-center justify-center py-20">
+              <p className="text-body-2-medium text-gray-500">디자이너 정보를 찾을 수 없습니다.</p>
+            </div>
+          ) : isListLoading ? (
+            <div className="flex w-full flex-1 items-center justify-center py-20">
+              <p className="text-body-2-medium text-gray-500">포트폴리오를 불러오는 중입니다.</p>
+            </div>
+          ) : isListError ? (
+            <div className="flex w-full flex-1 items-center justify-center py-20">
+              <p className="text-body-2-medium text-gray-500">포트폴리오를 불러오지 못했습니다.</p>
+            </div>
+          ) : totalCount === 0 ? (
             <div className="flex w-full flex-1 items-center justify-center py-20">
               <p className="text-body-2-medium text-gray-500">해당 카테고리의 포트폴리오가 없습니다.</p>
             </div>
