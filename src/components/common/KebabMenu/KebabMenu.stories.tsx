@@ -1,28 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import KebabMenu from './KebabMenu';
 
-const meta = {
+export default {
   title: 'Common/KebabMenu',
   component: KebabMenu,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    position: {
-      control: 'radio',
-      options: ['top-right', 'top-left', 'bottom-right', 'bottom-left'],
-      description: '메뉴 위치',
-    },
-  },
-} satisfies Meta<typeof KebabMenu>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+};
 
 // 기본 - 수정/삭제
-export const Default: Story = {
+export const Default = {
   args: {
     items: [
       { label: '수정', onClick: () => console.log('수정') },
@@ -32,7 +21,7 @@ export const Default: Story = {
 };
 
 // 위험 액션 포함
-export const WithDanger: Story = {
+export const WithDanger = {
   args: {
     items: [
       { label: '수정', onClick: () => console.log('수정') },
@@ -42,14 +31,14 @@ export const WithDanger: Story = {
 };
 
 // 단일 항목 - 고정/해제
-export const SingleItem: Story = {
+export const SingleItem = {
   args: {
     items: [{ label: '리뷰 고정', onClick: () => console.log('고정') }],
   },
 };
 
 // 다중 항목
-export const MultipleItems: Story = {
+export const MultipleItems = {
   args: {
     items: [
       { label: '수정', onClick: () => console.log('수정') },
@@ -61,7 +50,7 @@ export const MultipleItems: Story = {
 };
 
 // 카드 내 배치
-export const InCard: Story = {
+export const InCard = {
   args: {
     items: [
       { label: '수정', onClick: () => console.log('수정') },
@@ -84,7 +73,7 @@ export const InCard: Story = {
 };
 
 // 이미지 위 배치
-export const OnImage: Story = {
+export const OnImage = {
   args: {
     items: [
       { label: '수정', onClick: () => console.log('수정') },
@@ -103,7 +92,7 @@ export const OnImage: Story = {
 };
 
 // Controlled - 리스트에서 하나만 열기
-export const ControlledList: Story = {
+export const ControlledList = {
   args: {
     items: [
       { label: '수정', onClick: () => console.log('수정') },
@@ -111,7 +100,7 @@ export const ControlledList: Story = {
     ],
   },
   render: function Render(args) {
-    const [openId, setOpenId] = useState<number | null>(null);
+    const [openId, setOpenId] = useState(null);
     const items = [
       { id: 1, title: '첫 번째 항목' },
       { id: 2, title: '두 번째 항목' },
@@ -133,41 +122,6 @@ export const ControlledList: Story = {
         <p className="mt-2 text-caption-1-medium text-gray-500">
           * 리스트에서 하나의 메뉴만 열립니다
         </p>
-      </div>
-    );
-  },
-};
-
-// 위치 변형들
-export const PositionTopLeft: Story = {
-  args: {
-    items: [
-      { label: '수정', onClick: () => console.log('수정') },
-      { label: '삭제', onClick: () => console.log('삭제') },
-    ],
-    position: 'top-left',
-  },
-  render: function Render(args) {
-    return (
-      <div className="flex h-[100px] w-[300px] items-start justify-end rounded-xl bg-gray-100 p-4">
-        <KebabMenu {...args} />
-      </div>
-    );
-  },
-};
-
-export const PositionBottomRight: Story = {
-  args: {
-    items: [
-      { label: '수정', onClick: () => console.log('수정') },
-      { label: '삭제', onClick: () => console.log('삭제') },
-    ],
-    position: 'bottom-right',
-  },
-  render: function Render(args) {
-    return (
-      <div className="flex h-[100px] w-[300px] items-end justify-start rounded-xl bg-gray-100 p-4">
-        <KebabMenu {...args} />
       </div>
     );
   },
