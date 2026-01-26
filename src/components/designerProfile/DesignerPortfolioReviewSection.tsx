@@ -14,6 +14,7 @@ interface DesignerPortfolioReviewSectionProps {
   onTabChange: (tab: DesignerProfileTab) => void;
   portfolioImages: string[];
   portfolioIds?: number[];
+  portfolioTotalCount?: number;
   reviewSummary: DesignerReviewSummaryData;
   reviewItems: DesignerReviewItem[];
   isReviewLoading?: boolean;
@@ -29,6 +30,7 @@ export default function DesignerPortfolioReviewSection({
   onTabChange,
   portfolioImages,
   portfolioIds,
+  portfolioTotalCount,
   reviewSummary,
   reviewItems,
   isReviewLoading = false,
@@ -38,6 +40,8 @@ export default function DesignerPortfolioReviewSection({
   onReviewViewAll,
   onReviewPreviewMore,
 }: DesignerPortfolioReviewSectionProps) {
+  const portfolioCount = portfolioTotalCount ?? portfolioImages.length;
+
   return (
     <section className="border-gray-200">
       <div className="grid h-13 grid-cols-2 border-b border-gray-400">
@@ -70,7 +74,7 @@ export default function DesignerPortfolioReviewSection({
           <div className="flex items-center justify-between px-4 pt-4">
             <div className="flex gap-1">
               <span className="text-body-1-medium text-black">전체</span>
-              <span className="text-body-1-semibold text-gray-600">{portfolioImages.length}</span>
+              <span className="text-body-1-semibold text-gray-600">{portfolioCount}</span>
             </div>
             <button
               type="button"

@@ -21,7 +21,7 @@ export default function DesignerProfileEditPage() {
   const { mutate: deletePortfolio } = useDeletePortfolio();
 
   const portfolioItems = useMemo(
-    () => portfolioData?.pages.flatMap((page) => page.result.items) ?? [],
+    () => portfolioData?.pages?.[0]?.result.items ?? [],
     [portfolioData]
   );
 

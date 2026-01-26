@@ -15,6 +15,9 @@ export const portfolioKeys = {
   publicLists: () => [...portfolioKeys.all, 'public', 'list'] as const,
   publicList: (designerId: number, params?: { cursorId?: number; size?: number }) =>
     [...portfolioKeys.publicLists(), designerId, params] as const,
+  publicInfiniteLists: () => [...portfolioKeys.all, 'public', 'list', 'infinite'] as const,
+  publicInfiniteList: (designerId: number, params?: { cursorId?: number; size?: number }) =>
+    [...portfolioKeys.publicInfiniteLists(), designerId, params] as const,
   publicDetails: () => [...portfolioKeys.all, 'public', 'detail'] as const,
   publicDetail: (portfolioId: number) => [...portfolioKeys.publicDetails(), portfolioId] as const,
 };

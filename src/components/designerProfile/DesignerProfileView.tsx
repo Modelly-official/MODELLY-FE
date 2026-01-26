@@ -26,6 +26,7 @@ interface DesignerProfileViewProps {
   openRecruitments: DesignerRecruitmentCard[];
   portfolioItems?: DesignerPortfolioListItem[];
   portfolioImages?: string[];
+  portfolioTotalCount?: number;
   actionType?: 'edit' | 'share' | 'none';
   showActionBar?: boolean;
   onBack?: () => void;
@@ -49,6 +50,7 @@ export default function DesignerProfileView({
   openRecruitments,
   portfolioItems,
   portfolioImages = defaultPortfolioImages,
+  portfolioTotalCount,
   actionType = 'none',
   showActionBar = false,
   onBack,
@@ -275,6 +277,7 @@ export default function DesignerProfileView({
         onTabChange={setActiveTab}
         portfolioImages={resolvedPortfolioImages}
         portfolioIds={resolvedPortfolioIds}
+        portfolioTotalCount={portfolioTotalCount}
         reviewSummary={reviewSummary}
         reviewItems={reviewItems}
         isReviewLoading={isReviewLoading}
