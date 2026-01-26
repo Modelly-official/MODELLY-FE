@@ -1,0 +1,113 @@
+/* utilities.css - 커스텀 유틸리티 클래스 */
+
+/* ========================================
+   Typography - Heading
+   ======================================== */
+@utility text-head-1-semibold {
+  font-size: var(--text-head-1);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-2-semibold {
+  font-size: var(--text-head-2);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-3-semibold {
+  font-size: var(--text-head-3);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-3-medium {
+  font-size: var(--text-head-3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-140);
+}
+
+@utility text-head-4-semibold {
+  font-size: var(--text-head-4);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-150);
+}
+
+@utility text-head-4-medium {
+  font-size: var(--text-head-4);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+/* ========================================
+   Typography - Body
+   ======================================== */
+@utility text-body-1-semibold {
+  font-size: var(--text-body-1);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-1-medium {
+  font-size: var(--text-body-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-2-semibold {
+  font-size: var(--text-body-2);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-2-medium {
+  font-size: var(--text-body-2);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-body-2-regular {
+  font-size: var(--text-body-2);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--leading-150);
+}
+
+/* ========================================
+   Typography - Caption
+   ======================================== */
+@utility text-caption-1-medium {
+  font-size: var(--text-caption-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-150);
+}
+
+@utility text-caption-2-regular {
+  font-size: var(--text-caption-2);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--leading-150);
+}
+
+/* ========================================
+   Shadow
+   ======================================== */
+@utility shadow-dropdown {
+  box-shadow: 0 0 12px 12px rgba(56, 56, 56, 0.1);
+}
+
+/* ========================================
+   PWA Safe Area
+   ======================================== */
+@utility safe-area-top {
+  @media (display-mode: standalone) {
+    padding-top: var(--safe-area-inset-top);
+  }
+}
+
+/* ========================================
+   Background
+   ======================================== */
+@utility gradation {
+  background:
+    radial-gradient(90.86% 110.91% at 23.75% -3.12%, #a5a8ff 0%, #c0c8ff 71.53%, #dee9ff 100%),
+    linear-gradient(180deg, #c9d4ff 0%, #797f99 100%);
+}
