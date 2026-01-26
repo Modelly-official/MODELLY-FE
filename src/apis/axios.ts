@@ -1,7 +1,17 @@
-import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores';
+import { useAuthStore, getAccessToken, setAccessToken, getUserRole } from '@/src/stores';
 import { apiLogger } from '@/src/utils';
 import { dispatchAuthError } from '@/src/utils/auth/authErrorDispatcher';
+import { PUBLIC_ROUTES } from '@/src/constants/routes';
 import axios, { AxiosRequestConfig } from 'axios';
+
+// 공개 라우트 체크 (SSR-safe)
+function isPublicRoute(): boolean {
+  if (typeof window === 'undefined') return false;
+  const pathname = window.location.pathname;
+  return PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
 
 // 토큰 갱신 상태 관리 (Race Condition 방지)
 let isRefreshing = false;
@@ -107,6 +117,14 @@ axiosInstance.interceptors.response.use(
     if (needsTokenRefresh && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      const onPublicRoute = isPublicRoute();
+      const hasUserRole = !!getUserRole();
+
+      // 공개 라우트에서 비로그인 유저는 refresh 시도 안 함 (UI 모달이 처리)
+      if (onPublicRoute && !hasUserRole) {
+        return Promise.reject(error);
+      }
+
       // 이미 갱신 중이면 대기
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -152,7 +170,11 @@ axiosInstance.interceptors.response.use(
         // 갱신 실패 - 대기 중인 요청들에게 에러 전달
         onRefreshFailed(refreshError instanceof Error ? refreshError : new Error('Token refresh failed'));
         clearAuth();
-        dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
+
+        // 공개 라우트: soft (인증 클리어만) / 보호 라우트: hard (리다이렉트)
+        if (!onPublicRoute) {
+          dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
+        }
         return Promise.reject(error);
       } finally {
         isRefreshing = false;
@@ -163,7 +185,10 @@ axiosInstance.interceptors.response.use(
     // ACCESS_TOKEN_EXPIRED는 위에서 refresh 시도하므로 여기서 제외
     if (res?.status === 400 && (code === 'INVALID_REFRESH_TOKEN' || code === 'INVALID_TOKEN')) {
       clearAuth();
-      dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
+      // 공개 라우트: soft (인증 클리어만) / 보호 라우트: hard (리다이렉트)
+      if (!isPublicRoute()) {
+        dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
+      }
     }
 
     return Promise.reject(error);
