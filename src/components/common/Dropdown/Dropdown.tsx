@@ -196,7 +196,7 @@ export default function Dropdown<T = string>({
               }`
             }
           >
-            <span className={`text-body-2-medium ${selectedOption ? 'text-gray-900' : 'text-gray-600'}`}>
+            <span className={`text-body-2-medium !text-[16px] ${selectedOption ? 'text-gray-900' : 'text-gray-600'}`}>
               {selectedOption ? selectedOption.label : placeholder}
             </span>
             <ChevronDownIcon className={`h-5 w-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
