@@ -10,28 +10,38 @@ export default {
   tags: ['autodocs'],
 };
 
-// 기본 옵션들
-const sortOptions = [
-  { value: 'latest', label: '최신순' },
-  { value: 'popular', label: '인기순' },
-  { value: 'distance', label: '거리순' },
-];
+// ===== 실제 프로젝트에서 사용되는 옵션들 =====
 
+// 카테고리 (src/constants/explore.ts 기반)
 const categoryOptions = [
   { value: 'HAIR', label: '헤어' },
   { value: 'NAIL', label: '네일' },
+  { value: 'TATTOO', label: '타투' },
+  { value: 'EYELASH', label: '속눈썹' },
 ];
 
+// 정렬 옵션 (src/constants/explore.ts 기반)
+const sortOptions = [
+  { value: 'NEWEST', label: '최신순' },
+  { value: 'DISTANCE', label: '거리순' },
+  { value: 'MOST_REVIEWS', label: '후기 많은 순' },
+];
+
+// 연도 옵션 (마이페이지 리뷰에서 사용)
+const currentYear = new Date().getFullYear();
 const yearOptions = [
-  { value: 2024, label: '2024년' },
-  { value: 2025, label: '2025년' },
-  { value: 2026, label: '2026년' },
+  { value: currentYear - 1, label: `${currentYear - 1}` },
+  { value: currentYear, label: `${currentYear}` },
+  { value: currentYear + 1, label: `${currentYear + 1}` },
 ];
 
+// 월 옵션 (캘린더에서 사용)
 const monthOptions = Array.from({ length: 12 }, (_, i) => ({
   value: i + 1,
   label: `${i + 1}월`,
 }));
+
+// ===== Form Variant Stories =====
 
 // Form Variant - 기본
 export const FormDefault = {
@@ -103,16 +113,18 @@ export const FormDisabled = {
   },
 };
 
-// Inline Variant - 정렬
+// ===== Inline Variant Stories =====
+
+// Inline Variant - 정렬 (탐색 페이지에서 사용)
 export const InlineSort = {
   args: {
     options: sortOptions,
-    value: 'latest',
+    value: 'NEWEST',
     variant: 'inline',
     ariaLabel: '정렬 방식 선택',
   },
   render: function Render(args) {
-    const [value, setValue] = useState('latest');
+    const [value, setValue] = useState('NEWEST');
     return (
       <div className="flex items-center justify-end p-4">
         <Dropdown {...args} value={value} onChange={setValue} />
@@ -121,17 +133,17 @@ export const InlineSort = {
   },
 };
 
-// Inline Variant - 대형 (연도)
+// Inline Variant - 대형 연도 (마이페이지 리뷰에서 사용)
 export const InlineLargeYear = {
   args: {
     options: yearOptions,
-    value: 2026,
+    value: currentYear,
     variant: 'inline',
     size: 'lg',
     ariaLabel: '연도 선택',
   },
   render: function Render(args) {
-    const [value, setValue] = useState(2026);
+    const [value, setValue] = useState(currentYear);
     return (
       <div className="p-4">
         <Dropdown {...args} value={value} onChange={setValue} />
@@ -140,7 +152,7 @@ export const InlineLargeYear = {
   },
 };
 
-// Inline Variant - 스크롤 (월)
+// Inline Variant - 스크롤 월 (캘린더에서 사용)
 export const InlineScrollMonth = {
   args: {
     options: monthOptions,
@@ -155,6 +167,47 @@ export const InlineScrollMonth = {
     return (
       <div className="p-4">
         <Dropdown {...args} value={value} onChange={setValue} />
+      </div>
+    );
+  },
+};
+
+// ===== 실제 사용 예시 Stories =====
+
+// 탐색 페이지 필터 영역
+export const ExploreFiltersExample = {
+  render: function Render() {
+    const [sort, setSort] = useState('NEWEST');
+    return (
+      <div className="flex w-[360px] items-center justify-between bg-white p-4">
+        <span className="text-body-2-medium text-gray-600">총 24개</span>
+        <Dropdown
+          variant="inline"
+          ariaLabel="정렬 방식 선택"
+          options={sortOptions}
+          value={sort}
+          onChange={setSort}
+        />
+      </div>
+    );
+  },
+};
+
+// 마이페이지 리뷰 연도 선택
+export const MypageReviewYearExample = {
+  render: function Render() {
+    const [year, setYear] = useState(currentYear);
+    return (
+      <div className="flex w-[360px] items-center gap-4 bg-white p-4">
+        <Dropdown
+          variant="inline"
+          size="lg"
+          ariaLabel="연도 선택"
+          options={yearOptions}
+          value={year}
+          onChange={setYear}
+        />
+        <span className="text-body-2-medium text-gray-600">작성한 리뷰</span>
       </div>
     );
   },
