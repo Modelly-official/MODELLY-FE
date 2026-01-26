@@ -29,10 +29,7 @@ export default function DesignerProfilePage({ params }: PageProps) {
     enabled: validDesignerId !== null,
   });
 
-  const portfolioImages = useMemo(
-    () => portfolioData?.result.items.map((item) => item.thumbnail) ?? [],
-    [portfolioData]
-  );
+  const portfolioItems = useMemo(() => portfolioData?.result.items ?? [], [portfolioData]);
 
   if (validDesignerId === null) {
     return (
@@ -57,7 +54,7 @@ export default function DesignerProfilePage({ params }: PageProps) {
     <DesignerProfileView
       profile={profile}
       openRecruitments={openRecruitments}
-      portfolioImages={portfolioImages}
+      portfolioItems={portfolioItems}
       actionType="share"
       showActionBar={showActionBar}
     />

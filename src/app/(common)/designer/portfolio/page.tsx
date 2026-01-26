@@ -32,8 +32,11 @@ export default function PortfolioPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const designerIdParam = searchParams.get('designerId');
+  const portfolioIdParam = searchParams.get('portfolioId');
   const numericDesignerId = designerIdParam ? Number(designerIdParam) : NaN;
+  const numericPortfolioId = portfolioIdParam ? Number(portfolioIdParam) : NaN;
   const isValidDesignerId = Number.isFinite(numericDesignerId) && numericDesignerId > 0;
+  const isValidPortfolioId = Number.isFinite(numericPortfolioId) && numericPortfolioId > 0;
   const swiperRef = useRef<SwiperType | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -95,6 +98,12 @@ export default function PortfolioPage() {
     if (activeCategory === 'ALL') return portfolioItems;
     return portfolioItems.filter((item) => item.subCategoryList.includes(activeCategory));
   }, [activeCategory, portfolioItems]);
+
+  const initialIndex = useMemo(() => {
+    if (!isValidPortfolioId) return 0;
+    const targetIndex = filteredItems.findIndex((item) => item.id === numericPortfolioId);
+    return targetIndex >= 0 ? targetIndex : 0;
+  }, [filteredItems, isValidPortfolioId, numericPortfolioId]);
 
   const handleCategoryChange = (category: string) => {
     if (category === activeCategory) return;
@@ -167,10 +176,11 @@ export default function PortfolioPage() {
             <>
               <div className="max-w-[300px]">
                 <Swiper
-                  key={selectedCategory}
+                  key={`${activeCategory}-${initialIndex}`}
                   effect="cards"
                   grabCursor
                   modules={[EffectCards, Pagination]}
+                  initialSlide={initialIndex}
                   pagination={{
                     clickable: true,
                     bulletClass: 'swiper-pagination-bullet !bg-gray-300 !opacity-100 !rounded-full',
@@ -184,6 +194,7 @@ export default function PortfolioPage() {
                   className="portfolio-swiper h-[420px]"
                   onSwiper={(swiper) => {
                     swiperRef.current = swiper;
+                    setActiveIndex(swiper.activeIndex);
                   }}
                   onSlideChange={(swiper) => {
                     setActiveIndex(swiper.activeIndex);

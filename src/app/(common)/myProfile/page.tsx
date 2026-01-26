@@ -17,8 +17,8 @@ export default function DesignerMyProfilePage() {
     enabled: authReady && isLoggedIn,
   });
 
-  const portfolioImages = useMemo(
-    () => portfolioData?.pages.flatMap((page) => page.result.items.map((item) => item.thumbnail)) ?? [],
+  const portfolioItems = useMemo(
+    () => portfolioData?.pages.flatMap((page) => page.result.items) ?? [],
     [portfolioData]
   );
 
@@ -38,7 +38,7 @@ export default function DesignerMyProfilePage() {
     <DesignerProfileView
       profile={data.result.profile}
       openRecruitments={data.result.openRecruitments}
-      portfolioImages={portfolioImages}
+      portfolioItems={portfolioItems}
       actionType="edit"
     />
   );
