@@ -18,10 +18,8 @@ const sortOptions = [
 ];
 
 const categoryOptions = [
-  { value: 'hair', label: '헤어' },
-  { value: 'makeup', label: '메이크업' },
-  { value: 'nail', label: '네일' },
-  { value: 'skin', label: '피부관리' },
+  { value: 'HAIR', label: '헤어' },
+  { value: 'NAIL', label: '네일' },
 ];
 
 const yearOptions = [
@@ -78,13 +76,13 @@ export const FormRequired = {
 export const FormSelected = {
   args: {
     options: categoryOptions,
-    value: 'hair',
+    value: 'HAIR',
     placeholder: '카테고리를 선택해주세요',
     label: '카테고리',
     variant: 'form',
   },
   render: function Render(args) {
-    const [value, setValue] = useState('hair');
+    const [value, setValue] = useState('HAIR');
     return (
       <div className="w-[320px]">
         <Dropdown {...args} value={value} onChange={setValue} />
@@ -97,7 +95,7 @@ export const FormSelected = {
 export const FormDisabled = {
   args: {
     options: categoryOptions,
-    value: 'hair',
+    value: 'HAIR',
     placeholder: '카테고리를 선택해주세요',
     label: '카테고리',
     variant: 'form',
