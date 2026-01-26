@@ -5,9 +5,8 @@ import { useToast } from '@/src/hooks/common/useToast';
 import { useAuthReady } from './useAuthReady';
 import { useProfileWithFallback } from './useProfileWithFallback';
 import { mapProfileResponseToForm, buildProfilePayload } from '@/src/utils/mypage/profileTransform';
-import { isValidBirthDate, isValidGender, isValidCategory } from '@/src/utils/mypage/validation';
+import { isValidBirthDate, isValidGender } from '@/src/utils/mypage/validation';
 import { formatBirthDate } from '@/src/utils/signup/profileFormat';
-import { CATEGORY_OPTIONS } from '@/src/constants/mypage';
 import type { ProfileEditFormState, UserRole } from '@/src/types/mypage';
 import { PROFILE_EDIT_INITIAL_STATE } from '@/src/types/mypage';
 
@@ -96,8 +95,7 @@ export function useProfileEditForm() {
       hasBasicFields &&
       form.intro.trim() &&
       form.storeName.trim() &&
-      form.address.trim() &&
-      isValidCategory(form.category, [...CATEGORY_OPTIONS])
+      form.address.trim()
     );
   })();
 
