@@ -9,6 +9,7 @@ import type {
   PortfolioMutationResponse,
   PortfolioPresignedUrlsResponse,
   PortfolioImageUploadResult,
+  DesignerPortfolioDetail,
 } from '@/src/types/portfolio';
 
 /**
@@ -21,6 +22,19 @@ export async function getDesignerPortfolios(
   const { data } = await axiosInstance.get<ApiResponse<DesignerPortfolioListResponse>>(
     '/designers/portfolios',
     { params }
+  );
+  return data;
+}
+
+/**
+ * 디자이너 포트폴리오 단건 조회
+ * GET /designers/portfolios/{portfolioId}
+ */
+export async function getDesignerPortfolioDetail(
+  portfolioId: number
+): Promise<ApiResponse<DesignerPortfolioDetail>> {
+  const { data } = await axiosInstance.get<ApiResponse<DesignerPortfolioDetail>>(
+    `/designers/portfolios/${portfolioId}`
   );
   return data;
 }

@@ -25,6 +25,17 @@ export interface PortfolioImageUploadResult {
   folderId: string;
 }
 
+// ===== 포트폴리오 상세 =====
+
+/** 디자이너 포트폴리오 상세 */
+export interface DesignerPortfolioDetail {
+  portfolioId: number;
+  title: string;
+  subCategoryList: SubCategory[];
+  content: string;
+  imageList: string[];
+}
+
 // ===== 내 포트폴리오 리스트 =====
 
 /** 내 포트폴리오 리스트 조회 파라미터 */
