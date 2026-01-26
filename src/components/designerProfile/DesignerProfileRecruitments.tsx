@@ -43,6 +43,7 @@ export default function DesignerProfileRecruitments({
                   alt={recruitment.title}
                   fill
                   sizes="72px"
+                  quality={100}
                   className="rounded-xl object-cover"
                 />
               </div>

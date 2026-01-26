@@ -36,6 +36,7 @@ export default function MapRecruitmentCard({
             alt={recruitment.title}
             fill
             sizes="120px"
+            quality={100}
             className="object-cover"
           />
         ) : (

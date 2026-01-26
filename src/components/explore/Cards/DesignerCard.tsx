@@ -27,7 +27,7 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
         {/* 프로필 이미지 */}
         <div className="relative size-[78px] shrink-0 overflow-hidden rounded-full bg-gray-200">
           {designer.thumbnail ? (
-            <Image src={designer.thumbnail} alt={designer.designerName} fill sizes="78px" className="object-cover" />
+            <Image src={designer.thumbnail} alt={designer.designerName} fill sizes="78px" quality={100} className="object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <ProfileIcon className="h-10 w-8 text-gray-600" />

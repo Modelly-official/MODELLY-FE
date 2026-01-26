@@ -58,6 +58,7 @@ export default function RecruitmentCard({ recruitment, onEdit, onDelete, onClick
               alt={recruitment.title}
               fill
               sizes="286px"
+              quality={100}
               className={`pointer-events-none object-cover transition-opacity select-none ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
               draggable={false}
               onLoad={() => {

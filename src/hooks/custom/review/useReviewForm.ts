@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCreateReview, useUpdateReview } from '@/src/hooks/queries/review';
 import { useToast } from '@/src/hooks/common/useToast';
 import { uploadReviewImages } from '@/src/apis';
+import { prepareAllImagesAsFiles, hasImageChanges } from '@/src/utils/image';
 import type { UnreviewedReservation, WrittenReviewItem } from '@/src/types';
 
 // 상수
@@ -76,6 +77,9 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // 수정 모드: 원본 이미지 URL 저장 (변경 여부 확인용)
+  const originalImageUrlsRef = useRef<string[]>([]);
+
   // 수정 모드: 기존 리뷰 데이터로 초기화 (한 번만)
   useEffect(() => {
     if (isEditMode && options.review && !isInitializedRef.current) {
@@ -84,7 +88,9 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
       setRating(review.rating);
       setContent(review.content);
       // 기존 이미지 URL을 previewUrls에 설정 (imageFiles는 빈 배열 유지)
-      setPreviewUrls(review.imageList || []);
+      const imageUrls = review.imageList || [];
+      setPreviewUrls(imageUrls);
+      originalImageUrlsRef.current = [...imageUrls];
     }
   }, [isEditMode, options]);
 
@@ -163,29 +169,56 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
       if (isEditMode) {
         // 수정 모드
         const reviewId = (options as UseReviewFormEditOptions).reviewId;
+        const reservationId = (options as UseReviewFormEditOptions).review?.reservationId;
 
-        // 기존 이미지 URL과 새 파일 분리
-        const { existingUrls, newFiles } = separateImages(previewUrls, imageFiles);
+        // 이미지 변경 여부 확인
+        const imageChanged = hasImageChanges(
+          originalImageUrlsRef.current,
+          previewUrls,
+          imageFiles
+        );
 
-        let finalImageUrls = existingUrls;
-        let thumbnail = existingUrls[0] || '';
-        let imageFolderId = '';
+        let finalImageUrls: string[] = [];
+        let thumbnail = '';
+        let imageFolderId: string | undefined;
 
-        // 새 이미지가 있으면 업로드
-        if (newFiles.length > 0) {
-          const reservationId = (options as UseReviewFormEditOptions).review?.reservationId;
-          if (reservationId) {
-            const uploadResult = await uploadReviewImages(reservationId, newFiles);
-            if (uploadResult) {
-              finalImageUrls = [...existingUrls, ...uploadResult.imageUrls];
-              thumbnail = uploadResult.thumbnail || existingUrls[0] || '';
-              imageFolderId = uploadResult.imageFolderId;
-            }
-          } else {
+        if (imageChanged && previewUrls.length > 0) {
+          // 이미지가 변경됨 → 모든 이미지를 새 폴더에 재업로드
+          if (!reservationId) {
             showToast('이미지를 업로드할 수 없습니다.');
+            setIsSubmitting(false);
             return;
           }
+
+          // 기존 URL은 fetch, 새 파일은 그대로 사용
+          let allFiles: File[];
+          try {
+            allFiles = await prepareAllImagesAsFiles(previewUrls, imageFiles);
+          } catch {
+            showToast('기존 이미지를 불러오는 중 오류가 발생했습니다.');
+            setIsSubmitting(false);
+            return;
+          }
+
+          try {
+            const uploadResult = await uploadReviewImages(reservationId, allFiles);
+            if (uploadResult) {
+              finalImageUrls = uploadResult.imageUrls;
+              thumbnail = uploadResult.thumbnail;
+              imageFolderId = uploadResult.imageFolderId;
+            }
+          } catch {
+            showToast('이미지 업로드에 실패했습니다.');
+            setIsSubmitting(false);
+            return;
+          }
+        } else if (!imageChanged && previewUrls.length > 0) {
+          // 이미지 변경 없음 → 기존 URL 유지, imageFolderId 전송 안함
+          finalImageUrls = previewUrls;
+          thumbnail = previewUrls[0] || '';
+          // imageFolderId를 undefined로 두면 API 요청에서 제외됨
         }
+        // previewUrls.length === 0 이면 이미지 없는 상태로 수정
 
         // 리뷰 수정 API 호출
         await updateReviewMutation.mutateAsync({
@@ -195,7 +228,7 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
             content,
             thumbnail,
             imageUrlList: finalImageUrls,
-            imageFolderId,
+            ...(imageFolderId !== undefined && { imageFolderId }),
           },
         });
       } else {
@@ -253,31 +286,4 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
     minContentLength: MIN_CONTENT_LENGTH,
     maxImages: MAX_IMAGES,
   };
-}
-
-/**
- * previewUrls에서 기존 URL과 새 파일 분리
- * - https:// 또는 http:// URL → 기존 이미지 (서버에 이미 있음)
- * - blob: URL → 새 이미지 (업로드 필요)
- */
-function separateImages(
-  previewUrls: string[],
-  imageFiles: File[]
-): { existingUrls: string[]; newFiles: File[] } {
-  const existingUrls: string[] = [];
-  const newFiles: File[] = [];
-
-  let blobIndex = 0;
-  for (const url of previewUrls) {
-    if (url.startsWith('blob:')) {
-      if (blobIndex < imageFiles.length) {
-        newFiles.push(imageFiles[blobIndex]);
-        blobIndex++;
-      }
-    } else {
-      existingUrls.push(url);
-    }
-  }
-
-  return { existingUrls, newFiles };
 }
