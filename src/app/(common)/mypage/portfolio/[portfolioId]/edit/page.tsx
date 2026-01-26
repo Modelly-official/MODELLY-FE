@@ -4,9 +4,8 @@ import { useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
 import PortfolioForm from '@/src/components/mypage/portfolio/PortfolioForm';
-import { mockPortfolioItems } from '@/src/mocks/portfolio';
 import { useToast } from '@/src/hooks/common/useToast';
-import { useUpdatePortfolio } from '@/src/hooks/queries';
+import { useDesignerPortfolioDetail, useUpdatePortfolio } from '@/src/hooks/queries';
 import { uploadPortfolioImages } from '@/src/apis';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { useDesignerProfile } from '@/src/hooks/queries/mypage';
@@ -18,7 +17,7 @@ export default function PortfolioEditPage() {
   const router = useRouter();
   const { portfolioId } = useParams<{ portfolioId: string }>();
   const numericId = Number(portfolioId);
-  const portfolioItem = mockPortfolioItems.find((item) => item.id === numericId);
+  const isValidId = Number.isFinite(numericId) && numericId > 0;
 
   const { showToast } = useToast();
   const { mutateAsync: updatePortfolio } = useUpdatePortfolio();
@@ -38,7 +37,60 @@ export default function PortfolioEditPage() {
     }));
   }, [designerCategory]);
 
-  if (!portfolioItem) {
+  const { data, isLoading, isError } = useDesignerPortfolioDetail({
+    portfolioId: isValidId ? numericId : null,
+    enabled: isValidId,
+  });
+  const portfolioDetail = data?.result;
+  const initialImageUrl = portfolioDetail?.imageList?.[0] ?? null;
+  const originalImageUrls = portfolioDetail?.imageList ?? [];
+  const initialSubCategory = portfolioDetail?.subCategoryList?.[0] ?? null;
+
+  if (!isValidId) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white">
+        <header className="flex items-center justify-between px-4 py-3">
+          <button
+            type="button"
+            onClick={() => router.push('/mypage/portfolio')}
+            className="flex size-6 cursor-pointer items-center justify-center"
+            aria-label="뒤로가기"
+          >
+            <LeftArrowIcon className="size-6" />
+          </button>
+          <h1 className="text-head-4-medium text-center text-black">포트폴리오 수정</h1>
+          <div className="size-6" />
+        </header>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-body-2-medium text-gray-700">잘못된 포트폴리오입니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white">
+        <header className="flex h-13 items-center justify-between px-4 py-3">
+          <button
+            type="button"
+            onClick={() => router.push('/mypage/portfolio')}
+            className="flex size-6 cursor-pointer items-center justify-center"
+            aria-label="뒤로가기"
+          >
+            <LeftArrowIcon className="size-6" />
+          </button>
+          <h1 className="text-head-4-medium text-center text-black">포트폴리오 수정</h1>
+          <div className="size-6" />
+        </header>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-body-2-medium text-gray-700">포트폴리오를 불러오는 중입니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !portfolioDetail) {
     return (
       <div className="flex min-h-screen flex-col bg-white">
         <header className="flex items-center justify-between px-4 py-3">
@@ -86,19 +138,27 @@ export default function PortfolioEditPage() {
         content: payload.description,
         subCategoryList: [payload.subCategory as SubCategory],
       };
-    } else if (payload.imagePreviewUrl && !payload.imagePreviewUrl.startsWith('blob:')) {
+    } else {
+      const fallbackImageUrls = originalImageUrls.length
+        ? originalImageUrls
+        : payload.imagePreviewUrl && !payload.imagePreviewUrl.startsWith('blob:')
+          ? [payload.imagePreviewUrl]
+          : [];
+
+      if (fallbackImageUrls.length === 0) {
+        showToast('이미지를 업로드해주세요.');
+        return;
+      }
+
       request = {
         title: payload.title,
-        thumbnail: payload.imagePreviewUrl,
+        thumbnail: fallbackImageUrls[0],
         // TODO: 상세 조회 API에서 folderId를 받아올 수 있으면 교체
         folderId: '',
-        imageUrls: [payload.imagePreviewUrl],
+        imageUrls: fallbackImageUrls,
         content: payload.description,
         subCategoryList: [payload.subCategory as SubCategory],
       };
-    } else {
-      showToast('이미지를 업로드해주세요.');
-      return;
     }
 
     try {
@@ -128,9 +188,10 @@ export default function PortfolioEditPage() {
         <PortfolioForm
           submitLabel="수정하기"
           subCategoryOptions={subCategoryOptions}
-          initialTitle={portfolioItem.title}
-          initialDescription={portfolioItem.description}
-          initialImageUrl={portfolioItem.imageUrl}
+          initialTitle={portfolioDetail.title}
+          initialDescription={portfolioDetail.content}
+          initialImageUrl={initialImageUrl}
+          initialSubCategory={initialSubCategory}
           onSubmit={handleSubmit}
         />
       </div>
