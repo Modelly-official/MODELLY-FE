@@ -9,6 +9,7 @@ import {
   subCategoryNameToCode,
   subCategoryCodeToName,
 } from '@/src/utils/myRecruitment/category/categoryMapping';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepConfirmProps {
   recruitmentId: number;
@@ -114,7 +115,7 @@ export default function StepConfirm({
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col px-4 pt-1">
+      <div className="flex flex-1 flex-col px-4 pt-1 pb-[100px]">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
           <p className="text-head-3 leading-140 font-normal tracking-[-0.4px] text-gray-900">4/4</p>
@@ -147,7 +148,7 @@ export default function StepConfirm({
       </div>
 
       {/* 하단 버튼 */}
-      <div className="px-4 py-3">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={handleReservation}
@@ -160,7 +161,7 @@ export default function StepConfirm({
         >
           {isPending ? '예약 중...' : '완료'}
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

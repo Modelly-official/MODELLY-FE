@@ -1,4 +1,5 @@
 import { Skeleton } from '@/src/components/common/Skeleton';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import ImageGallerySkeleton from './ImageGallerySkeleton';
 import PostInfoSkeleton from './PostInfoSkeleton';
 import PostContentSkeleton from './PostContentSkeleton';
@@ -16,11 +17,12 @@ export default function PostPageSkeleton() {
       <PostContentSkeleton />
 
       {/* 하단 버튼 영역 */}
-      <div className="h-[88px]" />
-      <div className="fixed right-0 bottom-0 left-0 flex gap-2 border-t border-gray-200 bg-white px-4 py-3">
-        <Skeleton className="h-12 flex-1 rounded-full" />
-        <Skeleton className="h-12 flex-1 rounded-full" />
-      </div>
+      <FixedBottomContainer hasBorder>
+        <div className="flex gap-2">
+          <Skeleton className="h-[56px] flex-1 rounded-full" />
+          <Skeleton className="h-[56px] flex-1 rounded-full" />
+        </div>
+      </FixedBottomContainer>
     </div>
   );
 }

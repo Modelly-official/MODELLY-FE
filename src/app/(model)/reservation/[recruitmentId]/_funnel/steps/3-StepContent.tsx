@@ -2,6 +2,7 @@
 
 import { ReservationHeader } from '@/src/components/reservation';
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 const MAX_LENGTH = 100;
 
@@ -30,7 +31,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-6 px-4">
+      <div className="flex flex-1 flex-col gap-6 px-4 pb-[100px]">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
           <p className="text-[20px] leading-[1.4] font-normal tracking-[-0.4px]">
@@ -64,7 +65,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="px-4 py-3">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={goNext}
@@ -75,7 +76,7 @@ export default function StepContent({ goNext, goPrev }: StepContentProps) {
         >
           다음
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

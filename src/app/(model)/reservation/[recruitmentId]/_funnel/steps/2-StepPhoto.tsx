@@ -6,6 +6,7 @@ import { useReservationStore } from '@/src/stores/reservation/useReservationStor
 import { getReservationPresignedUrl } from '@/src/apis/reservation/model';
 import { uploadImageToS3 } from '@/src/apis/auth/profile';
 import { useToast } from '@/src/hooks/common/useToast';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepPhotoProps {
   category: string;
@@ -89,7 +90,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-6 px-4">
+      <div className="flex flex-1 flex-col gap-6 px-4 pb-[100px]">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
           <p className="text-[20px] leading-[1.4] font-normal tracking-[-0.4px]">
@@ -128,7 +129,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
       </div>
 
       {/* 하단 버튼 */}
-      <div className="p-4">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={goNext}
@@ -139,7 +140,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
         >
           다음
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

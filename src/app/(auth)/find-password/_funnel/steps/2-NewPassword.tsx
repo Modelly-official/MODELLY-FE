@@ -7,6 +7,7 @@ import { PasswordInput } from '@/src/components/common';
 import { useResetPassword } from '@/src/hooks/queries';
 import { usePasswordValidation } from '@/src/hooks/auth/find-password';
 import { AuthHeader } from '@/src/components/auth';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { showToast } from '@/src/utils';
 
 interface StepNewPasswordProps {
@@ -63,7 +64,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
       </div>
 
       {/* 입력 폼 */}
-      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[100px]" onSubmit={(e) => e.preventDefault()}>
         {/* 새 비밀번호 입력 */}
         <PasswordInput
           label="새로운 비밀번호"
@@ -94,13 +95,13 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
           }
         />
 
-        {/* 하단 버튼 */}
-        <div className="mt-auto mb-3">
-          <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
-            {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
-          </FixedBottomButton>
-        </div>
       </form>
+      {/* 하단 버튼 */}
+      <FixedBottomContainer>
+        <FixedBottomButton disabled={!isValid || resetPasswordMutation.isPending} onClick={handleComplete}>
+          {resetPasswordMutation.isPending ? '변경 중...' : '완료'}
+        </FixedBottomButton>
+      </FixedBottomContainer>
     </div>
   );
 };

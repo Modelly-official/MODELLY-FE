@@ -14,6 +14,7 @@ import { getSubCategoryOptions } from '@/src/constants/explore';
 import { getUserCategory } from '@/src/stores';
 import { isStep2Valid } from '@/src/utils/myRecruitment';
 import type { PurposeType } from '@/src/types/myRecruitment';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepContentProps {
   goNext: () => void;
@@ -199,12 +200,12 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
       </div>
 
       {/* 하단 등록 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pt-3 pb-2">
+      <FixedBottomContainer hasBorder>
         <button
           type="button"
           onClick={goNext}
           disabled={!isSubmitButtonEnabled || isSubmitting}
-          className={`text-body-1-semibold flex w-full items-center justify-center rounded-full py-4 ${
+          className={`text-body-1-semibold flex h-14 w-full items-center justify-center rounded-full ${
             isSubmitButtonEnabled && !isSubmitting
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
@@ -216,7 +217,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
             isEdit ? '모집글 수정' : '새 모집글 등록'
           )}
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

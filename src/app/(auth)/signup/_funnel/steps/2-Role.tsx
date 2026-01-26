@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSignupStore } from '@/src/stores';
 import { SignupHeader, SignupTitle, FixedBottomButton } from '@/src/components/signup';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { SIGNUP_ROLES, SIGNUP_STEPS, SIGNUP_MESSAGES } from '@/src/constants/signup';
 import type { SignupStepProps } from '@/src/types';
 
@@ -35,7 +36,7 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
           </button>
         ))}
       </div>
-      <div className="mx-4 mt-auto mb-3">
+      <FixedBottomContainer>
         <FixedBottomButton
           disabled={!selectedRole}
           onClick={() => {
@@ -47,7 +48,7 @@ export const StepRole: React.FC<StepRoleProps> = ({ goNext, goPrev, isSocial }) 
         >
           {SIGNUP_MESSAGES.BUTTON.NEXT}
         </FixedBottomButton>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 };

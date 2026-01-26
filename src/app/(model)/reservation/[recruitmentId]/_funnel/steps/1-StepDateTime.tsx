@@ -10,6 +10,7 @@ import {
 import { useReservationStore } from '@/src/stores/reservation/useReservationStore';
 import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment';
 import { useAvailableSchedules } from '@/src/hooks/queries/reservation';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepDateTimeProps {
   recruitmentId: number;
@@ -72,7 +73,7 @@ export default function StepDateTime({
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-6 px-4">
+      <div className="flex flex-1 flex-col gap-6 px-4 pb-[100px]">
         {/* 스텝 정보 */}
         <ReservationStepInfo
           currentStep={1}
@@ -116,7 +117,7 @@ export default function StepDateTime({
       </div>
 
       {/* 하단 버튼 */}
-      <div className="p-4">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={goNext}
@@ -129,7 +130,7 @@ export default function StepDateTime({
         >
           다음
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

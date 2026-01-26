@@ -28,6 +28,7 @@ import {
 } from '@/src/hooks/queries/review';
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface PostDetailContentProps {
   recruitmentId: number;
@@ -367,15 +368,15 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       {/* 하단 액션 버튼 */}
       {isOwner ? (
         // 본인 공고: 수정하기 버튼
-        <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
+        <FixedBottomContainer>
           <button
             type="button"
             onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
-            className="text-body-1-semibold h-14 w-full cursor-pointer rounded-full bg-gray-900 text-white"
+            className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
           >
             수정하기
           </button>
-        </div>
+        </FixedBottomContainer>
       ) : (
         // 다른 사람 공고: 채팅하기 / 예약하기
         <PostActions recruitmentId={detail.recruitmentId} designerUserId={detail.designerProfile.userId} />

@@ -7,6 +7,7 @@ import { StarRatingInput } from '@/src/components/review';
 import { ReviewImageUploader } from '@/src/components/mypage/model-reviews';
 import { useUnreviewedReservations } from '@/src/hooks/queries/review';
 import { useReviewForm } from '@/src/hooks/custom/review';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import type { UnreviewedReservation } from '@/src/types';
 
 export default function ReviewWritePage() {
@@ -150,15 +151,15 @@ export default function ReviewWritePage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pb-2 pt-3">
+      <FixedBottomContainer hasBorder>
         <button
           type="button"
           onClick={handleSubmit}
           disabled={!isValidForm || isSubmitting}
-          className={`flex w-full items-center justify-center rounded-full py-4 text-body-1-semibold transition-colors ${
+          className={`flex h-[56px] w-full cursor-pointer items-center justify-center rounded-full text-body-1-semibold transition-colors ${
             isValidForm && !isSubmitting
               ? 'bg-gray-900 text-white'
-              : 'bg-gray-200 text-gray-600'
+              : 'cursor-not-allowed bg-gray-200 text-gray-600'
           }`}
         >
           {isSubmitting ? (
@@ -167,7 +168,7 @@ export default function ReviewWritePage() {
             '작성하기'
           )}
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }
