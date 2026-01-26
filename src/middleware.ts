@@ -60,13 +60,35 @@ async function refreshAccessToken(request: NextRequest): Promise<RefreshResult> 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     if (!apiBaseUrl) {
-      console.error('NEXT_PUBLIC_API_BASE_URL is not defined');
+      console.error('[Middleware] NEXT_PUBLIC_API_BASE_URL is not defined');
       return { accessToken: null, setCookieHeader: null };
     }
 
     const refreshToken = request.cookies.get('refresh_token')?.value;
+    const accessToken = request.cookies.get('access_token')?.value;
+
+    // 디버그 로그: 쿠키 상태
+    console.log('[Middleware Debug] ===== Refresh Attempt =====');
+    console.log('[Middleware Debug] Path:', request.nextUrl.pathname);
+    console.log('[Middleware Debug] refresh_token exists:', !!refreshToken);
+    console.log('[Middleware Debug] access_token exists:', !!accessToken);
+    if (refreshToken) {
+      // JWT의 payload에서 iat 확인 (Base64 디코딩)
+      try {
+        const payload = JSON.parse(atob(refreshToken.split('.')[1]));
+        console.log(
+          '[Middleware Debug] refresh_token iat:',
+          payload.iat,
+          '→',
+          new Date(payload.iat * 1000).toISOString(),
+        );
+      } catch {
+        console.log('[Middleware Debug] refresh_token payload parse failed');
+      }
+    }
 
     if (!refreshToken) {
+      console.log('[Middleware Debug] No refresh_token cookie, skip refresh');
       return { accessToken: null, setCookieHeader: null };
     }
 
@@ -77,8 +99,17 @@ async function refreshAccessToken(request: NextRequest): Promise<RefreshResult> 
       },
     });
 
+    console.log('[Middleware Debug] Refresh API response status:', response.status);
+
     if (!response.ok) {
-      console.error('Token refresh failed:', response.status);
+      // 에러 응답 본문도 로깅
+      try {
+        const errorBody = await response.text();
+        console.error('[Middleware Debug] Refresh failed body:', errorBody);
+      } catch {
+        console.error('[Middleware Debug] Could not read error body');
+      }
+      console.error('[Middleware] Token refresh failed:', response.status);
       return { accessToken: null, setCookieHeader: null };
     }
 
@@ -88,12 +119,15 @@ async function refreshAccessToken(request: NextRequest): Promise<RefreshResult> 
     const setCookieHeader = response.headers.get('set-cookie');
 
     if (data.isSuccess && data.result?.accessToken) {
+      console.log('[Middleware Debug] Refresh SUCCESS');
+      console.log('[Middleware Debug] Set-Cookie header exists:', !!setCookieHeader);
       return {
         accessToken: data.result.accessToken,
         setCookieHeader,
       };
     }
 
+    console.log('[Middleware Debug] Refresh response not successful:', data);
     return { accessToken: null, setCookieHeader: null };
   } catch (error) {
     console.error('Token refresh error:', error);
