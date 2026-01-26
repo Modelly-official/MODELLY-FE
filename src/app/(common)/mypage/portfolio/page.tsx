@@ -32,10 +32,10 @@ export default function PortfolioManagePage() {
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* 헤더 */}
-      <header className="flex items-center justify-between px-4 py-3">
+      <header className="flex h-13 items-center justify-between px-4 py-3">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push('/mypage')}
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
@@ -59,7 +59,7 @@ export default function PortfolioManagePage() {
         )}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto w-full bg-white px-4 py-3 sm:w-[375px]">
+      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
         <button
           type="button"
           onClick={handleAddPortfolio}

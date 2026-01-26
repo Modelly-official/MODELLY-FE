@@ -108,7 +108,7 @@ export default function PortfolioForm({
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto w-full bg-white px-4 py-3 sm:w-[375px]">
+      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
         <button
           type="button"
           onClick={handleSubmit}
