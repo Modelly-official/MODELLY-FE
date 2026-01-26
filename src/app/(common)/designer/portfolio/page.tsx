@@ -43,12 +43,15 @@ export default function PortfolioPage() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const listParams = useMemo(() => ({ size: 12 }), []);
-  const { data: listData, isLoading: isListLoading, isError: isListError } =
-    usePublicDesignerPortfolios({
-      designerId: isValidDesignerId ? numericDesignerId : null,
-      params: listParams,
-      enabled: isValidDesignerId,
-    });
+  const {
+    data: listData,
+    isLoading: isListLoading,
+    isError: isListError,
+  } = usePublicDesignerPortfolios({
+    designerId: isValidDesignerId ? numericDesignerId : null,
+    params: listParams,
+    enabled: isValidDesignerId,
+  });
 
   const listItems = listData?.result.items ?? [];
 
@@ -74,7 +77,7 @@ export default function PortfolioPage() {
           imageUrl: detail?.imageList?.[0] ?? item.thumbnail,
         };
       }),
-    [listItems, detailQueries]
+    [listItems, detailQueries],
   );
 
   const categoryOptions = useMemo(() => {
@@ -184,11 +187,11 @@ export default function PortfolioPage() {
                   pagination={{
                     clickable: true,
                     bulletClass: 'swiper-pagination-bullet !bg-gray-300 !opacity-100 !rounded-full',
-                    bulletActiveClass: '!bg-gray-900 !w-5',
+                    bulletActiveClass: '!bg-gray-900',
                   }}
                   cardsEffect={{
-                    perSlideOffset: 12,
-                    perSlideRotate: 2,
+                    perSlideOffset: 6,
+                    perSlideRotate: 2.55,
                     slideShadows: false,
                   }}
                   className="portfolio-swiper h-[420px]"
@@ -202,7 +205,7 @@ export default function PortfolioPage() {
                 >
                   {filteredItems.map((item) => (
                     <SwiperSlide key={item.id} className="flex! items-center justify-center">
-                      <div className="relative h-96 w-[288px] overflow-hidden rounded-[20px] bg-gray-100 shadow-2xs">
+                      <div className="relative h-96 w-[288px] overflow-hidden rounded-[20px] bg-gray-100 shadow-[0_0_4px_rgba(0,0,0,0.25)]">
                         <Image
                           src={item.imageUrl}
                           alt={item.title}
@@ -271,6 +274,14 @@ export default function PortfolioPage() {
           height: 6px;
           margin: 0 3px !important;
           transition: width 0.2s ease;
+        }
+        .portfolio-swiper .swiper-slide {
+          opacity: 0;
+        }
+        .portfolio-swiper .swiper-slide-active,
+        .portfolio-swiper .swiper-slide-next,
+        .portfolio-swiper .swiper-slide-prev {
+          opacity: 1;
         }
       `}</style>
     </div>
