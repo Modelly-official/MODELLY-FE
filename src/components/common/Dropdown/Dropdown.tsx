@@ -215,7 +215,7 @@ export default function Dropdown<T = string>({
                 aria-label={ariaLabel || (!label ? placeholder : undefined)}
                 aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
                 className={`absolute top-14 z-20 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-dropdown ${
-                  maxHeight ? `max-h-[${maxHeight}px] overflow-y-auto scrollbar-hide` : ''
+                  maxHeight ? 'overflow-y-auto scrollbar-hide' : ''
                 }`}
                 style={maxHeight ? { maxHeight: `${maxHeight}px` } : undefined}
               >
