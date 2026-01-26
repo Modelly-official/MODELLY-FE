@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { isPublicRoute, checkRoleAccess } from '@/src/utils/middleware/routeGuard';
+import { isPublicRoute, checkRoleAccess, isDesignerBlockedRoute } from '@/src/utils/middleware/routeGuard';
 import { ValidateResponse } from '@/src/types/auth/auth';
 import { ApiResponse } from '@/src/types';
 
@@ -118,6 +118,11 @@ export async function middleware(request: NextRequest) {
   if (isPublicRoute(pathname)) {
     const currentAccessToken = request.cookies.get('access_token')?.value;
     const userRole = request.cookies.get('user_role')?.value;
+
+    // 디자이너가 차단된 라우트에 접근 시 홈으로 리다이렉트
+    if (userRole === 'designer' && isDesignerBlockedRoute(pathname)) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
 
     // user_role 있고 accessToken 없으면 갱신 시도 (이전에 로그인했던 사용자)
     if (userRole && !currentAccessToken) {
