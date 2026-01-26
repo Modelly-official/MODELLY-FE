@@ -38,6 +38,7 @@ export default function LikedRecruitmentCard({
             alt={recruitment.title}
             fill
             sizes="50vw"
+            quality={100}
             className="object-cover"
           />
         ) : (

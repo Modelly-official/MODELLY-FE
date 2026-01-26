@@ -59,6 +59,7 @@ export default function DesignerProfileEditRecruitments({
                       alt={recruitment.title}
                       fill
                       sizes="80px"
+                      quality={100}
                       className="object-cover"
                     />
                   </div>

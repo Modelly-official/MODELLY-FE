@@ -46,6 +46,7 @@ export default function ClosedRecruitmentListItem({
             alt={recruitment.title}
             fill
             sizes="85px"
+            quality={100}
             className="object-cover"
             onError={() => setImageError(true)}
           />
