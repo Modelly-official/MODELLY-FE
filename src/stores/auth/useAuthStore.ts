@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { categoryNameToCode } from '@/src/utils/myRecruitment';
+import { NOTIFICATION_STORAGE_KEYS } from '@/src/constants/notification';
 import type { Category } from '@/src/types/recruitment';
 
 interface User {
@@ -35,6 +36,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       document.cookie = 'user_role=; path=/; max-age=0';
       document.cookie = 'user_category=; path=/; max-age=0';
     }
+
+    // 알림 관련 스토리지 클리어
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem(NOTIFICATION_STORAGE_KEYS.PROMPT_DISMISSED);
+        sessionStorage.removeItem(NOTIFICATION_STORAGE_KEYS.TOKEN_REGISTERED);
+      } catch {
+        // Private mode fallback
+      }
+    }
+
     set({ user: null, isAuthenticated: false });
   },
 }));
