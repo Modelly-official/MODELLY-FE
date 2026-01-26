@@ -21,17 +21,19 @@ export default function DesignerProfileEditPortfolio({
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
   return (
-    <section className="rounded-2xl bg-white px-4 py-4">
+    <section className="rounded-lg bg-white px-4 py-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-body-1-semibold text-gray-900">포트폴리오</h2>
-        <button
-          type="button"
-          onClick={onViewAll}
-          className="flex cursor-pointer items-center justify-center text-gray-800"
-          aria-label="포트폴리오 전체보기"
-        >
-          <ChevronRightIcon className="h-5 w-5" />
-        </button>
+        <h2 className="text-body-1-semibold text-gray-900">내 포트폴리오</h2>
+        {onViewAll && (
+          <button
+            type="button"
+            onClick={onViewAll}
+            className="flex cursor-pointer items-center justify-center text-gray-800"
+            aria-label="포트폴리오 전체보기"
+          >
+            <ChevronRightIcon className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       <div className="relative mt-3 grid grid-cols-3 gap-2.5">

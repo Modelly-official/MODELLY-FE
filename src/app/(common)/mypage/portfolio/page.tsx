@@ -51,23 +51,21 @@ export default function PortfolioManagePage() {
             <p className="text-body-2-medium text-gray-500">등록된 포트폴리오가 없습니다.</p>
           </div>
         ) : (
-          <div className="">
-            <DesignerProfileEditPortfolio
-              images={portfolioImages}
-              onEditImage={handleEditImage}
-              onDeleteImage={handleDeleteImage}
-            />
-          </div>
+          <DesignerProfileEditPortfolio
+            images={portfolioImages}
+            onEditImage={handleEditImage}
+            onDeleteImage={handleDeleteImage}
+          />
         )}
       </div>
 
-      <div className="fixed right-0 bottom-0 left-0 w-full max-w-[375px] bg-white px-4 pt-3 pb-2">
+      <div className="fixed inset-x-0 bottom-0 mx-auto w-full bg-white px-4 py-3 sm:w-[375px]">
         <button
           type="button"
           onClick={handleAddPortfolio}
           className="text-body-1-semibold flex w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 py-4 text-white"
         >
-          신규 포트폴리오 추가하기
+          신규 포트폴리오 작성하기
         </button>
       </div>
     </div>
