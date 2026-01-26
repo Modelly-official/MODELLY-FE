@@ -88,44 +88,6 @@
 }
 
 /* ========================================
-   Typography - Number (Spoqa Han Sans Neo)
-   ======================================== */
-@utility text-number-1 {
-  font-family: var(--font-number);
-  font-size: var(--text-number-1);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-2 {
-  font-family: var(--font-number);
-  font-size: var(--text-number-2);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-3 {
-  font-family: var(--font-number);
-  font-size: var(--text-number-3);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-4 {
-  font-family: var(--font-number);
-  font-size: var(--text-number-4);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--leading-140);
-}
-
-@utility text-number-5 {
-  font-family: var(--font-number);
-  font-size: var(--text-number-5);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--leading-150);
-}
-
-/* ========================================
    Shadow
    ======================================== */
 @utility shadow-dropdown {
