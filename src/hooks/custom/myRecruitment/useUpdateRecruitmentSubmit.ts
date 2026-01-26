@@ -68,18 +68,18 @@ export function useUpdateRecruitmentSubmit(recruitmentId: number) {
           return;
         }
       } else if (!imageChanged && formState.imagePreviewUrls.length > 0) {
-        // 이미지 변경 없음 → 기존 URL 유지, imageFolderId 전송 안함
+        // 이미지 변경 없음 → 기존 URL 유지, imageFolderId 생략
         uploadResult = {
           thumbnail: formState.imagePreviewUrls[0] || formState.thumbnail,
           imageUrls: formState.imagePreviewUrls,
-          imageFolderId: '', // 빈 문자열 → transformFormToRequest에서 제외 처리 필요
+          // imageFolderId 생략 → transformFormToRequest에서 제외
         };
       } else {
         // 이미지 없음
         uploadResult = {
           thumbnail: '',
           imageUrls: [],
-          imageFolderId: '',
+          // imageFolderId 생략
         };
       }
 

@@ -21,7 +21,7 @@ export interface RecruitmentPresignedUrlResponse {
 export interface ImageUploadResult {
   thumbnail: string;
   imageUrls: string[];
-  imageFolderId: string;
+  imageFolderId?: string; // 이미지 변경 없으면 undefined → transformFormToRequest에서 제외
 }
 
 // ===== 내 공고 리스트 조회 =====

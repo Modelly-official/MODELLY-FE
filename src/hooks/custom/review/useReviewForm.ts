@@ -90,7 +90,7 @@ export function useReviewForm(options: UseReviewFormOptions): UseReviewFormRetur
       // 기존 이미지 URL을 previewUrls에 설정 (imageFiles는 빈 배열 유지)
       const imageUrls = review.imageList || [];
       setPreviewUrls(imageUrls);
-      originalImageUrlsRef.current = imageUrls;
+      originalImageUrlsRef.current = [...imageUrls];
     }
   }, [isEditMode, options]);
 
