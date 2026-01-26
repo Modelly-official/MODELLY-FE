@@ -17,7 +17,7 @@ function matchRoute(pathname: string, route: string): boolean {
 }
 
 // 정확 매칭만 허용하는 라우트 (하위 경로는 인증 필요)
-const EXACT_MATCH_ROUTES = ['/mypage'];
+const EXACT_MATCH_ROUTES = ['/mypage', '/chat'];
 
 /**
  * 공개 라우트 확인

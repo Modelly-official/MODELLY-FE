@@ -1,16 +1,13 @@
 import { useAuthStore, getAccessToken, setAccessToken, getUserRole } from '@/src/stores';
 import { apiLogger } from '@/src/utils';
 import { dispatchAuthError } from '@/src/utils/auth/authErrorDispatcher';
-import { PUBLIC_ROUTES } from '@/src/constants/routes';
+import { isPublicRoute as checkPublicRoute } from '@/src/utils/middleware/routeGuard';
 import axios, { AxiosRequestConfig } from 'axios';
 
-// 공개 라우트 체크 (SSR-safe)
+// 공개 라우트 체크 (SSR-safe, middleware와 동일 로직 사용)
 function isPublicRoute(): boolean {
   if (typeof window === 'undefined') return false;
-  const pathname = window.location.pathname;
-  return PUBLIC_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`),
-  );
+  return checkPublicRoute(window.location.pathname);
 }
 
 // 토큰 갱신 상태 관리 (Race Condition 방지)
