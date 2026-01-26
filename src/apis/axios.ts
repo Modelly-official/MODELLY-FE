@@ -1,4 +1,4 @@
-import { useAuthStore, getAccessToken, setAccessToken, getUserRole } from '@/src/stores';
+import { useAuthStore, getAccessToken, setAccessToken } from '@/src/stores';
 import { apiLogger } from '@/src/utils';
 import { dispatchAuthError } from '@/src/utils/auth/authErrorDispatcher';
 import axios, { AxiosRequestConfig } from 'axios';
@@ -96,12 +96,12 @@ axiosInstance.interceptors.response.use(
 
     // 토큰 갱신이 필요한지 확인
     // - 401: 토큰 만료
-    // - 403 + Authorization 헤더 없음 + user_role 쿠키 있음: 로그인했던 사용자의 accessToken만 삭제된 경우
-    //   (완전 비로그인 사용자는 user_role 쿠키가 없으므로 불필요한 refresh 요청 방지)
-    const hasUserRole = !!getUserRole();
+    // - 403 + Authorization 헤더 없음: accessToken이 삭제된 경우
+    // - 400 + ACCESS_TOKEN_EXPIRED: 만료된 토큰으로 요청한 경우
     const needsTokenRefresh =
       res?.status === 401 ||
-      (res?.status === 403 && !originalRequest.headers?.Authorization && hasUserRole);
+      (res?.status === 403 && !originalRequest.headers?.Authorization) ||
+      (res?.status === 400 && code === 'ACCESS_TOKEN_EXPIRED');
 
     // 토큰 갱신이 필요하고 아직 재시도 안 했으면 갱신 시도
     if (needsTokenRefresh && !originalRequest._retry) {
@@ -159,11 +159,9 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // 400 특정 코드 처리 (토큰 관련 에러)
-    if (
-      res?.status === 400 &&
-      (code === 'INVALID_REFRESH_TOKEN' || code === 'INVALID_TOKEN' || code === 'ACCESS_TOKEN_EXPIRED')
-    ) {
+    // 400 특정 코드 처리 (복구 불가능한 토큰 에러)
+    // ACCESS_TOKEN_EXPIRED는 위에서 refresh 시도하므로 여기서 제외
+    if (res?.status === 400 && (code === 'INVALID_REFRESH_TOKEN' || code === 'INVALID_TOKEN')) {
       clearAuth();
       dispatchAuthError({ type: 'TOKEN_EXPIRED', redirectUrl: getRedirectUrl() });
     }

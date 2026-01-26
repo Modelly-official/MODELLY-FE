@@ -97,8 +97,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 공개 라우트는 통과
+  // 공개 라우트: soft refresh 시도 (실패해도 통과)
   if (isPublicRoute(pathname)) {
+    const currentAccessToken = request.cookies.get('access_token')?.value;
+    const userRole = request.cookies.get('user_role')?.value;
+
+    // user_role 있고 accessToken 없으면 갱신 시도 (이전에 로그인했던 사용자)
+    if (userRole && !currentAccessToken) {
+      const newAccessToken = await refreshAccessToken(request);
+      if (newAccessToken) {
+        const response = NextResponse.next();
+        response.cookies.set('access_token', newAccessToken, {
+          path: '/',
+          maxAge: 604800,
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+        });
+        return response;
+      }
+    }
     return NextResponse.next();
   }
 
