@@ -31,6 +31,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
             alt={recruitment.title}
             fill
             sizes="50vw"
+            quality={100}
             className="object-cover"
           />
         ) : (
