@@ -4,6 +4,7 @@ import { useToast } from '@/src/hooks/common/useToast';
 import { portfolioKeys } from './useDesignerPortfolios';
 import type {
   ApiResponse,
+  DesignerPortfolioDetail,
   DesignerPortfolioListResponse,
   UpdatePortfolioRequest,
   PortfolioMutationResponse,
@@ -31,6 +32,23 @@ export function useUpdatePortfolio() {
     },
     onSuccess: (_data, variables) => {
       const nextThumbnail = variables.request.imageUrls?.[0] ?? variables.request.thumbnail;
+      queryClient.setQueryData<ApiResponse<DesignerPortfolioDetail>>(
+        portfolioKeys.detail(variables.portfolioId),
+        (oldData) => {
+          if (!oldData?.result) return oldData;
+
+          return {
+            ...oldData,
+            result: {
+              ...oldData.result,
+              title: variables.request.title,
+              content: variables.request.content,
+              subCategoryList: variables.request.subCategoryList,
+              imageList: variables.request.imageUrls,
+            },
+          };
+        }
+      );
       queryClient.setQueriesData(
         { queryKey: portfolioKeys.lists() },
         (oldData: { pages: ApiResponse<DesignerPortfolioListResponse>[]; pageParams: unknown[] } | undefined) => {
