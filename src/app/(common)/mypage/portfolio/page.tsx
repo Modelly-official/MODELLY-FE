@@ -1,15 +1,18 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
 import DesignerProfileEditPortfolio from '@/src/components/designerProfile/edit/DesignerProfileEditPortfolio';
-import { mockPortfolioItems } from '@/src/mocks/portfolio';
+import { useDeletePortfolio, useDesignerPortfolios } from '@/src/hooks/queries';
 
 export default function PortfolioManagePage() {
   const router = useRouter();
-  const [portfolioItems, setPortfolioItems] = useState(mockPortfolioItems);
-  const portfolioImages = useMemo(() => portfolioItems.map((item) => item.imageUrl), [portfolioItems]);
+  const { data, isLoading, isError } = useDesignerPortfolios({ size: 12 });
+  const { mutate: deletePortfolio } = useDeletePortfolio();
+
+  const portfolioItems = useMemo(() => data?.pages.flatMap((page) => page.result.items) ?? [], [data]);
+  const portfolioImages = useMemo(() => portfolioItems.map((item) => item.thumbnail), [portfolioItems]);
 
   const handleAddPortfolio = () => {
     router.push('/mypage/portfolio/create');
@@ -22,15 +25,17 @@ export default function PortfolioManagePage() {
   const handleEditImage = (index: number) => {
     const selected = portfolioItems[index];
     if (!selected) return;
-    handleEditPortfolio(selected.id);
+    handleEditPortfolio(selected.portfolioId);
   };
 
   const handleDeleteImage = (index: number) => {
-    setPortfolioItems((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
+    const selected = portfolioItems[index];
+    if (!selected) return;
+    deletePortfolio(selected.portfolioId);
   };
 
   return (
-    <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+    <div className="flex min-h-screen flex-col bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* 헤더 */}
       <header className="flex h-13 items-center justify-between px-4 py-3">
         <button
@@ -46,9 +51,17 @@ export default function PortfolioManagePage() {
       </header>
 
       <div className="flex flex-1 flex-col pb-[calc(88px+env(safe-area-inset-bottom))]">
-        {portfolioItems.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center">
-            <p className="text-body-2-medium text-gray-500">등록된 포트폴리오가 없습니다.</p>
+        {isLoading ? (
+          <div className="flex flex-1 items-center justify-center text-center">
+            <p className="text-body-1-medium text-gray-700">포트폴리오를 불러오는 중입니다.</p>
+          </div>
+        ) : isError ? (
+          <div className="flex flex-1 items-center justify-center text-center">
+            <p className="text-body-1-medium text-gray-700">포트폴리오 목록을 불러오지 못했습니다.</p>
+          </div>
+        ) : portfolioItems.length === 0 ? (
+          <div className="flex flex-1 items-center justify-center text-center">
+            <p className="text-body-1-medium text-gray-700">등록된 포트폴리오가 없습니다.</p>
           </div>
         ) : (
           <DesignerProfileEditPortfolio
