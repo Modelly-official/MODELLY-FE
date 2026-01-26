@@ -2,20 +2,19 @@
 
 import 'swiper/css';
 import 'swiper/css/effect-cards';
-import 'swiper/css/pagination';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueries, type UseQueryResult } from '@tanstack/react-query';
 import type { Swiper as SwiperType } from 'swiper';
-import { EffectCards, Pagination } from 'swiper/modules';
+import { EffectCards } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/portfolio/straigh-arrow-left.svg';
 import ArrowRightIcon from '@/public/icons/portfolio/straight-arrow-right.svg';
 import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
 import { getPublicPortfolioDetail } from '@/src/apis';
-import { usePublicDesignerPortfolios } from '@/src/hooks/queries/portfolio';
+import { usePublicDesignerPortfoliosInfinite } from '@/src/hooks/queries/portfolio';
 import { portfolioKeys } from '@/src/hooks/queries/portfolio/useDesignerPortfolios';
 import { getCategoryLabel } from '@/src/constants/explore';
 import type { ApiResponse, PublicPortfolioDetail } from '@/src/types';
@@ -47,13 +46,19 @@ export default function PortfolioPage() {
     data: listData,
     isLoading: isListLoading,
     isError: isListError,
-  } = usePublicDesignerPortfolios({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = usePublicDesignerPortfoliosInfinite({
     designerId: isValidDesignerId ? numericDesignerId : null,
     params: listParams,
     enabled: isValidDesignerId,
   });
 
-  const listItems = listData?.result.items ?? [];
+  const listItems = useMemo(
+    () => listData?.pages.flatMap((page) => page.result.items) ?? [],
+    [listData]
+  );
 
   const detailQueries = useQueries({
     queries: listItems.map((item) => ({
@@ -102,6 +107,14 @@ export default function PortfolioPage() {
     return portfolioItems.filter((item) => item.subCategoryList.includes(activeCategory));
   }, [activeCategory, portfolioItems]);
 
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    if (filteredItems.length === 0) return;
+    if (activeIndex >= filteredItems.length - 2) {
+      fetchNextPage();
+    }
+  }, [activeIndex, filteredItems.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   const initialIndex = useMemo(() => {
     if (!isValidPortfolioId) return 0;
     const targetIndex = filteredItems.findIndex((item) => item.id === numericPortfolioId);
@@ -114,10 +127,22 @@ export default function PortfolioPage() {
     setActiveIndex(0);
   };
 
-  const totalCount = filteredItems.length;
+  const loadedCount = filteredItems.length;
+  const totalCount =
+    activeCategory === 'ALL'
+      ? (listData?.pages?.[0]?.result.totalCount ?? loadedCount)
+      : loadedCount;
   const currentItem = filteredItems[activeIndex] ?? filteredItems[0];
   const canGoPrev = activeIndex > 0;
-  const canGoNext = activeIndex < totalCount - 1;
+  const canGoNext = activeIndex < loadedCount - 1;
+
+  const paginationState = useMemo(() => {
+    if (totalCount <= 0) return { startIndex: 0, count: 0 };
+    if (totalCount <= 3) return { startIndex: 0, count: totalCount };
+    if (activeIndex <= 1) return { startIndex: 0, count: 3 };
+    if (activeIndex >= totalCount - 2) return { startIndex: totalCount - 3, count: 3 };
+    return { startIndex: activeIndex - 1, count: 3 };
+  }, [activeIndex, totalCount]);
 
   return (
     <div className="min-h-screen bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
@@ -182,13 +207,8 @@ export default function PortfolioPage() {
                   key={`${activeCategory}-${initialIndex}`}
                   effect="cards"
                   grabCursor
-                  modules={[EffectCards, Pagination]}
+                  modules={[EffectCards]}
                   initialSlide={initialIndex}
-                  pagination={{
-                    clickable: true,
-                    bulletClass: 'swiper-pagination-bullet !bg-gray-300 !opacity-100 !rounded-full',
-                    bulletActiveClass: '!bg-gray-900',
-                  }}
                   cardsEffect={{
                     perSlideOffset: 6,
                     perSlideRotate: 2.55,
@@ -220,6 +240,25 @@ export default function PortfolioPage() {
                   ))}
                 </Swiper>
               </div>
+              {paginationState.count > 0 && (
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  {Array.from({ length: paginationState.count }).map((_, position) => {
+                    const slideIndex = paginationState.startIndex + position;
+                    const isActive = slideIndex === activeIndex;
+                    return (
+                      <button
+                        key={`portfolio-pagination-pos-${position}`}
+                        type="button"
+                        onClick={() => swiperRef.current?.slideTo(slideIndex)}
+                        className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                          isActive ? 'bg-gray-900' : 'bg-gray-300'
+                        }`}
+                        aria-label={`포트폴리오 ${slideIndex + 1}번으로 이동`}
+                      />
+                    );
+                  })}
+                </div>
+              )}
 
               <div className="mt-5 text-center">
                 <h2 className="text-head-2-semibold text-gray-900">{currentItem?.title}</h2>
@@ -261,19 +300,10 @@ export default function PortfolioPage() {
 
       <style jsx global>{`
         .portfolio-swiper {
-          padding-bottom: 12px;
+          padding-bottom: 0;
         }
         .portfolio-swiper .swiper-wrapper {
           align-items: center;
-        }
-        .portfolio-swiper .swiper-pagination {
-          bottom: 0 !important;
-        }
-        .portfolio-swiper .swiper-pagination-bullet {
-          width: 6px;
-          height: 6px;
-          margin: 0 3px !important;
-          transition: width 0.2s ease;
         }
         .portfolio-swiper .swiper-slide {
           opacity: 0;
