@@ -232,7 +232,10 @@ export default function NotificationSettingsPage() {
       {/* 상태 안내 배너 (컴포넌트로 분리) */}
       <NotificationStatusBanner
         uiConfig={uiConfig}
-        onResetDismissed={resetDismissed}
+        onResetDismissed={() => {
+          resetDismissed();
+          setPermissionModalDismissed(false);
+        }}
       />
 
       {/* 알림 설정 리스트 */}
