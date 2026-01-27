@@ -213,7 +213,9 @@ export default function NaverMapView({
     prevSelectedDesignerIdRef.current = selectedDesignerId;
   }, [selectedDesignerId]);
 
-  // center prop 변경 감지 - primitive 의존성 사용
+  // center prop 변경 감지 - 실제 지도 중심과 비교하여 이동
+  // 의존성: center 객체 (GPS 버튼 클릭 시 새 객체 생성으로 useEffect 실행 보장)
+  // bottomOffset은 ref로 관리 (offset 변경만으로는 지도 이동하지 않음)
   useEffect(() => {
     if (!mapInstance) return;
 
@@ -248,7 +250,7 @@ export default function NaverMapView({
         easing: 'easeOutCubic',
       });
     }
-  }, [mapInstance, center.lat, center.lng]);
+  }, [mapInstance, center]);
 
   // zoom 변경 시 지도 줌 변경
   useEffect(() => {
