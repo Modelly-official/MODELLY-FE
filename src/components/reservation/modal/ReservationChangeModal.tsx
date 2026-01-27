@@ -223,7 +223,7 @@ export default function ReservationChangeModal({
         onClose={() => setIsCalendarOpen(false)}
         selectedDate={selectedDate || null}
         onDateSelect={handleDateSelect}
-        title="변경 일자 선택"
+        title=""
         availableDates={availableDates}
         onMonthChange={handleMonthChange}
       />
