@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import PlusIcon from '@/public/icons/myRecruitment/plus.svg';
-import { CalendarHeader } from '@/src/components/myRecruitment/Calendar';
+import { CalendarNavigation } from '@/src/components/common/Calendar';
 import { MyRecruitmentHeader } from '@/src/components/myRecruitment/Header';
 import { RecruitmentList, RecruitmentEmpty, ClosedRecruitmentList } from '@/src/components/myRecruitment/List';
 import { RecruitmentTabs, type RecruitmentTabType } from '@/src/components/myRecruitment/Tabs';
@@ -125,7 +125,7 @@ export default function MyRecruitmentPage() {
       {activeTab === 'active' && (
         <>
           {/* 캘린더 헤더 */}
-          <CalendarHeader year={year} month={month} onPrevMonth={handlePrevMonth} onNextMonth={handleNextMonth} />
+          <CalendarNavigation year={year} month={month} onPrevMonth={handlePrevMonth} onNextMonth={handleNextMonth} />
 
           {/* 공고 리스트 */}
           <div className="mt-4">

@@ -1,7 +1,13 @@
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
-import CalendarHeader from './CalendarHeader';
+import {
+  CalendarNavigation,
+  WEEKDAYS,
+  generateCalendarDays,
+  formatDateString,
+  getTodayString,
+} from '@/src/components/common/Calendar';
 import XCircleIcon from '@/public/icons/common/x-circle.svg';
 
 interface MonthCalendarProps {
@@ -15,8 +21,6 @@ interface MonthCalendarProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
 }
-
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
 export default function MonthCalendar({
   year,
@@ -35,47 +39,21 @@ export default function MonthCalendar({
   const [isDragging, setIsDragging] = useState(false);
 
   // 오늘 날짜
-  const today = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  }, []);
+  const today = useMemo(() => getTodayString(), []);
 
   // 해당 월의 날짜 배열 생성
-  const calendarDays = useMemo(() => {
-    const firstDay = new Date(year, month - 1, 1);
-    const lastDay = new Date(year, month, 0);
-    const startDayOfWeek = firstDay.getDay(); // 0 (일) ~ 6 (토)
-    const daysInMonth = lastDay.getDate();
-
-    const days: (number | null)[] = [];
-
-    // 이전 달 빈 칸
-    for (let i = 0; i < startDayOfWeek; i++) {
-      days.push(null);
-    }
-
-    // 현재 달 날짜
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-
-    return days;
-  }, [year, month]);
+  const calendarDays = useMemo(() => generateCalendarDays(year, month), [year, month]);
 
   // 날짜 문자열 생성 (YYYY-MM-DD)
-  const formatDateString = useCallback(
-    (day: number): string => {
-      return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    },
+  const getDateString = useCallback(
+    (day: number): string => formatDateString(year, month, day),
     [year, month]
   );
 
   // 날짜가 선택되었는지 확인
   const isSelected = useCallback(
-    (day: number): boolean => {
-      return selectedDates.includes(formatDateString(day));
-    },
-    [selectedDates, formatDateString]
+    (day: number): boolean => selectedDates.includes(getDateString(day)),
+    [selectedDates, getDateString]
   );
 
   // 드래그 범위 내에 있는지 확인
@@ -91,19 +69,14 @@ export default function MonthCalendar({
 
   // 포커스된 날짜인지 확인 (시간 선택 중인 날짜)
   const isFocused = useCallback(
-    (day: number): boolean => {
-      return formatDateString(day) === focusedDate;
-    },
-    [formatDateString, focusedDate]
+    (day: number): boolean => getDateString(day) === focusedDate,
+    [getDateString, focusedDate]
   );
 
   // 과거 날짜인지 확인 (오늘 이전)
   const isPast = useCallback(
-    (day: number): boolean => {
-      const dateStr = formatDateString(day);
-      return dateStr < today;
-    },
-    [formatDateString, today]
+    (day: number): boolean => getDateString(day) < today,
+    [getDateString, today]
   );
 
   // 드래그 시작
@@ -134,7 +107,7 @@ export default function MonthCalendar({
 
     // 단일 클릭인 경우 (드래그 시작과 끝이 같음)
     if (dragStart === dragEnd) {
-      const clickedDateStr = formatDateString(dragStart);
+      const clickedDateStr = getDateString(dragStart);
       const isAlreadySelected = selectedDates.includes(clickedDateStr);
 
       if (isAlreadySelected) {
@@ -153,7 +126,7 @@ export default function MonthCalendar({
       const rangeDates: string[] = [];
       for (let day = min; day <= max; day++) {
         if (!isPast(day)) {
-          rangeDates.push(formatDateString(day));
+          rangeDates.push(getDateString(day));
         }
       }
 
@@ -183,7 +156,12 @@ export default function MonthCalendar({
       onTouchEnd={handleDragEnd}
     >
       {/* 월 네비게이션 */}
-      <CalendarHeader year={year} month={month} onPrevMonth={onPrevMonth} onNextMonth={onNextMonth} />
+      <CalendarNavigation
+        year={year}
+        month={month}
+        onPrevMonth={onPrevMonth}
+        onNextMonth={onNextMonth}
+      />
 
       {/* 요일 헤더 - 날짜 그리드와 동일한 간격 */}
       <div className="mb-2 flex items-center justify-between">
@@ -261,7 +239,7 @@ export default function MonthCalendar({
                       {day !== null && isSelected(day) ? (
                         <button
                           type="button"
-                          onClick={() => onDateToggle(formatDateString(day))}
+                          onClick={() => onDateToggle(getDateString(day))}
                           className="cursor-pointer"
                           aria-label="날짜 선택 취소"
                         >
