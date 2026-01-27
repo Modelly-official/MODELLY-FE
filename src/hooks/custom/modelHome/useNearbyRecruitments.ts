@@ -48,7 +48,7 @@ export function useNearbyRecruitments(category: HomeCategory) {
   );
 
   const items = useMemo<RecruitmentListItem[]>(() => {
-    return query.data?.result ?? [];
+    return (query.data?.result ?? []).slice(0, 10);
   }, [query.data?.result]);
 
   useEffect(() => {

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperInstance } from 'swiper/types';
 import 'swiper/css';
 import { BottomNav, Skeleton } from '@/src/components/common';
 import ChatCategoryChips from '@/src/components/chat/chatlist/ChatCategoryChips';
@@ -22,13 +23,16 @@ import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeho
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
 import type { HomeCategory } from '@/src/types/modelHome';
+import type { RecruitmentListItem } from '@/src/types';
 
 export function ModelHomeContent() {
   const router = useRouter();
   const [nearbyCategory, setNearbyCategory] = useState<HomeCategory>('ALL');
   const [topCategory, setTopCategory] = useState<HomeCategory>('ALL');
-  const [designerCategory, setDesignerCategory] = useState<HomeCategory>('ALL');
+  const [designerCategory, setDesignerCategory] = useState<HomeCategory>('HAIR');
+  const [nearbyActiveIndex, setNearbyActiveIndex] = useState(0);
   const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
+  const designerCategories: HomeCategory[] = ['HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
 
   const { authReady, isLoggedIn, isSummaryLoading, modelName, profileImageUrl, reservationSummary, hasReservation } =
     useModelHomeSummary();
@@ -47,6 +51,24 @@ export function ModelHomeContent() {
     activeLocation,
     isLocationLoading,
   );
+
+  const nearbySwiperRef = useRef<SwiperInstance | null>(null);
+
+  const nearbySlides = useMemo(() => {
+    const slides: Array<RecruitmentListItem[]> = [];
+    for (let i = 0; i < nearbyRecruitments.length; i += 2) {
+      slides.push(nearbyRecruitments.slice(i, i + 2));
+    }
+    return slides;
+  }, [nearbyRecruitments]);
+
+  const handleNearbyCategoryChange = (category: HomeCategory) => {
+    setNearbyCategory(category);
+    setNearbyActiveIndex(0);
+    if (nearbySwiperRef.current) {
+      nearbySwiperRef.current.slideTo(0, 0);
+    }
+  };
 
   return (
     <>
@@ -155,41 +177,77 @@ export function ModelHomeContent() {
               <div className="-mx-4 mt-1">
                 <ChatCategoryChips
                   selectedCategory={nearbyCategory}
-                  onChange={(category) => setNearbyCategory(category as HomeCategory)}
+                  onChange={(category) => handleNearbyCategoryChange(category as HomeCategory)}
                 />
               </div>
             </div>
             {isNearbyLoading ? (
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {[0, 1].map((index) => (
-                  <RecruitmentCardSkeleton key={`nearby-skeleton-${index}`} isLeftColumn={index % 2 === 0} />
-                ))}
-              </div>
-            ) : nearbyRecruitments.length > 0 ? (
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {nearbyRecruitments.map((item, index) => (
-                  <RecruitmentCard key={item.recruitmentId} recruitment={item} isLeftColumn={index % 2 === 0} />
-                ))}
-              </div>
-            ) : (
-              <div className="relative mt-2 h-[341px]">
-                <div className="invisible grid grid-cols-2 gap-2">
+              <div className="mt-2">
+                <div className="flex gap-2">
                   {[0, 1].map((index) => (
-                    <RecruitmentCardSkeleton key={`nearby-empty-${index}`} isLeftColumn={index % 2 === 0} />
+                    <div key={`nearby-skeleton-${index}`} className="flex-1">
+                      <RecruitmentCardSkeleton isLeftColumn={index % 2 === 0} />
+                    </div>
                   ))}
                 </div>
-                <p className="text-body-2-medium absolute inset-0 flex items-center justify-center px-4 text-gray-600">
+              </div>
+            ) : nearbySlides.length > 0 ? (
+              <div className="mt-2">
+                <Swiper
+                  spaceBetween={12}
+                  slidesPerView={1}
+                  onSlideChange={(swiper) => setNearbyActiveIndex(swiper.activeIndex)}
+                  onSwiper={(swiper) => {
+                    nearbySwiperRef.current = swiper;
+                    setNearbyActiveIndex(0);
+                  }}
+                  className="w-full"
+                >
+                  {nearbySlides.map((pair, slideIndex) => (
+                    <SwiperSlide key={`nearby-slide-${slideIndex}`} className="w-full!">
+                      <div className="flex gap-2">
+                        {pair.map((item, index) => (
+                          <div key={item.recruitmentId} className="flex-1">
+                            <RecruitmentCard recruitment={item} isLeftColumn={index === 0} />
+                          </div>
+                        ))}
+                        {pair.length === 1 && <div className="flex-1" aria-hidden />}
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            ) : (
+              <div className="relative mt-5.5">
+                <Swiper spaceBetween={12} slidesPerView={1} className="w-full">
+                  <SwiperSlide className="w-full!">
+                    <div className="invisible flex w-full gap-2">
+                      {[0, 1].map((index) => (
+                        <div key={`nearby-empty-${index}`} className="flex-1">
+                          <RecruitmentCardSkeleton isLeftColumn={index % 2 === 0} />
+                        </div>
+                      ))}
+                    </div>
+                  </SwiperSlide>
+                </Swiper>
+                <p className="text-body-2-medium absolute inset-0 flex h-[341px] items-center justify-center px-4 text-gray-600">
                   표시할 모집글이 없습니다.
                 </p>
               </div>
             )}
             <div className="mt-5 flex items-center justify-center gap-1.5">
-              {categoryIndicators.map((category) => (
-                <span
-                  key={category}
-                  className={`h-1.5 rounded-full ${nearbyCategory === category ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'}`}
-                />
-              ))}
+              {nearbySlides.length > 0
+                ? nearbySlides.map((_, index) => (
+                    <span
+                      key={`nearby-indicator-${index}`}
+                      className={`h-1.5 rounded-full ${
+                        nearbyActiveIndex === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
+                      }`}
+                    />
+                  ))
+                : Array.from({ length: 5 }).map((_, index) => (
+                    <span key={`nearby-indicator-empty-${index}`} className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+                  ))}
             </div>
           </section>
 
@@ -252,6 +310,7 @@ export function ModelHomeContent() {
                 <ChatCategoryChips
                   selectedCategory={designerCategory}
                   onChange={(category) => setDesignerCategory(category as HomeCategory)}
+                  categories={designerCategories}
                 />
               </div>
             </div>
@@ -286,16 +345,6 @@ export function ModelHomeContent() {
                   </p>
                 </div>
               )}
-              <div className="mt-2 flex items-center justify-center gap-1.5">
-                {categoryIndicators.map((category) => (
-                  <span
-                    key={category}
-                    className={`h-1.5 rounded-full ${
-                      designerCategory === category ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
-                    }`}
-                  />
-                ))}
-              </div>
             </div>
           </section>
         </div>
