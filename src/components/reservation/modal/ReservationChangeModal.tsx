@@ -50,7 +50,6 @@ export default function ReservationChangeModal({
 
   const availableSchedules = useMemo(() => schedulesData?.result?.schedules ?? [], [schedulesData]);
   const availableDates = useMemo(() => {
-    if (availableSchedules.length === 0) return undefined;
     return availableSchedules
       .filter((schedule) => schedule.times.some((slot) => !slot.isReserved))
       .map((schedule) => schedule.date);
