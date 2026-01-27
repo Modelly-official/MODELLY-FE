@@ -63,6 +63,11 @@ export default function NaverMapView({
   const onCenterChangedRef = useRef(onCenterChanged);
   const onZoomChangedRef = useRef(onZoomChanged);
 
+  // bottomOffset 값을 ref로 관리 (useLatest 패턴)
+  // offset은 "center 이동 시 적용할 보정값"이지, "offset 변경 시 지도를 이동"하는 것이 아님
+  const bottomOffsetRef = useRef(bottomOffset);
+  const bottomOffsetPxRef = useRef(bottomOffsetPx);
+
   useEffect(() => {
     onCenterChangedRef.current = onCenterChanged;
   }, [onCenterChanged]);
@@ -70,6 +75,14 @@ export default function NaverMapView({
   useEffect(() => {
     onZoomChangedRef.current = onZoomChanged;
   }, [onZoomChanged]);
+
+  useEffect(() => {
+    bottomOffsetRef.current = bottomOffset;
+  }, [bottomOffset]);
+
+  useEffect(() => {
+    bottomOffsetPxRef.current = bottomOffsetPx;
+  }, [bottomOffsetPx]);
 
   // 지도 초기화 (한 번만 실행)
   useEffect(() => {
@@ -201,17 +214,17 @@ export default function NaverMapView({
   }, [selectedDesignerId]);
 
   // center prop 변경 감지 - 실제 지도 중심과 비교하여 이동
+  // 의존성: center 객체 (GPS 버튼 클릭 시 새 객체 생성으로 useEffect 실행 보장)
+  // bottomOffset은 ref로 관리 (offset 변경만으로는 지도 이동하지 않음)
   useEffect(() => {
     if (!mapInstance) return;
 
     // 실제 지도의 현재 중심 좌표를 가져옴
     const currentMapCenter = mapInstance.getCenter();
-    const currentLat = currentMapCenter.y;
-    const currentLng = currentMapCenter.x;
 
     const isSameAsMapCenter =
-      Math.abs(currentLat - center.lat) < 0.0001 &&
-      Math.abs(currentLng - center.lng) < 0.0001;
+      Math.abs(currentMapCenter.y - center.lat) < 0.0001 &&
+      Math.abs(currentMapCenter.x - center.lng) < 0.0001;
 
     if (!isSameAsMapCenter) {
       let targetCoord: naver.maps.LatLng | naver.maps.Coord = new naver.maps.LatLng(
@@ -219,8 +232,9 @@ export default function NaverMapView({
         center.lng
       );
 
-      // 하단 오프셋 보정 (px 우선, 없으면 vh 변환)
-      const offsetPx = bottomOffsetPx ?? ((bottomOffset ?? 0) / 100) * window.innerHeight;
+      // 하단 오프셋 보정 (ref에서 최신 값 읽음)
+      const offsetPx =
+        bottomOffsetPxRef.current ?? ((bottomOffsetRef.current ?? 0) / 100) * window.innerHeight;
       if (offsetPx > 0) {
         const projection = mapInstance.getProjection();
         const pixelOffset = projection.fromCoordToOffset(targetCoord);
@@ -236,7 +250,7 @@ export default function NaverMapView({
         easing: 'easeOutCubic',
       });
     }
-  }, [mapInstance, center, bottomOffset, bottomOffsetPx]);
+  }, [mapInstance, center]);
 
   // zoom 변경 시 지도 줌 변경
   useEffect(() => {
