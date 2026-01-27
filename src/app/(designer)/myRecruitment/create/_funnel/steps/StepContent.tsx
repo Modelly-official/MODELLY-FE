@@ -105,7 +105,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
       </div>
 
       {/* 컨텐츠 영역 */}
-      <div className="flex-1 space-y-7 p-4 pb-[250px]">
+      <div className="flex-1 space-y-7 p-4 pb-[150px]">
         {/* 시술 내용 */}
         <TextArea
           label="시술 내용"
