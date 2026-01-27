@@ -11,3 +11,4 @@ export * from './reservation';
 export * from './review';
 export * from './mypage';
 export * from './axios';
+export * from './modelHome';

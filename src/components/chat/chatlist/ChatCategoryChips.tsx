@@ -3,6 +3,7 @@
 interface ChatCategoryChipsProps {
   selectedCategory: string;
   onChange: (category: string) => void;
+  categories?: string[];
 }
 
 const CATEGORY_CHIPS = [
@@ -13,10 +14,14 @@ const CATEGORY_CHIPS = [
   { code: 'EYELASH', label: '속눈썹' },
 ];
 
-export default function ChatCategoryChips({ selectedCategory, onChange }: ChatCategoryChipsProps) {
+export default function ChatCategoryChips({ selectedCategory, onChange, categories }: ChatCategoryChipsProps) {
+  const filteredChips = categories?.length
+    ? CATEGORY_CHIPS.filter((chip) => categories.includes(chip.code))
+    : CATEGORY_CHIPS;
+
   return (
     <div className="scrollbar-hide flex gap-1.5 overflow-x-auto px-4 py-2">
-      {CATEGORY_CHIPS.map((chip) => {
+      {filteredChips.map((chip) => {
         const isActive = selectedCategory === chip.code;
         return (
           <button

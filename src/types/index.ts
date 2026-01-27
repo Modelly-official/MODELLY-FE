@@ -47,3 +47,6 @@ export * from './map';
 
 // Notification types
 export * from './notification';
+
+// Model Home types
+export * from './modelHome/modelHome';

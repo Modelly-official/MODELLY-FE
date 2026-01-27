@@ -188,3 +188,25 @@ declare global {
     MarkerClustering: typeof MarkerClustering;
   }
 }
+
+// 위치 좌표를 구/동 텍스트로 변환할 때 사용 (src/utils/common/locationGeocoder.ts)
+// geocoder submodule은 스크립트 로드 후 주입되므로 optional 처리
+declare namespace naver.maps {
+  interface ReverseGeocodeOptions {
+    coords: LatLng | Coord;
+    coordType?: string;
+    orders?: string;
+  }
+
+  type ReverseGeocodeResponse = unknown;
+  type ReverseGeocodeCallback = (status: string, response: ReverseGeocodeResponse) => void;
+
+  interface ServiceNamespace {
+    reverseGeocode?: (options: ReverseGeocodeOptions, callback: ReverseGeocodeCallback) => void;
+    OrderType?: { ADDR: string; ROAD_ADDR: string };
+    CoordType?: { WGS84: string };
+    Status?: { OK: string };
+  }
+
+  const Service: ServiceNamespace | undefined;
+}
