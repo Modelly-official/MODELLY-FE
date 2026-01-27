@@ -36,11 +36,17 @@ export function ModelHomeContent() {
   const {
     items: nearbyRecruitments,
     isLoading: isNearbyLoading,
+    isLocationLoading,
     locationLabel,
     showLocationCta,
     requestLocation,
+    activeLocation,
   } = useNearbyRecruitments(nearbyCategory);
-  const { items: popularDesigners, isLoading: isPopularLoading } = usePopularDesigners(designerCategory);
+  const { items: popularDesigners, isLoading: isPopularLoading } = usePopularDesigners(
+    designerCategory,
+    activeLocation,
+    isLocationLoading,
+  );
 
   return (
     <>

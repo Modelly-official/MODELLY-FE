@@ -26,15 +26,40 @@ export function useModelHomeSummary() {
     return reservationsQuery.data?.result ?? [];
   }, [reservationsQuery.data?.result]);
 
-  const confirmedReservation = useMemo(() => {
-    if (reservationItems.length === 0) return null;
+  const upcomingReservations = useMemo(() => {
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-    return [...reservationItems].sort((a, b) => {
-      const aTime = new Date(a.startDateTime).getTime();
-      const bTime = new Date(b.startDateTime).getTime();
-      return aTime - bTime;
-    })[0];
+    const getTimeMinutes = (value: string) => {
+      const match = value.match(/(\d{1,2}):(\d{2})/);
+      if (!match) return null;
+      return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+    };
+
+    return reservationItems.filter((item) => {
+      if (item.dDay > 0) return true;
+      if (item.dDay < 0) return false;
+
+      const reservationMinutes = getTimeMinutes(item.startDateTime);
+      if (reservationMinutes === null) return true;
+      return reservationMinutes >= nowMinutes;
+    });
   }, [reservationItems]);
+
+  const confirmedReservation = useMemo(() => {
+    if (upcomingReservations.length === 0) return null;
+
+    const getTimeMinutes = (value: string) => {
+      const match = value.match(/(\d{1,2}):(\d{2})/);
+      if (!match) return 0;
+      return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+    };
+
+    return [...upcomingReservations].sort((a, b) => {
+      if (a.dDay !== b.dDay) return a.dDay - b.dDay;
+      return getTimeMinutes(a.startDateTime) - getTimeMinutes(b.startDateTime);
+    })[0];
+  }, [upcomingReservations]);
 
   const reservationSummary = useMemo<ReservationSummary | null>(() => {
     if (!confirmedReservation) return null;
