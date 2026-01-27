@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { login, logout, validateToken, socialSignup, processSocialLoginCallback } from '@/src/apis';
+import { login, logout, validateToken, socialSignup, processSocialLoginCallback, withdraw } from '@/src/apis';
 import type {
   LoginRequest,
   LoginResponse,
@@ -9,6 +9,7 @@ import type {
   SocialSignupResponse,
   SocialLoginCallbackRequest,
   SocialLoginCallbackResponse,
+  WithdrawResponse,
   ApiResponse,
 } from '@/src/types';
 
@@ -64,5 +65,14 @@ export function useSocialLoginCallback() {
   >({
     mutationFn: ({ provider, payload }) => processSocialLoginCallback(provider, payload),
     retry: 0, // 소셜 로그인 콜백은 재시도하지 않음
+  });
+}
+
+/**
+ * 회원 탈퇴 mutation hook
+ */
+export function useWithdraw() {
+  return useMutation<ApiResponse<WithdrawResponse>, Error, void>({
+    mutationFn: withdraw,
   });
 }

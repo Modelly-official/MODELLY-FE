@@ -125,3 +125,9 @@ export interface SocialLoginCallbackResponse {
   userRole: 'MODEL' | 'DESIGNER';
   category?: 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH'; // 디자이너 카테고리
 }
+
+// 회원 탈퇴 관련 타입
+
+export interface WithdrawResponse {
+  message: string;
+}
