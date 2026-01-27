@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import TextArea from '@/src/components/myRecruitment/Form/TextArea';
-import Dropdown from '@/src/components/myRecruitment/Form/Dropdown';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import ImageUploader from '@/src/components/myRecruitment/Form/ImageUploader';
 import TickSquareCheckbox from '@/src/components/myRecruitment/Form/TickSquareCheckbox';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
@@ -14,6 +14,7 @@ import { getSubCategoryOptions } from '@/src/constants/explore';
 import { getUserCategory } from '@/src/stores';
 import { isStep2Valid } from '@/src/utils/myRecruitment';
 import type { PurposeType } from '@/src/types/myRecruitment';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepContentProps {
   goNext: () => void;
@@ -79,10 +80,12 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
 
   // 디자이너 카테고리에 맞는 서브카테고리 옵션
   const designerCategory = getUserCategory();
-  const subCategoryOptions = designerCategory ? getSubCategoryOptions(designerCategory) : [];
+  const subCategoryOptions = designerCategory
+    ? getSubCategoryOptions(designerCategory).map((opt) => ({ value: opt.code, label: opt.name }))
+    : [];
 
   // 목적 옵션
-  const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ code: opt.code, name: opt.name }));
+  const purposeOptions = PURPOSE_OPTIONS.map((opt) => ({ value: opt.code, label: opt.name }));
 
   // 등록 버튼 활성화 조건
   const isSubmitButtonEnabled = isStep2Valid(
@@ -199,12 +202,12 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
       </div>
 
       {/* 하단 등록 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] border-t border-gray-100 bg-white px-4 pt-3 pb-2">
+      <FixedBottomContainer hasBorder>
         <button
           type="button"
           onClick={goNext}
           disabled={!isSubmitButtonEnabled || isSubmitting}
-          className={`text-body-1-semibold flex w-full items-center justify-center rounded-full py-4 ${
+          className={`text-body-1-semibold flex h-14 w-full items-center justify-center rounded-full ${
             isSubmitButtonEnabled && !isSubmitting
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-500'
@@ -216,7 +219,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
             isEdit ? '모집글 수정' : '새 모집글 등록'
           )}
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

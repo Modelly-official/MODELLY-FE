@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
-import DotIcon from '@/public/icons/myRecruitment/dot.svg';
 import PinIcon from '@/public/icons/common/check-circle.svg';
+import StarDisplay from '@/src/components/common/StarDisplay';
+import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 import type { DesignerReviewItem } from '@/src/types';
 
 interface DesignerReviewCardProps {
@@ -31,26 +31,11 @@ export default function DesignerReviewCard({
   onReplyCancel,
   isSubmittingReply = false,
 }: DesignerReviewCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   // 날짜 포맷팅 (YYYY-MM-DD → YYYY.MM.DD)
   const formattedDate = review.createdDate.replace(/-/g, '.');
 
   // 이미지 배열
   const images = review.reviewImages ?? [];
-
-  // 더보기 메뉴 클릭
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  // 리뷰 고정/해제
-  const handlePin = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onPin?.(review.reviewId, !review.isFixed);
-  };
 
   // 답글 달기 클릭
   const handleReplyClick = () => {
@@ -96,53 +81,19 @@ export default function DesignerReviewCard({
             </div>
 
             {/* 더보기 버튼 */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={handleMenuClick}
-                className="flex size-5 cursor-pointer items-center justify-center"
-                aria-label="더보기"
-              >
-                <DotIcon className="size-5 text-gray-900" />
-              </button>
-
-              {/* 드롭다운 메뉴 */}
-              {isMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                    }}
-                  />
-                  <div className="absolute right-0 top-6 z-20 overflow-hidden rounded-[10px] border border-gray-400 bg-white">
-                    <button
-                      type="button"
-                      onClick={handlePin}
-                      className="block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
-                    >
-                      {review.isFixed ? '고정 취소' : '리뷰 고정'}
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <KebabMenu
+              items={[
+                {
+                  label: review.isFixed ? '고정 취소' : '리뷰 고정',
+                  onClick: () => onPin?.(review.reviewId, !review.isFixed),
+                },
+              ]}
+            />
           </div>
 
           {/* 별점 + 날짜 */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Image
-                  key={star}
-                  src={star <= review.rating ? '/icons/common/star.svg' : '/icons/common/star-empty.svg'}
-                  alt=""
-                  width={12}
-                  height={12}
-                />
-              ))}
-            </div>
+            <StarDisplay rating={review.rating} size={12} />
             <span className="text-caption-1-medium text-gray-700">{formattedDate}</span>
           </div>
         </div>

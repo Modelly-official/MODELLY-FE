@@ -1,11 +1,13 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import type { Category, SubCategory, SortOption } from '@/src/types/recruitment';
 import type { BottomSheetState } from '@/src/types/map';
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
 import { LAYOUT, SHEET_HEIGHTS, DRAG } from '@/src/constants/map';
-import { CategoryTabs, SubCategoryChips, SortDropdown } from '@/src/components/explore';
+import { CategoryTabs, SubCategoryChips } from '@/src/components/explore';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 
 // re-export for backward compatibility
 export { SHEET_HEIGHTS } from '@/src/constants/map';
@@ -22,6 +24,7 @@ interface MapBottomSheetProps {
   onSubCategoryChange: (subCategory: SubCategory | 'ALL') => void;
   onSortChange: (sortOption: SortOption) => void;
   onHeightChange?: (height: number) => void;
+  onCurrentLocation?: () => void;
   // 무한 스크롤 props
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
@@ -43,6 +46,7 @@ export default function MapBottomSheet({
   onSubCategoryChange,
   onSortChange,
   onHeightChange,
+  onCurrentLocation,
   hasNextPage,
   isFetchingNextPage,
   onLoadMore,
@@ -334,11 +338,22 @@ export default function MapBottomSheet({
       className="fixed right-0 left-0 z-20 rounded-t-[20px] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.1)] sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2"
       style={{
         height: `${SHEET_HEIGHTS.max}dvh`,
-        bottom: `${LAYOUT.BOTTOM_NAV_HEIGHT}px`,
+        bottom: `calc(${LAYOUT.BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px))`,
         transform: `translateY(${getTranslateY(sheetState)}dvh)`,
         willChange: 'transform',
       }}
     >
+      {/* GPS 버튼 - 시트 상단 18px 위에 배치 */}
+      {onCurrentLocation && (
+        <button
+          type="button"
+          onClick={onCurrentLocation}
+          className="absolute -top-[56px] right-4 z-10 cursor-pointer"
+        >
+          <Image src="/icons/map/gps.svg" alt="현재 위치" width={38} height={38} />
+        </button>
+      )}
+
       {/* 헤더 영역 - 전체 드래그 가능 */}
       <div
         onTouchStart={handleHeaderTouchStart}
@@ -378,10 +393,12 @@ export default function MapBottomSheet({
               <span className="text-body-2-medium text-black">전체</span>
               <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
             </div>
-            <SortDropdown
-              sortOptions={SORT_OPTIONS}
-              selectedSort={sortOption}
-              onSortChange={(s) => onSortChange(s as SortOption)}
+            <Dropdown
+              variant="inline"
+              ariaLabel="정렬 방식 선택"
+              options={SORT_OPTIONS.map((opt) => ({ value: opt.code, label: opt.name }))}
+              value={sortOption}
+              onChange={(value) => onSortChange(value as SortOption)}
             />
           </div>
         </div>

@@ -1,0 +1,24 @@
+/* components.css - 컴포넌트 전용 전역 스타일 */
+
+/* ========================================
+   카드 스와이퍼 용 스타일
+   ======================================== */
+@layer components {
+  .portfolio-swiper {
+    padding-bottom: 0;
+  }
+
+  .portfolio-swiper .swiper-wrapper {
+    align-items: center;
+  }
+
+  .portfolio-swiper .swiper-slide {
+    opacity: 0;
+  }
+
+  .portfolio-swiper .swiper-slide-active,
+  .portfolio-swiper .swiper-slide-next,
+  .portfolio-swiper .swiper-slide-prev {
+    opacity: 1;
+  }
+}

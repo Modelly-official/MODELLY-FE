@@ -88,7 +88,7 @@ export default function UnreviewedCard({
             </div>
             <div className="text-body-2-medium flex items-center gap-4">
               <span className="w-[51px] text-gray-600">디자이너</span>
-              <span className="text-gray-900">{reservation.designerNickname}</span>
+              <span className="text-gray-900">{reservation.designerNickname} 디자이너</span>
             </div>
             <div className="text-body-2-medium flex items-center gap-4">
               <span className="w-[51px] text-gray-600">매장명</span>

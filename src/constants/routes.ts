@@ -23,16 +23,21 @@ export const MODEL_ONLY_ROUTES: string[] = [
   '/reservation', // 예약
 ];
 
+// ===== 디자이너 접근 차단 라우트 (모델/비로그인만 허용) =====
+export const DESIGNER_BLOCKED_ROUTES = ['/explore', '/map', '/post'];
+
 // ===== 디자이너 전용 라우트 =====
 export const DESIGNER_ONLY_ROUTES = [
   '/myRecruitment', // 내 공고 관리 (목록, 생성, 수정, 상세)
   '/calendar', // 캘린더
   '/reservations', // 예약 관리 (목록, 상세)
   '/myProfile', // 디자이너 내 프로필
+  '/mypage/portfolio', // 포트폴리오 관리
 ];
 
 // ===== 인증된 사용자 공통 라우트 =====
 export const AUTHENTICATED_ROUTES: string[] = [
+  '/chat', // 채팅방 (하위 경로: /chat/[roomId])
   '/mypage/profile', // 프로필 수정
   '/mypage/likes', // 찜 목록
   '/mypage/reservations', // 예약 내역

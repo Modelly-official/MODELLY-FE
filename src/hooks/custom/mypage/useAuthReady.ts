@@ -77,7 +77,8 @@ export function useAuthReady(): AuthReadyState {
     const category = getUserCategory();
 
     const role = (user?.role ?? cookieRole ?? 'model') as Role;
-    const isLoggedIn = !!(isAuthenticated || user || token);
+    // user_role 쿠키가 있으면 이전에 로그인한 사용자 → API 호출 허용 (axios가 refresh 시도)
+    const isLoggedIn = !!(isAuthenticated || user || token || cookieRole);
 
     return {
       role,

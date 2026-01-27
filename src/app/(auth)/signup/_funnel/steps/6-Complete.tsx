@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { SIGNUP_MESSAGES } from '@/src/constants/signup';
 import SignupCompletedIcon from '@/public/icons/signup/signup-completed.svg';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 export const StepComplete: React.FC = () => {
   const router = useRouter();
@@ -21,12 +22,14 @@ export const StepComplete: React.FC = () => {
           {SIGNUP_MESSAGES.COMPLETE.TITLE}
         </p>
       </div>
-      <button
-        onClick={handleStart}
-        className="text-body-1-medium fixed bottom-3 left-1/2 w-[calc(100%-2rem)] max-w-[343px] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 text-white sm:w-[343px]"
-      >
-        {SIGNUP_MESSAGES.COMPLETE.BUTTON}
-      </button>
+      <FixedBottomContainer>
+        <button
+          onClick={handleStart}
+          className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
+        >
+          {SIGNUP_MESSAGES.COMPLETE.BUTTON}
+        </button>
+      </FixedBottomContainer>
     </div>
   );
 };

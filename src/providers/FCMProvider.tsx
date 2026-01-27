@@ -1,13 +1,36 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, ReactNode } from 'react';
+import { useCallback, useEffect, useState, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { MessagePayload } from 'firebase/messaging';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFCM } from '@/src/hooks/custom';
 import { useSaveFcmToken, notificationKeys } from '@/src/hooks/queries';
 import { getAccessToken } from '@/src/stores';
+import { NOTIFICATION_STORAGE_KEYS } from '@/src/constants/notification';
 import NotificationBanner from '@/src/components/common/NotificationBanner';
+
+/** sessionStorage에서 토큰 등록 상태 조회 */
+function getTokenRegistered(): boolean {
+  try {
+    return sessionStorage.getItem(NOTIFICATION_STORAGE_KEYS.TOKEN_REGISTERED) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/** sessionStorage에 토큰 등록 상태 저장 */
+function setTokenRegistered(value: boolean): void {
+  try {
+    if (value) {
+      sessionStorage.setItem(NOTIFICATION_STORAGE_KEYS.TOKEN_REGISTERED, 'true');
+    } else {
+      sessionStorage.removeItem(NOTIFICATION_STORAGE_KEYS.TOKEN_REGISTERED);
+    }
+  } catch {
+    // Private mode fallback
+  }
+}
 
 interface FCMProviderProps {
   children: ReactNode;
@@ -28,7 +51,6 @@ interface NotificationState {
  */
 export function FCMProvider({ children }: FCMProviderProps) {
   const [notification, setNotification] = useState<NotificationState | null>(null);
-  const tokenRegisteredRef = useRef(false);
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
@@ -76,25 +98,25 @@ export function FCMProvider({ children }: FCMProviderProps) {
     const autoRegisterToken = async () => {
       const accessToken = getAccessToken();
 
-      // 로그아웃 상태면 ref 리셋 (다음 로그인 시 재등록 가능하도록)
+      // 로그아웃 상태면 sessionStorage 리셋 (다음 로그인 시 재등록 가능하도록)
       if (!accessToken) {
-        tokenRegisteredRef.current = false;
+        setTokenRegistered(false);
         return;
       }
 
       // 로그인 상태 + 권한 허용 + 아직 등록 안 함
-      if (permission === 'granted' && !tokenRegisteredRef.current) {
-        tokenRegisteredRef.current = true;
+      if (permission === 'granted' && !getTokenRegistered()) {
+        setTokenRegistered(true);
 
         const fcmToken = await requestPermission();
         if (fcmToken) {
           saveFcmToken(fcmToken, {
             onError: () => {
-              tokenRegisteredRef.current = false;
+              setTokenRegistered(false);
             },
           });
         } else {
-          tokenRegisteredRef.current = false;
+          setTokenRegistered(false);
         }
       }
     };

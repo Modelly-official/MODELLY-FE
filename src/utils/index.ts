@@ -6,3 +6,4 @@ export * from './chat';
 export * from './myRecruitment';
 export * from './mypage';
 export * from './modelHome';
+export * from './image';

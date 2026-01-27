@@ -20,6 +20,7 @@ export interface UnreviewedReservation {
 // ===== 작성한 리뷰 아이템 =====
 export interface WrittenReviewItem {
   reviewId: number;
+  reservationId: number;
   rating: number;
   content: string;
   thumbnail?: string;

@@ -86,7 +86,7 @@ export default function ReviewImageUploader({
           </div>
         ))}
 
-        {/* 추가 버튼 - Figma: 109x108, bg #F9F9FB, rounded 8px, gap 4px */}
+        {/* 추가 버튼 */}
         {canAddMore && (
           <button
             type="button"

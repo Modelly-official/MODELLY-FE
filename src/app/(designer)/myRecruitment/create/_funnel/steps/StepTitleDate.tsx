@@ -7,6 +7,7 @@ import TimeSelector from '@/src/components/myRecruitment/Calendar/TimeSelector';
 import TitleInput from '@/src/components/myRecruitment/Form/TitleInput';
 import { useRecruitmentFormStore } from '@/src/stores/myRecruitment/useRecruitmentFormStore';
 import { isStep1Valid } from '@/src/utils/myRecruitment';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface StepTitleDateProps {
   goNext: () => void;
@@ -142,12 +143,12 @@ export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTi
       </div>
 
       {/* 하단 다음 버튼 (Fixed) */}
-      <div className="fixed right-0 bottom-0 left-0 mx-auto w-full max-w-[375px] bg-white px-4 py-3">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={goNext}
           disabled={!isNextButtonEnabled}
-          className={`text-body-1-semibold w-full rounded-full py-4 ${
+          className={`text-body-1-semibold h-14 w-full rounded-full ${
             isNextButtonEnabled
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-600'
@@ -155,7 +156,7 @@ export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTi
         >
           다음
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { useSendResetPasswordCode, useVerifyEmailCode, useVerifyResetPassword } 
 import { validateEmail } from '@/src/utils/auth/find-password';
 import { useTimer } from '@/src/hooks/auth/find-password';
 import { AuthHeader, Spinner, AuthCodeInputWithTimer } from '@/src/components/auth';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { showToast } from '@/src/utils';
 
 interface StepInputProps {
@@ -146,7 +147,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
       </div>
 
       {/* 입력 폼 */}
-      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[100px]" onSubmit={(e) => e.preventDefault()}>
         {/* 이름 입력 */}
         <div className="flex flex-col gap-2">
           <label className="text-body-1-medium tracking-tight text-gray-900">이름 (실명)</label>
@@ -225,13 +226,13 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext, goSocialUser }) =>
           )}
         </div>
 
-        {/* 하단 버튼 */}
-        <div className="mt-auto mb-3">
-          <FixedBottomButton disabled={!isVerified || verifyResetMutation.isPending} onClick={handleNextStep}>
-            {verifyResetMutation.isPending ? '검증 중...' : '비밀번호 재설정'}
-          </FixedBottomButton>
-        </div>
       </form>
+      {/* 하단 버튼 */}
+      <FixedBottomContainer>
+        <FixedBottomButton disabled={!isVerified || verifyResetMutation.isPending} onClick={handleNextStep}>
+          {verifyResetMutation.isPending ? '검증 중...' : '비밀번호 재설정'}
+        </FixedBottomButton>
+      </FixedBottomContainer>
     </div>
   );
 };

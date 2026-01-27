@@ -43,7 +43,7 @@ export default function NotificationPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* 헤더 */}
-      <header className="flex items-center justify-between px-4 py-3">
+      <header className="safe-area-top flex items-center justify-between px-4 py-3">
         <button
           type="button"
           onClick={() => router.push('/')}

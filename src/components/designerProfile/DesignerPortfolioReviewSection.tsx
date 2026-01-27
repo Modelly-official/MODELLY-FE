@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
-import DesignerReviewTab, { DesignerReviewSummaryData } from '@/src/components/designerProfile/review/DesignerReviewTab';
+import DesignerReviewTab, {
+  DesignerReviewSummaryData,
+} from '@/src/components/designerProfile/review/DesignerReviewTab';
 import type { DesignerReviewItem } from '@/src/components/designerProfile/review/DesignerReviewCard';
 
 type DesignerProfileTab = 'portfolio' | 'review';
@@ -11,10 +13,14 @@ interface DesignerPortfolioReviewSectionProps {
   activeTab: DesignerProfileTab;
   onTabChange: (tab: DesignerProfileTab) => void;
   portfolioImages: string[];
+  portfolioIds?: number[];
+  portfolioTotalCount?: number;
   reviewSummary: DesignerReviewSummaryData;
   reviewItems: DesignerReviewItem[];
   isReviewLoading?: boolean;
   isReviewError?: boolean;
+  onPortfolioViewAll?: () => void;
+  onPortfolioSelect?: (portfolioId: number) => void;
   onReviewViewAll?: () => void;
   onReviewPreviewMore?: () => void;
 }
@@ -23,13 +29,19 @@ export default function DesignerPortfolioReviewSection({
   activeTab,
   onTabChange,
   portfolioImages,
+  portfolioIds,
+  portfolioTotalCount,
   reviewSummary,
   reviewItems,
   isReviewLoading = false,
   isReviewError = false,
+  onPortfolioViewAll,
+  onPortfolioSelect,
   onReviewViewAll,
   onReviewPreviewMore,
 }: DesignerPortfolioReviewSectionProps) {
+  const portfolioCount = portfolioTotalCount ?? portfolioImages.length;
+
   return (
     <section className="border-gray-200">
       <div className="grid h-13 grid-cols-2 border-b border-gray-400">
@@ -62,28 +74,47 @@ export default function DesignerPortfolioReviewSection({
           <div className="flex items-center justify-between px-4 pt-4">
             <div className="flex gap-1">
               <span className="text-body-1-medium text-black">전체</span>
-              <span className="text-body-1-semibold text-gray-600">{portfolioImages.length}</span>
+              <span className="text-body-1-semibold text-gray-600">{portfolioCount}</span>
             </div>
-            <button type="button" className="text-body-2-medium flex items-center justify-center gap-0.5 text-gray-800">
+            <button
+              type="button"
+              onClick={onPortfolioViewAll}
+              disabled={!onPortfolioViewAll}
+              className="text-body-2-medium flex cursor-pointer items-center justify-center gap-0.5 text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+            >
               자세히 보기
               <ChevronRightIcon className="h-5 w-5 -translate-y-px text-gray-800" />
             </button>
           </div>
           <div className="grid grid-cols-3 gap-2.5 px-4 pt-3 pb-[calc(32px+env(safe-area-inset-bottom))]">
-            {portfolioImages.map((imageUrl, index) => (
-              <div
-                key={`${imageUrl}-${index}`}
-                className="relative h-[151px] w-full overflow-hidden rounded-lg bg-gray-200"
-              >
-                <Image
-                  src={imageUrl}
-                  alt={`포트폴리오 이미지 ${index + 1}`}
-                  fill
-                  sizes="33vw"
-                  className="object-cover"
-                />
-              </div>
-            ))}
+            {portfolioImages.map((imageUrl, index) => {
+              const portfolioId = portfolioIds?.[index];
+              const isClickable = typeof portfolioId === 'number' && !!onPortfolioSelect;
+
+              return (
+                <button
+                  key={`${imageUrl}-${index}`}
+                  type="button"
+                  onClick={() => {
+                    if (!isClickable) return;
+                    onPortfolioSelect?.(portfolioId);
+                  }}
+                  className={`border-0 p-0 relative h-[151px] w-full overflow-hidden rounded-lg bg-gray-200 ${
+                    isClickable ? 'cursor-pointer' : 'cursor-default'
+                  }`}
+                  disabled={!isClickable}
+                  aria-label={isClickable ? '포트폴리오 상세 보기' : undefined}
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={`포트폴리오 이미지 ${index + 1}`}
+                    fill
+                    sizes="33vw"
+                    className="object-cover"
+                  />
+                </button>
+              );
+            })}
           </div>
         </>
       ) : (

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
-import DesignerProfileEditMenu from '@/src/components/designerProfile/edit/DesignerProfileEditMenu';
+import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 import { formatPeriodToMonthDay } from '@/src/utils/common';
 import type { DesignerRecruitmentCard } from '@/src/types/profile';
 
@@ -27,22 +27,6 @@ export default function DesignerProfileEditRecruitments({
 }: DesignerProfileEditRecruitmentsProps) {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const formatPeriod = (startDate: string, endDate: string) => formatPeriodToMonthDay(`${startDate} ~ ${endDate}`);
-
-  const handleToggleMenu = (recruitmentId: number) => {
-    setOpenMenuId((prev) => (prev === recruitmentId ? null : recruitmentId));
-  };
-
-  const handleCloseMenu = () => setOpenMenuId(null);
-
-  const handleEdit = (recruitmentId: number) => {
-    onEdit?.(recruitmentId);
-    setOpenMenuId(null);
-  };
-
-  const handleDelete = (recruitmentId: number) => {
-    onDelete?.(recruitmentId);
-    setOpenMenuId(null);
-  };
 
   return (
     <section className="rounded-2xl bg-white px-4 py-4">
@@ -75,6 +59,7 @@ export default function DesignerProfileEditRecruitments({
                       alt={recruitment.title}
                       fill
                       sizes="80px"
+                      quality={100}
                       className="object-cover"
                     />
                   </div>
@@ -100,13 +85,13 @@ export default function DesignerProfileEditRecruitments({
                   </div>
                 </Link>
 
-                <DesignerProfileEditMenu
+                <KebabMenu
                   isOpen={isMenuOpen}
-                  onToggle={() => handleToggleMenu(recruitment.recruitmentId)}
-                  onClose={handleCloseMenu}
-                  onEdit={() => handleEdit(recruitment.recruitmentId)}
-                  onDelete={() => handleDelete(recruitment.recruitmentId)}
-                  ariaLabel="모집글 메뉴"
+                  onOpenChange={(open) => setOpenMenuId(open ? recruitment.recruitmentId : null)}
+                  items={[
+                    { label: '수정', onClick: () => onEdit?.(recruitment.recruitmentId) },
+                    { label: '삭제', onClick: () => onDelete?.(recruitment.recruitmentId) },
+                  ]}
                 />
               </div>
             );

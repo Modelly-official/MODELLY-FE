@@ -1,7 +1,8 @@
 'use client';
 
 import { CATEGORIES, SUB_CATEGORIES_BY_CATEGORY, SORT_OPTIONS } from '@/src/constants/explore';
-import { CategoryTabs, SearchBar, SubCategoryChips, SortDropdown } from '@/src/components/explore';
+import { CategoryTabs, SearchBar, SubCategoryChips } from '@/src/components/explore';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import type { Category, SubCategory, SortOption } from '@/src/types';
 import type { ExploreView } from '@/src/hooks/custom/explore';
 
@@ -63,10 +64,12 @@ export default function ExploreFiltersSection({
             <span className="text-body-2-medium text-black">전체</span>
             <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
           </div>
-          <SortDropdown
-            sortOptions={SORT_OPTIONS}
-            selectedSort={sort}
-            onSortChange={(s) => onSortChange(s as SortOption)}
+          <Dropdown
+            variant="inline"
+            ariaLabel="정렬 방식 선택"
+            options={SORT_OPTIONS.map((opt) => ({ value: opt.code, label: opt.name }))}
+            value={sort}
+            onChange={(value) => onSortChange(value as SortOption)}
           />
         </div>
       </div>

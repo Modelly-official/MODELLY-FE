@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import SignupCompletedIcon from '@/public/icons/signup/signup-completed.svg';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 export const StepComplete: React.FC = () => {
   const router = useRouter();
@@ -20,12 +21,14 @@ export const StepComplete: React.FC = () => {
           <p className="text-head-3-semibold text-center tracking-tight text-gray-900">비밀번호 변경이 완료되었어요</p>
         </div>
       </div>
-      <button
-        onClick={handleGoToLogin}
-        className="text-body-1-medium fixed bottom-3 left-1/2 w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-full bg-gray-900 py-4 tracking-tight text-white sm:w-[343px]"
-      >
-        로그인 화면으로 이동
-      </button>
+      <FixedBottomContainer>
+        <button
+          onClick={handleGoToLogin}
+          className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
+        >
+          로그인 화면으로 이동
+        </button>
+      </FixedBottomContainer>
     </div>
   );
 };

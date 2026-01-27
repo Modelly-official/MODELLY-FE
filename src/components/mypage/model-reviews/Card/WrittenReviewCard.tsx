@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import DotIcon from '@/public/icons/myRecruitment/dot.svg';
+import StarDisplay from '@/src/components/common/StarDisplay';
+import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 import type { WrittenReviewItem } from '@/src/types';
 
 interface WrittenReviewCardProps {
@@ -24,7 +25,6 @@ export default function WrittenReviewCard({
   isLastInMonth = false,
   isFirstItem = false,
 }: WrittenReviewCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -64,23 +64,6 @@ export default function WrittenReviewCard({
     setIsDragging(false);
   };
 
-  const handleMenuClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onEdit?.(review.reviewId);
-  };
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(false);
-    onDelete?.(review.reviewId);
-  };
-
   return (
     <div className={`flex ${needsTopGap ? 'mt-4' : ''}`}>
       {/* 날짜 + 세로선 영역 (왼쪽) */}
@@ -101,84 +84,41 @@ export default function WrittenReviewCard({
         />
       </div>
 
-      {/* 카드 영역 (오른쪽) - Figma: rounded-16, px-20, py-16, gap-12 */}
+      {/* 카드 영역 */}
       <div className={`ml-[6px] flex min-w-0 flex-1 flex-col gap-3 rounded-[16px] bg-white px-5 py-4 ${!showDate ? 'mt-4' : ''}`}>
         {/* 상단: 디자이너 정보 + 별점 */}
         <div className="flex flex-col gap-2">
           {/* 디자이너명 + 매장 + 더보기 버튼 */}
           <div className="flex items-start justify-between">
             <div className="flex items-end gap-2">
-              {/* 디자이너명 - Figma: Head 4 Medium 18px, #222 */}
-              <span className="text-head-4-medium text-black">{review.designerName}</span>
-              {/* 매장명 - Figma: Caption 1 Medium 12px, #81828d */}
+              {/* 디자이너명 */}
+              <span className="text-head-4-medium text-black">{review.designerName} 디자이너</span>
+              {/* 매장명 */}
               {review.shop && (
                 <span className="text-caption-1-medium text-gray-700">{review.shop}</span>
               )}
             </div>
 
             {/* 더보기 버튼 */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={handleMenuClick}
-                className="flex size-5 cursor-pointer items-center justify-center"
-                aria-label="더보기"
-              >
-                <DotIcon className="size-5 text-gray-900" />
-              </button>
-
-              {/* 드롭다운 메뉴 */}
-              {isMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                    }}
-                  />
-                  <div className="absolute right-0 top-6 z-20 overflow-hidden rounded-[10px] border border-gray-400 bg-white">
-                    <button
-                      type="button"
-                      onClick={handleEdit}
-                      className="block w-full cursor-pointer whitespace-nowrap border-b border-gray-400 px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
-                    >
-                      수정
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className="block w-full cursor-pointer whitespace-nowrap px-[13px] py-[6px] text-caption-1-medium text-gray-900 hover:bg-gray-100"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <KebabMenu
+              items={[
+                { label: '수정', onClick: () => onEdit?.(review.reviewId) },
+                { label: '삭제', onClick: () => onDelete?.(review.reviewId) },
+              ]}
+            />
           </div>
 
-          {/* 별점 - Figma: gap-4, 숫자 14px #2f2e32, 별 20px */}
+          {/* 별점 */}
           <div className="flex items-center gap-1">
             <span className="text-body-2-medium text-gray-900">{review.rating.toFixed(1)}</span>
-            <div className="flex items-center gap-0.5">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Image
-                  key={star}
-                  src={star <= review.rating ? '/icons/common/star.svg' : '/icons/common/star-empty.svg'}
-                  alt=""
-                  width={20}
-                  height={20}
-                />
-              ))}
-            </div>
+            <StarDisplay rating={review.rating} size={20} />
           </div>
         </div>
 
-        {/* 리뷰 내용 - Figma: Body 2 Regular 14px, #2f2e32 */}
+        {/* 리뷰 내용 */}
         <p className="text-body-2-regular text-gray-900">{review.content}</p>
 
-        {/* 이미지 목록 - Figma: gap-8, 132x132, rounded-8 */}
+        {/* 이미지 목록 */}
         {images.length > 0 && (
           <div
             ref={imageContainerRef}
@@ -205,7 +145,7 @@ export default function WrittenReviewCard({
           </div>
         )}
 
-        {/* 카테고리 배지 - Figma: gap-8, bg-#ebeeff, text-#5559ff, rounded-8, px-8, py-4 */}
+        {/* 카테고리 배지 */}
         {review.summary && (
           <div className="flex gap-2">
             <span className="rounded-lg bg-purple-200 px-2 py-1 text-caption-1-medium text-purple-700">

@@ -21,7 +21,7 @@ export interface RecruitmentPresignedUrlResponse {
 export interface ImageUploadResult {
   thumbnail: string;
   imageUrls: string[];
-  imageFolderId: string;
+  imageFolderId?: string; // 이미지 변경 없으면 undefined → transformFormToRequest에서 제외
 }
 
 // ===== 내 공고 리스트 조회 =====
@@ -59,7 +59,7 @@ export interface MyRecruitmentListResponse {
 
 // ===== 공고 생성/수정 =====
 
-/** 공고 생성 요청 */
+/** 공고 생성/수정 요청 (imageFolderId는 이미지 변경 시에만 전송) */
 export interface CreateRecruitmentRequest {
   title: string;
   recruitmentSchedule: RecruitmentSchedule[];
@@ -70,14 +70,14 @@ export interface CreateRecruitmentRequest {
   goal1: string;
   thumbnail: string;
   imageUrls: string[];
-  imageFolderId: string;
+  imageFolderId?: string; // 이미지 변경 없으면 생략
   agreeVideo: boolean;
   agreeInsta: boolean;
   agreeMosaic: boolean;
   etc: string;
 }
 
-/** 공고 수정 요청 (생성과 동일) */
+/** 공고 수정 요청 */
 export type UpdateRecruitmentRequest = CreateRecruitmentRequest;
 
 /** 공고 생성/수정 응답 */

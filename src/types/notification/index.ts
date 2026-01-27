@@ -50,3 +50,25 @@ export interface NotificationListParams {
 export interface SaveFcmTokenRequest {
   fcmToken: string;
 }
+
+/** 유효 권한 상태 (브라우저 권한 + 앱 상태 + 플랫폼 통합) */
+export type EffectivePermissionState =
+  | 'not_supported' // iOS Safari (PWA 미설치) 또는 Notification API 미지원
+  | 'browser_denied' // 브라우저에서 권한 거부
+  | 'app_dismissed' // 앱 모달에서 거부/취소
+  | 'granted' // 권한 허용됨
+  | 'prompt_needed'; // 권한 요청 필요 (모달 표시)
+
+/** 권한 상태별 UI 설정 */
+export interface PermissionUIConfig {
+  /** 토글 비활성화 여부 */
+  disabled: boolean;
+  /** 안내 메시지 (null이면 표시 안 함) */
+  message: string | null;
+  /** iOS PWA 설치 가이드 표시 */
+  showInstallGuide?: boolean;
+  /** "다시 활성화" 버튼 표시 */
+  showResetButton?: boolean;
+  /** 권한 요청 모달 표시 */
+  showModal?: boolean;
+}

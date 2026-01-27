@@ -2,6 +2,7 @@ import {
   PUBLIC_ROUTES,
   MODEL_ONLY_ROUTES,
   DESIGNER_ONLY_ROUTES,
+  DESIGNER_BLOCKED_ROUTES,
   AUTHENTICATED_ROUTES,
 } from '@/src/constants/routes';
 
@@ -17,7 +18,7 @@ function matchRoute(pathname: string, route: string): boolean {
 }
 
 // 정확 매칭만 허용하는 라우트 (하위 경로는 인증 필요)
-const EXACT_MATCH_ROUTES = ['/mypage'];
+const EXACT_MATCH_ROUTES = ['/mypage', '/chat'];
 
 /**
  * 공개 라우트 확인
@@ -50,4 +51,11 @@ export function checkRoleAccess(pathname: string, role: string): boolean {
   }
   // 미등록 라우트는 기본 차단 (보안 강화)
   return false;
+}
+
+/**
+ * 디자이너 차단 라우트 확인
+ */
+export function isDesignerBlockedRoute(pathname: string): boolean {
+  return DESIGNER_BLOCKED_ROUTES.some((route) => matchRoute(pathname, route));
 }

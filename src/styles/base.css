@@ -1,0 +1,38 @@
+/* base.css - 기본 스타일 및 리셋 */
+
+/* Safe Area CSS Variables */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Base Styles */
+@layer base {
+  /* iOS Safari input 자동 확대 방지 - !important로 유틸리티 클래스 오버라이드 */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Windows 스크롤바 레이아웃 시프트 방지 */
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings:
+      'liga' off,
+      'clig' off;
+    letter-spacing: var(--tracking-tight);
+    /* Mac/모바일 오버스크롤 바운스 방지 */
+    overscroll-behavior: none;
+  }
+}

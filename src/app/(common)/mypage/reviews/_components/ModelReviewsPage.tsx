@@ -9,8 +9,9 @@ import {
   ReviewCategoryChips,
   UnreviewedList,
   WrittenReviewList,
-  YearDropdown,
 } from '@/src/components/mypage/model-reviews';
+import ConfirmModal from '@/src/components/common/Modal/ConfirmModal';
+import Dropdown from '@/src/components/common/Dropdown/Dropdown';
 import type { ReviewTabType, ReviewCategoryFilter, UnreviewedReservation } from '@/src/types';
 
 export default function ModelReviewsPage() {
@@ -19,6 +20,10 @@ export default function ModelReviewsPage() {
 
   // 탭 상태
   const [activeTab, setActiveTab] = useState<ReviewTabType>('unreviewed');
+
+  // 삭제 확인 모달 상태
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [reviewIdToDelete, setReviewIdToDelete] = useState<number | null>(null);
 
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<ReviewCategoryFilter>('ALL');
@@ -71,11 +76,28 @@ export default function ModelReviewsPage() {
     router.push(`/mypage/reviews/edit/${reviewId}`);
   };
 
-  // 리뷰 삭제 핸들러
+  // 리뷰 삭제 모달 열기
   const handleDeleteReview = (reviewId: number) => {
-    if (window.confirm('리뷰를 삭제하시겠습니까?')) {
-      deleteReviewMutation.mutate(reviewId);
+    setReviewIdToDelete(reviewId);
+    setDeleteModalOpen(true);
+  };
+
+  // 리뷰 삭제 확인
+  const handleConfirmDelete = () => {
+    if (reviewIdToDelete !== null) {
+      deleteReviewMutation.mutate(reviewIdToDelete, {
+        onSuccess: () => {
+          setDeleteModalOpen(false);
+          setReviewIdToDelete(null);
+        },
+      });
     }
+  };
+
+  // 리뷰 삭제 모달 닫기
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setReviewIdToDelete(null);
   };
 
   return (
@@ -84,7 +106,7 @@ export default function ModelReviewsPage() {
       <header className="flex items-center justify-between bg-white px-4 py-3">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push('/mypage')}
           className="flex size-6 cursor-pointer items-center justify-center"
           aria-label="뒤로가기"
         >
@@ -105,7 +127,14 @@ export default function ModelReviewsPage() {
         {/* 년도 선택 및 전체 개수 (작성한 리뷰 탭에서만 표시) */}
         {activeTab === 'written' && (
           <div className="flex items-center justify-between">
-            <YearDropdown years={yearOptions} selectedYear={selectedYear} onYearChange={setSelectedYear} />
+            <Dropdown<number>
+              variant="inline"
+              size="lg"
+              ariaLabel="연도 선택"
+              options={yearOptions.map((year) => ({ value: year, label: String(year) }))}
+              value={selectedYear}
+              onChange={setSelectedYear}
+            />
             <div className="flex items-center gap-1">
               <span className="text-body-2-medium text-black">전체</span>
               <span className="text-body-2-semibold text-gray-600">{totalCount}</span>
@@ -137,6 +166,17 @@ export default function ModelReviewsPage() {
           )}
         </div>
       </div>
+
+      {/* 삭제 확인 모달 */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        message="리뷰를 삭제하시겠습니까?"
+        confirmText="삭제"
+        cancelText="취소"
+        isLoading={deleteReviewMutation.isPending}
+      />
     </div>
   );
 }
