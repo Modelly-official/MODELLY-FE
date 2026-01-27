@@ -106,7 +106,7 @@ export default function BaseBottomSheet({
         >
           {/* 핸들 바 */}
           <div className="mb-3 flex justify-center">
-            <div className="h-1 w-9 rounded-full bg-gray-300" />
+            <div className="h-1.5 w-14 rounded-full bg-gray-400" />
           </div>
 
           {/* 타이틀 */}
