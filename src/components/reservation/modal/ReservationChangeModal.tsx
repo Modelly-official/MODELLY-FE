@@ -50,7 +50,6 @@ export default function ReservationChangeModal({
 
   const availableSchedules = useMemo(() => schedulesData?.result?.schedules ?? [], [schedulesData]);
   const availableDates = useMemo(() => {
-    if (availableSchedules.length === 0) return undefined;
     return availableSchedules
       .filter((schedule) => schedule.times.some((slot) => !slot.isReserved))
       .map((schedule) => schedule.date);
@@ -223,7 +222,7 @@ export default function ReservationChangeModal({
         onClose={() => setIsCalendarOpen(false)}
         selectedDate={selectedDate || null}
         onDateSelect={handleDateSelect}
-        title="변경 일자 선택"
+        title=""
         availableDates={availableDates}
         onMonthChange={handleMonthChange}
       />

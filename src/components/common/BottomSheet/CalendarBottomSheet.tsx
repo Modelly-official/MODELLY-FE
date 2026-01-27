@@ -2,8 +2,13 @@
 
 import { useMemo, useCallback, useEffect, useState } from 'react';
 import BaseBottomSheet from './BaseBottomSheet';
-import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
-import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
+import {
+  CalendarNavigation,
+  WEEKDAYS,
+  generateCalendarDays,
+  formatDateString,
+  getTodayString,
+} from '@/src/components/common/Calendar';
 
 interface CalendarBottomSheetProps {
   isOpen: boolean;
@@ -16,8 +21,6 @@ interface CalendarBottomSheetProps {
   onMonthChange?: (year: number, month: number) => void;
 }
 
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
-
 export default function CalendarBottomSheet({
   isOpen,
   onClose,
@@ -28,6 +31,9 @@ export default function CalendarBottomSheet({
   minDate,
   onMonthChange,
 }: CalendarBottomSheetProps) {
+  // 임시 선택 날짜 (확인 버튼 클릭 전까지 유지)
+  const [tempSelectedDate, setTempSelectedDate] = useState<string | null>(null);
+
   // 현재 표시 중인 년/월
   const [currentYear, setCurrentYear] = useState(() => {
     if (selectedDate) {
@@ -42,57 +48,37 @@ export default function CalendarBottomSheet({
     return new Date().getMonth() + 1;
   });
 
-  // 오늘 날짜
-  const today = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  }, []);
+  // 실제 표시할 선택 날짜 (tempSelectedDate가 있으면 우선, 없으면 selectedDate)
+  const displaySelectedDate = tempSelectedDate ?? selectedDate;
+
+  // 오늘 날짜 (매 렌더마다 계산하여 자정 이후에도 정확한 날짜 반영)
+  const today = getTodayString();
 
   // 최소 날짜 (기본값: 오늘)
   const minimumDate = minDate || today;
 
   // 해당 월의 날짜 배열 생성
-  const calendarDays = useMemo(() => {
-    const firstDay = new Date(currentYear, currentMonth - 1, 1);
-    const lastDay = new Date(currentYear, currentMonth, 0);
-    const startDayOfWeek = firstDay.getDay();
-    const daysInMonth = lastDay.getDate();
-
-    const days: (number | null)[] = [];
-
-    // 이전 달 빈 칸
-    for (let i = 0; i < startDayOfWeek; i++) {
-      days.push(null);
-    }
-
-    // 현재 달 날짜
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-
-    return days;
-  }, [currentYear, currentMonth]);
+  const calendarDays = useMemo(
+    () => generateCalendarDays(currentYear, currentMonth),
+    [currentYear, currentMonth]
+  );
 
   // 날짜 문자열 생성 (YYYY-MM-DD)
-  const formatDateString = useCallback(
-    (day: number): string => {
-      return `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    },
+  const getDateString = useCallback(
+    (day: number): string => formatDateString(currentYear, currentMonth, day),
     [currentYear, currentMonth]
   );
 
   // 날짜가 선택되었는지 확인
   const isSelected = useCallback(
-    (day: number): boolean => {
-      return formatDateString(day) === selectedDate;
-    },
-    [selectedDate, formatDateString]
+    (day: number): boolean => getDateString(day) === displaySelectedDate,
+    [displaySelectedDate, getDateString]
   );
 
   // 선택 가능한 날짜인지 확인
   const isAvailable = useCallback(
     (day: number): boolean => {
-      const dateStr = formatDateString(day);
+      const dateStr = getDateString(day);
       // 최소 날짜보다 이전이면 선택 불가
       if (dateStr < minimumDate) return false;
       // availableDates가 지정되어 있으면 해당 목록에 있어야 선택 가능
@@ -101,13 +87,27 @@ export default function CalendarBottomSheet({
       }
       return true;
     },
-    [formatDateString, minimumDate, availableDates]
+    [getDateString, minimumDate, availableDates]
   );
 
-  // 날짜 클릭 핸들러
+  // 날짜 클릭 핸들러 (임시 선택만)
   const handleDateClick = (day: number) => {
     if (!isAvailable(day)) return;
-    onDateSelect(formatDateString(day));
+    setTempSelectedDate(getDateString(day));
+  };
+
+  // 확인 버튼 클릭 핸들러
+  const handleConfirm = () => {
+    if (displaySelectedDate) {
+      onDateSelect(displaySelectedDate);
+    }
+    setTempSelectedDate(null);
+    onClose();
+  };
+
+  // 바텀시트 닫을 때 임시 선택 초기화
+  const handleClose = () => {
+    setTempSelectedDate(null);
     onClose();
   };
 
@@ -131,75 +131,67 @@ export default function CalendarBottomSheet({
     }
   };
 
-  // 월을 2자리로 포맷
-  const formattedMonth = currentMonth.toString().padStart(2, '0');
-
   useEffect(() => {
     if (!isOpen || !onMonthChange) return;
     onMonthChange(currentYear, currentMonth);
   }, [currentYear, currentMonth, isOpen, onMonthChange]);
 
   return (
-    <BaseBottomSheet isOpen={isOpen} onClose={onClose} title={title}>
+    <BaseBottomSheet isOpen={isOpen} onClose={handleClose} title={title}>
       <div className="w-full select-none">
         {/* 월 네비게이션 */}
-        <div className="flex items-center justify-center gap-4 py-2">
-          <button
-            type="button"
-            onClick={handlePrevMonth}
-            className="flex size-8 cursor-pointer items-center justify-center"
-            aria-label="이전 달"
-          >
-            <ArrowLeftIcon className="size-5" />
-          </button>
-
-          <span className="text-head-2-semibold text-gray-900">
-            {currentYear}.{formattedMonth}
-          </span>
-
-          <button
-            type="button"
-            onClick={handleNextMonth}
-            className="flex size-8 cursor-pointer items-center justify-center"
-            aria-label="다음 달"
-          >
-            <ArrowRightIcon className="size-5" />
-          </button>
-        </div>
+        <CalendarNavigation
+          year={currentYear}
+          month={currentMonth}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+          className="py-2"
+        />
 
         {/* 요일 헤더 */}
-        <div className="mb-1 grid grid-cols-7 place-items-center">
+        <div className="mb-2 grid grid-cols-7 place-items-center">
           {WEEKDAYS.map((weekday) => (
-            <div key={weekday} className="flex size-7 items-center justify-center">
+            <div key={weekday} className="flex size-8 items-center justify-center">
               <span className="text-body-2-regular text-gray-600">{weekday}</span>
             </div>
           ))}
         </div>
 
         {/* 날짜 그리드 */}
-        <div className="grid grid-cols-7 place-items-center gap-y-0.5">
+        <div className="grid grid-cols-7 place-items-center gap-y-3">
           {calendarDays.map((day, index) => (
-            <div key={index} className="flex size-7 items-center justify-center">
+            <div key={index} className="flex size-8 items-center justify-center">
               {day !== null ? (
                 <button
                   type="button"
                   onClick={() => handleDateClick(day)}
                   disabled={!isAvailable(day)}
-                  className={`flex size-7 items-center justify-center rounded-full text-body-2-medium transition-colors ${
+                  className={`flex size-8 items-center justify-center rounded-full text-calendar-day transition-colors ${
                     isSelected(day)
                       ? 'bg-purple-500 text-white'
                       : !isAvailable(day)
                         ? 'cursor-not-allowed text-gray-400'
-                        : 'cursor-pointer text-gray-900 hover:bg-gray-200'
+                        : 'cursor-pointer text-gray-950 hover:bg-gray-200'
                   }`}
                 >
                   {day}
                 </button>
               ) : (
-                <div className="size-7" />
+                <div className="size-8" />
               )}
             </div>
           ))}
+        </div>
+
+        {/* 확인 버튼 - safe area 처리 */}
+        <div className="mt-6 pb-[env(safe-area-inset-bottom)]">
+          <button
+            type="button"
+            onClick={handleConfirm}
+            className="h-[49px] w-full cursor-pointer rounded-full bg-gray-900 text-body-2-medium text-white"
+          >
+            확인
+          </button>
         </div>
       </div>
     </BaseBottomSheet>

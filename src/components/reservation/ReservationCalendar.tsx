@@ -1,8 +1,13 @@
 'use client';
 
 import { useMemo, useCallback } from 'react';
-import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
-import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
+import {
+  CalendarNavigation,
+  WEEKDAYS,
+  generateCalendarDays,
+  formatDateString,
+  getTodayString,
+} from '@/src/components/common/Calendar';
 
 interface ReservationCalendarProps {
   year: number;
@@ -14,8 +19,6 @@ interface ReservationCalendarProps {
   onNextMonth: () => void;
 }
 
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
-
 export default function ReservationCalendar({
   year,
   month,
@@ -25,102 +28,51 @@ export default function ReservationCalendar({
   onPrevMonth,
   onNextMonth,
 }: ReservationCalendarProps) {
-  // 오늘 날짜
-  const today = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  }, []);
+  // 오늘 날짜 (매 렌더마다 계산하여 자정 이후에도 정확한 날짜 반영)
+  const today = getTodayString();
 
   // 해당 월의 날짜 배열 생성
-  const calendarDays = useMemo(() => {
-    const firstDay = new Date(year, month - 1, 1);
-    const lastDay = new Date(year, month, 0);
-    const startDayOfWeek = firstDay.getDay();
-    const daysInMonth = lastDay.getDate();
-
-    const days: (number | null)[] = [];
-
-    // 이전 달 빈 칸
-    for (let i = 0; i < startDayOfWeek; i++) {
-      days.push(null);
-    }
-
-    // 현재 달 날짜
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-
-    return days;
-  }, [year, month]);
+  const calendarDays = useMemo(() => generateCalendarDays(year, month), [year, month]);
 
   // 날짜 문자열 생성 (YYYY-MM-DD)
-  const formatDateString = useCallback(
-    (day: number): string => {
-      return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    },
+  const getDateString = useCallback(
+    (day: number): string => formatDateString(year, month, day),
     [year, month]
   );
 
   // 날짜가 선택되었는지 확인
   const isSelected = useCallback(
-    (day: number): boolean => {
-      return formatDateString(day) === selectedDate;
-    },
-    [selectedDate, formatDateString]
+    (day: number): boolean => getDateString(day) === selectedDate,
+    [selectedDate, getDateString]
   );
 
   // 예약 가능한 날짜인지 확인
   const isAvailable = useCallback(
-    (day: number): boolean => {
-      return availableDates.includes(formatDateString(day));
-    },
-    [availableDates, formatDateString]
+    (day: number): boolean => availableDates.includes(getDateString(day)),
+    [availableDates, getDateString]
   );
 
   // 과거 날짜인지 확인 (오늘 이전)
   const isPast = useCallback(
-    (day: number): boolean => {
-      const dateStr = formatDateString(day);
-      return dateStr < today;
-    },
-    [formatDateString, today]
+    (day: number): boolean => getDateString(day) < today,
+    [getDateString, today]
   );
 
   // 날짜 클릭 핸들러
   const handleDateClick = (day: number) => {
     if (isPast(day) || !isAvailable(day)) return;
-    onDateSelect(formatDateString(day));
+    onDateSelect(getDateString(day));
   };
-
-  // 월을 2자리로 포맷
-  const formattedMonth = month.toString().padStart(2, '0');
 
   return (
     <div className="w-full select-none overflow-hidden rounded-[20px] bg-gray-100 px-4 pb-5">
       {/* 월 네비게이션 */}
-      <div className="flex items-center justify-center gap-4 py-4">
-        <button
-          type="button"
-          onClick={onPrevMonth}
-          className="flex size-8 cursor-pointer items-center justify-center"
-          aria-label="이전 달"
-        >
-          <ArrowLeftIcon className="size-5" />
-        </button>
-
-        <span className="text-head-2-semibold text-gray-900">
-          {year}.{formattedMonth}
-        </span>
-
-        <button
-          type="button"
-          onClick={onNextMonth}
-          className="flex size-8 cursor-pointer items-center justify-center"
-          aria-label="다음 달"
-        >
-          <ArrowRightIcon className="size-5" />
-        </button>
-      </div>
+      <CalendarNavigation
+        year={year}
+        month={month}
+        onPrevMonth={onPrevMonth}
+        onNextMonth={onNextMonth}
+      />
 
       {/* 요일 헤더 */}
       <div className="mb-2 flex items-center justify-between">
@@ -145,7 +97,7 @@ export default function ReservationCalendar({
                       type="button"
                       onClick={() => handleDateClick(day)}
                       disabled={isPast(day) || !isAvailable(day)}
-                      className={`flex size-8 items-center justify-center rounded-full text-[16px] leading-[1.4] tracking-[-0.32px] transition-colors ${
+                      className={`flex size-8 items-center justify-center rounded-full text-calendar-day transition-colors ${
                         isSelected(day)
                           ? 'bg-purple-500 text-white'
                           : isPast(day) || !isAvailable(day)

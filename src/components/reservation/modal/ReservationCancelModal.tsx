@@ -53,7 +53,7 @@ export default function ReservationCancelModal({
 
         {/* 취소 사유 */}
         <div className="flex flex-col gap-1">
-          <span className="text-head-4-medium text-gray-900">취소 사유</span>
+          <span className="text-body-2-medium text-gray-900">취소 사유</span>
           <textarea
             value={reasonInput.value}
             onChange={reasonInput.onChange}

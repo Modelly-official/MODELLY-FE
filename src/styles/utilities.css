@@ -9,6 +9,12 @@
   line-height: var(--leading-140);
 }
 
+@utility text-head-1-medium {
+  font-size: var(--text-head-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-140);
+}
+
 @utility text-head-2-semibold {
   font-size: var(--text-head-2);
   font-weight: var(--font-weight-semibold);
@@ -85,6 +91,23 @@
   font-size: var(--text-caption-2);
   font-weight: var(--font-weight-regular);
   line-height: var(--leading-150);
+}
+
+/* ========================================
+   Typography - Calendar
+   ======================================== */
+@utility text-calendar-month {
+  font-size: var(--text-head-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-140);
+  letter-spacing: -0.05em;
+}
+
+@utility text-calendar-day {
+  font-size: var(--text-head-4);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-140);
+  letter-spacing: -1.08px;
 }
 
 /* ========================================

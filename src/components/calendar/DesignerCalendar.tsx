@@ -1,8 +1,13 @@
 'use client';
 
 import { useMemo, useCallback } from 'react';
-import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
-import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
+import {
+  CalendarNavigation,
+  WEEKDAYS,
+  generateCalendarDays,
+  formatDateString,
+  getTodayString,
+} from '@/src/components/common/Calendar';
 
 interface DesignerCalendarProps {
   year: number;
@@ -14,8 +19,6 @@ interface DesignerCalendarProps {
   onNextMonth: () => void;
 }
 
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
-
 export default function DesignerCalendar({
   year,
   month,
@@ -26,68 +29,38 @@ export default function DesignerCalendar({
   onNextMonth,
 }: DesignerCalendarProps) {
   // 오늘 날짜
-  const today = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  }, []);
+  const today = useMemo(() => getTodayString(), []);
 
   // 해당 월의 날짜 배열 생성
-  const calendarDays = useMemo(() => {
-    const firstDay = new Date(year, month - 1, 1);
-    const lastDay = new Date(year, month, 0);
-    const startDayOfWeek = firstDay.getDay();
-    const daysInMonth = lastDay.getDate();
-
-    const days: (number | null)[] = [];
-
-    // 이전 달 빈 칸
-    for (let i = 0; i < startDayOfWeek; i++) {
-      days.push(null);
-    }
-
-    // 현재 달 날짜
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-
-    return days;
-  }, [year, month]);
+  const calendarDays = useMemo(() => generateCalendarDays(year, month), [year, month]);
 
   // 날짜 문자열 생성 (YYYY-MM-DD)
-  const formatDateString = useCallback(
-    (day: number): string => {
-      return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    },
+  const getDateString = useCallback(
+    (day: number): string => formatDateString(year, month, day),
     [year, month]
   );
 
   // 오늘 날짜인지 확인
   const isToday = useCallback(
-    (day: number): boolean => {
-      return formatDateString(day) === today;
-    },
-    [formatDateString, today]
+    (day: number): boolean => getDateString(day) === today,
+    [getDateString, today]
   );
 
   // 선택된 날짜인지 확인
   const isSelected = useCallback(
-    (day: number): boolean => {
-      return formatDateString(day) === selectedDate;
-    },
-    [formatDateString, selectedDate]
+    (day: number): boolean => getDateString(day) === selectedDate,
+    [getDateString, selectedDate]
   );
 
   // 예약이 있는 날짜인지 확인
   const hasReservation = useCallback(
-    (day: number): boolean => {
-      return reservationDots.includes(formatDateString(day));
-    },
-    [formatDateString, reservationDots]
+    (day: number): boolean => reservationDots.includes(getDateString(day)),
+    [getDateString, reservationDots]
   );
 
   // 날짜 클릭 핸들러
   const handleDateClick = (day: number) => {
-    const dateStr = formatDateString(day);
+    const dateStr = getDateString(day);
     // 이미 선택된 날짜를 다시 클릭하면 선택 해제 (전체 보기)
     if (dateStr === selectedDate) {
       onDateSelect(null);
@@ -99,29 +72,12 @@ export default function DesignerCalendar({
   return (
     <div className="w-full bg-white px-4">
       {/* 월 네비게이션 */}
-      <div className="flex items-center justify-center gap-1 py-4">
-        <button
-          type="button"
-          onClick={onPrevMonth}
-          className="flex size-6 items-center justify-center"
-          aria-label="이전 달"
-        >
-          <ArrowLeftIcon className="size-5 cursor-pointer text-gray-800" />
-        </button>
-
-        <span className="text-[26px] font-normal leading-[1.4] tracking-[-0.52px] text-gray-900">
-          {year}.{String(month).padStart(2, '0')}
-        </span>
-
-        <button
-          type="button"
-          onClick={onNextMonth}
-          className="flex size-6 items-center justify-center"
-          aria-label="다음 달"
-        >
-          <ArrowRightIcon className="size-5 cursor-pointer text-gray-800" />
-        </button>
-      </div>
+      <CalendarNavigation
+        year={year}
+        month={month}
+        onPrevMonth={onPrevMonth}
+        onNextMonth={onNextMonth}
+      />
 
       {/* 요일 헤더 */}
       <div className="mb-2 flex items-center justify-between">

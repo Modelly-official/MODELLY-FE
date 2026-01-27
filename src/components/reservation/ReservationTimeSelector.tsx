@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import ArrowDownIcon from '@/public/icons/common/arrow-down.svg';
+import ChevronUpIcon from '@/public/icons/reservation/chevron-up.svg';
 import type { TimeSlot } from '@/src/types';
 
 interface ReservationTimeSelectorProps {
@@ -92,9 +92,9 @@ export default function ReservationTimeSelector({
             onClick={() => setIsAmExpanded(!isAmExpanded)}
             className="flex cursor-pointer items-center justify-between"
           >
-            <span className="text-body-2-regular text-gray-900">오전</span>
-            <ArrowDownIcon
-              className={`h-[9px] w-4 transition-transform ${isAmExpanded ? 'rotate-180' : ''}`}
+            <span className="text-body-2-medium text-gray-900">오전</span>
+            <ChevronUpIcon
+              className={`size-5 transition-transform ${isAmExpanded ? '' : 'rotate-180'}`}
             />
           </button>
 
@@ -112,9 +112,9 @@ export default function ReservationTimeSelector({
             onClick={() => setIsPmExpanded(!isPmExpanded)}
             className="flex cursor-pointer items-center justify-between"
           >
-            <span className="text-body-2-regular text-gray-900">오후</span>
-            <ArrowDownIcon
-              className={`h-[9px] w-4 transition-transform ${isPmExpanded ? 'rotate-180' : ''}`}
+            <span className="text-body-2-medium text-gray-900">오후</span>
+            <ChevronUpIcon
+              className={`size-5 transition-transform ${isPmExpanded ? '' : 'rotate-180'}`}
             />
           </button>
 

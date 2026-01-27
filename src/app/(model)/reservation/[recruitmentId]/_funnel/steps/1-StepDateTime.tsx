@@ -104,7 +104,6 @@ export default function StepDateTime({
             {/* 시간 선택 (선택된 날짜가 있을 때만 표시) */}
             {selectedDate && (
               <div>
-                <h2 className="mb-4 text-head-3-semibold text-gray-900">시간 선택</h2>
                 <ReservationTimeSelector
                   timeSlots={selectedDateTimes}
                   selectedTime={selectedTime}
