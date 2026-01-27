@@ -92,20 +92,20 @@ export function useNotificationPermission(): UseNotificationPermissionReturn {
   const setDismissed = useCallback(() => {
     try {
       localStorage.setItem(NOTIFICATION_STORAGE_KEYS.PROMPT_DISMISSED, 'true');
-      setUserDismissed(true);
     } catch {
       // Private mode
     }
+    setUserDismissed(true);
   }, []);
 
   // 거부 상태 리셋 (다시 활성화)
   const resetDismissed = useCallback(() => {
     try {
       localStorage.removeItem(NOTIFICATION_STORAGE_KEYS.PROMPT_DISMISSED);
-      setUserDismissed(false);
     } catch {
       // Private mode
     }
+    setUserDismissed(false);
   }, []);
 
   // 유효 권한 상태 계산

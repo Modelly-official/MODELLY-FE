@@ -140,6 +140,7 @@ export default function NotificationSettingsPage() {
   // 모달 확인 핸들러
   const handlePermissionConfirm = async () => {
     setPermissionModalDismissed(true);
+    setTokenSaveAttempted(true); // 중복 저장 방지
     const fcmToken = await requestPermission();
     if (fcmToken) {
       saveFcmToken(fcmToken, {
