@@ -26,6 +26,7 @@ function createCurrentLocationMarkerHtml(): string {
       display: flex;
       align-items: center;
       justify-content: center;
+      pointer-events: none;
     ">
       <!-- 정확도 원 (반투명 보라색) -->
       <div class="current-location-accuracy" style="
@@ -74,7 +75,8 @@ export function createCurrentLocationMarker(
       content: createCurrentLocationMarkerHtml(),
       anchor: new naver.maps.Point(ACCURACY_CIRCLE_SIZE / 2, ACCURACY_CIRCLE_SIZE / 2),
     },
-    zIndex: 100, // 다른 마커보다 위에 표시
+    clickable: false, // 클릭 이벤트 비활성화 (샵 마커 클릭 방해 방지)
+    zIndex: 50, // 샵 마커(기본 100)보다 아래에 표시
   });
 
   return marker;
