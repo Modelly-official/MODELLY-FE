@@ -31,6 +31,9 @@ export default function CalendarBottomSheet({
   minDate,
   onMonthChange,
 }: CalendarBottomSheetProps) {
+  // 임시 선택 날짜 (확인 버튼 클릭 전까지 유지)
+  const [tempSelectedDate, setTempSelectedDate] = useState<string | null>(null);
+
   // 현재 표시 중인 년/월
   const [currentYear, setCurrentYear] = useState(() => {
     if (selectedDate) {
@@ -44,6 +47,9 @@ export default function CalendarBottomSheet({
     }
     return new Date().getMonth() + 1;
   });
+
+  // 실제 표시할 선택 날짜 (tempSelectedDate가 있으면 우선, 없으면 selectedDate)
+  const displaySelectedDate = tempSelectedDate ?? selectedDate;
 
   // 오늘 날짜
   const today = useMemo(() => getTodayString(), []);
@@ -65,8 +71,8 @@ export default function CalendarBottomSheet({
 
   // 날짜가 선택되었는지 확인
   const isSelected = useCallback(
-    (day: number): boolean => getDateString(day) === selectedDate,
-    [selectedDate, getDateString]
+    (day: number): boolean => getDateString(day) === displaySelectedDate,
+    [displaySelectedDate, getDateString]
   );
 
   // 선택 가능한 날짜인지 확인
@@ -84,10 +90,24 @@ export default function CalendarBottomSheet({
     [getDateString, minimumDate, availableDates]
   );
 
-  // 날짜 클릭 핸들러
+  // 날짜 클릭 핸들러 (임시 선택만)
   const handleDateClick = (day: number) => {
     if (!isAvailable(day)) return;
-    onDateSelect(getDateString(day));
+    setTempSelectedDate(getDateString(day));
+  };
+
+  // 확인 버튼 클릭 핸들러
+  const handleConfirm = () => {
+    if (displaySelectedDate) {
+      onDateSelect(displaySelectedDate);
+    }
+    setTempSelectedDate(null);
+    onClose();
+  };
+
+  // 바텀시트 닫을 때 임시 선택 초기화
+  const handleClose = () => {
+    setTempSelectedDate(null);
     onClose();
   };
 
@@ -117,7 +137,7 @@ export default function CalendarBottomSheet({
   }, [currentYear, currentMonth, isOpen, onMonthChange]);
 
   return (
-    <BaseBottomSheet isOpen={isOpen} onClose={onClose} title={title}>
+    <BaseBottomSheet isOpen={isOpen} onClose={handleClose} title={title}>
       <div className="w-full select-none">
         {/* 월 네비게이션 */}
         <CalendarNavigation
@@ -129,38 +149,49 @@ export default function CalendarBottomSheet({
         />
 
         {/* 요일 헤더 */}
-        <div className="mb-1 grid grid-cols-7 place-items-center">
+        <div className="mb-2 grid grid-cols-7 place-items-center">
           {WEEKDAYS.map((weekday) => (
-            <div key={weekday} className="flex size-7 items-center justify-center">
+            <div key={weekday} className="flex size-8 items-center justify-center">
               <span className="text-body-2-regular text-gray-600">{weekday}</span>
             </div>
           ))}
         </div>
 
         {/* 날짜 그리드 */}
-        <div className="grid grid-cols-7 place-items-center gap-y-0.5">
+        <div className="grid grid-cols-7 place-items-center gap-y-3">
           {calendarDays.map((day, index) => (
-            <div key={index} className="flex size-7 items-center justify-center">
+            <div key={index} className="flex size-8 items-center justify-center">
               {day !== null ? (
                 <button
                   type="button"
                   onClick={() => handleDateClick(day)}
                   disabled={!isAvailable(day)}
-                  className={`flex size-7 items-center justify-center rounded-full text-body-2-medium transition-colors ${
+                  className={`flex size-8 items-center justify-center rounded-full text-[18px] font-normal leading-140 tracking-[-1.08px] transition-colors ${
                     isSelected(day)
                       ? 'bg-purple-500 text-white'
                       : !isAvailable(day)
                         ? 'cursor-not-allowed text-gray-400'
-                        : 'cursor-pointer text-gray-900 hover:bg-gray-200'
+                        : 'cursor-pointer text-gray-950 hover:bg-gray-200'
                   }`}
                 >
                   {day}
                 </button>
               ) : (
-                <div className="size-7" />
+                <div className="size-8" />
               )}
             </div>
           ))}
+        </div>
+
+        {/* 확인 버튼 - safe area 처리 */}
+        <div className="mt-6 pb-[env(safe-area-inset-bottom)]">
+          <button
+            type="button"
+            onClick={handleConfirm}
+            className="h-[49px] w-full cursor-pointer rounded-full bg-gray-900 text-body-2-medium text-white"
+          >
+            확인
+          </button>
         </div>
       </div>
     </BaseBottomSheet>
