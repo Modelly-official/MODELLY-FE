@@ -206,7 +206,7 @@ export default function MonthCalendar({
                         }}
                         disabled={isPast(day)}
                         data-day={day}
-                        className={`flex size-8 items-center justify-center rounded-full text-[16px] leading-[1.4] tracking-[-0.32px] transition-colors ${
+                        className={`flex size-8 items-center justify-center rounded-full text-calendar-day transition-colors ${
                           isFocused(day) && isSelected(day)
                             ? 'cursor-pointer border border-purple-500 bg-gray-100 text-purple-700'
                             : isSelected(day) || isInDragRange(day)

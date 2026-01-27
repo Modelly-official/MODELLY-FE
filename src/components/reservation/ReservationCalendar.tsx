@@ -97,7 +97,7 @@ export default function ReservationCalendar({
                       type="button"
                       onClick={() => handleDateClick(day)}
                       disabled={isPast(day) || !isAvailable(day)}
-                      className={`flex size-8 items-center justify-center rounded-full text-[16px] leading-[1.4] tracking-[-0.32px] transition-colors ${
+                      className={`flex size-8 items-center justify-center rounded-full text-calendar-day transition-colors ${
                         isSelected(day)
                           ? 'bg-purple-500 text-white'
                           : isPast(day) || !isAvailable(day)

@@ -166,7 +166,7 @@ export default function CalendarBottomSheet({
                   type="button"
                   onClick={() => handleDateClick(day)}
                   disabled={!isAvailable(day)}
-                  className={`flex size-8 items-center justify-center rounded-full text-[18px] font-normal leading-140 tracking-[-1.08px] transition-colors ${
+                  className={`flex size-8 items-center justify-center rounded-full text-calendar-day transition-colors ${
                     isSelected(day)
                       ? 'bg-purple-500 text-white'
                       : !isAvailable(day)

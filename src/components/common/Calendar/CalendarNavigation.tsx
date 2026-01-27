@@ -32,7 +32,7 @@ export const CalendarNavigation = ({
           height={24}
         />
       </button>
-      <span className="min-w-[90px] text-center text-head-1-medium tracking-[-0.05em]">
+      <span className="min-w-[90px] text-center text-calendar-month">
         {year}.{formattedMonth}
       </span>
       <button
