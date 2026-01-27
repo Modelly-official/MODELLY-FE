@@ -24,6 +24,13 @@ export default function BaseBottomSheet({
   const [dragY, setDragY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
+  const dragYRef = useRef(0);
+
+  // dragY 상태와 ref를 동시에 업데이트하는 헬퍼 (stale closure 방지)
+  const updateDragY = (value: number) => {
+    dragYRef.current = value;
+    setDragY(value);
+  };
 
   // onClose ref 업데이트
   useEffect(() => {
@@ -43,18 +50,18 @@ export default function BaseBottomSheet({
     const diff = currentY - startY.current;
     // 아래로만 드래그 가능
     if (diff > 0) {
-      setDragY(diff);
+      updateDragY(diff);
     }
   };
 
   // 드래그 종료 (터치)
   const handleTouchEnd = () => {
     setIsDragging(false);
-    // 100px 이상 드래그하면 닫기
-    if (dragY > 100) {
+    // 100px 이상 드래그하면 닫기 (ref에서 최신 값 읽기)
+    if (dragYRef.current > 100) {
       onCloseRef.current();
     }
-    setDragY(0);
+    updateDragY(0);
   };
 
   // 드래그 시작 (마우스)
@@ -71,16 +78,17 @@ export default function BaseBottomSheet({
     const handleMouseMove = (e: MouseEvent) => {
       const diff = e.clientY - startY.current;
       if (diff > 0) {
-        setDragY(diff);
+        updateDragY(diff);
       }
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
-      if (dragY > 100) {
+      // ref에서 최신 값 읽기 (stale closure 방지)
+      if (dragYRef.current > 100) {
         onCloseRef.current();
       }
-      setDragY(0);
+      updateDragY(0);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -90,7 +98,7 @@ export default function BaseBottomSheet({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragY]);
+  }, [isDragging]);
 
   // 초기 포커스 + body 스크롤 방지
   useEffect(() => {

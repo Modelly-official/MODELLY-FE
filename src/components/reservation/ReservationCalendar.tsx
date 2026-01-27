@@ -28,8 +28,8 @@ export default function ReservationCalendar({
   onPrevMonth,
   onNextMonth,
 }: ReservationCalendarProps) {
-  // 오늘 날짜
-  const today = useMemo(() => getTodayString(), []);
+  // 오늘 날짜 (매 렌더마다 계산하여 자정 이후에도 정확한 날짜 반영)
+  const today = getTodayString();
 
   // 해당 월의 날짜 배열 생성
   const calendarDays = useMemo(() => generateCalendarDays(year, month), [year, month]);

@@ -51,8 +51,8 @@ export default function CalendarBottomSheet({
   // 실제 표시할 선택 날짜 (tempSelectedDate가 있으면 우선, 없으면 selectedDate)
   const displaySelectedDate = tempSelectedDate ?? selectedDate;
 
-  // 오늘 날짜
-  const today = useMemo(() => getTodayString(), []);
+  // 오늘 날짜 (매 렌더마다 계산하여 자정 이후에도 정확한 날짜 반영)
+  const today = getTodayString();
 
   // 최소 날짜 (기본값: 오늘)
   const minimumDate = minDate || today;
