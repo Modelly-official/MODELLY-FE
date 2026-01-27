@@ -64,7 +64,7 @@ export default function DesignerProfileEditPortfolio({
             type="button"
             onClick={onViewAll}
             className="flex cursor-pointer items-center justify-center text-gray-800"
-            aria-label="포트폴리오 전체보기"
+            aria-label={`${title} 전체보기`}
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>
