@@ -134,7 +134,7 @@ export const StepInput: React.FC<StepInputProps> = ({ goNext }) => {
       </div>
 
       {/* 입력 폼 */}
-      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[100px]" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[250px]" onSubmit={(e) => e.preventDefault()}>
         {/* 이름 입력 */}
         <div className="flex flex-col gap-2">
           <label className="text-body-1-medium tracking-tight text-gray-900">이름 (실명)</label>

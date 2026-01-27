@@ -64,7 +64,7 @@ export const StepNewPassword: React.FC<StepNewPasswordProps> = ({ email, goNext 
       </div>
 
       {/* 입력 폼 */}
-      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[100px]" onSubmit={(e) => e.preventDefault()}>
+      <form className="mx-4 mt-8 flex flex-1 flex-col gap-6 pb-[250px]" onSubmit={(e) => e.preventDefault()}>
         {/* 새 비밀번호 입력 */}
         <PasswordInput
           label="새로운 비밀번호"
