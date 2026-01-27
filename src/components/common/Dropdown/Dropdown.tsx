@@ -206,7 +206,7 @@ export default function Dropdown<T = string>({
           {isOpen && !disabled && (
             <>
               {/* Overlay for outside click */}
-              <div className="fixed inset-0 z-10" onClick={handleClose} aria-hidden="true" />
+              <div className="fixed inset-0 z-50" onClick={handleClose} aria-hidden="true" />
               <div
                 ref={listRef}
                 id={listboxId}
@@ -214,7 +214,7 @@ export default function Dropdown<T = string>({
                 aria-labelledby={label ? `${listboxId}-label` : undefined}
                 aria-label={ariaLabel || (!label ? placeholder : undefined)}
                 aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-                className={`absolute top-14 z-20 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-dropdown ${
+                className={`absolute top-14 z-60 w-full rounded-xl border border-solid border-gray-400 bg-white px-4 py-3.5 shadow-dropdown ${
                   maxHeight ? 'overflow-y-auto scrollbar-hide' : ''
                 }`}
                 style={maxHeight ? { maxHeight: `${maxHeight}px` } : undefined}
@@ -278,14 +278,14 @@ export default function Dropdown<T = string>({
       {isOpen && !disabled && (
         <>
           {/* Overlay for outside click */}
-          <div className="fixed inset-0 z-10" onClick={handleClose} aria-hidden="true" />
+          <div className="fixed inset-0 z-50" onClick={handleClose} aria-hidden="true" />
           <div
             ref={listRef}
             id={listboxId}
             role="listbox"
             aria-label={ariaLabel || label || placeholder}
             aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-            className={`absolute top-full right-0 z-20 mt-0.5 flex min-w-[100px] flex-col gap-1.5 overflow-hidden rounded-xl border border-gray-400 bg-white p-3 shadow-dropdown ${
+            className={`absolute top-full right-0 z-60 mt-0.5 flex min-w-[100px] flex-col gap-1.5 overflow-hidden rounded-xl border border-gray-400 bg-white p-3 shadow-dropdown ${
               maxHeight ? 'overflow-y-auto scrollbar-hide' : ''
             }`}
             style={maxHeight ? { maxHeight: `${maxHeight}px` } : undefined}

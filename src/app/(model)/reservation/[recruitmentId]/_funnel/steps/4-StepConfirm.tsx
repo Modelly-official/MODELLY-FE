@@ -115,7 +115,7 @@ export default function StepConfirm({
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col px-4 pt-1 pb-[100px]">
+      <div className="flex flex-1 flex-col px-4 pt-1 pb-[250px]">
         {/* 스텝 정보 */}
         <div className="flex flex-col gap-2">
           <p className="text-head-3 leading-140 font-normal tracking-[-0.4px] text-gray-900">4/4</p>

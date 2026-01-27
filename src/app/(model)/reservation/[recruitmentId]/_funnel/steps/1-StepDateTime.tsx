@@ -73,7 +73,7 @@ export default function StepDateTime({
       <ReservationHeader onBack={goPrev} />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col gap-6 px-4 pb-[100px]">
+      <div className="flex flex-1 flex-col gap-6 px-4 pb-[250px]">
         {/* 스텝 정보 */}
         <ReservationStepInfo
           currentStep={1}
