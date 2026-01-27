@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useRecruitments } from '@/src/hooks/queries/explore';
+import { useModelHomePopularRecruitments } from '@/src/hooks/queries/modelHome';
 import type { Category } from '@/src/types/recruitment';
 import type { RecruitmentListItem } from '@/src/types';
 import type { HomeCategory } from '@/src/types/modelHome';
@@ -14,16 +14,32 @@ export function useTopRecruitments(category: HomeCategory, options: UseTopRecrui
   const { enabled = true } = options;
   const queryCategory: Category | undefined = category === 'ALL' ? undefined : (category as Category);
 
-  const query = useRecruitments({
-    category: queryCategory,
-    sortOption: 'MOST_REVIEWS',
-    size: 10,
-    enabled,
-  });
+  const query = useModelHomePopularRecruitments(
+    {
+      category: queryCategory,
+    },
+    { enabled },
+  );
 
   const items = useMemo<RecruitmentListItem[]>(() => {
-    return query.data?.pages.flatMap((page) => page.result.items) ?? [];
-  }, [query.data?.pages]);
+    const rawItems = query.data?.result ?? [];
+    return rawItems.map((item) => ({
+      recruitmentId: item.recruitmentId,
+      title: item.recruitmentTitle,
+      designerImage: '',
+      designerName: item.designerNickname,
+      recruitmentThumbnail: '',
+      shop: item.shop,
+      shopAddress: '',
+      category: item.category,
+      subCategories: item.subCategories,
+      reviewCount: 0,
+      distance: 0,
+      isLiked: false,
+      createdAt: '',
+      averageRating: 0,
+    }));
+  }, [query.data?.result]);
 
   return {
     items,

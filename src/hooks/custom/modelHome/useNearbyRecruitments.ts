@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useEffect, useState, useCallback } from 'react';
-import { useRecruitments } from '@/src/hooks/queries/explore';
+import { useModelHomeNearbyRecruitments } from '@/src/hooks/queries/modelHome';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useToast } from '@/src/hooks/common/useToast';
 import { reverseGeocodeToDistrict } from '@/src/utils/common/locationGeocoder';
@@ -36,17 +36,20 @@ export function useNearbyRecruitments(category: HomeCategory) {
   const queryCategory: Category | undefined = category === 'ALL' ? undefined : (category as Category);
   const activeLocation = location ?? FALLBACK_LOCATION;
 
-  const query = useRecruitments({
-    category: queryCategory,
-    sortOption: 'DISTANCE',
-    userLatitude: activeLocation.latitude,
-    userLongitude: activeLocation.longitude,
-    size: 2,
-  });
+  const query = useModelHomeNearbyRecruitments(
+    {
+      category: queryCategory,
+      userLatitude: activeLocation.latitude,
+      userLongitude: activeLocation.longitude,
+    },
+    {
+      enabled: !isLocationLoading,
+    },
+  );
 
   const items = useMemo<RecruitmentListItem[]>(() => {
-    return query.data?.pages.flatMap((page) => page.result.items) ?? [];
-  }, [query.data?.pages]);
+    return query.data?.result ?? [];
+  }, [query.data?.result]);
 
   useEffect(() => {
     let cancelled = false;
@@ -109,10 +112,11 @@ export function useNearbyRecruitments(category: HomeCategory) {
 
   return {
     items,
-    isLoading: query.isLoading,
+    isLoading: isLocationLoading || query.isLoading,
     isLocationLoading,
     locationLabel: displayLocationLabel,
     showLocationCta: !location && !isLocationLoading && displayLocationLabel !== LOCATION_LOADING_LABEL,
     requestLocation: handleRequestLocation,
+    activeLocation,
   };
 }

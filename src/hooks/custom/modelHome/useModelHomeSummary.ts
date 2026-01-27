@@ -1,11 +1,10 @@
 'use client';
 
 import { useMemo, useSyncExternalStore } from 'react';
-import { useModelReservations } from '@/src/hooks/queries/reservation';
+import { useModelHomeReservations } from '@/src/hooks/queries/modelHome';
 import { useModelProfile } from '@/src/hooks/queries/mypage';
 import { getAccessToken } from '@/src/stores';
-import type { ModelReservationItem } from '@/src/types';
-import type { ReservationSummary } from '@/src/types/modelHome';
+import type { ReservationSummary, ModelHomeReservationItem } from '@/src/types/modelHome';
 import { buildReservationSummary } from '@/src/utils/modelHome/formatReservationSummary';
 
 const emptySubscribe = () => () => {};
@@ -22,18 +21,17 @@ export function useModelHomeSummary() {
   const { data: profileData, isLoading: isProfileLoading } = useModelProfile(isLoggedIn);
   const profile = profileData?.result ?? null;
 
-  const reservationsQuery = useModelReservations('UPCOMING', {}, { enabled: isLoggedIn });
-  const reservationItems = useMemo<ModelReservationItem[]>(() => {
-    return reservationsQuery.data?.pages.flatMap((page) => page.result.items) ?? [];
-  }, [reservationsQuery.data?.pages]);
+  const reservationsQuery = useModelHomeReservations({ enabled: isLoggedIn });
+  const reservationItems = useMemo<ModelHomeReservationItem[]>(() => {
+    return reservationsQuery.data?.result ?? [];
+  }, [reservationsQuery.data?.result]);
 
   const confirmedReservation = useMemo(() => {
-    const confirmedItems = reservationItems.filter((item) => item.status === 'RESERVATION_CONFIRMED');
-    if (confirmedItems.length === 0) return null;
+    if (reservationItems.length === 0) return null;
 
-    return [...confirmedItems].sort((a, b) => {
-      const aTime = new Date(`${a.date}T${a.startTime}:00`).getTime();
-      const bTime = new Date(`${b.date}T${b.startTime}:00`).getTime();
+    return [...reservationItems].sort((a, b) => {
+      const aTime = new Date(a.startDateTime).getTime();
+      const bTime = new Date(b.startDateTime).getTime();
       return aTime - bTime;
     })[0];
   }, [reservationItems]);
