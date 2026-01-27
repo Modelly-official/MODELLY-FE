@@ -28,8 +28,8 @@ export default function DesignerCalendar({
   onPrevMonth,
   onNextMonth,
 }: DesignerCalendarProps) {
-  // 오늘 날짜
-  const today = useMemo(() => getTodayString(), []);
+  // 오늘 날짜 (매 렌더마다 계산하여 자정 이후에도 정확한 날짜 반영)
+  const today = getTodayString();
 
   // 해당 월의 날짜 배열 생성
   const calendarDays = useMemo(() => generateCalendarDays(year, month), [year, month]);
@@ -102,7 +102,7 @@ export default function DesignerCalendar({
                       <button
                         type="button"
                         onClick={() => handleDateClick(day)}
-                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-body-1 leading-140 tracking-[-0.32px] transition-colors ${
+                        className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-calendar-day transition-colors ${
                           isSelected(day)
                             ? 'bg-purple-600 text-white'
                             : isToday(day)
