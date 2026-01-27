@@ -16,6 +16,7 @@ import { useModelHomeSummary } from '@/src/hooks/custom/modelHome/useModelHomeSu
 import { useNearbyRecruitments } from '@/src/hooks/custom/modelHome/useNearbyRecruitments';
 import { usePopularDesigners } from '@/src/hooks/custom/modelHome/usePopularDesigners';
 import { useTopRecruitments } from '@/src/hooks/custom/modelHome/useTopRecruitments';
+import { useToggleDesignerLike, useToggleRecruitmentLike } from '@/src/hooks/queries/likes';
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
 import LocationIcon from '@/public/icons/common/location-current.svg';
@@ -51,6 +52,8 @@ export function ModelHomeContent() {
     activeLocation,
     isLocationLoading,
   );
+  const { mutate: toggleRecruitmentLike } = useToggleRecruitmentLike();
+  const { mutate: toggleDesignerLike } = useToggleDesignerLike();
 
   const nearbySwiperRef = useRef<SwiperInstance | null>(null);
   const topSwiperRef = useRef<SwiperInstance | null>(null);
@@ -217,7 +220,11 @@ export function ModelHomeContent() {
                       <div className="flex gap-2">
                         {pair.map((item, index) => (
                           <div key={item.recruitmentId} className="flex-1">
-                            <RecruitmentCard recruitment={item} isLeftColumn={index === 0} />
+                            <RecruitmentCard
+                              recruitment={item}
+                              isLeftColumn={index === 0}
+                              onLikeToggle={() => toggleRecruitmentLike(item.recruitmentId)}
+                            />
                           </div>
                         ))}
                         {pair.length === 1 && <div className="flex-1" aria-hidden />}
@@ -286,10 +293,7 @@ export function ModelHomeContent() {
                     className="-mx-4 px-4!"
                   >
                     {topRecruitments.map((item) => (
-                      <SwiperSlide
-                        key={item.recruitmentId}
-                        className="w-[62vw]! max-[389px]:w-[241px]! sm:w-[260px]!"
-                      >
+                      <SwiperSlide key={item.recruitmentId} className="w-[62vw]! max-[389px]:w-[241px]! sm:w-[260px]!">
                         <TopRecruitmentCard recruitment={item} />
                       </SwiperSlide>
                     ))}
@@ -342,7 +346,7 @@ export function ModelHomeContent() {
                 <div className="flex flex-col">
                   {popularDesigners.map((item) => (
                     <div key={item.designerId} className="rounded-2xl bg-white px-4 py-2">
-                      <DesignerCard designer={item} />
+                      <DesignerCard designer={item} onLikeToggle={() => toggleDesignerLike(item.designerId)} />
                     </div>
                   ))}
                 </div>
