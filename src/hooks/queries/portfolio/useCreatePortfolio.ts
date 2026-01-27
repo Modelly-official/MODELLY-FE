@@ -24,12 +24,21 @@ export function useCreatePortfolio() {
     mutationFn: (request: CreatePortfolioRequest) => {
       return createPortfolio(request);
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
+      const nextThumbnail = variables.imageUrls?.[0] ?? variables.thumbnail;
+      const parsedId = Number(data?.result);
+      const isValidId = Number.isFinite(parsedId) && parsedId > 0;
+
+      if (!isValidId) {
+        queryClient.invalidateQueries({ queryKey: portfolioKeys.lists() });
+        showToast('포트폴리오가 등록되었습니다.');
+        return;
+      }
+
       queryClient.setQueriesData(
         { queryKey: portfolioKeys.lists() },
         (oldData: { pages: ApiResponse<DesignerPortfolioListResponse>[]; pageParams: unknown[] } | undefined) => {
           if (!oldData) return oldData;
-          const nextThumbnail = variables.imageUrls?.[0] ?? variables.thumbnail;
           const firstPage = oldData.pages[0];
           if (!firstPage) return oldData;
 
@@ -39,10 +48,7 @@ export function useCreatePortfolio() {
               result: {
                 ...firstPage.result,
                 items: [
-                  {
-                    portfolioId: Math.max(0, ...firstPage.result.items.map((item) => item.portfolioId)) + 1,
-                    thumbnail: nextThumbnail,
-                  },
+                  { portfolioId: parsedId, thumbnail: nextThumbnail },
                   ...firstPage.result.items,
                 ],
                 totalCount: firstPage.result.totalCount + 1,

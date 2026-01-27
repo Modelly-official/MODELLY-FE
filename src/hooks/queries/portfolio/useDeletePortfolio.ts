@@ -16,7 +16,7 @@ export function useDeletePortfolio() {
       return deletePortfolio(portfolioId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: portfolioKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: portfolioKeys.all });
       showToast('포트폴리오가 삭제되었습니다.');
     },
     onError: () => {

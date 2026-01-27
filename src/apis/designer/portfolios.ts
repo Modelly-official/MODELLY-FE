@@ -118,6 +118,13 @@ export async function uploadPortfolioImages(
 
   const { folderId, presignedUrls, thumbnailUrl } = presignedResponse.result;
 
+  if (presignedUrls.length !== files.length) {
+    throw new Error('Presigned URL 개수가 업로드 파일 수와 일치하지 않습니다.');
+  }
+  if (presignedUrls.some((u) => !u.uploadUrl || !u.imageUrl)) {
+    throw new Error('Presigned URL 응답에 누락된 필드가 있습니다.');
+  }
+
   await Promise.all(
     files.map((file, index) => uploadImageToS3(presignedUrls[index].uploadUrl, file))
   );

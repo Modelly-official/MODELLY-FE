@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
 import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
@@ -25,6 +25,35 @@ export default function DesignerProfileEditPortfolio({
   gridClassName = 'relative mt-3 grid grid-cols-3 gap-2.5',
 }: DesignerProfileEditPortfolioProps) {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
+  const [imageSources, setImageSources] = useState<string[]>(images);
+  const [imageLoaded, setImageLoaded] = useState<boolean[]>(() => images.map(() => false));
+  const retryCountsRef = useRef<Record<number, number>>({});
+
+  useEffect(() => {
+    setImageSources(images);
+    retryCountsRef.current = {};
+    setImageLoaded(images.map(() => false));
+  }, [images]);
+
+  const handleImageError = (index: number) => {
+    const retries = retryCountsRef.current[index] ?? 0;
+    if (retries >= 2) return;
+    retryCountsRef.current[index] = retries + 1;
+
+    const original = imageSources[index];
+    if (!original) return;
+    const separator = original.includes('?') ? '&' : '?';
+    const nextSrc = `${original}${separator}retry=${Date.now()}`;
+
+    setTimeout(() => {
+      setImageSources((prev) => {
+        if (!prev[index]) return prev;
+        const next = [...prev];
+        next[index] = nextSrc;
+        return next;
+      });
+    }, 600);
+  };
 
   return (
     <section className={sectionClassName}>
@@ -43,8 +72,9 @@ export default function DesignerProfileEditPortfolio({
       </div>
 
       <div className={gridClassName}>
-        {images.map((imageUrl, index) => {
+        {imageSources.map((imageUrl, index) => {
           const isMenuOpen = openMenuIndex === index;
+          const isLoaded = imageLoaded[index];
           return (
             <div key={`${imageUrl}-${index}`} className="relative overflow-visible">
               <div className="relative h-[135px] w-full overflow-hidden rounded-2xl bg-gray-200">
@@ -53,7 +83,16 @@ export default function DesignerProfileEditPortfolio({
                   alt={`포트폴리오 이미지 ${index + 1}`}
                   fill
                   sizes="33vw"
-                  className="object-cover"
+                  className={`object-cover transition-opacity ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onError={() => handleImageError(index)}
+                  onLoadingComplete={() => {
+                    setImageLoaded((prev) => {
+                      if (prev[index]) return prev;
+                      const next = [...prev];
+                      next[index] = true;
+                      return next;
+                    });
+                  }}
                 />
               </div>
 
