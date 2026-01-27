@@ -96,7 +96,7 @@ export default function StepTitleDate({ goNext, goPrev, isEdit = false }: StepTi
       </div>
 
       {/* 컨텐츠 영역 */}
-      <div className="flex-1 space-y-6 p-4 pb-[250px]">
+      <div className="flex-1 space-y-6 p-4 pb-[150px]">
         {/* TitleInput */}
         <TitleInput value={title} onChange={setTitle} />
 
