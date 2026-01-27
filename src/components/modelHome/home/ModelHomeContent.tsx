@@ -247,7 +247,7 @@ export function ModelHomeContent() {
                   </SwiperSlide>
                 </Swiper>
                 <p className="text-body-2-medium absolute inset-0 flex h-[341px] items-center justify-center px-4 text-gray-600">
-                  표시할 모집글이 없습니다.
+                  내 주위에 모집글이 없습니다.
                 </p>
               </div>
             )}
