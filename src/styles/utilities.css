@@ -9,6 +9,12 @@
   line-height: var(--leading-140);
 }
 
+@utility text-head-1-medium {
+  font-size: var(--text-head-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-140);
+}
+
 @utility text-head-2-semibold {
   font-size: var(--text-head-2);
   font-weight: var(--font-weight-semibold);
