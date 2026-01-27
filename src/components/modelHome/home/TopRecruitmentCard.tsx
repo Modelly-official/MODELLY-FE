@@ -20,7 +20,7 @@ export function TopRecruitmentCard({ recruitment }: TopRecruitmentCardProps) {
             src={recruitment.recruitmentThumbnail}
             alt={recruitment.title}
             fill
-            sizes="70vw"
+            sizes="(max-width: 389px) 241px, (max-width: 640px) 62vw, 260px"
             className="object-cover"
           />
         ) : (

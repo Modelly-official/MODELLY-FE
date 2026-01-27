@@ -267,14 +267,17 @@ export function ModelHomeContent() {
             <div className="mt-2">
               {isTopLoading ? (
                 <div className="flex gap-2 px-4">
-                  <div className="animate-skeleton aspect-260/286 w-[clamp(200px,62vw,640px)] shrink-0 rounded-2xl bg-gray-200" />
-                  <div className="animate-skeleton aspect-260/286 w-[clamp(200px,62vw,640px)] shrink-0 rounded-2xl bg-gray-200" />
+                  <div className="animate-skeleton aspect-260/286 w-[62vw] shrink-0 rounded-2xl bg-gray-200 max-[389px]:w-[241px] sm:w-[260px]" />
+                  <div className="animate-skeleton aspect-260/286 w-[62vw] shrink-0 rounded-2xl bg-gray-200 max-[389px]:w-[241px] sm:w-[260px]" />
                 </div>
               ) : topRecruitments.length > 0 ? (
                 <>
                   <Swiper key={topCategory} spaceBetween={8} slidesPerView="auto" className="-mx-4 px-4!">
                     {topRecruitments.map((item) => (
-                      <SwiperSlide key={item.recruitmentId} className="w-[clamp(200px,62vw,640px)]!">
+                      <SwiperSlide
+                        key={item.recruitmentId}
+                        className="w-[62vw]! max-[389px]:w-[241px]! sm:w-[260px]!"
+                      >
                         <TopRecruitmentCard recruitment={item} />
                       </SwiperSlide>
                     ))}
@@ -283,7 +286,7 @@ export function ModelHomeContent() {
               ) : (
                 <div className="px-4">
                   <div className="flex items-center justify-center">
-                    <div className="flex aspect-260/286 w-[clamp(200px,62vw,640px)] items-center justify-center">
+                    <div className="flex aspect-260/286 w-[62vw] items-center justify-center max-[389px]:w-[241px] sm:w-[260px]">
                       <p className="text-body-2-medium text-gray-600">표시할 모집글이 없습니다.</p>
                     </div>
                   </div>
