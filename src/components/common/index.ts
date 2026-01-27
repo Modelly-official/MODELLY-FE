@@ -7,6 +7,9 @@ export { default as Toast } from './Toast';
 // Badge Components
 export { default as CategoryBadge, getCategoryLabel } from './CategoryBadge';
 
+// Pagination Components
+export { default as PaginationDots } from './PaginationDots';
+
 // Input Components
 export { TextInput, PasswordInput } from './Input';
 
@@ -24,4 +27,3 @@ export { Skeleton } from './Skeleton';
 
 // Toggle Components
 export { Toggle } from './Toggle';
-

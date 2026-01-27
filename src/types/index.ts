@@ -33,6 +33,9 @@ export * from './designerHome';
 // MyPage types
 export * from './mypage';
 
+// Portfolio types
+export * from './portfolio';
+
 // Likes types
 export * from './likes';
 

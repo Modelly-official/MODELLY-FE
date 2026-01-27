@@ -13,11 +13,15 @@ import { useDeleteModal } from '@/src/hooks/custom/myRecruitment';
 import { useDeleteRecruitment } from '@/src/hooks/queries/myRecruitment';
 import { useUpdateMyDesignerProfile } from '@/src/hooks/queries/profile';
 import type { DesignerProfileInfo, DesignerRecruitmentCard } from '@/src/types/profile';
+import type { DesignerPortfolioListItem } from '@/src/types/portfolio';
 
 interface DesignerProfileEditViewProps {
   profile: DesignerProfileInfo;
   openRecruitments: DesignerRecruitmentCard[];
-  portfolioImages: string[];
+  portfolioImages?: string[];
+  portfolioItems?: DesignerPortfolioListItem[];
+  onPortfolioEdit?: (portfolioId: number) => void;
+  onPortfolioDelete?: (portfolioId: number) => void;
   onBack?: () => void;
 }
 
@@ -33,7 +37,10 @@ interface DesignerProfileEditFormState {
 export default function DesignerProfileEditView({
   profile,
   openRecruitments,
-  portfolioImages,
+  portfolioImages = [],
+  portfolioItems,
+  onPortfolioEdit,
+  onPortfolioDelete,
   onBack,
 }: DesignerProfileEditViewProps) {
   const router = useRouter();
@@ -153,6 +160,10 @@ export default function DesignerProfileEditView({
     return `${form.profileImageUrl}${separator}v=${profileImageVersion}`;
   })();
 
+  const resolvedPortfolioImages = portfolioItems?.length
+    ? portfolioItems.map((item) => item.thumbnail)
+    : portfolioImages;
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
       <DesignerProfileEditHero
@@ -255,7 +266,28 @@ export default function DesignerProfileEditView({
       </section>
 
       <section className="px-4 pt-6 pb-[calc(24px+env(safe-area-inset-bottom))]">
-        <DesignerProfileEditPortfolio images={portfolioImages} />
+        <DesignerProfileEditPortfolio
+          images={resolvedPortfolioImages}
+          onViewAll={() => router.push('/mypage/portfolio')}
+          onEditImage={
+            portfolioItems && onPortfolioEdit
+              ? (index) => {
+                  const selected = portfolioItems[index];
+                  if (!selected) return;
+                  onPortfolioEdit(selected.portfolioId);
+                }
+              : undefined
+          }
+          onDeleteImage={
+            portfolioItems && onPortfolioDelete
+              ? (index) => {
+                  const selected = portfolioItems[index];
+                  if (!selected) return;
+                  onPortfolioDelete(selected.portfolioId);
+                }
+              : undefined
+          }
+        />
       </section>
 
       <ConfirmModal

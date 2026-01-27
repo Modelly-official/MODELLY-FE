@@ -4,6 +4,7 @@ export * from './explore';
 export * from './likes';
 export * from './map';
 export * from './myRecruitment';
+export * from './portfolio';
 export * from './chat';
 export * from './notification';
 export * from './profile';

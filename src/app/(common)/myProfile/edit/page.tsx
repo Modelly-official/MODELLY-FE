@@ -1,16 +1,29 @@
 'use client';
 
+import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import DesignerProfileEditView from '@/src/components/designerProfile/edit/DesignerProfileEditView';
 import DesignerProfileSkeleton from '@/src/components/designerProfile/DesignerProfileSkeleton';
 import { useAuthReady } from '@/src/hooks/custom/mypage';
 import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
-import { mockPortfolioImages } from '@/src/mocks/profile/designerProfile';
+import { useDeletePortfolio, useDesignerPortfolios } from '@/src/hooks/queries/portfolio';
 
 export default function DesignerProfileEditPage() {
+  const router = useRouter();
   const { authReady, isLoggedIn } = useAuthReady();
   const { data, isLoading, isError } = useMyDesignerProfile({
     enabled: authReady && isLoggedIn,
   });
+  const { data: portfolioData } = useDesignerPortfolios({
+    size: 12,
+    enabled: authReady && isLoggedIn,
+  });
+  const { mutate: deletePortfolio } = useDeletePortfolio();
+
+  const portfolioItems = useMemo(
+    () => portfolioData?.pages?.[0]?.result.items ?? [],
+    [portfolioData]
+  );
 
   if (!authReady || isLoading) {
     return <DesignerProfileSkeleton />;
@@ -28,7 +41,9 @@ export default function DesignerProfileEditPage() {
     <DesignerProfileEditView
       profile={data.result.profile}
       openRecruitments={data.result.openRecruitments}
-      portfolioImages={mockPortfolioImages}
+      portfolioItems={portfolioItems}
+      onPortfolioEdit={(portfolioId) => router.push(`/mypage/portfolio/${portfolioId}/edit`)}
+      onPortfolioDelete={(portfolioId) => deletePortfolio(portfolioId)}
     />
   );
 }
