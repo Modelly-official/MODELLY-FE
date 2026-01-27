@@ -105,7 +105,7 @@
 
 @utility text-calendar-day {
   font-size: var(--text-head-4);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-140);
   letter-spacing: -1.08px;
 }
