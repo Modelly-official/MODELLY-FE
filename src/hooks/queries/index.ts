@@ -12,3 +12,4 @@ export * from './review';
 export * from './calendar';
 export * from './designerHome';
 export * from './mypage';
+export * from './modelHome';
