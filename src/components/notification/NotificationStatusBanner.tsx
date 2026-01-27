@@ -31,7 +31,7 @@ export default function NotificationStatusBanner({
         <button
           type="button"
           onClick={onResetDismissed}
-          className="text-caption-1-medium text-purple-500 mt-2 underline"
+          className="text-caption-1-medium text-purple-500 mt-2 underline cursor-pointer"
         >
           다시 활성화
         </button>
