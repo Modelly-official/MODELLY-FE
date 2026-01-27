@@ -30,13 +30,13 @@ export default function BaseBottomSheet({
     onCloseRef.current = onClose;
   }, [onClose]);
 
-  // 드래그 시작
+  // 드래그 시작 (터치)
   const handleTouchStart = (e: React.TouchEvent) => {
     startY.current = e.touches[0].clientY;
     setIsDragging(true);
   };
 
-  // 드래그 중
+  // 드래그 중 (터치)
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
     const currentY = e.touches[0].clientY;
@@ -47,7 +47,7 @@ export default function BaseBottomSheet({
     }
   };
 
-  // 드래그 종료
+  // 드래그 종료 (터치)
   const handleTouchEnd = () => {
     setIsDragging(false);
     // 100px 이상 드래그하면 닫기
@@ -56,6 +56,41 @@ export default function BaseBottomSheet({
     }
     setDragY(0);
   };
+
+  // 드래그 시작 (마우스)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    startY.current = e.clientY;
+    setIsDragging(true);
+  };
+
+  // 마우스 드래그 이벤트 (document 레벨)
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const diff = e.clientY - startY.current;
+      if (diff > 0) {
+        setDragY(diff);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      if (dragY > 100) {
+        onCloseRef.current();
+      }
+      setDragY(0);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragY]);
 
   // 초기 포커스 + body 스크롤 방지
   useEffect(() => {
@@ -139,12 +174,13 @@ export default function BaseBottomSheet({
         >
           {/* 핸들 바 - 드래그 영역 */}
           <div
-            className="mb-3 flex cursor-grab justify-center py-2 active:cursor-grabbing"
+            className="mb-3 flex cursor-grab justify-center py-2 select-none active:cursor-grabbing"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
           >
-            <div className="h-1.5 w-14 rounded-full bg-gray-400" />
+            <div className="pointer-events-none h-1.5 w-14 rounded-full bg-gray-400" />
           </div>
 
           {/* 타이틀 */}
