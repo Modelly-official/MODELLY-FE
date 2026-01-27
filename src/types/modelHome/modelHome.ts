@@ -29,6 +29,7 @@ export interface ModelHomePopularRecruitmentItem {
   designerNickname: string;
   shop: string;
   recruitmentTitle: string;
+  thumbnailUrl?: string;
   category: Category;
   subCategories: string[];
 }

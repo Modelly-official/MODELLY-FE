@@ -236,7 +236,7 @@ export function ModelHomeContent() {
             ) : (
               <div className="relative mt-5.5">
                 <Swiper spaceBetween={12} slidesPerView={1} className="w-full">
-                  <SwiperSlide className="!w-full">
+                  <SwiperSlide className="w-full!">
                     <div className="invisible flex w-full gap-2">
                       {[0, 1].map((index) => (
                         <div key={`nearby-empty-${index}`} className="flex-1">

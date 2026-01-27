@@ -28,7 +28,7 @@ export function useTopRecruitments(category: HomeCategory, options: UseTopRecrui
       title: item.recruitmentTitle,
       designerImage: '',
       designerName: item.designerNickname,
-      recruitmentThumbnail: '',
+      recruitmentThumbnail: item.thumbnailUrl ?? '',
       shop: item.shop,
       shopAddress: '',
       category: item.category,
