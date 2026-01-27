@@ -43,3 +43,15 @@ export const ROLE_FALLBACK_NAMES = {
   model: '모델',
   designer: '디자이너',
 } as const;
+
+/** 탈퇴 모달 텍스트 */
+export const WITHDRAW_MODAL = {
+  title: '정말 탈퇴하시겠습니까?',
+  notices: [
+    '탈퇴일 포함 5일 동안 재가입이 불가하며,\n재가입 시에도 이용 내역은 복구되지 않습니다.',
+    '탈퇴 고객의 개인 정보는 개인정보 관련 법령에\n따라, 일정 기간 안전하게 보관되며 그 이후에\n자동 파기됩니다.',
+  ],
+  checkboxLabel: '유의사항을 확인했습니다',
+  cancelButton: '취소',
+  confirmButton: '탈퇴하기',
+} as const;
