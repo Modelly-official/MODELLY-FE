@@ -5,14 +5,15 @@ import { useModelHomeNearbyRecruitments } from '@/src/hooks/queries/modelHome';
 import { useUserLocation } from '@/src/hooks/custom/useUserLocation';
 import { useToast } from '@/src/hooks/common/useToast';
 import { reverseGeocodeToDistrict } from '@/src/utils/common/locationGeocoder';
+import { MAP_DEFAULTS } from '@/src/constants/map';
 import type { Category } from '@/src/types/recruitment';
 import type { RecruitmentListItem } from '@/src/types';
 import type { HomeCategory } from '@/src/types/modelHome';
 
 const FALLBACK_LOCATION = {
-  label: '강남구 논현동',
-  latitude: 37.5112,
-  longitude: 127.0284,
+  label: '마포구 서교동',
+  latitude: MAP_DEFAULTS.CENTER.lat,
+  longitude: MAP_DEFAULTS.CENTER.lng,
 };
 const LOCATION_LOADING_LABEL = '위치 확인 중';
 
