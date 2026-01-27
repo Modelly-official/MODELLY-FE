@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useId } from 'react';
+import { useEffect, useRef, useId, useState } from 'react';
 
 interface BaseBottomSheetProps {
   isOpen: boolean;
@@ -20,10 +20,42 @@ export default function BaseBottomSheet({
   const onCloseRef = useRef(onClose);
   const titleId = useId();
 
+  // 드래그 상태
+  const [dragY, setDragY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startY = useRef(0);
+
   // onClose ref 업데이트
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+
+  // 드래그 시작
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startY.current = e.touches[0].clientY;
+    setIsDragging(true);
+  };
+
+  // 드래그 중
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - startY.current;
+    // 아래로만 드래그 가능
+    if (diff > 0) {
+      setDragY(diff);
+    }
+  };
+
+  // 드래그 종료
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    // 100px 이상 드래그하면 닫기
+    if (dragY > 100) {
+      onCloseRef.current();
+    }
+    setDragY(0);
+  };
 
   // 초기 포커스 + body 스크롤 방지
   useEffect(() => {
@@ -101,11 +133,17 @@ export default function BaseBottomSheet({
           role="dialog"
           aria-modal="true"
           aria-labelledby={title ? titleId : undefined}
-          className="w-full animate-slide-up rounded-t-[20px] bg-white px-4 pb-6 pt-3"
+          className={`w-full rounded-t-[20px] bg-white px-4 pb-6 pt-3 ${isDragging ? '' : 'animate-slide-up'}`}
+          style={{ transform: `translateY(${dragY}px)` }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* 핸들 바 */}
-          <div className="mb-3 flex justify-center">
+          {/* 핸들 바 - 드래그 영역 */}
+          <div
+            className="mb-3 flex cursor-grab justify-center py-2 active:cursor-grabbing"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="h-1.5 w-14 rounded-full bg-gray-400" />
           </div>
 
