@@ -69,7 +69,8 @@ export default function Dropdown<T = string>({
 
     setIsOpen(true);
     const selectedIndex = options.findIndex((opt) => opt.value === value);
-    setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0);
+    // 선택된 값이 없으면 focusedIndex를 -1로 유지 (첫 번째 옵션 자동 포커스 방지)
+    setFocusedIndex(selectedIndex >= 0 ? selectedIndex : -1);
 
     // 선택된 항목으로 스크롤
     if (scrollToSelected) {
