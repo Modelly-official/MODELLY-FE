@@ -22,7 +22,7 @@ export function useTopRecruitments(category: HomeCategory, options: UseTopRecrui
   );
 
   const items = useMemo<RecruitmentListItem[]>(() => {
-    const rawItems = query.data?.result ?? [];
+    const rawItems = (query.data?.result ?? []).slice(0, 5);
     return rawItems.map((item) => ({
       recruitmentId: item.recruitmentId,
       title: item.recruitmentTitle,

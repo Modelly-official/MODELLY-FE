@@ -31,8 +31,8 @@ export function ModelHomeContent() {
   const [topCategory, setTopCategory] = useState<HomeCategory>('ALL');
   const [designerCategory, setDesignerCategory] = useState<HomeCategory>('HAIR');
   const [nearbyActiveIndex, setNearbyActiveIndex] = useState(0);
-  const categoryIndicators: HomeCategory[] = ['ALL', 'HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
   const designerCategories: HomeCategory[] = ['HAIR', 'NAIL', 'TATTOO', 'EYELASH'];
+  const [topActiveIndex, setTopActiveIndex] = useState(0);
 
   const { authReady, isLoggedIn, isSummaryLoading, modelName, profileImageUrl, reservationSummary, hasReservation } =
     useModelHomeSummary();
@@ -53,6 +53,7 @@ export function ModelHomeContent() {
   );
 
   const nearbySwiperRef = useRef<SwiperInstance | null>(null);
+  const topSwiperRef = useRef<SwiperInstance | null>(null);
 
   const nearbySlides = useMemo(() => {
     const slides: Array<RecruitmentListItem[]> = [];
@@ -67,6 +68,14 @@ export function ModelHomeContent() {
     setNearbyActiveIndex(0);
     if (nearbySwiperRef.current) {
       nearbySwiperRef.current.slideTo(0, 0);
+    }
+  };
+
+  const handleTopCategoryChange = (category: HomeCategory) => {
+    setTopCategory(category);
+    setTopActiveIndex(0);
+    if (topSwiperRef.current) {
+      topSwiperRef.current.slideTo(0, 0);
     }
   };
 
@@ -220,7 +229,7 @@ export function ModelHomeContent() {
             ) : (
               <div className="relative mt-5.5">
                 <Swiper spaceBetween={12} slidesPerView={1} className="w-full">
-                  <SwiperSlide className="w-full!">
+                  <SwiperSlide className="!w-full">
                     <div className="invisible flex w-full gap-2">
                       {[0, 1].map((index) => (
                         <div key={`nearby-empty-${index}`} className="flex-1">
@@ -235,19 +244,15 @@ export function ModelHomeContent() {
                 </p>
               </div>
             )}
-            <div className="mt-5 flex items-center justify-center gap-1.5">
-              {nearbySlides.length > 0
-                ? nearbySlides.map((_, index) => (
-                    <span
-                      key={`nearby-indicator-${index}`}
-                      className={`h-1.5 rounded-full ${
-                        nearbyActiveIndex === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
-                      }`}
-                    />
-                  ))
-                : Array.from({ length: 5 }).map((_, index) => (
-                    <span key={`nearby-indicator-empty-${index}`} className="h-1.5 w-1.5 rounded-full bg-gray-400" />
-                  ))}
+            <div className="mt-5 flex min-h-1.5 items-center justify-center gap-1.5">
+              {nearbySlides.map((_, index) => (
+                <span
+                  key={`nearby-indicator-${index}`}
+                  className={`h-1.5 rounded-full ${
+                    nearbyActiveIndex === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
+                  }`}
+                />
+              ))}
             </div>
           </section>
 
@@ -258,9 +263,7 @@ export function ModelHomeContent() {
               <div className="-mx-4 mt-1">
                 <ChatCategoryChips
                   selectedCategory={topCategory}
-                  onChange={(category) => {
-                    setTopCategory(category as HomeCategory);
-                  }}
+                  onChange={(category) => handleTopCategoryChange(category as HomeCategory)}
                 />
               </div>
             </div>
@@ -272,7 +275,16 @@ export function ModelHomeContent() {
                 </div>
               ) : topRecruitments.length > 0 ? (
                 <>
-                  <Swiper key={topCategory} spaceBetween={8} slidesPerView="auto" className="-mx-4 px-4!">
+                  <Swiper
+                    spaceBetween={8}
+                    slidesPerView="auto"
+                    onSlideChange={(swiper) => setTopActiveIndex(swiper.activeIndex)}
+                    onSwiper={(swiper) => {
+                      topSwiperRef.current = swiper;
+                      setTopActiveIndex(0);
+                    }}
+                    className="-mx-4 px-4!"
+                  >
                     {topRecruitments.map((item) => (
                       <SwiperSlide
                         key={item.recruitmentId}
@@ -292,12 +304,12 @@ export function ModelHomeContent() {
                   </div>
                 </div>
               )}
-              <div className="mt-5 flex items-center justify-center gap-1.5">
-                {categoryIndicators.map((category) => (
+              <div className="mt-5 flex min-h-1.5 items-center justify-center gap-1.5">
+                {topRecruitments.map((item, index) => (
                   <span
-                    key={category}
+                    key={item.recruitmentId}
                     className={`h-1.5 rounded-full ${
-                      topCategory === category ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
+                      topActiveIndex === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-400'
                     }`}
                   />
                 ))}
