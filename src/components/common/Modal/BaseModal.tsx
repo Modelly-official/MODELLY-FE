@@ -117,7 +117,7 @@ export default function BaseModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
-        className="relative w-[311px] rounded-[20px] border border-gray-400 bg-white px-5 pt-4 pb-6"
+        className="relative w-[311px] rounded-[20px] bg-white px-5 pt-4 pb-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 영역 */}

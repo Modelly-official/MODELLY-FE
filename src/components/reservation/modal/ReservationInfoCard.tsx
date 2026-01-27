@@ -12,10 +12,10 @@ interface ReservationInfoCardProps {
 
 export default function ReservationInfoCard({ modelName, date, startTime }: ReservationInfoCardProps) {
   return (
-    <div className="border-gray-40 flex w-full flex-col items-center justify-center rounded-[20px] border px-12 py-[23px]">
+    <div className="flex w-full flex-col items-center justify-center rounded-[20px] border border-gray-400 px-12 py-[23px]">
       <div className="flex flex-col items-center gap-1">
         {/* 모델명 */}
-        <p className="text-head-4-medium text-gray-90">
+        <p className="text-head-4-medium text-gray-900">
           {modelName} <span>님</span>
         </p>
 
