@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, ReactNode } from 'react';
+import { useCallback, useEffect, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { MessagePayload } from 'firebase/messaging';
 import { useQueryClient } from '@tanstack/react-query';
@@ -8,7 +8,7 @@ import { useFCM } from '@/src/hooks/custom';
 import { useSaveFcmToken, notificationKeys } from '@/src/hooks/queries';
 import { getAccessToken } from '@/src/stores';
 import { NOTIFICATION_STORAGE_KEYS } from '@/src/constants/notification';
-import NotificationBanner from '@/src/components/common/NotificationBanner';
+import { showNotificationToast } from '@/src/components/common/NotificationToast';
 
 /** sessionStorage에서 토큰 등록 상태 조회 */
 function getTokenRegistered(): boolean {
@@ -36,21 +36,13 @@ interface FCMProviderProps {
   children: ReactNode;
 }
 
-interface NotificationState {
-  title: string;
-  body: string;
-  targetId?: string;
-  notificationType?: string;
-}
-
 /**
  * FCM 포그라운드 메시지 수신 Provider
  * - 앱이 포그라운드일 때 푸시 알림 수신
- * - 클릭 가능한 알림 배너로 표시
+ * - Sonner 토스트로 누적 표시
  * - 로그인 + 권한 granted 시 자동 FCM 토큰 등록
  */
 export function FCMProvider({ children }: FCMProviderProps) {
-  const [notification, setNotification] = useState<NotificationState | null>(null);
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
@@ -71,7 +63,8 @@ export function FCMProvider({ children }: FCMProviderProps) {
         return;
       }
 
-      setNotification({
+      // Sonner 토스트로 알림 표시 (누적 가능)
+      showNotificationToast({
         title,
         body,
         targetId: data?.targetId,
@@ -83,11 +76,6 @@ export function FCMProvider({ children }: FCMProviderProps) {
     },
     [queryClient, pathname]
   );
-
-  /** 알림 배너 닫기 */
-  const handleClose = useCallback(() => {
-    setNotification(null);
-  }, []);
 
   // FCM 훅 사용 (포그라운드 메시지 리스너 등록)
   const { permission, requestPermission } = useFCM(handleMessage);
@@ -124,18 +112,5 @@ export function FCMProvider({ children }: FCMProviderProps) {
     autoRegisterToken();
   }, [permission, requestPermission, saveFcmToken]);
 
-  return (
-    <>
-      {children}
-      {notification && (
-        <NotificationBanner
-          title={notification.title}
-          body={notification.body}
-          targetId={notification.targetId}
-          notificationType={notification.notificationType}
-          onClose={handleClose}
-        />
-      )}
-    </>
-  );
+  return <>{children}</>;
 }
