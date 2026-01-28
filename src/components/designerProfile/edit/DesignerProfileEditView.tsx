@@ -170,7 +170,7 @@ export default function DesignerProfileEditView({
         profileImageUrl={resolvedProfileImageUrl}
         nickname={form.nickname}
         onBack={handleBack}
-        onEditImage={handleEditImage}
+        onEditImage={isEditing ? handleEditImage : undefined}
       />
       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
 

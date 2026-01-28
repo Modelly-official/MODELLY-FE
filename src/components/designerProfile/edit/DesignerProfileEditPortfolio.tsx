@@ -96,7 +96,6 @@ export default function DesignerProfileEditPortfolio({
                     }}
                   />
                 </div>
-
                 <KebabMenu
                   isOpen={isMenuOpen}
                   onOpenChange={(open) => setOpenMenuIndex(open ? index : null)}
