@@ -251,7 +251,7 @@ export default function Dropdown<T = string>({
   }
 
   // Inline variant
-  const sizeClasses = size === 'lg' ? 'text-head-1-semibold' : 'text-body-2-medium';
+  const sizeClasses = size === 'lg' ? 'text-head-1-medium tracking-[-0.96px]' : 'text-body-2-medium';
 
   return (
     <div className="relative">
