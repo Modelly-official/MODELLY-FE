@@ -65,7 +65,7 @@ export const formatChatDateLabel = (value?: string): string => {
   const day = String(date.getDate()).padStart(2, '0');
   const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()] ?? '';
 
-  return `${year}. ${month}. ${day}(${weekday})`;
+  return `${year}. ${month}. ${day} (${weekday})`;
 };
 
 /**
