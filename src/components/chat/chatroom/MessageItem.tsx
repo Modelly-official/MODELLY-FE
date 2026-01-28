@@ -97,7 +97,7 @@ export default function MessageItem({
         )}
         {(showTime || status) && (
           <div className="mt-0.5 flex items-center gap-2 text-gray-600">
-            {showUnread && <span className="text-[11px] font-medium leading-[1.5]">안읽음</span>}
+            {showUnread && <span className="text-caption-2 leading-[1.5] font-medium">안읽음</span>}
             {showTime && <span className="text-caption-1-medium">{message.time}</span>}
           </div>
         )}

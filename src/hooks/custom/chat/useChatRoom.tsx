@@ -11,7 +11,7 @@ import {
   mapApiMessage,
   mapStompMessage,
   formatMessageDateKey,
-  formatMessageTime,
+  formatChatRoomTime,
 } from '@/src/utils/chat/messageConverter';
 import { parseUserIdFromToken } from '@/src/utils/auth/token';
 import type { ChatOpponent, Message, SendChatMessagePayload, StompIncomingChatPayload } from '@/src/types/chat';
@@ -260,7 +260,7 @@ export default function useChatRoom(roomId?: string | number) {
       fromMe: true,
       messageType: 'TEXT',
       text,
-      time: formatMessageTime(now),
+      time: formatChatRoomTime(now),
       dateKey: formatMessageDateKey(now),
       read: false,
       pending: true,
@@ -313,7 +313,7 @@ export default function useChatRoom(roomId?: string | number) {
         fromMe: true,
         messageType: 'IMAGE',
         text: '',
-        time: formatMessageTime(now),
+        time: formatChatRoomTime(now),
         dateKey: formatMessageDateKey(now),
         read: false,
         imageUrls: [objectUrl],

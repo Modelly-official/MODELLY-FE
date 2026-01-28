@@ -26,7 +26,7 @@ export default function ChatReservationSummaryCard({
 }: ChatReservationSummaryCardProps) {
   const router = useRouter();
   const title = reservation.recruitmentTitle || `${reservation.modelName}님`;
-  const timeLabel = formatTimeWithPeriod(reservation.startTime).replace(' ', '');
+  const timeLabel = formatTimeWithPeriod(reservation.startTime);
   const { monthDay, weekday } = getDateBadge(reservation.date);
   const canOpenRecruitment = reservation.recruitmentId != null;
   const normalizedRole = viewerRole?.toLowerCase();
