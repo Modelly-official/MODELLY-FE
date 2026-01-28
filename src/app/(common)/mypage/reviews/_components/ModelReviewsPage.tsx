@@ -130,6 +130,7 @@ export default function ModelReviewsPage() {
             <Dropdown<number>
               variant="inline"
               size="lg"
+              align="left"
               ariaLabel="연도 선택"
               options={yearOptions.map((year) => ({ value: year, label: String(year) }))}
               value={selectedYear}
