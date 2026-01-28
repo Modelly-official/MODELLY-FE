@@ -44,7 +44,7 @@ export default function ChatReservationSummaryCard({
     <div className="flex flex-col gap-4 bg-white">
       <div className="flex items-center gap-3">
         <div className="flex h-14 w-14 flex-col items-center justify-center rounded-[10px] bg-purple-200 text-purple-700">
-          <span className="text-body-1-medium leading-none tracking-tight">{monthDay}</span>
+          <span className="text-body-2-medium leading-none tracking-tight">{monthDay}</span>
           <span className="text-body-2-medium mt-1 leading-none font-medium">{weekday}</span>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
