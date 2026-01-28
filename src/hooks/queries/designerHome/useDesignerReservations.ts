@@ -8,6 +8,7 @@ import {
 } from '@/src/apis/designer';
 import { useToast } from '@/src/hooks/common/useToast';
 import { calendarKeys } from '@/src/hooks/queries/calendar';
+import { myRecruitmentKeys } from '@/src/hooks/queries/myRecruitment';
 import type { ApiResponse } from '@/src/types';
 import type {
   TodayReservationsResult,
@@ -83,6 +84,7 @@ export function useConfirmReservation() {
       queryClient.invalidateQueries({ queryKey: designerReservationKeys.all });
       queryClient.invalidateQueries({ queryKey: designerReservationKeys.detail(reservationId) });
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: myRecruitmentKeys.lists() });
     },
     onError: () => {
       showToast('예약 확정에 실패했습니다.');
@@ -104,6 +106,7 @@ export function useRejectReservation() {
       queryClient.invalidateQueries({ queryKey: designerReservationKeys.all });
       queryClient.invalidateQueries({ queryKey: designerReservationKeys.detail(reservationId) });
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: myRecruitmentKeys.lists() });
       showToast('예약이 거절되었습니다.');
     },
     onError: () => {
