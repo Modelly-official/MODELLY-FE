@@ -11,9 +11,11 @@ import { RecruitmentTabs, type RecruitmentTabType } from '@/src/components/myRec
 import { ConfirmModal } from '@/src/components/common';
 import { useDesignerRecruitments, useDeleteRecruitment } from '@/src/hooks/queries/myRecruitment';
 import { useMonthNavigation, useDeleteModal } from '@/src/hooks/custom/myRecruitment';
+import { useToast } from '@/src/hooks/common/useToast';
 
 export default function MyRecruitmentPage() {
   const router = useRouter();
+  const { showToast } = useToast();
 
   // 탭 상태
   const [activeTab, setActiveTab] = useState<RecruitmentTabType>('active');
@@ -90,9 +92,35 @@ export default function MyRecruitmentPage() {
     router.push(`/myRecruitment/${id}`);
   };
 
+  // 공고 찾기 헬퍼
+  const findRecruitment = (id: number) => activeRecruitments.find((r) => r.recruitmentId === id);
+
   // 수정 핸들러
   const handleEdit = (id: number) => {
+    const recruitment = findRecruitment(id);
+    if (recruitment && !recruitment.canModify) {
+      if (recruitment.hasPendingReservation) {
+        showToast('대기 중인 예약이 있어 수정이 불가합니다.');
+      } else if (recruitment.hasConfirmedReservation) {
+        showToast('확정된 예약이 있어 수정이 불가합니다.');
+      }
+      return;
+    }
     router.push(`/myRecruitment/${id}/edit`);
+  };
+
+  // 삭제 모달 열기 핸들러
+  const handleDeleteClick = (id: number) => {
+    const recruitment = findRecruitment(id);
+    if (recruitment && !recruitment.canModify) {
+      if (recruitment.hasPendingReservation) {
+        showToast('대기 중인 예약이 있어 삭제가 불가합니다.');
+      } else if (recruitment.hasConfirmedReservation) {
+        showToast('확정된 예약이 있어 삭제가 불가합니다.');
+      }
+      return;
+    }
+    openModal(id);
   };
 
   // 삭제 핸들러
@@ -137,7 +165,7 @@ export default function MyRecruitmentPage() {
               <RecruitmentList
                 recruitments={activeRecruitments}
                 onEdit={handleEdit}
-                onDelete={openModal}
+                onDelete={handleDeleteClick}
                 onClick={handleCardClick}
                 onLoadMore={fetchActiveNextPage}
                 hasMore={hasActiveNextPage}
