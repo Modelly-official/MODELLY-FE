@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import type { UnreviewedReservation } from '@/src/types';
 import { categoryCodeToName, subCategoryCodeToName } from '@/src/utils/myRecruitment';
 import { formatDateToKorean, formatTimeToKorean } from '@/src/utils/common';
@@ -45,19 +46,12 @@ export default function UnreviewedCard({
     <div className="flex w-full flex-col gap-5 rounded-[20px] bg-white px-5 py-4">
       {/* 카테고리 뱃지 */}
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           {/* 메인 카테고리 뱃지 */}
-          <span className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
-            {categoryLabel}
-          </span>
+          <CategoryBadge label={categoryLabel} variant="filled" />
           {/* 서브카테고리 뱃지 */}
           {subCategoryLabels.map((label) => (
-            <span
-              key={label}
-              className="text-caption-1-medium rounded-lg bg-purple-200 px-2 py-1 text-purple-700"
-            >
-              {label}
-            </span>
+            <CategoryBadge key={label} label={label} />
           ))}
         </div>
 

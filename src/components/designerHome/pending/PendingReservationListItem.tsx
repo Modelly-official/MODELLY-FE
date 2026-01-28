@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import type { PendingReservationItem } from '@/src/types/designerHome';
 
 // ===== 요일 배열 =====
@@ -29,7 +30,7 @@ interface PendingReservationListItemProps {
 }
 
 export function PendingReservationListItem({ item }: PendingReservationListItemProps) {
-  const category = item.subCategories?.[0] ?? '기타';
+  const categories = item.subCategories ?? [];
   const formattedDate = formatDateWithDay(item.date);
   const formattedTime = formatTimeWithAmPm(item.time);
 
@@ -40,10 +41,14 @@ export function PendingReservationListItem({ item }: PendingReservationListItemP
     >
       {/* 카테고리 뱃지 + 공고 제목 */}
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center">
-          <span className="rounded-lg bg-purple-600 px-2 py-1 text-caption-1-medium text-white">
-            {category}
-          </span>
+        <div className="flex flex-wrap gap-1">
+          {categories.length > 0 ? (
+            categories.map((cat) => (
+              <CategoryBadge key={cat} label={cat} variant="filled" />
+            ))
+          ) : (
+            <CategoryBadge label="기타" variant="filled" />
+          )}
         </div>
         <p className="text-head-4-semibold text-gray-900">{item.recruitmentTitle}</p>
       </div>
