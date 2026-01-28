@@ -11,7 +11,7 @@ interface NotificationRouteParams {
  * 알림 타입과 사용자 역할을 기반으로 이동할 URL 결정
  * - 채팅 알림: /chat/{targetId}
  * - 예약 알림: 디자이너 → /reservations/{targetId}, 모델 → /mypage/reservations
- * - 일정 알림: 리마인더 → /mypage/reservations, 변경/취소 → /chat/{targetId}
+ * - 일정 알림: 리마인더 → / (홈), 변경/취소 → /chat/{targetId}
  * - 리뷰 알림: /mypage/reviews
  */
 export function getNotificationTargetUrl({
@@ -39,15 +39,15 @@ export function getNotificationTargetUrl({
 
   // 일정 알림: title로 리마인더 vs 변경/취소 구분
   if (type === '일정 알림') {
-    // 리마인더 알림이면 예약 목록으로
+    // 리마인더 알림 → 홈으로 이동
     if (title.includes('리마인더') || title.includes('예정')) {
-      return '/mypage/reservations';
+      return '/';
     }
     // 일정 변경/취소 알림이면 채팅방으로
     if (id) {
       return `/chat/${id}`;
     }
-    return '/mypage/reservations';
+    return '/';
   }
 
   // 그 외 (리뷰 알림 등)
