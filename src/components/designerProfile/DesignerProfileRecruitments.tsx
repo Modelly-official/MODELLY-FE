@@ -49,15 +49,13 @@ export default function DesignerProfileRecruitments({
               </div>
               <div className="flex flex-1 flex-col gap-1 py-[3.5px]">
                 <div className="flex flex-wrap gap-1">
-                  {recruitment.subCategories
-                    .slice(0, 2)
-                    .map((subCategory) =>
-                      isCategoryCode(subCategory) ? (
-                        <CategoryBadge key={subCategory} category={subCategory} />
-                      ) : (
-                        <CategoryBadge key={subCategory} label={subCategory} />
-                      ),
-                    )}
+                  {recruitment.subCategories.map((subCategory) =>
+                    isCategoryCode(subCategory) ? (
+                      <CategoryBadge key={subCategory} category={subCategory} />
+                    ) : (
+                      <CategoryBadge key={subCategory} label={subCategory} />
+                    ),
+                  )}
                 </div>
                 <p className="text-body-2-medium line-clamp-2 text-gray-900">{recruitment.title}</p>
                 <div className="flex items-center gap-1 pt-1 text-gray-900">

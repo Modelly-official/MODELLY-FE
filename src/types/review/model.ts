@@ -28,7 +28,7 @@ export interface WrittenReviewItem {
   designerName: string;
   shop?: string;
   shopAddress?: string;
-  summary?: string; // 카테고리 요약 (예: "파마", "염색", "커트")
+  summary?: string; // 카테고리 요약 (예: "파마, 염색, 커트")
   createdAt: string;
 }
 

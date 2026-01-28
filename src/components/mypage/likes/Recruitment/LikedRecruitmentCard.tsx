@@ -98,7 +98,7 @@ export default function LikedRecruitmentCard({
         {/* 서비스 태그 */}
         {recruitment.subCategories && recruitment.subCategories.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {recruitment.subCategories.slice(0, 2).map((subCategory) => (
+            {recruitment.subCategories.map((subCategory) => (
               <CategoryBadge key={subCategory} category={subCategory} />
             ))}
           </div>

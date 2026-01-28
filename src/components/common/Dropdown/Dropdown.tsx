@@ -54,6 +54,7 @@ export default function Dropdown<T = string>({
   scrollToSelected = false,
   maxHeight,
   align = 'right',
+  multiple = false,
   ariaLabel,
   buttonClassName,
 }: DropdownProps<T>) {
@@ -156,13 +157,38 @@ export default function Dropdown<T = string>({
   const handleSelect = useCallback(
     (optionValue: T) => {
       onChange(optionValue);
-      handleClose();
-      buttonRef.current?.focus();
+      if (!multiple) {
+        handleClose();
+        buttonRef.current?.focus();
+      }
     },
-    [onChange, handleClose],
+    [onChange, handleClose, multiple],
   );
 
   const selectedOption = options.find((opt) => opt.value === value);
+
+  // 다중 선택 모드 표시 텍스트
+  const getDisplayText = (): string => {
+    if (multiple && Array.isArray(value)) {
+      if (value.length === 0) return placeholder;
+      const labels = value
+        .map((v) => options.find((opt) => opt.value === v)?.label)
+        .filter(Boolean);
+      return labels.join(', ');
+    }
+    return selectedOption ? selectedOption.label : placeholder;
+  };
+
+  // 옵션 선택 여부 확인
+  const isOptionSelected = (optionValue: T): boolean => {
+    if (multiple && Array.isArray(value)) {
+      return value.includes(optionValue);
+    }
+    return value === optionValue;
+  };
+
+  // 값이 있는지 확인
+  const hasValue = multiple && Array.isArray(value) ? value.length > 0 : !!selectedOption;
 
   // Form variant
   if (variant === 'form') {
@@ -198,10 +224,10 @@ export default function Dropdown<T = string>({
               }`
             }
           >
-            <span className={`text-body-2-medium !text-[16px] ${selectedOption ? 'text-gray-900' : 'text-gray-600'}`}>
-              {selectedOption ? selectedOption.label : placeholder}
+            <span className={`truncate text-body-2-medium !text-[16px] ${hasValue ? 'text-gray-900' : 'text-gray-600'}`}>
+              {getDisplayText()}
             </span>
-            <ChevronDownIcon className={`h-5 w-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDownIcon className={`h-5 w-5 shrink-0 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {/* 드롭다운 옵션 목록 */}
@@ -223,7 +249,7 @@ export default function Dropdown<T = string>({
               >
                 <div className="flex flex-col gap-3">
                   {options.map((option, index) => {
-                    const isSelected = value === option.value;
+                    const isSelected = isOptionSelected(option.value);
                     const isFocused = focusedIndex === index;
                     return (
                       <button
@@ -237,7 +263,7 @@ export default function Dropdown<T = string>({
                         onMouseEnter={() => setFocusedIndex(index)}
                         className={getOptionClassName('form', isFocused)}
                       >
-                        <span className={getFormOptionTextClassName(isSelected, !!value)}>{option.label}</span>
+                        <span className={getFormOptionTextClassName(isSelected, hasValue)}>{option.label}</span>
                         {isSelected && <CheckIcon />}
                       </button>
                     );
@@ -273,8 +299,8 @@ export default function Dropdown<T = string>({
           }`
         }
       >
-        {selectedOption ? selectedOption.label : placeholder}
-        <ArrowDownIcon className={`size-5 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="truncate">{getDisplayText()}</span>
+        <ArrowDownIcon className={`size-5 shrink-0 text-gray-900 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && !disabled && (
@@ -293,7 +319,7 @@ export default function Dropdown<T = string>({
             style={maxHeight ? { maxHeight: `${maxHeight}px` } : undefined}
           >
             {options.map((option, index) => {
-              const isSelected = value === option.value;
+              const isSelected = isOptionSelected(option.value);
               const isFocused = focusedIndex === index;
               return (
                 <button

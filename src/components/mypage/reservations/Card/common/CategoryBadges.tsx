@@ -1,5 +1,6 @@
 'use client';
 
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import { subCategoryCodeToName, categoryCodeToName } from '@/src/utils/myRecruitment';
 
 type StatusBadgeType = 'pending' | 'completed' | null;
@@ -23,25 +24,18 @@ export default function CategoryBadges({
   const categoryLabel =
     categoryCodeToName(category as 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH') ?? category;
 
-  const subCategoryLabels = subCategories.map((code) =>
-    subCategoryCodeToName(category, code)
-  );
+  const subCategoryLabels = subCategories
+    .map((code) => subCategoryCodeToName(category, code))
+    .filter((label): label is string => label !== undefined);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex flex-wrap items-center gap-1">
       {/* 메인 카테고리 뱃지 */}
-      <span className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
-        {categoryLabel}
-      </span>
+      <CategoryBadge label={categoryLabel} variant="filled" />
 
       {/* 서브카테고리 뱃지 */}
-      {subCategoryLabels.map((label) => (
-        <span
-          key={label}
-          className="text-caption-1-medium rounded-lg bg-purple-200 px-2 py-1 text-purple-700"
-        >
-          {label}
-        </span>
+      {subCategoryLabels.map((label, index) => (
+        <CategoryBadge key={`${label}-${index}`} label={label} />
       ))}
 
       {/* 상태 뱃지 */}

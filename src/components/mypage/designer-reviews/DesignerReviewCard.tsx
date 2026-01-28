@@ -4,6 +4,7 @@ import Image from 'next/image';
 import PinIcon from '@/public/icons/common/check-circle.svg';
 import StarDisplay from '@/src/components/common/StarDisplay';
 import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import type { DesignerReviewItem } from '@/src/types';
 
 interface DesignerReviewCardProps {
@@ -124,10 +125,10 @@ export default function DesignerReviewCard({
 
         {/* 카테고리 배지 */}
         {review.summary && (
-          <div className="flex gap-1">
-            <span className="rounded-lg bg-purple-200 px-2 py-1 text-caption-1-medium text-purple-700">
-              {review.summary}
-            </span>
+          <div className="flex flex-wrap gap-1">
+            {review.summary.split(', ').map((category) => (
+              <CategoryBadge key={category} label={category} />
+            ))}
           </div>
         )}
       </div>

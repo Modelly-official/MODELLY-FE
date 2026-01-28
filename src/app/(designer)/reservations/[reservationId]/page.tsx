@@ -125,7 +125,7 @@ export default function ReservationDetailPage() {
         {/* 카테고리 배지 + 공고 제목 */}
         <div className="mb-4 flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            {[reservation.category, ...reservation.subCategories].map((cat) => (
+            {reservation.subCategories.map((cat) => (
               <span key={cat} className="text-caption-1-medium rounded-lg bg-purple-600 px-2 py-1 text-white">
                 {cat}
               </span>

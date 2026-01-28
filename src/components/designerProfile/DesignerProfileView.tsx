@@ -83,7 +83,7 @@ export default function DesignerProfileView({
       date: item.createdDate.replace(/-/g, '.'),
       content: item.content,
       images: item.reviewImages ?? [],
-      category: item.summary,
+      summary: item.summary,
       isFixed: item.isFixed,
     }));
   }, [designerReviewsQuery.data?.pages, isOwnerProfile, reviewListQuery.data?.result?.items]);

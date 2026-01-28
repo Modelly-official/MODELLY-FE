@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import CategoryBadge from '@/src/components/common/CategoryBadge';
 import type { DesignerReservationItem, ReservationListType, ReservationInfo } from '@/src/types';
 import { formatDateToKorean, formatTimeToKorean } from '@/src/utils/common';
 import {
@@ -78,14 +79,9 @@ export default function DesignerReservationCard({
       {/* 콘텐츠 */}
       <div className="flex flex-col gap-2">
         {/* 서브카테고리 뱃지 */}
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           {reservation.subCategories.map((label) => (
-            <span
-              key={label}
-              className="text-caption-1-medium rounded-lg bg-purple-200 px-2 py-1 text-purple-700"
-            >
-              {label}
-            </span>
+            <CategoryBadge key={label} label={label} />
           ))}
         </div>
 

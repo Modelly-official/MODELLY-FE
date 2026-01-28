@@ -52,10 +52,12 @@ export function convertDetailToFormState(
   const categoryCode = categoryNameToCode(detail.category);
 
   // 서브카테고리 변환 (한글 -> 코드, 카테고리별로 다름)
-  const subCategoryName = detail.subCategories?.[0];
-  let subCategoryCode: string | null = null;
-  if (subCategoryName && categoryCode) {
-    subCategoryCode = subCategoryNameToCode(categoryCode, subCategoryName);
+  const subCategoryCodes: string[] = [];
+  if (categoryCode && detail.subCategories?.length) {
+    detail.subCategories.forEach((name) => {
+      const code = subCategoryNameToCode(categoryCode, name);
+      if (code) subCategoryCodes.push(code);
+    });
   }
 
   return {
@@ -65,7 +67,7 @@ export function convertDetailToFormState(
     applyTimesToAll: false,
     content: detail.content,
     category: categoryCode,
-    subCategory: subCategoryCode,
+    subCategories: subCategoryCodes,
     restrictions: detail.restriction, // 유의사항
     notice: detail.notice, // 전달 사항
     purpose,

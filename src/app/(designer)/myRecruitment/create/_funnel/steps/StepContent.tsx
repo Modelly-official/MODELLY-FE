@@ -28,8 +28,8 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
   const {
     content,
     setContent,
-    subCategory,
-    setSubCategory,
+    subCategories,
+    toggleSubCategory,
     restrictions,
     setRestrictions,
     notice,
@@ -89,7 +89,7 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
 
   // 등록 버튼 활성화 조건
   const isSubmitButtonEnabled = isStep2Valid(
-    { content, subCategory, restrictions, notice, imageFiles, imagePreviewUrls, purpose, purposeDetail },
+    { content, subCategories, restrictions, notice, imageFiles, imagePreviewUrls, purpose, purposeDetail },
     { isEditMode: isEdit },
   );
 
@@ -119,10 +119,11 @@ export default function StepContent({ goNext, goPrev, isSubmitting = false, isEd
         <Dropdown
           label="카테고리"
           required
+          multiple
           placeholder="시술 카테고리를 선택해주세요"
           options={subCategoryOptions}
-          value={subCategory}
-          onChange={setSubCategory}
+          value={subCategories}
+          onChange={toggleSubCategory}
         />
 
         {/* 제한 사항 */}

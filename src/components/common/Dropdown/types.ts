@@ -6,7 +6,7 @@ export interface DropdownOption<T = string> {
 export interface DropdownProps<T = string> {
   // 필수 Props
   options: DropdownOption<T>[];
-  value: T | null;
+  value: T | null | T[]; // multiple일 때 T[]
   onChange: (value: T) => void;
   placeholder?: string;
 
@@ -21,6 +21,7 @@ export interface DropdownProps<T = string> {
   scrollToSelected?: boolean;
   maxHeight?: number;
   align?: 'left' | 'right';
+  multiple?: boolean; // 다중 선택 모드
 
   // 접근성
   ariaLabel?: string;
