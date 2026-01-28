@@ -13,14 +13,3 @@ export const PERMISSION_MESSAGES = {
   browser_denied_web: '브라우저 설정에서 알림을 허용해주세요.',
   app_dismissed: '알림이 비활성화되어 있습니다.',
 } as const;
-
-/**
- * 알림 타입별 기본 라우팅 경로
- * - 채팅 알림: /chat/{targetId}
- * - 리뷰 알림: /mypage/reviews
- * - 예약/일정 알림: NotificationToast에서 역할/title 기반 상세 로직 처리
- */
-export const NOTIFICATION_ROUTES: Record<string, string> = {
-  '채팅 알림': 'chat',
-  '리뷰 알림': '/mypage/reviews',
-};

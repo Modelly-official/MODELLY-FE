@@ -58,8 +58,8 @@ export function FCMProvider({ children }: FCMProviderProps) {
       const isInSameChatRoom = pathname === `/chat/${data?.targetId}`;
 
       if (isChatNotification && isInSameChatRoom) {
-        // 읽지 않은 알림 개수만 갱신
-        queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
+        // 알림 쿼리 갱신 (unread + list)
+        queryClient.invalidateQueries({ queryKey: notificationKeys.all });
         return;
       }
 
@@ -71,8 +71,8 @@ export function FCMProvider({ children }: FCMProviderProps) {
         notificationType: data?.notificationType,
       });
 
-      // 읽지 않은 알림 개수 갱신
-      queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
+      // 알림 쿼리 갱신 (unread + list)
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     },
     [queryClient, pathname]
   );
