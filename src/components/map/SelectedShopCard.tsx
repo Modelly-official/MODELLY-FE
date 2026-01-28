@@ -276,9 +276,9 @@ export default function SelectedShopCard({
         <div className="flex flex-col gap-1">
           {/* 카테고리 배지 + 버튼 */}
           <div className="flex items-center justify-between px-4">
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               <CategoryBadge category={shop.category} variant="filled" />
-              {firstRecruitment?.subCategories.slice(0, 1).map((subCategory) => (
+              {firstRecruitment?.subCategories.map((subCategory) => (
                 <CategoryBadge key={subCategory} category={subCategory} />
               ))}
               {recruitmentCount > 1 && (

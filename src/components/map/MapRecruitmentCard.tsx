@@ -88,7 +88,7 @@ export default function MapRecruitmentCard({
 
           {/* 서비스 태그 */}
           <div className="flex flex-wrap gap-1">
-            {recruitment.subCategories.slice(0, 2).map((subCategory) => (
+            {recruitment.subCategories.map((subCategory) => (
               <CategoryBadge key={subCategory} category={subCategory} />
             ))}
           </div>
