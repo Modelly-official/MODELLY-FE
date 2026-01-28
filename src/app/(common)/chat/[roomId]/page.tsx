@@ -220,7 +220,7 @@ export default function ChatRoom() {
               className="text-body-2-medium flex cursor-pointer items-center gap-2 text-gray-800"
             >
               <span>예약 내역</span>
-              <DropDownArrowIcon className="h-[9px] w-4 scale-[0.9] rotate-180 text-gray-800" />
+              <DropDownArrowIcon className="h-5 w-5 rotate-180 text-gray-800" />
             </button>
           </div>
           {confirmedReservationInfo ? (
@@ -253,7 +253,11 @@ export default function ChatRoom() {
           setIsReservationOpen((prev) => !prev);
         }}
       />
-      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto overscroll-y-contain px-4 py-3" onScroll={handleScroll}>
+      <main
+        ref={containerRef}
+        className="scrollbar-hide flex-1 overflow-auto overscroll-y-contain px-4 py-3"
+        onScroll={handleScroll}
+      >
         <ul className="space-y-3">
           {messages.map((m, idx) => {
             const next = messages[idx + 1];
@@ -329,11 +333,7 @@ export default function ChatRoom() {
           />
         </>
       )}
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setModalDismissed(true)}
-        callbackUrl={callbackUrl}
-      />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setModalDismissed(true)} callbackUrl={callbackUrl} />
     </div>
   );
 }

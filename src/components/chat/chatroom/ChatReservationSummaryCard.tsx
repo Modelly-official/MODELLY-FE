@@ -59,7 +59,7 @@ export default function ChatReservationSummaryCard({
             aria-label={canOpenRecruitment ? '공고 상세로 이동' : undefined}
           >
             <span className="text-body-1-medium truncate text-gray-900">{title}</span>
-            <ArrowRightIcon className="h-4 w-4 shrink-0 scale-[0.7] text-gray-800" />
+            <ArrowRightIcon className="h-5 w-5 shrink-0 text-gray-800" />
           </button>
           <span className="text-body-2-medium text-gray-700">{timeLabel}</span>
         </div>
