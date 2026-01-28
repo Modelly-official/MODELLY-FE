@@ -53,9 +53,12 @@ export default function DesignerReviewCard({ review }: DesignerReviewCardProps) 
       <p className="text-body-2-regular whitespace-pre-line text-gray-900">{review.content}</p>
       {review.summary && (
         <div className="flex flex-wrap gap-1">
-          {review.summary.split(', ').map((category) => (
-            <CategoryBadge key={category} label={category} />
-          ))}
+          {review.summary
+            .split(', ')
+            .filter((category) => category.trim())
+            .map((category, index) => (
+              <CategoryBadge key={`${category}-${index}`} label={category} />
+            ))}
         </div>
       )}
     </div>

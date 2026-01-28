@@ -24,9 +24,9 @@ export default function CategoryBadges({
   const categoryLabel =
     categoryCodeToName(category as 'HAIR' | 'NAIL' | 'TATTOO' | 'EYELASH') ?? category;
 
-  const subCategoryLabels = subCategories.map((code) =>
-    subCategoryCodeToName(category, code)
-  );
+  const subCategoryLabels = subCategories
+    .map((code) => subCategoryCodeToName(category, code))
+    .filter((label): label is string => label !== undefined);
 
   return (
     <div className="flex flex-wrap items-center gap-1">
@@ -34,8 +34,8 @@ export default function CategoryBadges({
       <CategoryBadge label={categoryLabel} variant="filled" />
 
       {/* 서브카테고리 뱃지 */}
-      {subCategoryLabels.map((label) => (
-        <CategoryBadge key={label} label={label} />
+      {subCategoryLabels.map((label, index) => (
+        <CategoryBadge key={`${label}-${index}`} label={label} />
       ))}
 
       {/* 상태 뱃지 */}

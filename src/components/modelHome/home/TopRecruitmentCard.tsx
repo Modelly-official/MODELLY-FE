@@ -10,7 +10,7 @@ interface TopRecruitmentCardProps {
 }
 
 export function TopRecruitmentCard({ recruitment }: TopRecruitmentCardProps) {
-  const chipItems = [recruitment.category, ...recruitment.subCategories];
+  const chipItems = [recruitment.category, ...(recruitment.subCategories ?? [])];
 
   return (
     <Link href={`/post/${recruitment.recruitmentId}`} className="block">

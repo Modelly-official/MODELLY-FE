@@ -50,8 +50,8 @@ export default function UnreviewedCard({
           {/* 메인 카테고리 뱃지 */}
           <CategoryBadge label={categoryLabel} variant="filled" />
           {/* 서브카테고리 뱃지 */}
-          {subCategoryLabels.map((label) => (
-            <CategoryBadge key={label} label={label} />
+          {subCategoryLabels.map((label, index) => (
+            <CategoryBadge key={`${label}-${index}`} label={label} />
           ))}
         </div>
 
