@@ -106,6 +106,7 @@ export default function StepDateTime({
               <div>
                 <ReservationTimeSelector
                   timeSlots={selectedDateTimes}
+                  selectedDate={selectedDate}
                   selectedTime={selectedTime}
                   onTimeSelect={handleTimeSelect}
                 />

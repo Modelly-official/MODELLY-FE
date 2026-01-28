@@ -24,3 +24,14 @@ export const getTodayString = (): string => {
   const now = new Date();
   return formatDateString(now.getFullYear(), now.getMonth() + 1, now.getDate());
 };
+
+/** 현재 시간 문자열 반환 (HH:mm) */
+export const getCurrentTimeString = (): string => {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+};
+
+/** 특정 날짜가 오늘인지 확인 */
+export const isToday = (date: string): boolean => {
+  return date === getTodayString();
+};

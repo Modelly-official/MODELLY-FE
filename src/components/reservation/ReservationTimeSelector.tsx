@@ -2,21 +2,28 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import ChevronUpIcon from '@/public/icons/reservation/chevron-up.svg';
+import { isToday, getCurrentTimeString } from '@/src/components/common/Calendar/calendarUtils';
 import type { TimeSlot } from '@/src/types';
 
 interface ReservationTimeSelectorProps {
   timeSlots: TimeSlot[]; // API에서 받아온 시간대 목록
+  selectedDate: string; // 선택된 날짜 (YYYY-MM-DD)
   selectedTime: string | null;
   onTimeSelect: (time: string) => void;
 }
 
 export default function ReservationTimeSelector({
   timeSlots,
+  selectedDate,
   selectedTime,
   onTimeSelect,
 }: ReservationTimeSelectorProps) {
   const [isAmExpanded, setIsAmExpanded] = useState(true);
   const [isPmExpanded, setIsPmExpanded] = useState(true);
+
+  // 매 슬롯마다 Date 생성하지 않도록 컴포넌트 레벨에서 계산
+  const isTodaySelected = isToday(selectedDate);
+  const currentTime = isTodaySelected ? getCurrentTimeString() : '';
 
   // 오전/오후 시간대 분리
   const { amSlots, pmSlots } = useMemo(() => {
@@ -45,14 +52,16 @@ export default function ReservationTimeSelector({
 
   // 시간 클릭 핸들러
   const handleTimeClick = (slot: TimeSlot) => {
-    if (slot.isReserved) return;
+    const isPastTime = isTodaySelected && slot.startTime <= currentTime;
+    if (slot.isReserved || isPastTime) return;
     onTimeSelect(slot.startTime);
   };
 
   // 시간 버튼 렌더링
   const renderTimeButton = (slot: TimeSlot) => {
     const selected = isSelected(slot.startTime);
-    const disabled = slot.isReserved;
+    const isPastTime = isTodaySelected && slot.startTime <= currentTime;
+    const disabled = slot.isReserved || isPastTime;
 
     return (
       <button
@@ -76,8 +85,12 @@ export default function ReservationTimeSelector({
   // 시간대가 없는 경우
   if (timeSlots.length === 0) {
     return (
-      <div className="flex h-20 items-center justify-center">
-        <p className="text-body-2-regular text-gray-500">해당 날짜에 예약 가능한 시간이 없습니다.</p>
+      <div className="flex min-h-20 items-center justify-center px-4">
+        <p className="text-center text-body-2-regular text-gray-500">
+          {isTodaySelected
+            ? '오늘은 예약 가능한 시간이 모두 지났습니다. 다른 날짜를 선택해 주세요.'
+            : '해당 날짜에 예약 가능한 시간이 없습니다.'}
+        </p>
       </div>
     );
   }

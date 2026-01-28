@@ -9,6 +9,7 @@ import ReservationInfoCard from './ReservationInfoCard';
 import { formatDateToShort } from '@/src/utils/common';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 import { useAvailableSchedules } from '@/src/hooks/queries/reservation';
+import { isToday, getCurrentTimeString } from '@/src/components/common/Calendar/calendarUtils';
 import type { ReservationInfo, ReservationChangeRequest, AvailableTimeSlot } from '@/src/types/reservation';
 
 interface ReservationChangeModalProps {
@@ -59,8 +60,16 @@ export default function ReservationChangeModal({
     if (!selectedDate) return [];
     const schedule = availableSchedules.find((item) => item.date === selectedDate);
     if (!schedule) return [];
+
+    const isTodaySelected = isToday(selectedDate);
+    const currentTime = isTodaySelected ? getCurrentTimeString() : '';
+
     return schedule.times
-      .filter((slot) => !slot.isReserved)
+      .filter((slot) => {
+        if (slot.isReserved) return false;
+        if (isTodaySelected && slot.startTime <= currentTime) return false;
+        return true;
+      })
       .map((slot) => ({ value: slot.startTime, label: slot.startTime }));
   }, [availableSchedules, selectedDate]);
 
@@ -176,7 +185,11 @@ export default function ReservationChangeModal({
                     </button>
                   ))
                 ) : (
-                  <div className="text-body-2-medium px-4 py-3 text-gray-600">선택 가능한 시간이 없습니다.</div>
+                  <div className="text-body-2-medium px-4 py-3 text-gray-600">
+                    {isToday(selectedDate)
+                      ? '오늘은 예약 가능한 시간이 모두 지났습니다.'
+                      : '선택 가능한 시간이 없습니다.'}
+                  </div>
                 )}
               </div>
             )}
