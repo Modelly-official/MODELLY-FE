@@ -85,8 +85,12 @@ export default function ReservationTimeSelector({
   // 시간대가 없는 경우
   if (timeSlots.length === 0) {
     return (
-      <div className="flex h-20 items-center justify-center">
-        <p className="text-body-2-regular text-gray-500">해당 날짜에 예약 가능한 시간이 없습니다.</p>
+      <div className="flex min-h-20 items-center justify-center px-4">
+        <p className="text-center text-body-2-regular text-gray-500">
+          {isTodaySelected
+            ? '오늘은 예약 가능한 시간이 모두 지났습니다. 다른 날짜를 선택해 주세요.'
+            : '해당 날짜에 예약 가능한 시간이 없습니다.'}
+        </p>
       </div>
     );
   }

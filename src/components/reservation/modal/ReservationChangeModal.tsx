@@ -185,7 +185,11 @@ export default function ReservationChangeModal({
                     </button>
                   ))
                 ) : (
-                  <div className="text-body-2-medium px-4 py-3 text-gray-600">선택 가능한 시간이 없습니다.</div>
+                  <div className="text-body-2-medium px-4 py-3 text-gray-600">
+                    {isToday(selectedDate)
+                      ? '오늘은 예약 가능한 시간이 모두 지났습니다.'
+                      : '선택 가능한 시간이 없습니다.'}
+                  </div>
                 )}
               </div>
             )}
