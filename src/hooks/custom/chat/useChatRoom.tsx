@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import type { StompSubscription } from '@stomp/stompjs';
 import { getChatMessages } from '@/src/apis/chat/chat';
 import { publishMessage, publishRead, subscribeRoom } from '@/src/utils/chat';
@@ -38,9 +39,11 @@ export default function useChatRoom(roomId?: string | number) {
   const subscriptionRef = useRef<StompSubscription | null>(null);
   const lastMessageIdRef = useRef<string | number | null>(null);
   const lastReadSentRef = useRef<number | null>(null);
+  const lastSummaryRefetchAtRef = useRef<number>(0);
   const pendingTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingQueueRef = useRef<{ id: string; payload: SendChatMessagePayload }[]>([]);
+  const queryClient = useQueryClient();
 
   const { sendImage: sendImageInternal, sendingImage } = useChatImage({
     roomId,
@@ -184,6 +187,20 @@ export default function useChatRoom(roomId?: string | number) {
       }
       const mapped = mapStompMessage(payload, effectiveUserId);
       if (!mapped) return;
+      const roomIdNumber = typeof roomId === 'string' ? Number(roomId) : roomId;
+      if (roomIdNumber != null && !Number.isNaN(roomIdNumber)) {
+        const now = Date.now();
+        if (now - lastSummaryRefetchAtRef.current > 1500) {
+          lastSummaryRefetchAtRef.current = now;
+          queryClient.invalidateQueries({
+            predicate: (query) =>
+              Array.isArray(query.queryKey) &&
+              query.queryKey[0] === 'reservation' &&
+              query.queryKey[1] === 'chatSummary' &&
+              query.queryKey[2] === roomIdNumber,
+          });
+        }
+      }
       setMessages((prev) => {
         // 서버 에코로 동일 id가 올 때 중복 추가 방지
         if (prev.some((m) => m.id === mapped.id)) return prev;
@@ -232,7 +249,7 @@ export default function useChatRoom(roomId?: string | number) {
       subscriptionRef.current?.unsubscribe();
       subscriptionRef.current = null;
     };
-  }, [roomId, effectiveUserId, stompConnected, clientRef]);
+  }, [roomId, effectiveUserId, stompConnected, clientRef, queryClient]);
 
   useEffect(() => {
     const timeouts = pendingTimeoutsRef.current;

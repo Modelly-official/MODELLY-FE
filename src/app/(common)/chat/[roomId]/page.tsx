@@ -99,10 +99,10 @@ export default function ChatRoom() {
   const { data: fetchedReservationInfo } = useChatReservationSummary({
     roomId: validRoomId ?? null,
     role: userRole,
-    enabled: !queryReservationInfo && isLoggedIn,
+    enabled: isLoggedIn && !!validRoomId,
   });
 
-  const reservationInfo = queryReservationInfo ?? fetchedReservationInfo ?? null;
+  const reservationInfo = fetchedReservationInfo ?? queryReservationInfo ?? null;
   const isConfirmedReservation =
     !reservationInfo?.status ||
     reservationInfo.status === 'RESERVATION_CONFIRMED' ||
