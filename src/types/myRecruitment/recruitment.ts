@@ -47,6 +47,9 @@ export interface MyRecruitmentListItem {
   averageRating: number;
   thumbnail?: string;
   subCategory?: string[]; // 서브카테고리 배열 (예: ["커트"])
+  hasPendingReservation: boolean; // 대기 중인 예약 존재 여부
+  hasConfirmedReservation: boolean; // 진행 예정인 확정 예약 존재 여부
+  canModify: boolean; // 수정/삭제 가능 여부
 }
 
 /** 내 공고 리스트 응답 */

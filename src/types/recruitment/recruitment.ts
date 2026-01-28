@@ -96,5 +96,6 @@ export interface RecruitmentDetail {
   isLiked: boolean;
   reviewCount: number;
   averageRating: number;
+  hasPendingReservation: boolean; // 현재 모델의 대기 중인 예약 존재 여부
 }
 
