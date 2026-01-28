@@ -370,12 +370,20 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       {/* 하단 액션 버튼 */}
       {isOwner ? (
         // 본인 공고: 수정하기 버튼
-        // TODO: 디자이너 상세 페이지 수정 차단 - 현재 API(GET /recruitments/{id})의 hasPendingReservation은
-        // "현재 로그인한 모델 기준"이므로 디자이너가 조회하면 항상 false. 백엔드에 canModify 필드 추가 요청 필요.
         <FixedBottomContainer>
           <button
             type="button"
-            onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
+            onClick={() => {
+              if (!detail.canModify) {
+                if (detail.designerHasPendingReservation) {
+                  showToast('대기 중인 예약이 있어 수정이 불가합니다.');
+                } else if (detail.designerHasConfirmedReservation) {
+                  showToast('확정된 예약이 있어 수정이 불가합니다.');
+                }
+                return;
+              }
+              router.push(`/myRecruitment/${recruitmentId}/edit`);
+            }}
             className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
           >
             수정하기
@@ -386,7 +394,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
         <PostActions
           recruitmentId={detail.recruitmentId}
           designerUserId={detail.designerProfile.userId}
-          hasPendingReservation={detail.hasPendingReservation}
+          modelHasPendingReservation={detail.modelHasPendingReservation}
         />
       )}
     </div>
