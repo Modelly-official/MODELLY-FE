@@ -48,10 +48,16 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
     }
 
-    // IndexedDB 정리 (Service Worker용)
-    clearUserRoleFromIDB().catch(() => {
-      // IndexedDB 실패해도 앱 동작에 영향 없음
-    });
+    // IndexedDB 정리 (Service Worker용, SSR/iOS Private Browsing 환경 대응)
+    if (typeof window !== 'undefined' && 'indexedDB' in window) {
+      try {
+        clearUserRoleFromIDB().catch(() => {
+          // IndexedDB 실패해도 앱 동작에 영향 없음
+        });
+      } catch {
+        // iOS Private Browsing 등 동기 에러 무시
+      }
+    }
 
     set({ user: null, isAuthenticated: false });
   },
@@ -125,10 +131,16 @@ export const setUserRole = (role: 'model' | 'designer' | string) => {
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
 
-  // IndexedDB에도 저장 (Service Worker용)
-  saveUserRoleToIDB(normalizedRole).catch(() => {
-    // IndexedDB 실패해도 앱 동작에 영향 없음
-  });
+  // IndexedDB에도 저장 (Service Worker용, SSR/iOS Private Browsing 환경 대응)
+  if (typeof window !== 'undefined' && 'indexedDB' in window) {
+    try {
+      saveUserRoleToIDB(normalizedRole).catch(() => {
+        // IndexedDB 실패해도 앱 동작에 영향 없음
+      });
+    } catch {
+      // iOS Private Browsing 등 동기 에러 무시
+    }
+  }
 };
 
 // 쿠키에서 userCategory 읽는 헬퍼 함수
