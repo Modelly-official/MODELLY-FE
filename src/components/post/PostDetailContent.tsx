@@ -29,6 +29,7 @@ import {
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
 import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
+import { useToast } from '@/src/hooks/common/useToast';
 
 interface PostDetailContentProps {
   recruitmentId: number;
@@ -37,6 +38,7 @@ interface PostDetailContentProps {
 
 export default function PostDetailContent({ recruitmentId, isOwner = false }: PostDetailContentProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
 
   // Optimistic update를 위한 토글 카운트 (홀수면 반전)
@@ -371,7 +373,13 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
         <FixedBottomContainer>
           <button
             type="button"
-            onClick={() => router.push(`/myRecruitment/${recruitmentId}/edit`)}
+            onClick={() => {
+              if (detail.hasPendingReservation) {
+                showToast('대기 중인 예약이 있어 수정이 불가합니다.');
+                return;
+              }
+              router.push(`/myRecruitment/${recruitmentId}/edit`);
+            }}
             className="text-body-1-semibold h-[56px] w-full cursor-pointer rounded-full bg-gray-900 text-white"
           >
             수정하기
@@ -379,7 +387,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
         </FixedBottomContainer>
       ) : (
         // 다른 사람 공고: 채팅하기 / 예약하기
-        <PostActions recruitmentId={detail.recruitmentId} designerUserId={detail.designerProfile.userId} />
+        <PostActions
+          recruitmentId={detail.recruitmentId}
+          designerUserId={detail.designerProfile.userId}
+          hasPendingReservation={detail.hasPendingReservation}
+        />
       )}
     </div>
   );
