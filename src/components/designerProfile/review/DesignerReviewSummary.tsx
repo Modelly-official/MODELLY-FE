@@ -17,7 +17,7 @@ export default function DesignerReviewSummary({ rating, count, onViewAll }: Desi
         <span className="text-body-1-semibold text-gray-900">{rating.toFixed(1)}</span>
         <span className="text-body-2-semibold text-gray-500">({count})</span>
       </div>
-      {onViewAll && (
+      {onViewAll && count > 0 && (
         <button
           type="button"
           onClick={onViewAll}

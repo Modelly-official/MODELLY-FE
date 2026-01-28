@@ -77,15 +77,16 @@ export default function DesignerPortfolioReviewSection({
               <span className="text-body-1-medium text-black">전체</span>
               <span className="text-body-1-semibold text-gray-600">{portfolioCount}</span>
             </div>
-            <button
-              type="button"
-              onClick={onPortfolioViewAll}
-              disabled={!onPortfolioViewAll || !hasPortfolios}
-              className="text-body-2-medium flex cursor-pointer items-center justify-center gap-0.5 text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              자세히 보기
-              <ChevronRightIcon className="h-5 w-5 -translate-y-px text-gray-800" />
-            </button>
+            {onPortfolioViewAll && hasPortfolios && (
+              <button
+                type="button"
+                onClick={onPortfolioViewAll}
+                className="text-body-2-medium flex cursor-pointer items-center justify-center gap-0.5 text-gray-800"
+              >
+                자세히 보기
+                <ChevronRightIcon className="h-5 w-5 -translate-y-px text-gray-800" />
+              </button>
+            )}
           </div>
           {hasPortfolios ? (
             <div className="grid grid-cols-3 gap-2.5 px-4 pt-3 pb-[calc(32px+env(safe-area-inset-bottom))]">

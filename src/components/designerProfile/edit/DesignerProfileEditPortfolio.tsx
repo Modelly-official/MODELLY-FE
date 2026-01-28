@@ -71,44 +71,50 @@ export default function DesignerProfileEditPortfolio({
         )}
       </div>
 
-      <div className={gridClassName}>
-        {imageSources.map((imageUrl, index) => {
-          const isMenuOpen = openMenuIndex === index;
-          const isLoaded = imageLoaded[index];
-          return (
-            <div key={`${imageUrl}-${index}`} className="relative overflow-visible">
-              <div className="relative h-[135px] w-full overflow-hidden rounded-2xl bg-gray-200">
-                <Image
-                  src={imageUrl}
-                  alt={`포트폴리오 이미지 ${index + 1}`}
-                  fill
-                  sizes="33vw"
-                  className={`object-cover transition-opacity ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  onError={() => handleImageError(index)}
-                  onLoadingComplete={() => {
-                    setImageLoaded((prev) => {
-                      if (prev[index]) return prev;
-                      const next = [...prev];
-                      next[index] = true;
-                      return next;
-                    });
-                  }}
+      {imageSources.length > 0 ? (
+        <div className={gridClassName}>
+          {imageSources.map((imageUrl, index) => {
+            const isMenuOpen = openMenuIndex === index;
+            const isLoaded = imageLoaded[index];
+            return (
+              <div key={`${imageUrl}-${index}`} className="relative overflow-visible">
+                <div className="relative h-[135px] w-full overflow-hidden rounded-2xl bg-gray-200">
+                  <Image
+                    src={imageUrl}
+                    alt={`포트폴리오 이미지 ${index + 1}`}
+                    fill
+                    sizes="33vw"
+                    className={`object-cover transition-opacity ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+                    onError={() => handleImageError(index)}
+                    onLoadingComplete={() => {
+                      setImageLoaded((prev) => {
+                        if (prev[index]) return prev;
+                        const next = [...prev];
+                        next[index] = true;
+                        return next;
+                      });
+                    }}
+                  />
+                </div>
+
+                <KebabMenu
+                  isOpen={isMenuOpen}
+                  onOpenChange={(open) => setOpenMenuIndex(open ? index : null)}
+                  items={[
+                    { label: '수정', onClick: () => onEditImage?.(index) },
+                    { label: '삭제', onClick: () => onDeleteImage?.(index) },
+                  ]}
+                  wrapperClassName="absolute top-2 right-2"
                 />
               </div>
-
-              <KebabMenu
-                isOpen={isMenuOpen}
-                onOpenChange={(open) => setOpenMenuIndex(open ? index : null)}
-                items={[
-                  { label: '수정', onClick: () => onEditImage?.(index) },
-                  { label: '삭제', onClick: () => onDeleteImage?.(index) },
-                ]}
-                wrapperClassName="absolute top-2 right-2"
-              />
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="mt-3 rounded-2xl bg-gray-100 px-4 py-6 text-center">
+          <p className="text-body-2-medium text-gray-500">등록된 포트폴리오가 없습니다.</p>
+        </div>
+      )}
     </section>
   );
 }
