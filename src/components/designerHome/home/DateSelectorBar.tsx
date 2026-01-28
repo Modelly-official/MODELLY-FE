@@ -77,7 +77,7 @@ export function DateSelectorBar({ selectedDate, onDateSelect }: DateSelectorBarP
   const dates = generateDateRange(today, 5); // 오늘 + 4일
 
   return (
-    <div className="flex gap-2 overflow-x-auto px-4 scrollbar-hide">
+    <div className="flex justify-between gap-2 overflow-x-auto px-4 scrollbar-hide">
       {dates.map((date) => {
         const dateStr = formatDateString(date);
         return (

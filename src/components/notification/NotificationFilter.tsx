@@ -16,7 +16,6 @@ const FILTER_ITEMS: FilterItem[] = [
   { code: 'RESERVATION', label: '예약' },
   { code: 'SCHEDULE', label: '일정' },
   { code: 'REVIEW', label: '리뷰' },
-  { code: 'CHATTING', label: '채팅' },
 ];
 
 interface NotificationFilterProps {

@@ -120,7 +120,7 @@ export default function DesignerReviewsPage() {
             <p className="text-body-2-medium text-gray-600">등록된 리뷰가 없습니다.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col divide-y divide-gray-400 bg-white">
             {reviews.map((review) => (
               <DesignerReviewCard
                 key={review.reviewId}

@@ -45,7 +45,7 @@ export default function NotificationItem({ notification, onClick }: Notification
         )}
 
         {/* 시간 */}
-        <span className="text-body-2-regular text-gray-600">{createdAt}</span>
+        <span className="text-caption-1-medium text-gray-600">{createdAt}</span>
       </div>
     </button>
   );

@@ -172,6 +172,7 @@ export default function MyReservationsPage() {
             <Dropdown
               variant="inline"
               size="lg"
+              align="left"
               scrollToSelected
               maxHeight={200}
               ariaLabel="월 선택"

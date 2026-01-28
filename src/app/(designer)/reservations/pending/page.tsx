@@ -24,7 +24,7 @@ export default function PendingReservationsPage() {
   return (
     <div className="flex min-h-screen flex-col bg-gray-200">
       {/* 헤더 */}
-      <header className="flex items-center justify-between px-4 py-3">
+      <header className="flex h-[52px] items-center justify-between px-4">
         <button
           type="button"
           onClick={() => router.push('/')}

@@ -20,6 +20,7 @@ export interface DropdownProps<T = string> {
   size?: 'sm' | 'lg';
   scrollToSelected?: boolean;
   maxHeight?: number;
+  align?: 'left' | 'right';
 
   // 접근성
   ariaLabel?: string;

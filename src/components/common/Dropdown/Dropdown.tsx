@@ -53,6 +53,7 @@ export default function Dropdown<T = string>({
   size = 'sm',
   scrollToSelected = false,
   maxHeight,
+  align = 'right',
   ariaLabel,
   buttonClassName,
 }: DropdownProps<T>) {
@@ -251,7 +252,7 @@ export default function Dropdown<T = string>({
   }
 
   // Inline variant
-  const sizeClasses = size === 'lg' ? 'text-head-1-semibold' : 'text-body-2-medium';
+  const sizeClasses = size === 'lg' ? 'text-head-1-medium tracking-[-0.96px]' : 'text-body-2-medium';
 
   return (
     <div className="relative">
@@ -286,7 +287,7 @@ export default function Dropdown<T = string>({
             role="listbox"
             aria-label={ariaLabel || label || placeholder}
             aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-            className={`absolute top-full right-0 z-60 mt-0.5 flex min-w-[100px] flex-col gap-1.5 overflow-hidden rounded-xl border border-gray-400 bg-white p-3 shadow-dropdown ${
+            className={`absolute top-full ${align === 'left' ? 'left-0' : 'right-0'} z-60 mt-0.5 flex min-w-[100px] flex-col gap-1.5 overflow-hidden rounded-xl border border-gray-400 bg-white p-3 shadow-dropdown ${
               maxHeight ? 'overflow-y-auto scrollbar-hide' : ''
             }`}
             style={maxHeight ? { maxHeight: `${maxHeight}px` } : undefined}
