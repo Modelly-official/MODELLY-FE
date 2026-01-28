@@ -197,7 +197,7 @@ export function ModelHomeContent() {
               <div className="mt-2">
                 <div className="flex gap-2">
                   {[0, 1].map((index) => (
-                    <div key={`nearby-skeleton-${index}`} className="flex-1">
+                    <div key={`nearby-skeleton-${index}`} className="flex-1 min-w-0">
                       <RecruitmentCardSkeleton isLeftColumn={index % 2 === 0} />
                     </div>
                   ))}
@@ -219,7 +219,7 @@ export function ModelHomeContent() {
                     <SwiperSlide key={`nearby-slide-${slideIndex}`} className="w-full!">
                       <div className="flex gap-2">
                         {pair.map((item, index) => (
-                          <div key={item.recruitmentId} className="flex-1">
+                          <div key={item.recruitmentId} className="flex-1 min-w-0">
                             <RecruitmentCard
                               recruitment={item}
                               isLeftColumn={index === 0}
@@ -227,7 +227,7 @@ export function ModelHomeContent() {
                             />
                           </div>
                         ))}
-                        {pair.length === 1 && <div className="flex-1" aria-hidden />}
+                        {pair.length === 1 && <div className="flex-1 min-w-0" aria-hidden />}
                       </div>
                     </SwiperSlide>
                   ))}
@@ -239,7 +239,7 @@ export function ModelHomeContent() {
                   <SwiperSlide className="w-full!">
                     <div className="invisible flex w-full gap-2">
                       {[0, 1].map((index) => (
-                        <div key={`nearby-empty-${index}`} className="flex-1">
+                        <div key={`nearby-empty-${index}`} className="flex-1 min-w-0">
                           <RecruitmentCardSkeleton isLeftColumn={index % 2 === 0} />
                         </div>
                       ))}

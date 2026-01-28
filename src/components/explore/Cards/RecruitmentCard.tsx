@@ -22,7 +22,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
   });
 
   return (
-    <Link href={`/post/${recruitment.recruitmentId}`} className="flex flex-col gap-2.5">
+    <Link href={`/post/${recruitment.recruitmentId}`} className="flex min-w-0 flex-col gap-2.5">
       {/* 이미지 */}
       <div className="relative h-[210px] w-full overflow-hidden rounded-none bg-gray-200">
         {recruitment.recruitmentThumbnail ? (
@@ -43,7 +43,7 @@ export default function RecruitmentCard({ recruitment, isLeftColumn = false, onL
       </div>
 
       {/* 정보 */}
-      <div className={`flex flex-col gap-2 ${isLeftColumn ? 'pr-[9px] pl-4' : 'pr-4 pl-2.5'}`}>
+      <div className={`flex min-w-0 flex-col gap-2 ${isLeftColumn ? 'pr-[9px] pl-4' : 'pr-4 pl-2.5'}`}>
         <div className="flex flex-col gap-1">
           {/* 제목 */}
           <h3 className="text-body-1-semibold truncate text-black">{recruitment.title}</h3>
