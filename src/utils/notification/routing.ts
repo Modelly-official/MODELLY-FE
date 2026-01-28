@@ -24,8 +24,8 @@ export function getNotificationTargetUrl({
   const id = targetId?.toString();
 
   // 채팅 알림
-  if (route === 'chat' && id) {
-    return `/chat/${id}`;
+  if (route === 'chat') {
+    return id ? `/chat/${id}` : '/chat';
   }
 
   // 예약 알림: 디자이너는 예약 상세 페이지로

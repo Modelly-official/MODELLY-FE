@@ -75,7 +75,7 @@ async function getNotificationTargetUrl(data, title) {
   // 일정 알림: title 기반 분기
   if (type === '일정 알림') {
     // 리마인더 알림 → 홈으로 이동
-    if (title && title.includes('예정')) {
+    if (title && (title.includes('리마인더') || title.includes('예정'))) {
       return '/';
     }
     // 변경/취소 알림 → 채팅방으로 이동
