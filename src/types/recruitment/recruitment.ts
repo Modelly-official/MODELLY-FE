@@ -96,6 +96,10 @@ export interface RecruitmentDetail {
   isLiked: boolean;
   reviewCount: number;
   averageRating: number;
-  hasPendingReservation: boolean; // 현재 모델의 대기 중인 예약 존재 여부
+  // 예약 상태 필드
+  modelHasPendingReservation: boolean; // 모델의 대기 중인 예약 존재 여부 (모델의 예약 신청 방지용)
+  designerHasPendingReservation: boolean; // 해당 공고의 대기 중인 예약 존재 여부
+  designerHasConfirmedReservation: boolean; // 해당 공고의 확정된 예약 중 아직 진행하지 않은 예약 존재 여부
+  canModify: boolean; // 디자이너의 해당 공고 수정/삭제 가능 여부
 }
 
