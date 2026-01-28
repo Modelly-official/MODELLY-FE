@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import {
   acceptReservationChange,
   cancelReservation,
@@ -55,7 +56,14 @@ export function useCancelReservation() {
       queryClient.invalidateQueries({ queryKey: myReservationKeys.all });
       queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
-    onError: () => {
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const message = error.response?.data?.message as string | undefined;
+        if (message) {
+          showToast(message);
+          return;
+        }
+      }
       showToast('예약 취소에 실패했습니다.');
     },
   });
