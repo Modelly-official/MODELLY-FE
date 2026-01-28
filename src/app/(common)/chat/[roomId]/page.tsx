@@ -257,7 +257,7 @@ export default function ChatRoom() {
         <ul className="space-y-3">
           {messages.map((m, idx) => {
             const next = messages[idx + 1];
-            const showTime = !next || next.time !== m.time;
+            const showTime = !next || next.time !== m.time || next.fromMe !== m.fromMe;
             const prev = messages[idx - 1];
             const showDateDivider = !!m.dateKey && m.dateKey !== prev?.dateKey;
             if (m.messageType === 'RESERVATION' && m.reservation) {
