@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import ChevronRightIcon from '@/public/icons/common/chevron-right.svg';
 import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
@@ -25,34 +25,23 @@ export default function DesignerProfileEditPortfolio({
   gridClassName = 'relative mt-3 grid grid-cols-3 gap-2.5',
 }: DesignerProfileEditPortfolioProps) {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
-  const [imageSources, setImageSources] = useState<string[]>(images);
   const [imageLoaded, setImageLoaded] = useState<boolean[]>(() => images.map(() => false));
-  const retryCountsRef = useRef<Record<number, number>>({});
-
-  useEffect(() => {
-    setImageSources(images);
-    retryCountsRef.current = {};
-    setImageLoaded(images.map(() => false));
-  }, [images]);
+  const [retrySeeds, setRetrySeeds] = useState<number[]>(() => images.map(() => 0));
 
   const handleImageError = (index: number) => {
-    const retries = retryCountsRef.current[index] ?? 0;
-    if (retries >= 2) return;
-    retryCountsRef.current[index] = retries + 1;
-
-    const original = imageSources[index];
-    if (!original) return;
-    const separator = original.includes('?') ? '&' : '?';
-    const nextSrc = `${original}${separator}retry=${Date.now()}`;
-
-    setTimeout(() => {
-      setImageSources((prev) => {
-        if (!prev[index]) return prev;
-        const next = [...prev];
-        next[index] = nextSrc;
-        return next;
-      });
-    }, 600);
+    setRetrySeeds((prev) => {
+      const current = prev[index] ?? 0;
+      if (current >= 2) return prev;
+      const next = [...prev];
+      next[index] = current + 1;
+      return next;
+    });
+    setImageLoaded((prev) => {
+      if (!prev[index]) return prev;
+      const next = [...prev];
+      next[index] = false;
+      return next;
+    });
   };
 
   return (
@@ -71,22 +60,25 @@ export default function DesignerProfileEditPortfolio({
         )}
       </div>
 
-      {imageSources.length > 0 ? (
+      {images.length > 0 ? (
         <div className={gridClassName}>
-          {imageSources.map((imageUrl, index) => {
+          {images.map((imageUrl, index) => {
             const isMenuOpen = openMenuIndex === index;
             const isLoaded = imageLoaded[index];
+            const seed = retrySeeds[index] ?? 0;
+            const separator = imageUrl.includes('?') ? '&' : '?';
+            const resolvedSrc = seed > 0 ? `${imageUrl}${separator}retry=${seed}` : imageUrl;
             return (
               <div key={`${imageUrl}-${index}`} className="relative overflow-visible">
                 <div className="relative h-[135px] w-full overflow-hidden rounded-2xl bg-gray-200">
                   <Image
-                    src={imageUrl}
+                    src={resolvedSrc}
                     alt={`포트폴리오 이미지 ${index + 1}`}
                     fill
                     sizes="33vw"
                     className={`object-cover transition-opacity ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onError={() => handleImageError(index)}
-                    onLoadingComplete={() => {
+                    onLoad={() => {
                       setImageLoaded((prev) => {
                         if (prev[index]) return prev;
                         const next = [...prev];

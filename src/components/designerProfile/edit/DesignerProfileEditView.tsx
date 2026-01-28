@@ -163,6 +163,9 @@ export default function DesignerProfileEditView({
   const resolvedPortfolioImages = portfolioItems?.length
     ? portfolioItems.map((item) => item.thumbnail)
     : portfolioImages;
+  const portfolioKey = portfolioItems?.length
+    ? portfolioItems.map((item) => item.portfolioId).join('-')
+    : resolvedPortfolioImages.join('|') || 'empty';
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-100">
@@ -267,6 +270,7 @@ export default function DesignerProfileEditView({
 
       <section className="px-4 pt-6 pb-[calc(24px+env(safe-area-inset-bottom))]">
         <DesignerProfileEditPortfolio
+          key={portfolioKey}
           images={resolvedPortfolioImages}
           onViewAll={() => router.push('/mypage/portfolio')}
           onEditImage={
