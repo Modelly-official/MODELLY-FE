@@ -17,6 +17,9 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     averageRating: 4.8,
     thumbnail: '/images/mocks/hair-1.png',
     subCategory: ['커트', '염색'],
+    hasPendingReservation: false,
+    hasConfirmedReservation: false,
+    canModify: true,
     _month: '2025-12',
   },
   {
@@ -27,6 +30,9 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     averageRating: 4.5,
     thumbnail: '/images/mocks/hair-2.png',
     subCategory: ['아트'],
+    hasPendingReservation: false,
+    hasConfirmedReservation: false,
+    canModify: true,
     _month: '2025-12',
   },
   {
@@ -37,6 +43,9 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     averageRating: 4.9,
     thumbnail: '/images/mocks/hair-3.png',
     subCategory: ['펌'],
+    hasPendingReservation: false,
+    hasConfirmedReservation: false,
+    canModify: true,
     _month: '2026-01',
   },
   {
@@ -47,6 +56,9 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     averageRating: 5.0,
     thumbnail: '/images/mocks/hair-4.png',
     subCategory: ['염색'],
+    hasPendingReservation: false,
+    hasConfirmedReservation: false,
+    canModify: true,
     _month: '2026-01',
   },
   {
@@ -57,6 +69,9 @@ export const mockMyRecruitmentItems: MockRecruitmentItem[] = [
     averageRating: 0,
     thumbnail: '/images/mocks/hair-5.png',
     subCategory: ['속눈썹 연장'],
+    hasPendingReservation: false,
+    hasConfirmedReservation: false,
+    canModify: true,
     _month: '2026-01',
   },
 ];

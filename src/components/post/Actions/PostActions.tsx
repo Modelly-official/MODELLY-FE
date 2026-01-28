@@ -8,9 +8,14 @@ import { FixedBottomContainer } from '@/src/components/common/FixedBottomContain
 interface PostActionsProps {
   recruitmentId: number;
   designerUserId: number;
+  hasPendingReservation?: boolean;
 }
 
-export default function PostActions({ recruitmentId, designerUserId }: PostActionsProps) {
+export default function PostActions({
+  recruitmentId,
+  designerUserId,
+  hasPendingReservation = false,
+}: PostActionsProps) {
   const router = useRouter();
   const createChatRoom = useCreateChatRoom();
   const { showToast } = useToast();
@@ -27,6 +32,10 @@ export default function PostActions({ recruitmentId, designerUserId }: PostActio
   };
 
   const handleReservation = () => {
+    if (hasPendingReservation) {
+      showToast('대기 중인 예약이 있습니다.');
+      return;
+    }
     router.push(`/reservation/${recruitmentId}`);
   };
 

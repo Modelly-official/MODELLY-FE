@@ -29,6 +29,7 @@ import {
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
 import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
+import { useToast } from '@/src/hooks/common/useToast';
 
 interface PostDetailContentProps {
   recruitmentId: number;
@@ -37,6 +38,7 @@ interface PostDetailContentProps {
 
 export default function PostDetailContent({ recruitmentId, isOwner = false }: PostDetailContentProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<'detail' | 'review'>('detail');
 
   // Optimistic update를 위한 토글 카운트 (홀수면 반전)
@@ -368,6 +370,8 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       {/* 하단 액션 버튼 */}
       {isOwner ? (
         // 본인 공고: 수정하기 버튼
+        // TODO: 디자이너 상세 페이지 수정 차단 - 현재 API(GET /recruitments/{id})의 hasPendingReservation은
+        // "현재 로그인한 모델 기준"이므로 디자이너가 조회하면 항상 false. 백엔드에 canModify 필드 추가 요청 필요.
         <FixedBottomContainer>
           <button
             type="button"
@@ -379,7 +383,11 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
         </FixedBottomContainer>
       ) : (
         // 다른 사람 공고: 채팅하기 / 예약하기
-        <PostActions recruitmentId={detail.recruitmentId} designerUserId={detail.designerProfile.userId} />
+        <PostActions
+          recruitmentId={detail.recruitmentId}
+          designerUserId={detail.designerProfile.userId}
+          hasPendingReservation={detail.hasPendingReservation}
+        />
       )}
     </div>
   );
