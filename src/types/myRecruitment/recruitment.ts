@@ -124,7 +124,7 @@ export interface RecruitmentFormState {
   // Step 2: 시술 내용 + 카테고리 + 제한사항 + 전달사항 + 목적 + 동의
   content: string; // 시술 내용
   category: Category | null; // 메인 카테고리 (HAIR, NAIL 등)
-  subCategory: string | null; // 서브 카테고리 (커트, 염색, 펌, 기타)
+  subCategories: string[]; // 서브 카테고리 배열 (커트, 염색, 펌, 기타)
   restrictions: string; // 제한 사항
   notice: string; // 전달 사항
   purpose: PurposeType | null; // 목적

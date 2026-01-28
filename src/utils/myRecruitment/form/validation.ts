@@ -44,7 +44,7 @@ export function isStep1Valid(state: {
 export function isStep2Valid(
   state: {
     content: string;
-    subCategory: string | null;
+    subCategories: string[];
     restrictions: string;
     notice: string;
     imageFiles: File[];
@@ -54,7 +54,7 @@ export function isStep2Valid(
   },
   options?: { isEditMode?: boolean },
 ): boolean {
-  const { content, subCategory, restrictions, notice, imageFiles, imagePreviewUrls, purpose, purposeDetail } =
+  const { content, subCategories, restrictions, notice, imageFiles, imagePreviewUrls, purpose, purposeDetail } =
     state;
   const isEditMode = options?.isEditMode ?? false;
 
@@ -63,7 +63,7 @@ export function isStep2Valid(
 
   return (
     content.trim().length > 0 &&
-    subCategory !== null &&
+    subCategories.length > 0 &&
     restrictions.trim().length > 0 &&
     notice.trim().length > 0 &&
     hasImages &&

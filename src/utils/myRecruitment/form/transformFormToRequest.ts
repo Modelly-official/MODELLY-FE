@@ -30,7 +30,7 @@ export function transformFormToRequest(
   return {
     title: formState.title,
     recruitmentSchedule,
-    subCategoryList: formState.subCategory ? [formState.subCategory as SubCategory] : [],
+    subCategoryList: formState.subCategories as SubCategory[],
     content: formState.content,
     restriction: formState.restrictions, // 유의사항
     notice: formState.notice, // 전달 사항

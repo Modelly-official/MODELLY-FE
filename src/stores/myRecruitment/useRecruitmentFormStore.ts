@@ -12,7 +12,7 @@ const INITIAL_STATE: RecruitmentFormState = {
   // Step 2: 시술 내용 + 카테고리 + 제한사항 + 전달사항 + 목적 + 동의
   content: '',
   category: null,
-  subCategory: null,
+  subCategories: [],
   restrictions: '',
   notice: '',
   purpose: null,
@@ -48,7 +48,8 @@ interface RecruitmentFormStore extends RecruitmentFormState {
   // Step 2 actions
   setContent: (content: string) => void;
   setCategory: (category: Category | null) => void;
-  setSubCategory: (subCategory: string | null) => void;
+  setSubCategories: (subCategories: string[]) => void;
+  toggleSubCategory: (subCategory: string) => void;
   setRestrictions: (restrictions: string) => void;
   setNotice: (notice: string) => void;
   setPurpose: (purpose: PurposeType | null) => void;
@@ -144,10 +145,17 @@ export const useRecruitmentFormStore = create<RecruitmentFormStore>((set) => ({
   setCategory: (category) =>
     set({
       category,
-      subCategory: null, // 카테고리 변경 시 서브카테고리 초기화
+      subCategories: [], // 카테고리 변경 시 서브카테고리 초기화
     }),
 
-  setSubCategory: (subCategory) => set({ subCategory }),
+  setSubCategories: (subCategories) => set({ subCategories }),
+
+  toggleSubCategory: (subCategory) =>
+    set((state) => ({
+      subCategories: state.subCategories.includes(subCategory)
+        ? state.subCategories.filter((s) => s !== subCategory)
+        : [...state.subCategories, subCategory],
+    })),
 
   setRestrictions: (restrictions) => set({ restrictions }),
 
