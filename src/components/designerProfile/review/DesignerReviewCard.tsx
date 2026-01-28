@@ -13,7 +13,7 @@ export interface DesignerReviewItem {
   date: string;
   content: string;
   images: string[];
-  category: string;
+  summary?: string;
   isFixed?: boolean;
 }
 
@@ -51,9 +51,13 @@ export default function DesignerReviewCard({ review }: DesignerReviewCardProps) 
       )}
 
       <p className="text-body-2-regular whitespace-pre-line text-gray-900">{review.content}</p>
-      <div className="flex">
-        <CategoryBadge label={review.category} />
-      </div>
+      {review.summary && (
+        <div className="flex flex-wrap gap-1">
+          {review.summary.split(', ').map((category) => (
+            <CategoryBadge key={category} label={category} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

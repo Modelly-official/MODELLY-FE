@@ -93,7 +93,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       date: item.createdDate.replace(/-/g, '.'),
       content: item.content,
       images: item.reviewImages ?? [],
-      category: item.summary,
+      summary: item.summary,
       isFixed: item.isFixed,
     }));
   }, [isOwnerView, ownerReviewListQuery.data?.pages, reviewListQuery.data?.result?.items]);

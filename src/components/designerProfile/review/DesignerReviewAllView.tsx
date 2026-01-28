@@ -49,7 +49,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
       date: item.createdDate.replace(/-/g, '.'),
       content: item.content,
       images: item.reviewImages ?? [],
-      category: item.summary,
+      summary: item.summary,
       isFixed: item.isFixed,
     }));
   }, [reviewListQuery.data?.pages]);

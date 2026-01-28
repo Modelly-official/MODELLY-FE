@@ -184,9 +184,13 @@ export default function DesignerReviewPhotoDetailView({
         </div>
 
         <p className="text-body-2-regular pt-2 whitespace-pre-line text-gray-700">{reviewItem.content}</p>
-        <div className="flex">
-          <CategoryBadge label={reviewItem.summary} />
-        </div>
+        {reviewItem.summary && (
+          <div className="flex flex-wrap gap-1">
+            {reviewItem.summary.split(', ').map((category) => (
+              <CategoryBadge key={category} label={category} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
