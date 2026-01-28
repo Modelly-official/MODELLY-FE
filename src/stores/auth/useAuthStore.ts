@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { categoryNameToCode } from '@/src/utils/myRecruitment';
 import { NOTIFICATION_STORAGE_KEYS } from '@/src/constants/notification';
+import { saveUserRoleToIDB, clearUserRoleFromIDB } from '@/src/utils/notification';
 import type { Category } from '@/src/types/recruitment';
 
 interface User {
@@ -46,6 +47,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         // Private mode fallback
       }
     }
+
+    // IndexedDB 정리 (Service Worker용)
+    clearUserRoleFromIDB().catch(() => {
+      // IndexedDB 실패해도 앱 동작에 영향 없음
+    });
 
     set({ user: null, isAuthenticated: false });
   },
@@ -118,6 +124,11 @@ export const setUserRole = (role: 'model' | 'designer' | string) => {
   document.cookie = `user_role=${normalizedRole}; path=/; max-age=604800; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
+
+  // IndexedDB에도 저장 (Service Worker용)
+  saveUserRoleToIDB(normalizedRole).catch(() => {
+    // IndexedDB 실패해도 앱 동작에 영향 없음
+  });
 };
 
 // 쿠키에서 userCategory 읽는 헬퍼 함수
