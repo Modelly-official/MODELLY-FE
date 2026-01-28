@@ -28,21 +28,38 @@ const messaging = firebase.messaging();
 /**
  * IndexedDB에서 userRole 읽기
  * Service Worker에서 쿠키 접근이 불가하므로 IndexedDB 사용
+ * 주의: SW가 먼저 실행될 수 있으므로 onupgradeneeded에서 스토어 생성 필요
  */
 async function getUserRoleFromIDB() {
   return new Promise((resolve) => {
     const request = indexedDB.open('moandi-sw', 1);
     request.onerror = () => resolve(null);
+
+    // SW가 먼저 실행되면 스토어를 생성해야 앱의 saveUserRoleToIDB가 동작함
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('user-info')) {
+        db.createObjectStore('user-info');
+      }
+    };
+
     request.onsuccess = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains('user-info')) {
+        db.close();
         resolve(null);
         return;
       }
       const tx = db.transaction('user-info', 'readonly');
       const getRequest = tx.objectStore('user-info').get('userRole');
-      getRequest.onsuccess = () => resolve(getRequest.result || null);
-      getRequest.onerror = () => resolve(null);
+      getRequest.onsuccess = () => {
+        db.close();
+        resolve(getRequest.result || null);
+      };
+      getRequest.onerror = () => {
+        db.close();
+        resolve(null);
+      };
     };
   });
 }
