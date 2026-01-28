@@ -26,25 +26,89 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 /**
- * 알림 타입별 라우팅 경로
- * - 'chat': 채팅 페이지 (/chat/{targetId})
- * - 'reservation': 예약 상세 페이지 (/reservations/{targetId})
- * - 나머지: 해당 경로로 직접 이동
+ * IndexedDB에서 userRole 읽기
+ * Service Worker에서 쿠키 접근이 불가하므로 IndexedDB 사용
+ * 주의: SW가 먼저 실행될 수 있으므로 onupgradeneeded에서 스토어 생성 필요
  */
-const NOTIFICATION_ROUTES = {
-  // CHATTING
-  '채팅 알림': 'chat',
-  // RESERVATION
-  '예약 확정': '/mypage/reservations',
-  '예약 취소': '/mypage/reservations',
-  '예약 신청 알림': 'reservation', // DESIGNER → /reservations/{targetId}
-  // SCHEDULE
-  '예약 변경': 'chat', // targetId = 채팅방 id
-  '예약 알림': '/mypage/reservations',
-  // REVIEW
-  '리뷰 알림': '/mypage/reviews',
-  '리뷰 답글 알림': '/mypage/reviews',
-};
+async function getUserRoleFromIDB() {
+  return new Promise((resolve) => {
+    const request = indexedDB.open('moandi-sw', 1);
+    request.onerror = () => resolve(null);
+
+    // SW가 먼저 실행되면 스토어를 생성해야 앱의 saveUserRoleToIDB가 동작함
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('user-info')) {
+        db.createObjectStore('user-info');
+      }
+    };
+
+    request.onsuccess = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains('user-info')) {
+        db.close();
+        resolve(null);
+        return;
+      }
+      const tx = db.transaction('user-info', 'readonly');
+      const getRequest = tx.objectStore('user-info').get('userRole');
+      getRequest.onsuccess = () => {
+        db.close();
+        resolve(getRequest.result || null);
+      };
+      getRequest.onerror = () => {
+        db.close();
+        resolve(null);
+      };
+    };
+  });
+}
+
+/**
+ * 알림 타입별 이동 경로 결정
+ * - 채팅 알림: /chat/{targetId} 또는 /chat (targetId 없을 때)
+ * - 예약 알림: 디자이너 → /reservations/{targetId}, 모델 → /mypage/reservations
+ * - 일정 알림: 리마인더 → / (홈), 변경/취소 → /chat/{targetId}
+ * - 리뷰 알림: /mypage/reviews
+ */
+async function getNotificationTargetUrl(data, title) {
+  const type = data?.notificationType || '';
+  const targetId = data?.targetId;
+
+  // 채팅 알림
+  if (type === '채팅 알림') {
+    return targetId ? `/chat/${targetId}` : '/chat';
+  }
+
+  // 예약 알림: IndexedDB에서 역할 확인
+  if (type === '예약 알림') {
+    const userRole = await getUserRoleFromIDB();
+    if (userRole === 'designer' && targetId) {
+      return `/reservations/${targetId}`;
+    }
+    return '/mypage/reservations';
+  }
+
+  // 일정 알림: title 기반 분기
+  if (type === '일정 알림') {
+    // 리마인더 알림 → 홈으로 이동
+    if (title && (title.includes('리마인더') || title.includes('예정'))) {
+      return '/';
+    }
+    // 변경/취소 알림 → 채팅방으로 이동
+    if (targetId) {
+      return `/chat/${targetId}`;
+    }
+    return '/';
+  }
+
+  // 리뷰 알림
+  if (type === '리뷰 알림') {
+    return '/mypage/reviews';
+  }
+
+  return '/notification';
+}
 
 /**
  * 백그라운드 메시지 수신 핸들러
@@ -71,33 +135,22 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const data = event.notification.data;
-  let targetUrl = '/notification'; // 기본: 알림 목록 페이지
+  const title = event.notification.title;
 
-  // 알림 타입별 이동 경로 결정
-  const notificationType = data?.notificationType || '';
-  const route = NOTIFICATION_ROUTES[notificationType];
-
-  if (route === 'chat' && data?.targetId) {
-    targetUrl = `/chat/${data.targetId}`;
-  } else if (route === 'reservation' && data?.targetId) {
-    targetUrl = `/reservations/${data.targetId}`;
-  } else if (route) {
-    targetUrl = route;
-  }
-
-  // 열린 창이 있으면 포커스, 없으면 새 창 열기
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          client.focus();
-          client.navigate(targetUrl);
-          return;
+    getNotificationTargetUrl(data, title).then((targetUrl) => {
+      return clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        for (const client of clientList) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            client.focus();
+            client.navigate(targetUrl);
+            return;
+          }
         }
-      }
-      if (clients.openWindow) {
-        return clients.openWindow(targetUrl);
-      }
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      });
     })
   );
 });

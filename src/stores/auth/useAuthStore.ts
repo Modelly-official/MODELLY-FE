@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { categoryNameToCode } from '@/src/utils/myRecruitment';
 import { NOTIFICATION_STORAGE_KEYS } from '@/src/constants/notification';
+import { saveUserRoleToIDB, clearUserRoleFromIDB } from '@/src/utils/notification';
 import type { Category } from '@/src/types/recruitment';
 
 interface User {
@@ -44,6 +45,17 @@ export const useAuthStore = create<AuthState>((set) => ({
         sessionStorage.removeItem(NOTIFICATION_STORAGE_KEYS.TOKEN_REGISTERED);
       } catch {
         // Private mode fallback
+      }
+    }
+
+    // IndexedDB 정리 (Service Worker용, SSR/iOS Private Browsing 환경 대응)
+    if (typeof window !== 'undefined' && 'indexedDB' in window) {
+      try {
+        clearUserRoleFromIDB().catch(() => {
+          // IndexedDB 실패해도 앱 동작에 영향 없음
+        });
+      } catch {
+        // iOS Private Browsing 등 동기 에러 무시
       }
     }
 
@@ -118,6 +130,17 @@ export const setUserRole = (role: 'model' | 'designer' | string) => {
   document.cookie = `user_role=${normalizedRole}; path=/; max-age=604800; SameSite=Lax${
     process.env.NODE_ENV === 'production' ? '; Secure' : ''
   }`;
+
+  // IndexedDB에도 저장 (Service Worker용, SSR/iOS Private Browsing 환경 대응)
+  if (typeof window !== 'undefined' && 'indexedDB' in window) {
+    try {
+      saveUserRoleToIDB(normalizedRole).catch(() => {
+        // IndexedDB 실패해도 앱 동작에 영향 없음
+      });
+    } catch {
+      // iOS Private Browsing 등 동기 에러 무시
+    }
+  }
 };
 
 // 쿠키에서 userCategory 읽는 헬퍼 함수

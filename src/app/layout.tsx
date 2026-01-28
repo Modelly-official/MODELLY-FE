@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Toaster } from 'sonner';
 import '@/src/styles/globals.css';
 import { QueryProvider } from '@/src/providers/QueryProvider';
 import { ToastProvider } from '@/src/providers/ToastProvider';
@@ -63,6 +64,13 @@ const RootLayout = ({
             <AuthErrorHandler>
               <FCMProvider>
                 <div className="mx-auto min-h-screen w-full min-w-[375px] overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
+                <Toaster
+                  position="top-center"
+                  expand={false}
+                  toastOptions={{
+                    className: 'w-full',
+                  }}
+                />
                 <AgentationProvider />
               </FCMProvider>
             </AuthErrorHandler>

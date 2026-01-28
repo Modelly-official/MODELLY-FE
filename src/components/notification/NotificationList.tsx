@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import NotificationItem from './NotificationItem';
-import { NOTIFICATION_ROUTES } from '@/src/constants';
+import { getNotificationTargetUrl } from '@/src/utils/notification';
 import type { NotificationItem as NotificationItemType } from '@/src/types';
 
 interface NotificationListProps {
@@ -29,18 +29,9 @@ export default function NotificationList({
 
   /** 알림 클릭 시 해당 페이지로 이동 */
   const handleNotificationClick = (notification: NotificationItemType) => {
-    const { notificationType, targetId } = notification;
-    const route = NOTIFICATION_ROUTES[notificationType];
-
-    if (!route) return;
-
-    if (route === 'chat' && targetId) {
-      router.push(`/chat/${targetId}`);
-    } else if (route === 'reservation' && targetId) {
-      router.push(`/reservations/${targetId}`);
-    } else {
-      router.push(route);
-    }
+    const { notificationType, targetId, title } = notification;
+    const targetUrl = getNotificationTargetUrl({ notificationType, targetId, title });
+    router.push(targetUrl);
   };
 
   // 초기 로딩
