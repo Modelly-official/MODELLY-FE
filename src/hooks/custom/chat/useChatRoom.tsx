@@ -187,18 +187,20 @@ export default function useChatRoom(roomId?: string | number) {
       }
       const mapped = mapStompMessage(payload, effectiveUserId);
       if (!mapped) return;
-      const roomIdNumber = typeof roomId === 'string' ? Number(roomId) : roomId;
-      if (roomIdNumber != null && !Number.isNaN(roomIdNumber)) {
-        const now = Date.now();
-        if (now - lastSummaryRefetchAtRef.current > 1500) {
-          lastSummaryRefetchAtRef.current = now;
-          queryClient.invalidateQueries({
-            predicate: (query) =>
-              Array.isArray(query.queryKey) &&
-              query.queryKey[0] === 'reservation' &&
-              query.queryKey[1] === 'chatSummary' &&
-              query.queryKey[2] === roomIdNumber,
-          });
+      if (mapped.messageType === 'RESERVATION') {
+        const roomIdNumber = typeof roomId === 'string' ? Number(roomId) : roomId;
+        if (roomIdNumber != null && !Number.isNaN(roomIdNumber)) {
+          const now = Date.now();
+          if (now - lastSummaryRefetchAtRef.current > 1500) {
+            lastSummaryRefetchAtRef.current = now;
+            queryClient.invalidateQueries({
+              predicate: (query) =>
+                Array.isArray(query.queryKey) &&
+                query.queryKey[0] === 'reservation' &&
+                query.queryKey[1] === 'chatSummary' &&
+                query.queryKey[2] === roomIdNumber,
+            });
+          }
         }
       }
       setMessages((prev) => {
