@@ -48,7 +48,10 @@ export const mockRecruitmentDetail: RecruitmentDetail = {
   isLiked: false,
   reviewCount: 42,
   averageRating: 4.8,
-  hasPendingReservation: false,
+  modelHasPendingReservation: false,
+  designerHasPendingReservation: false,
+  designerHasConfirmedReservation: false,
+  canModify: true,
 };
 
 // 두 번째 공고 상세 Mock 데이터
@@ -87,5 +90,8 @@ export const mockRecruitmentDetail2: RecruitmentDetail = {
   isLiked: true,
   reviewCount: 18,
   averageRating: 4.5,
-  hasPendingReservation: false,
+  modelHasPendingReservation: false,
+  designerHasPendingReservation: false,
+  designerHasConfirmedReservation: false,
+  canModify: true,
 };
