@@ -32,6 +32,7 @@ export default function MessageItem({
   const status = isPending ? '전송 중...' : null;
   const statusClass = 'text-gray-600';
   const showUnread = showTime && message.fromMe && message.read === false;
+  const showStatus = !!status && message.fromMe;
   const shouldShowAvatar = !message.fromMe;
   const showAvatarImage = !!avatarUrl && !avatarError;
   const bubbleTone = isReservationNotice
@@ -80,9 +81,6 @@ export default function MessageItem({
         )}
         {message.text && (
           <div className="flex items-end gap-2">
-            {status && message.fromMe && (
-              <span className={`${statusClass} text-caption-1-medium translate-y-0.5`}>{status}</span>
-            )}
             <div
               className={`text-body-2-medium inline-block rounded-2xl px-4 py-3 ${cornerClass} ${bubbleTone} ${
                 isReservationNotice ? 'w-[220px]' : ''
@@ -90,14 +88,15 @@ export default function MessageItem({
             >
               {message.text}
             </div>
-            {status && !message.fromMe && (
-              <span className={`${statusClass} text-caption-1-medium translate-y-0.5`}>{status}</span>
-            )}
           </div>
         )}
         {(showTime || status) && (
           <div className="mt-0.5 flex items-center gap-2 text-gray-600">
-            {showUnread && <span className="text-caption-2 leading-[1.5] font-medium">안읽음</span>}
+            {showStatus ? (
+              <span className={`${statusClass} text-caption-2 leading-[1.5] font-medium`}>{status}</span>
+            ) : (
+              showUnread && <span className="text-caption-2 leading-[1.5] font-medium">안읽음</span>
+            )}
             {showTime && <span className="text-caption-1-medium">{message.time}</span>}
           </div>
         )}
