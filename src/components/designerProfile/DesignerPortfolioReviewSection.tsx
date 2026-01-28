@@ -41,6 +41,7 @@ export default function DesignerPortfolioReviewSection({
   onReviewPreviewMore,
 }: DesignerPortfolioReviewSectionProps) {
   const portfolioCount = portfolioTotalCount ?? portfolioImages.length;
+  const hasPortfolios = portfolioImages.length > 0;
 
   return (
     <section className="border-gray-200">
@@ -79,43 +80,49 @@ export default function DesignerPortfolioReviewSection({
             <button
               type="button"
               onClick={onPortfolioViewAll}
-              disabled={!onPortfolioViewAll}
+              disabled={!onPortfolioViewAll || !hasPortfolios}
               className="text-body-2-medium flex cursor-pointer items-center justify-center gap-0.5 text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
               자세히 보기
               <ChevronRightIcon className="h-5 w-5 -translate-y-px text-gray-800" />
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-2.5 px-4 pt-3 pb-[calc(32px+env(safe-area-inset-bottom))]">
-            {portfolioImages.map((imageUrl, index) => {
-              const portfolioId = portfolioIds?.[index];
-              const isClickable = typeof portfolioId === 'number' && !!onPortfolioSelect;
+          {hasPortfolios ? (
+            <div className="grid grid-cols-3 gap-2.5 px-4 pt-3 pb-[calc(32px+env(safe-area-inset-bottom))]">
+              {portfolioImages.map((imageUrl, index) => {
+                const portfolioId = portfolioIds?.[index];
+                const isClickable = typeof portfolioId === 'number' && !!onPortfolioSelect;
 
-              return (
-                <button
-                  key={`${imageUrl}-${index}`}
-                  type="button"
-                  onClick={() => {
-                    if (!isClickable) return;
-                    onPortfolioSelect?.(portfolioId);
-                  }}
-                  className={`border-0 p-0 relative h-[151px] w-full overflow-hidden rounded-lg bg-gray-200 ${
-                    isClickable ? 'cursor-pointer' : 'cursor-default'
-                  }`}
-                  disabled={!isClickable}
-                  aria-label={isClickable ? '포트폴리오 상세 보기' : undefined}
-                >
-                  <Image
-                    src={imageUrl}
-                    alt={`포트폴리오 이미지 ${index + 1}`}
-                    fill
-                    sizes="33vw"
-                    className="object-cover"
-                  />
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={`${imageUrl}-${index}`}
+                    type="button"
+                    onClick={() => {
+                      if (!isClickable) return;
+                      onPortfolioSelect?.(portfolioId);
+                    }}
+                    className={`relative h-[151px] w-full overflow-hidden rounded-lg border-0 bg-gray-200 p-0 ${
+                      isClickable ? 'cursor-pointer' : 'cursor-default'
+                    }`}
+                    disabled={!isClickable}
+                    aria-label={isClickable ? '포트폴리오 상세 보기' : undefined}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={`포트폴리오 이미지 ${index + 1}`}
+                      fill
+                      sizes="33vw"
+                      className="object-cover"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center px-4 pt-11 pb-[calc(60px+env(safe-area-inset-bottom))]">
+              <p className="text-body-2-medium text-gray-500">등록된 포트폴리오가 없습니다.</p>
+            </div>
+          )}
         </>
       ) : (
         <>
