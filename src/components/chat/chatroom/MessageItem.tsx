@@ -26,11 +26,7 @@ export default function MessageItem({
     message.messageType === 'TEXT' && message.text?.includes('예약 일정 변경 요청이 수락되었습니다');
   const isReservationNoticeFromMe = isReservationNotice && message.fromMe;
   const effectiveSharp = sharpCorner ?? defaultSharp;
-  const cornerClass = effectiveSharp
-    ? effectiveSharp === 'right'
-      ? 'rounded-br-none'
-      : 'rounded-bl-none'
-    : '';
+  const cornerClass = effectiveSharp ? (effectiveSharp === 'right' ? 'rounded-br-none' : 'rounded-bl-none') : '';
   const hasImages = (message.imageUrls?.length ?? 0) > 0;
   const isPending = message.pending || message.failed;
   const status = isPending ? '전송 중...' : null;
@@ -100,9 +96,9 @@ export default function MessageItem({
           </div>
         )}
         {(showTime || status) && (
-          <div className="text-caption-1-medium mt-0.5 flex items-center gap-2 text-gray-600">
-            {showUnread && <span className="text-purple-600">안읽음</span>}
-            {showTime && <span>{message.time}</span>}
+          <div className="mt-0.5 flex items-center gap-2 text-gray-600">
+            {showUnread && <span className="text-[11px] font-medium leading-[1.5]">안읽음</span>}
+            {showTime && <span className="text-caption-1-medium">{message.time}</span>}
           </div>
         )}
       </div>
