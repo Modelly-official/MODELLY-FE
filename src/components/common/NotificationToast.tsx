@@ -15,7 +15,7 @@ interface NotificationToastProps {
 
 /**
  * Sonner 커스텀 토스트 컴포넌트
- * - 슬림한 디자인 (앱 아이콘 + 텍스트)
+ * - 앱 아이콘 + 텍스트 디자인
  * - 클릭 시 해당 페이지로 이동
  * - 5초 후 자동 닫힘
  */
@@ -36,25 +36,25 @@ export default function NotificationToast({
   };
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex w-full justify-center font-['Pretendard']">
       <div
         onClick={handleClick}
-        className="flex min-w-[280px] w-fit cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-2.5 py-2 shadow-lg"
+        className="flex min-w-[320px] w-fit cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-lg"
       >
         {/* 앱 아이콘 */}
         <Image
-          src="/icons/app/icon-24x24.png"
+          src="/icons/app/icon-72x72.png"
           alt="Modelly"
-          width={24}
-          height={24}
+          width={32}
+          height={32}
           className="shrink-0 rounded-md"
         />
 
         {/* 내용 */}
         <div className="min-w-0 flex-1">
-          <p className="text-caption-1-medium truncate text-gray-900">{title}</p>
+          <p className="text-body-2-medium truncate text-gray-900">{title}</p>
           {body && (
-            <p className="text-caption-2-regular truncate text-gray-500">{body}</p>
+            <p className="text-caption-1-medium truncate text-gray-500">{body}</p>
           )}
         </div>
       </div>
