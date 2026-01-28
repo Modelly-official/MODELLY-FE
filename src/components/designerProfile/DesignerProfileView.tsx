@@ -33,23 +33,11 @@ interface DesignerProfileViewProps {
   onAction?: () => void;
 }
 
-const defaultPortfolioImages = [
-  '/images/mocks/portfolio-1.png',
-  '/images/mocks/portfolio-2.png',
-  '/images/mocks/portfolio-3.png',
-  '/images/mocks/portfolio-4.png',
-  '/images/mocks/portfolio-5.png',
-  '/images/mocks/portfolio-6.png',
-  '/images/mocks/hair-1.png',
-  '/images/mocks/hair-2.png',
-  '/images/mocks/hair-3.png',
-];
-
 export default function DesignerProfileView({
   profile,
   openRecruitments,
   portfolioItems,
-  portfolioImages = defaultPortfolioImages,
+  portfolioImages = [],
   portfolioTotalCount,
   actionType = 'none',
   showActionBar = false,
@@ -217,7 +205,7 @@ export default function DesignerProfileView({
     if (portfolioItems && portfolioItems.length > 0) {
       return portfolioItems.map((item) => item.thumbnail);
     }
-    return portfolioImages;
+    return portfolioImages ?? [];
   }, [portfolioItems, portfolioImages]);
 
   const resolvedPortfolioIds = useMemo(() => {

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMyDesignerProfile, getPublicDesignerProfile, updateMyDesignerProfile } from '@/src/apis/profile';
 import { useToast } from '@/src/hooks/common/useToast';
+import { mypageKeys } from '@/src/hooks/queries/mypage';
 import type { ApiResponse } from '@/src/types';
 import type { DesignerProfileResponse, DesignerProfileUpdateRequest } from '@/src/types/profile';
 
@@ -63,6 +64,7 @@ export function useUpdateMyDesignerProfile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: designerProfileKeys.all });
       queryClient.invalidateQueries({ queryKey: publicProfileKeys.all });
+      queryClient.invalidateQueries({ queryKey: mypageKeys.all });
       showToast('프로필이 저장되었습니다.');
     },
     onError: () => {

@@ -16,6 +16,9 @@ export default function PortfolioManagePage() {
 
   const portfolioItems = useMemo(() => data?.pages.flatMap((page) => page.result.items) ?? [], [data]);
   const portfolioImages = useMemo(() => portfolioItems.map((item) => item.thumbnail), [portfolioItems]);
+  const portfolioKey = portfolioItems.length
+    ? portfolioItems.map((item) => item.portfolioId).join('-')
+    : 'empty';
   const { loadMoreRef } = useInfiniteScroll({ hasNextPage, isFetchingNextPage, fetchNextPage });
 
   const handleAddPortfolio = () => {
@@ -70,6 +73,7 @@ export default function PortfolioManagePage() {
         ) : (
           <>
             <DesignerProfileEditPortfolio
+              key={portfolioKey}
               images={portfolioImages}
               onEditImage={handleEditImage}
               onDeleteImage={handleDeleteImage}

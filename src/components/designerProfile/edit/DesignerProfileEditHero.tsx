@@ -33,13 +33,15 @@ export default function DesignerProfileEditHero({
 
       <DesignerProfileHeader actionType="none" onBack={onBack} />
 
-      <button
-        type="button"
-        onClick={onEditImage}
-        className="text-body-2-medium absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-4 py-2 text-gray-900 shadow-sm"
-      >
-        대표 이미지 수정
-      </button>
+      {onEditImage && (
+        <button
+          type="button"
+          onClick={onEditImage}
+          className="text-body-2-medium absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-4 py-2 text-gray-900 shadow-sm"
+        >
+          대표 이미지 수정
+        </button>
+      )}
     </section>
   );
 }
