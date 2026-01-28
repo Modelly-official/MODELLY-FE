@@ -49,7 +49,7 @@ async function getUserRoleFromIDB() {
 
 /**
  * 알림 타입별 이동 경로 결정
- * - 채팅 알림: /chat/{targetId}
+ * - 채팅 알림: /chat/{targetId} 또는 /chat (targetId 없을 때)
  * - 예약 알림: 디자이너 → /reservations/{targetId}, 모델 → /mypage/reservations
  * - 일정 알림: 리마인더 → / (홈), 변경/취소 → /chat/{targetId}
  * - 리뷰 알림: /mypage/reviews
@@ -59,8 +59,8 @@ async function getNotificationTargetUrl(data, title) {
   const targetId = data?.targetId;
 
   // 채팅 알림
-  if (type === '채팅 알림' && targetId) {
-    return `/chat/${targetId}`;
+  if (type === '채팅 알림') {
+    return targetId ? `/chat/${targetId}` : '/chat';
   }
 
   // 예약 알림: IndexedDB에서 역할 확인
