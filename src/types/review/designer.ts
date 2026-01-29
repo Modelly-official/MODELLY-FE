@@ -28,6 +28,7 @@ export interface DesignerReviewsResponse {
   items: DesignerReviewItem[];
   hasNext: boolean;
   nextCursor?: number | null;
+  nextCursorFixed?: boolean | null;
   totalCount?: number;
 }
 
@@ -38,12 +39,29 @@ export interface DesignerReviewThumbnailItem {
   isFixed: boolean;
 }
 
+// ===== 디자이너 리뷰 이미지 아이템 =====
+export interface DesignerReviewImageItem {
+  reviewImageId: number;
+  reviewId: number;
+  reviewImage: string;
+  isFixed: boolean;
+}
+
 // ===== 디자이너 리뷰 썸네일 목록 응답 =====
 export interface DesignerReviewThumbnailsResponse {
   items: DesignerReviewThumbnailItem[];
   hasNext: boolean;
   nextCursor?: number | null;
   totalCount: number;
+}
+
+// ===== 디자이너 리뷰 이미지 목록 응답 =====
+export interface DesignerReviewImagesResponse {
+  items: DesignerReviewImageItem[];
+  hasNext: boolean;
+  nextCursor?: number | null;
+  nextCursorFixed?: boolean | null;
+  totalCount?: number;
 }
 
 // ===== 디자이너 리뷰 상세 응답 =====

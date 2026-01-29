@@ -19,6 +19,7 @@ export interface ReviewReply {
 export interface ReviewListParams {
   category?: Category | string;
   cursorId?: number;
+  cursorIsFixed?: boolean;
   size?: number;
 }
 

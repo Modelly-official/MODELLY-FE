@@ -29,6 +29,7 @@ export const designerReviewKeys = {
 // 커서 타입
 interface ReviewCursor {
   cursorId?: number;
+  cursorIsFixed?: boolean;
 }
 
 interface UseDesignerReviewsOptions {
@@ -39,7 +40,7 @@ interface UseDesignerReviewsOptions {
  * 디자이너가 받은 리뷰 목록 조회 Hook (무한 스크롤)
  */
 export function useDesignerReviews(
-  params?: Omit<ReviewListParams, 'cursorId'>,
+  params?: Omit<ReviewListParams, 'cursorId' | 'cursorIsFixed'>,
   options: UseDesignerReviewsOptions = {}
 ) {
   const { enabled = true } = options;
@@ -56,6 +57,7 @@ export function useDesignerReviews(
       const apiParams = {
         ...params,
         cursorId: pageParam?.cursorId,
+        cursorIsFixed: pageParam?.cursorIsFixed,
       };
       return getDesignerReviews(apiParams);
     },
@@ -64,6 +66,7 @@ export function useDesignerReviews(
       if (!lastPage.result?.hasNext) return undefined;
       return {
         cursorId: lastPage.result.nextCursor ?? undefined,
+        cursorIsFixed: lastPage.result.nextCursorFixed ?? undefined,
       };
     },
     enabled,

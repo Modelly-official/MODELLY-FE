@@ -1,9 +1,14 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { getPublicDesignerReviews, getPublicDesignerReviewThumbnails } from '@/src/apis';
+import {
+  getPublicDesignerReviews,
+  getPublicDesignerReviewThumbnails,
+  getPublicDesignerReviewImages,
+} from '@/src/apis';
 import type {
   ApiResponse,
   DesignerReviewsResponse,
   DesignerReviewThumbnailsResponse,
+  DesignerReviewImagesResponse,
   ReviewListParams,
 } from '@/src/types';
 
@@ -17,6 +22,10 @@ export const publicDesignerReviewKeys = {
     [...publicDesignerReviewKeys.all, 'thumbnails', designerId, params] as const,
   thumbnailsInfinite: (designerId: number, params?: ReviewListParams) =>
     [...publicDesignerReviewKeys.all, 'thumbnailsInfinite', designerId, params] as const,
+  images: (designerId: number, params?: ReviewListParams) =>
+    [...publicDesignerReviewKeys.all, 'images', designerId, params] as const,
+  imagesInfinite: (designerId: number, params?: ReviewListParams) =>
+    [...publicDesignerReviewKeys.all, 'imagesInfinite', designerId, params] as const,
 };
 
 interface UsePublicDesignerReviewListParams {
@@ -29,9 +38,14 @@ interface ReviewCursor {
   cursorId?: number;
 }
 
+interface ReviewListCursor {
+  cursorId?: number;
+  cursorIsFixed?: boolean;
+}
+
 interface UsePublicDesignerReviewListInfiniteParams {
   designerId: number;
-  params?: Omit<ReviewListParams, 'cursorId'>;
+  params?: Omit<ReviewListParams, 'cursorId' | 'cursorIsFixed'>;
   enabled?: boolean;
 }
 
@@ -44,6 +58,18 @@ interface UsePublicDesignerReviewThumbnailsParams {
 interface UsePublicDesignerReviewThumbnailsInfiniteParams {
   designerId: number;
   params?: Omit<ReviewListParams, 'cursorId'>;
+  enabled?: boolean;
+}
+
+interface UsePublicDesignerReviewImagesParams {
+  designerId: number;
+  params?: ReviewListParams;
+  enabled?: boolean;
+}
+
+interface UsePublicDesignerReviewImagesInfiniteParams {
+  designerId: number;
+  params?: Omit<ReviewListParams, 'cursorId' | 'cursorIsFixed'>;
   enabled?: boolean;
 }
 
@@ -74,15 +100,16 @@ export function usePublicDesignerReviewListInfinite({
   return useInfiniteQuery<
     ApiResponse<DesignerReviewsResponse>,
     Error,
-    { pages: ApiResponse<DesignerReviewsResponse>[]; pageParams: ReviewCursor[] },
+    { pages: ApiResponse<DesignerReviewsResponse>[]; pageParams: ReviewListCursor[] },
     ReturnType<typeof publicDesignerReviewKeys.listInfinite>,
-    ReviewCursor
+    ReviewListCursor
   >({
     queryKey: publicDesignerReviewKeys.listInfinite(designerId, params),
     queryFn: async ({ pageParam }) => {
       const apiParams = {
         ...params,
         cursorId: pageParam?.cursorId,
+        cursorIsFixed: pageParam?.cursorIsFixed,
       };
       return getPublicDesignerReviews(designerId, apiParams);
     },
@@ -91,6 +118,7 @@ export function usePublicDesignerReviewListInfinite({
       if (!lastPage.result?.hasNext) return undefined;
       return {
         cursorId: lastPage.result.nextCursor ?? undefined,
+        cursorIsFixed: lastPage.result.nextCursorFixed ?? undefined,
       };
     },
     enabled,
@@ -142,6 +170,59 @@ export function usePublicDesignerReviewThumbnailsInfinite({
       if (!lastPage.result?.hasNext) return undefined;
       return {
         cursorId: lastPage.result.nextCursor ?? undefined,
+      };
+    },
+    enabled,
+    staleTime: 1000 * 60 * 2, // 2분
+  });
+}
+
+/**
+ * 디자이너 리뷰 이미지 리스트 조회 Hook (공개)
+ */
+export function usePublicDesignerReviewImages({
+  designerId,
+  params,
+  enabled = true,
+}: UsePublicDesignerReviewImagesParams) {
+  return useQuery<ApiResponse<DesignerReviewImagesResponse>, Error>({
+    queryKey: publicDesignerReviewKeys.images(designerId, params),
+    queryFn: () => getPublicDesignerReviewImages(designerId, params),
+    enabled,
+    staleTime: 1000 * 60 * 2, // 2분
+  });
+}
+
+/**
+ * 디자이너 리뷰 이미지 리스트 조회 Hook (공개, 무한 스크롤)
+ */
+export function usePublicDesignerReviewImagesInfinite({
+  designerId,
+  params,
+  enabled = true,
+}: UsePublicDesignerReviewImagesInfiniteParams) {
+  return useInfiniteQuery<
+    ApiResponse<DesignerReviewImagesResponse>,
+    Error,
+    { pages: ApiResponse<DesignerReviewImagesResponse>[]; pageParams: ReviewListCursor[] },
+    ReturnType<typeof publicDesignerReviewKeys.imagesInfinite>,
+    ReviewListCursor
+  >({
+    queryKey: publicDesignerReviewKeys.imagesInfinite(designerId, params),
+    queryFn: async ({ pageParam }) => {
+      const apiParams = {
+        ...params,
+        cursorId: pageParam?.cursorId,
+        cursorIsFixed: pageParam?.cursorIsFixed,
+      };
+      return getPublicDesignerReviewImages(designerId, apiParams);
+    },
+    initialPageParam: {},
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.result?.hasNext) return undefined;
+      return {
+        cursorId: lastPage.result.nextCursor ?? undefined,
+        cursorIsFixed: lastPage.result.nextCursorFixed ?? undefined,
       };
     },
     enabled,
