@@ -96,9 +96,11 @@ export default function DesignerProfileView({
     const listItems = isOwnerProfile ? ownerItems : (publicResult?.items ?? []);
     const totalCount = isOwnerProfile
       ? (ownerTotalCount ?? listItems.length)
-      : (publicResult?.totalCount ?? listItems.length);
+      : (publicResult?.totalCount ?? profile.reviewCount ?? listItems.length);
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
-    const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
+    const rating =
+      profile.averageRating ??
+      (listItems.length > 0 ? totalRating / listItems.length : 0);
     const previewItems =
       reviewImagesQuery.data?.result?.items
         ?.map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImage }))
@@ -118,6 +120,8 @@ export default function DesignerProfileView({
     isOwnerProfile,
     reviewListQuery.data?.result,
     reviewImagesQuery.data?.result,
+    profile.reviewCount,
+    profile.averageRating,
   ]);
 
   const isReviewLoading = reviewQueryEnabled

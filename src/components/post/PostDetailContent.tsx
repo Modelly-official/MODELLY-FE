@@ -110,7 +110,9 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       ? ownerTotalCount ?? listItems.length
       : publicResult?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
-    const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
+    const rating =
+      data?.result?.averageRating ??
+      (listItems.length > 0 ? totalRating / listItems.length : 0);
     const previewItems =
       reviewImagesQuery.data?.result?.items
         ?.map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImage }))
