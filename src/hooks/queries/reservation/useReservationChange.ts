@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import {
   acceptReservationChange,
   cancelReservation,
@@ -10,6 +11,7 @@ import {
 import { useToast } from '@/src/hooks/common/useToast';
 import { calendarKeys } from '@/src/hooks/queries/calendar';
 import { myReservationKeys } from './useMyReservations';
+import { reservationKeys } from './useAvailableSchedules';
 import type { ApiResponse, ReservationCancelRequest, ReservationChangeRequest, ReservationChangeResult } from '@/src/types';
 
 type RequestReservationChangeVariables = {
@@ -34,6 +36,7 @@ export function useRequestReservationChange() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       queryClient.invalidateQueries({ queryKey: myReservationKeys.all });
+      queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
     onError: () => {
       showToast('예약 변경 요청에 실패했습니다.');
@@ -51,8 +54,16 @@ export function useCancelReservation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
       queryClient.invalidateQueries({ queryKey: myReservationKeys.all });
+      queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
-    onError: () => {
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const message = error.response?.data?.message as string | undefined;
+        if (message) {
+          showToast(message);
+          return;
+        }
+      }
       showToast('예약 취소에 실패했습니다.');
     },
   });
@@ -66,6 +77,7 @@ export function useRejectReservationChange() {
     mutationFn: (reservationChangeId) => rejectReservationChange(reservationChangeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
     onError: () => {
       showToast('예약 변경 거절에 실패했습니다.');
@@ -81,6 +93,7 @@ export function useAcceptReservationChange() {
     mutationFn: (reservationChangeId) => acceptReservationChange(reservationChangeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
     onError: () => {
       showToast('예약 변경 수락에 실패했습니다.');
@@ -96,6 +109,7 @@ export function useCancelReservationChange() {
     mutationFn: (reservationChangeId) => cancelReservationChange(reservationChangeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
     onError: () => {
       showToast('예약 변경 요청 취소에 실패했습니다.');
@@ -111,6 +125,7 @@ export function useProceedReservationChange() {
     mutationFn: (reservationChangeId) => proceedReservationChange(reservationChangeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: calendarKeys.all });
+      queryClient.invalidateQueries({ queryKey: reservationKeys.all });
     },
     onError: () => {
       showToast('기존 일정 진행 확정에 실패했습니다.');

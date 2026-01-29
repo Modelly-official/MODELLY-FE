@@ -99,10 +99,10 @@ export default function ChatRoom() {
   const { data: fetchedReservationInfo } = useChatReservationSummary({
     roomId: validRoomId ?? null,
     role: userRole,
-    enabled: !queryReservationInfo && isLoggedIn,
+    enabled: isLoggedIn && !!validRoomId,
   });
 
-  const reservationInfo = queryReservationInfo ?? fetchedReservationInfo ?? null;
+  const reservationInfo = fetchedReservationInfo ?? queryReservationInfo ?? null;
   const isConfirmedReservation =
     !reservationInfo?.status ||
     reservationInfo.status === 'RESERVATION_CONFIRMED' ||
@@ -220,7 +220,7 @@ export default function ChatRoom() {
               className="text-body-2-medium flex cursor-pointer items-center gap-2 text-gray-800"
             >
               <span>예약 내역</span>
-              <DropDownArrowIcon className="h-[9px] w-4 scale-[0.9] rotate-180 text-gray-800" />
+              <DropDownArrowIcon className="h-5 w-5 rotate-180 text-gray-800" />
             </button>
           </div>
           {confirmedReservationInfo ? (
@@ -253,11 +253,15 @@ export default function ChatRoom() {
           setIsReservationOpen((prev) => !prev);
         }}
       />
-      <main ref={containerRef} className="scrollbar-hide flex-1 overflow-auto overscroll-y-contain px-4 py-3" onScroll={handleScroll}>
+      <main
+        ref={containerRef}
+        className="scrollbar-hide flex-1 overflow-auto overscroll-y-contain px-4 py-3"
+        onScroll={handleScroll}
+      >
         <ul className="space-y-3">
           {messages.map((m, idx) => {
             const next = messages[idx + 1];
-            const showTime = !next || next.time !== m.time;
+            const showTime = !next || next.time !== m.time || next.fromMe !== m.fromMe;
             const prev = messages[idx - 1];
             const showDateDivider = !!m.dateKey && m.dateKey !== prev?.dateKey;
             if (m.messageType === 'RESERVATION' && m.reservation) {
@@ -329,11 +333,7 @@ export default function ChatRoom() {
           />
         </>
       )}
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setModalDismissed(true)}
-        callbackUrl={callbackUrl}
-      />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setModalDismissed(true)} callbackUrl={callbackUrl} />
     </div>
   );
 }

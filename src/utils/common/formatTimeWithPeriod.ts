@@ -1,5 +1,5 @@
 /**
- * 24시간 형식의 시간에 am/pm 표시 추가
+ * 24시간 형식의 시간에 오전 오후 표시 추가
  * @param timeStr - "HH:mm" 형식의 시간 문자열 (예: "14:00", "09:30")
  * @returns "HH:mm am/pm" 형식의 시간 문자열 (예: "14:00 pm", "09:30 am")
  */
@@ -12,7 +12,9 @@ export function formatTimeWithPeriod(timeStr: string): string {
     return timeStr;
   }
 
-  const period = hourNum >= 12 ? 'pm' : 'am';
+  const period = hourNum >= 12 ? '오후 ' : '오전 ';
+  const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+  const minute = timeStr.split(':')[1] ?? '00';
 
-  return `${timeStr} ${period}`;
+  return `${period} ${displayHour}:${minute}`;
 }

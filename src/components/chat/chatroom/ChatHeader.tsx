@@ -51,7 +51,7 @@ export default function ChatHeader({
         >
           <span>{rightLabel}</span>
           <DropDownArrowIcon
-            className={`h-[9px] w-4 shrink-0 origin-center scale-[0.9] text-gray-800 transition-transform ${
+            className={`h-5 w-5 shrink-0 origin-center text-gray-800 transition-transform ${
               isReservationOpen ? 'rotate-180' : ''
             }`}
           />

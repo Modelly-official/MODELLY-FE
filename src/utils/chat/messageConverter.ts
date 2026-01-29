@@ -36,6 +36,18 @@ export const formatMessageTime = (value?: string) => {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 };
 
+export const formatChatRoomTime = (value?: string) => {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const hours = d.getHours();
+  const minutes = d.getMinutes();
+  const period = hours < 12 ? '오전' : '오후';
+  const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+  const displayMinute = String(minutes).padStart(2, '0');
+  return `${period} ${displayHour}:${displayMinute}`;
+};
+
 export const formatMessageDateKey = (value?: string) => {
   if (!value) return '';
   const d = new Date(value);
@@ -65,7 +77,7 @@ export const formatChatDateLabel = (value?: string): string => {
   const day = String(date.getDate()).padStart(2, '0');
   const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()] ?? '';
 
-  return `${year}. ${month}. ${day}(${weekday})`;
+  return `${year}. ${month}. ${day} (${weekday})`;
 };
 
 /**
@@ -89,7 +101,7 @@ export const formatChatListTime = (isoString?: string): string => {
 
   // 오늘
   if (dateOnly.getTime() === todayOnly.getTime()) {
-    return formatMessageTime(isoString);
+    return formatChatRoomTime(isoString);
   }
 
   // 어제
@@ -99,11 +111,16 @@ export const formatChatListTime = (isoString?: string): string => {
 
   // 올해
   if (date.getFullYear() === now.getFullYear()) {
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}/${day}`;
   }
 
   // 그 외
-  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}/${month}/${day}`;
 };
 
 export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number | null): Message => {
@@ -119,7 +136,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
         fromMe,
         messageType: 'TEXT',
         text: msg.message ?? '',
-        time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
+        time: msg.createdAt ? formatChatRoomTime(msg.createdAt) : undefined,
         dateKey,
         read,
       };
@@ -129,7 +146,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
       fromMe,
       messageType: 'RESERVATION',
       reservation,
-      time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
+      time: msg.createdAt ? formatChatRoomTime(msg.createdAt) : undefined,
       dateKey,
       read,
     };
@@ -140,7 +157,7 @@ export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number |
     fromMe,
     messageType: msg.messageType,
     text: msg.messageType === 'IMAGE' ? '' : (msg.message ?? ''),
-    time: msg.createdAt ? formatMessageTime(msg.createdAt) : undefined,
+    time: msg.createdAt ? formatChatRoomTime(msg.createdAt) : undefined,
     dateKey,
     read,
     imageUrls: msg.imageUrls,
@@ -164,7 +181,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
         fromMe,
         messageType: 'TEXT',
         text: payload.message ?? '',
-        time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
+        time: payload.createdAt ? formatChatRoomTime(payload.createdAt) : undefined,
         dateKey,
         read: resolvedRead,
       };
@@ -174,7 +191,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
       fromMe,
       messageType: 'RESERVATION',
       reservation,
-      time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
+      time: payload.createdAt ? formatChatRoomTime(payload.createdAt) : undefined,
       dateKey,
       read: resolvedRead,
     };
@@ -185,7 +202,7 @@ export const mapStompMessage = (payload: StompIncomingChatPayload, currentUserId
     fromMe,
     messageType: payload.messageType,
     text: payload.messageType === 'IMAGE' ? '' : (payload.message ?? ''),
-    time: payload.createdAt ? formatMessageTime(payload.createdAt) : undefined,
+    time: payload.createdAt ? formatChatRoomTime(payload.createdAt) : undefined,
     dateKey,
     read: resolvedRead,
     imageUrls: payload.imageUrls,
