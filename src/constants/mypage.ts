@@ -9,6 +9,7 @@ export const SETTING_LINKS = [
       window.open(
         'https://docs.google.com/forms/d/e/1FAIpQLSe3FEUwr9RgbMR8uhBXNklICUJ9089BRAuIDfkPAOxL-cYALQ/viewform',
         '_blank',
+        'noopener,noreferrer',
       ),
   },
 ];
