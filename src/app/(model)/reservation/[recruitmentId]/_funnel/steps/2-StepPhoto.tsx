@@ -7,6 +7,8 @@ import { getReservationPresignedUrl } from '@/src/apis/reservation/model';
 import { uploadImageToS3 } from '@/src/apis/auth/profile';
 import { useToast } from '@/src/hooks/common/useToast';
 import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
+import { isPhotoRequired } from '@/src/utils/reservation/photoRequirement';
+import { Spinner } from '@/src/components/auth/common';
 
 interface StepPhotoProps {
   category: string;
@@ -29,6 +31,9 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
   const { showToast } = useToast();
   const [previewUrl, setPreviewUrl] = useState<string | null>(uploadedImageUrl);
   const [isUploading, setIsUploading] = useState(false);
+
+  // 사진 필수 여부 확인
+  const photoRequired = isPhotoRequired(category);
 
   // 스토어의 uploadedImageUrl 변경 시 previewUrl 동기화
   useEffect(() => {
@@ -82,7 +87,9 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
   }, [previewUrl, setUploadedImageUrl]);
 
   // 다음 버튼 활성화 조건
-  const canProceed = uploadedImageUrl !== null && !isUploading;
+  const canProceed = photoRequired
+    ? uploadedImageUrl !== null && !isUploading
+    : !isUploading;
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -102,7 +109,14 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
             <h1 className="text-head-2-semibold text-gray-900">
               예약 신청을 위해
               <br />
-              필수 사진을 첨부해주세요.
+              {photoRequired ? (
+                '필수 사진을 첨부해주세요.'
+              ) : (
+                <>
+                  사진을 첨부해주세요.{' '}
+                  <span className="text-body-1-medium text-gray-500">(선택)</span>
+                </>
+              )}
             </h1>
 
             {/* 안내 문구 */}
@@ -125,7 +139,12 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
         />
 
         {/* 업로드 중 표시 */}
-        {isUploading && <p className="text-body-2-regular text-center text-gray-500">이미지 업로드 중...</p>}
+        {isUploading && (
+          <div className="flex items-center justify-center gap-2">
+            <Spinner color="gray" size="sm" />
+            <span className="text-body-2-regular text-gray-500">이미지 업로드 중…</span>
+          </div>
+        )}
       </div>
 
       {/* 하단 버튼 */}
@@ -134,7 +153,7 @@ export default function StepPhoto({ category, goNext, goPrev }: StepPhotoProps) 
           type="button"
           onClick={goNext}
           disabled={!canProceed}
-          className={`text-body-1-semibold h-14 w-full rounded-full transition-colors ${
+          className={`text-body-1-semibold h-14 w-full rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 ${
             canProceed ? 'cursor-pointer bg-gray-900 text-white' : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
