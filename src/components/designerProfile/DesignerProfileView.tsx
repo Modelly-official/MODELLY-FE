@@ -155,11 +155,7 @@ export default function DesignerProfileView({
   };
 
   const handleBack = () => {
-    if (onBack) {
-      onBack();
-      return;
-    }
-    router.back();
+    router.replace('/explore');
   };
 
   const handleAction = () => {
