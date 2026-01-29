@@ -13,6 +13,8 @@ export interface DesignerProfileInfo {
   };
   intro: string;
   isLiked: boolean;
+  reviewCount?: number;
+  averageRating?: number;
 }
 
 // ===== 디자이너 프로필 내 공고 카드 =====

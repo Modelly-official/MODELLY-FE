@@ -6,10 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { useInfiniteScroll } from '@/src/hooks/common/useInfiniteScroll';
-import {
-  useDesignerReviews,
-  usePublicDesignerReviewListInfinite,
-} from '@/src/hooks/queries/review';
+import { usePublicDesignerReviewImagesInfinite } from '@/src/hooks/queries/review';
 
 interface DesignerReviewPhotoGalleryViewProps {
   designerId: number;
@@ -24,33 +21,23 @@ export default function DesignerReviewPhotoGalleryView({
   const isOwnerMode = mode === 'owner';
   const canFetchPhotos = Number.isFinite(designerId) && designerId > 0;
 
-  const ownerReviewQuery = useDesignerReviews(
-    { size: 12 },
-    { enabled: isOwnerMode && canFetchPhotos },
-  );
-
-  const publicReviewQuery = usePublicDesignerReviewListInfinite({
+  const activeQuery = usePublicDesignerReviewImagesInfinite({
     designerId,
     params: { size: 12 },
-    enabled: !isOwnerMode && canFetchPhotos,
+    enabled: canFetchPhotos,
   });
-
-  const activeQuery = isOwnerMode ? ownerReviewQuery : publicReviewQuery;
   const detailBasePath = isOwnerMode
     ? '/myProfile/reviews/photos'
     : `/designer/${designerId}/reviews/photos`;
 
   const photoItems = useMemo(() => {
     const items = activeQuery.data?.pages.flatMap((page) => page.result?.items ?? []) ?? [];
-    return items.flatMap((item) =>
-      (item.reviewImages ?? [])
-        .filter((imageUrl): imageUrl is string => Boolean(imageUrl))
-        .map((imageUrl, imageIndex) => ({
-          reviewId: item.reviewId,
-          imageUrl,
-          imageIndex,
-        })),
-    );
+    return items
+      .map((item) => ({
+        reviewId: item.reviewId,
+        imageUrl: item.reviewImage,
+      }))
+      .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
   }, [activeQuery.data?.pages]);
 
   const { loadMoreRef } = useInfiniteScroll({
@@ -96,7 +83,7 @@ export default function DesignerReviewPhotoGalleryView({
             photoItems.map((item, index) => (
               <Link
                 key={`${item.reviewId}-${index}`}
-                href={`${detailBasePath}/${item.reviewId}?imageIndex=${item.imageIndex}`}
+                href={`${detailBasePath}/${item.reviewId}?imageUrl=${encodeURIComponent(item.imageUrl)}`}
                 className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100"
                 aria-label={`리뷰 사진 ${index + 1} 보기`}
               >

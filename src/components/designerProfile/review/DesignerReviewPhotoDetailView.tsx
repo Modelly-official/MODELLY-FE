@@ -10,10 +10,15 @@ import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import PinIcon from '@/public/icons/common/pin.svg';
-import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder-sm.svg';
+import ProfileIcon from '@/public/icons/chat/profile.svg';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import DesignerReviewStars from '@/src/components/designerProfile/review/DesignerReviewStars';
-import { useDesignerReviews, usePublicDesignerReviewListInfinite } from '@/src/hooks/queries/review';
+import {
+  useDesignerReviews,
+  usePublicDesignerReviewDetail,
+  usePublicDesignerReviewListInfinite,
+} from '@/src/hooks/queries/review';
+import type { ApiResponse, DesignerReviewDetailResponse } from '@/src/types';
 
 interface DesignerReviewPhotoDetailViewProps {
   designerId: number;
@@ -31,6 +36,12 @@ export default function DesignerReviewPhotoDetailView({
   const isOwnerMode = mode === 'owner';
   const paginationId = useId().replace(/:/g, '');
   const canFetchReviews = Number.isFinite(designerId) && designerId > 0 && reviewId > 0;
+
+  const reviewDetailQuery = usePublicDesignerReviewDetail({
+    reviewId,
+    enabled: canFetchReviews,
+  });
+  const reviewDetail = reviewDetailQuery.data as ApiResponse<DesignerReviewDetailResponse> | undefined;
 
   const ownerReviewQuery = useDesignerReviews({ size: 10 }, { enabled: isOwnerMode && canFetchReviews });
 
@@ -50,20 +61,27 @@ export default function DesignerReviewPhotoDetailView({
   useEffect(() => {
     if (!canFetchReviews || reviewItem || !reviewListQuery.hasNextPage || reviewListQuery.isFetchingNextPage) return;
     reviewListQuery.fetchNextPage();
-  }, [
-    canFetchReviews,
-    reviewItem,
-    reviewListQuery,
-  ]);
+  }, [canFetchReviews, reviewItem, reviewListQuery]);
 
-  const reviewImages = reviewItem?.reviewImages ?? [];
+  const reviewImages = reviewDetail?.result?.imageUrls?.length
+    ? reviewDetail.result.imageUrls
+    : (reviewItem?.reviewImages ?? []);
   const displayDate = reviewItem?.createdDate ? reviewItem.createdDate.replace(/-/g, '.') : '';
+  const displayName = reviewItem?.modelName ?? '고객';
+  const displayRating = reviewDetail?.result?.rating ?? reviewItem?.rating ?? 0;
+  const displayContent = reviewDetail?.result?.content ?? reviewItem?.content ?? '';
+  const displaySummary = reviewDetail?.result?.summary ?? reviewItem?.summary ?? '';
   const initialIndex = useMemo(() => {
+    const imageUrlParam = searchParams.get('imageUrl');
+    if (imageUrlParam) {
+      const matchedIndex = reviewImages.findIndex((url) => url === imageUrlParam);
+      if (matchedIndex >= 0) return matchedIndex;
+    }
     const rawIndex = Number(searchParams.get('imageIndex'));
     if (!Number.isFinite(rawIndex)) return 0;
     const clamped = Math.max(0, Math.min(rawIndex, reviewImages.length - 1));
     return Number.isNaN(clamped) ? 0 : clamped;
-  }, [reviewImages.length, searchParams]);
+  }, [reviewImages, searchParams]);
 
   if (!canFetchReviews) {
     return (
@@ -73,7 +91,7 @@ export default function DesignerReviewPhotoDetailView({
     );
   }
 
-  if (reviewListQuery.isLoading && !reviewItem) {
+  if (reviewDetailQuery.isLoading && !reviewDetail?.result && !reviewItem) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white">
         <p className="text-body-2-medium text-gray-500">리뷰를 불러오는 중입니다.</p>
@@ -81,7 +99,7 @@ export default function DesignerReviewPhotoDetailView({
     );
   }
 
-  if (!reviewItem) {
+  if (!reviewDetail?.result && !reviewItem) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white">
         <p className="text-body-2-medium text-gray-500">리뷰 정보를 찾을 수 없습니다.</p>
@@ -159,36 +177,43 @@ export default function DesignerReviewPhotoDetailView({
       <div className="mt-6 flex flex-col gap-2 px-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100">
-              {reviewItem.modelImage ? (
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-300">
+              {reviewItem?.modelImage ? (
                 <Image
                   src={reviewItem.modelImage}
-                  alt={reviewItem.modelName}
+                  alt={displayName}
                   width={44}
                   height={44}
                   className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <ProfilePlaceholderIcon className="h-5 w-5 text-gray-400" />
+                <ProfileIcon className="h-7 w-7 text-gray-500" />
               )}
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-body-1-semibold text-gray-900">{reviewItem.modelName}</span>
-              <DesignerReviewStars rating={reviewItem.rating} />
+              <span className="text-body-1-semibold text-gray-900">{displayName}</span>
+              <DesignerReviewStars rating={displayRating} />
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
-            {reviewItem.isFixed && <PinIcon className="h-5 w-5 text-gray-700" />}
-            <span className="text-caption-1-medium text-gray-500">{displayDate}</span>
+            {reviewItem?.isFixed && <PinIcon className="h-5 w-5 text-gray-700" />}
+            {displayDate && <span className="text-caption-1-medium text-gray-500">{displayDate}</span>}
           </div>
         </div>
 
-        <p className="text-body-2-regular pt-2 whitespace-pre-line text-gray-700">{reviewItem.content}</p>
-        {reviewItem.summary && (
+        <p className="text-body-2-regular pt-2 whitespace-pre-line text-gray-700">{displayContent}</p>
+        {displaySummary && (
           <div className="flex flex-wrap gap-1">
-            {reviewItem.summary.split(', ').map((category) => (
+            {displaySummary.split(', ').map((category) => (
               <CategoryBadge key={category} label={category} />
             ))}
+          </div>
+        )}
+
+        {reviewItem?.replyDto?.content && (
+          <div className="mt-1 flex flex-col gap-3 rounded-xl bg-gray-100 px-4 py-4">
+            <span className="text-caption-1-medium text-gray-600">디자이너가 남긴 답글</span>
+            <p className="text-body-2-regular whitespace-pre-line text-gray-900">{reviewItem.replyDto.content}</p>
           </div>
         )}
       </div>
