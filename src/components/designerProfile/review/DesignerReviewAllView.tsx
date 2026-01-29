@@ -134,7 +134,15 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
                 <p className="text-body-2-medium text-gray-500">등록된 리뷰가 없습니다.</p>
               </div>
             ) : (
-              reviewItems.map((review) => <DesignerReviewCard key={review.id} review={review} />)
+              reviewItems.map((review) => (
+                <DesignerReviewCard
+                  key={review.id}
+                  review={review}
+                  onImageClick={(reviewId, imageUrl) =>
+                    router.push(`${photoDetailBase}/${reviewId}?imageUrl=${encodeURIComponent(imageUrl)}`)
+                  }
+                />
+              ))
             )}
 
             <div ref={loadMoreRef} className="h-4" />

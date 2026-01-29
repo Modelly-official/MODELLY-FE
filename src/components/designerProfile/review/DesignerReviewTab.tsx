@@ -24,6 +24,7 @@ interface DesignerReviewTabProps {
   onPreviewMore?: () => void;
   showPreviewMoreLabel?: boolean;
   onPreviewImageClick?: (reviewId: number, imageUrl: string) => void;
+  onReviewImageClick?: (reviewId: number, imageUrl: string) => void;
 }
 
 export default function DesignerReviewTab({
@@ -33,6 +34,7 @@ export default function DesignerReviewTab({
   onPreviewMore,
   showPreviewMoreLabel = false,
   onPreviewImageClick,
+  onReviewImageClick,
 }: DesignerReviewTabProps) {
   return (
     <div className="bg-gray-100 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
@@ -50,7 +52,9 @@ export default function DesignerReviewTab({
       <div className="flex flex-col px-4 pt-5">
         <div className="flex flex-col gap-5">
           {reviews.length > 0 ? (
-            reviews.map((review) => <DesignerReviewCard key={review.id} review={review} />)
+            reviews.map((review) => (
+              <DesignerReviewCard key={review.id} review={review} onImageClick={onReviewImageClick} />
+            ))
           ) : (
             <div className="flex items-center justify-center rounded-2xl bg-white px-4 py-6">
               <p className="text-body-2-medium text-gray-500">등록된 리뷰가 없습니다.</p>

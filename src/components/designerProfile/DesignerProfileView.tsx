@@ -275,6 +275,7 @@ export default function DesignerProfileView({
         onReviewViewAll={handleReviewViewAll}
         onReviewPreviewMore={handleReviewPreviewMore}
         onReviewPreviewImageClick={handleReviewPreviewImageClick}
+        onReviewImageClick={handleReviewPreviewImageClick}
       />
 
       {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} onChat={handleChat} />}

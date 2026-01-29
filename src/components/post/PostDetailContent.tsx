@@ -364,6 +364,12 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
                         router.push(`${reviewPhotoDetailBase}/${reviewId}?imageUrl=${encodeURIComponent(imageUrl)}`)
                     : undefined
                 }
+                onReviewImageClick={
+                  reviewPhotoDetailBase
+                    ? (reviewId, imageUrl) =>
+                        router.push(`${reviewPhotoDetailBase}/${reviewId}?imageUrl=${encodeURIComponent(imageUrl)}`)
+                    : undefined
+                }
                 showPreviewMoreLabel
               />
             </div>

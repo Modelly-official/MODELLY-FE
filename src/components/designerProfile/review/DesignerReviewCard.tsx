@@ -19,9 +19,10 @@ export interface DesignerReviewItem {
 
 interface DesignerReviewCardProps {
   review: DesignerReviewItem;
+  onImageClick?: (reviewId: number, imageUrl: string) => void;
 }
 
-export default function DesignerReviewCard({ review }: DesignerReviewCardProps) {
+export default function DesignerReviewCard({ review, onImageClick }: DesignerReviewCardProps) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-white px-4 pt-4 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.06)]">
       <div className="grid grid-cols-[44px_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3 gap-y-1">
@@ -43,9 +44,21 @@ export default function DesignerReviewCard({ review }: DesignerReviewCardProps) 
       {review.images.length > 0 && (
         <div className="flex gap-2">
           {review.images.map((imageUrl, index) => (
-            <div key={`${imageUrl}-${index}`} className="relative h-[99px] w-[98px] overflow-hidden rounded-lg">
-              <Image src={imageUrl} alt="" fill sizes="92px" className="object-cover" />
-            </div>
+            onImageClick ? (
+              <button
+                key={`${imageUrl}-${index}`}
+                type="button"
+                onClick={() => onImageClick(review.id, imageUrl)}
+                className="relative h-[99px] w-[98px] cursor-pointer overflow-hidden rounded-lg"
+                aria-label={`리뷰 사진 ${index + 1} 보기`}
+              >
+                <Image src={imageUrl} alt="" fill sizes="92px" className="object-cover" />
+              </button>
+            ) : (
+              <div key={`${imageUrl}-${index}`} className="relative h-[99px] w-[98px] overflow-hidden rounded-lg">
+                <Image src={imageUrl} alt="" fill sizes="92px" className="object-cover" />
+              </div>
+            )
           ))}
         </div>
       )}
