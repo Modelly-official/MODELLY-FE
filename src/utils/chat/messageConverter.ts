@@ -101,7 +101,7 @@ export const formatChatListTime = (isoString?: string): string => {
 
   // 오늘
   if (dateOnly.getTime() === todayOnly.getTime()) {
-    return formatMessageTime(isoString);
+    return formatChatRoomTime(isoString);
   }
 
   // 어제
@@ -111,11 +111,16 @@ export const formatChatListTime = (isoString?: string): string => {
 
   // 올해
   if (date.getFullYear() === now.getFullYear()) {
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${month}/${day}`;
   }
 
   // 그 외
-  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}/${month}/${day}`;
 };
 
 export const mapApiMessage = (msg: ChatMessageResponse, currentUserId?: number | null): Message => {
