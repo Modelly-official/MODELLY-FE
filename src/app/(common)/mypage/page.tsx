@@ -209,7 +209,7 @@ export default function MypagePage() {
               type="button"
               onClick={handleCloseWithdrawModal}
               disabled={isWithdrawing}
-              className="flex h-12 flex-1 items-center justify-center rounded-full border border-gray-400 bg-white text-body-2-medium text-gray-900 disabled:cursor-not-allowed"
+              className="flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white text-body-2-medium text-gray-900 disabled:cursor-not-allowed"
             >
               {WITHDRAW_MODAL.cancelButton}
             </button>
