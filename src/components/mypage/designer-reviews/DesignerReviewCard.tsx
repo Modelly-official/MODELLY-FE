@@ -7,6 +7,8 @@ import KebabMenu from '@/src/components/common/KebabMenu/KebabMenu';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import type { DesignerReviewItem } from '@/src/types';
 
+const REPLY_MAX_LENGTH = 200;
+
 interface DesignerReviewCardProps {
   review: DesignerReviewItem;
   onPin?: (reviewId: number, isFixed: boolean) => void;
@@ -136,13 +138,22 @@ export default function DesignerReviewCard({
       {/* 답글 입력 모드 */}
       {isReplying && (
         <>
-          <div className="flex h-[160px] items-start rounded-xl border border-gray-400 p-4">
+          <div className="flex h-[160px] flex-col justify-between rounded-xl border border-gray-400 p-4">
             <textarea
               value={replyContent}
-              onChange={(e) => onReplyContentChange?.(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= REPLY_MAX_LENGTH) {
+                  onReplyContentChange?.(e.target.value);
+                }
+              }}
               placeholder="내용을 입력하세요"
-              className="size-full resize-none text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
+              className="h-full w-full resize-none text-body-2-medium text-gray-900 placeholder:text-gray-600 focus:outline-none"
             />
+            <div className="text-right">
+              <span className="text-body-2-regular text-gray-600">
+                {replyContent.length}/{REPLY_MAX_LENGTH}
+              </span>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
