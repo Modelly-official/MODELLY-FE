@@ -9,6 +9,7 @@ import DesignerReviewStars from '@/src/components/designerProfile/review/Designe
 export interface DesignerReviewItem {
   id: number;
   name: string;
+  modelImage?: string | null;
   rating: number;
   date: string;
   content: string;
@@ -33,7 +34,17 @@ export default function DesignerReviewCard({ review, onImageClick }: DesignerRev
     <div className="flex flex-col gap-3 rounded-2xl bg-white px-4 pt-4 pb-5 shadow-[0_0_4px_rgba(34,34,34,0.06)]">
       <div className="grid grid-cols-[44px_1fr_auto] grid-rows-[auto_auto] items-center gap-x-3 gap-y-1">
         <div className="row-span-2 flex h-11 w-11 items-center justify-center rounded-full bg-gray-300">
-          <ProfileIcon className="h-7 w-7 text-gray-500" />
+          {review.modelImage ? (
+            <Image
+              src={review.modelImage}
+              alt={review.name}
+              width={44}
+              height={44}
+              className="h-11 w-11 rounded-full object-cover"
+            />
+          ) : (
+            <ProfileIcon className="h-7 w-7 text-gray-500" />
+          )}
         </div>
         <span className="text-body-1-medium text-gray-900">{review.name}</span>
         <DesignerReviewStars rating={review.rating} className="col-start-2 row-start-2" />

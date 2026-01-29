@@ -46,6 +46,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
     return items.map((item) => ({
       id: item.reviewId,
       name: item.modelName,
+      modelImage: item.modelImage ?? null,
       rating: item.rating,
       date: item.createdDate.replace(/-/g, '.'),
       content: item.content,

@@ -89,6 +89,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     return items.map((item) => ({
       id: item.reviewId,
       name: item.modelName,
+      modelImage: item.modelImage ?? null,
       rating: item.rating,
       date: item.createdDate.replace(/-/g, '.'),
       content: item.content,

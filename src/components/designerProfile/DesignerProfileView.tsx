@@ -77,6 +77,7 @@ export default function DesignerProfileView({
     return items.map((item) => ({
       id: item.reviewId,
       name: item.modelName,
+      modelImage: item.modelImage ?? null,
       rating: item.rating,
       date: item.createdDate.replace(/-/g, '.'),
       content: item.content,
