@@ -9,8 +9,8 @@ import DesignerPortfolioReviewSection from '@/src/components/designerProfile/Des
 import DesignerProfileActionBar from '@/src/components/designerProfile/DesignerProfileActionBar';
 import {
   useDesignerReviews,
+  usePublicDesignerReviewImages,
   usePublicDesignerReviewList,
-  usePublicDesignerReviewThumbnails,
 } from '@/src/hooks/queries/review';
 import { useToggleDesignerLike } from '@/src/hooks/queries/likes';
 import { useCreateChatRoom } from '@/src/hooks/queries/chat';
@@ -64,9 +64,9 @@ export default function DesignerProfileView({
     enabled: reviewQueryEnabled && !isOwnerProfile && canFetchPublicReviews,
   });
 
-  const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
+  const reviewImagesQuery = usePublicDesignerReviewImages({
     designerId: reviewDesignerId,
-    params: { size: 10 },
+    params: { size: 3 },
     enabled: reviewQueryEnabled && canFetchPublicReviews,
   });
 
@@ -97,37 +97,25 @@ export default function DesignerProfileView({
       : (publicResult?.totalCount ?? listItems.length);
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : 0;
-    const thumbnailResult = reviewThumbnailQuery.data?.result;
-    const thumbnailItems = thumbnailResult?.items ?? [];
-    const fallbackPreviewItems = listItems
-      .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImages?.[0] }))
-      .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
-    const previewSourceItems =
-      thumbnailItems.length > 0
-        ? thumbnailItems
-            .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewThumbnail }))
-            .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl))
-        : fallbackPreviewItems;
-    const previewImages = previewSourceItems.slice(0, 3).map((item) => item.imageUrl);
-    const totalPreviewCount =
-      thumbnailItems.length > 0
-        ? thumbnailResult?.hasNext
-          ? (thumbnailResult?.totalCount ?? previewSourceItems.length ?? totalCount)
-          : previewSourceItems.length
-        : (previewSourceItems.length ?? totalCount);
-    const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+    const previewItems =
+      reviewImagesQuery.data?.result?.items
+        ?.map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImage }))
+        .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl)) ?? [];
+    const previewItemsTrimmed = previewItems.slice(0, 3);
+    const totalPreviewCount = reviewImagesQuery.data?.result?.totalCount ?? previewItemsTrimmed.length;
+    const moreCount = Math.max(totalPreviewCount - previewItemsTrimmed.length, 0);
 
     return {
       rating,
       count: totalCount,
-      previewImages,
+      previewItems: previewItemsTrimmed,
       moreCount,
     };
   }, [
     designerReviewsQuery.data?.pages,
     isOwnerProfile,
     reviewListQuery.data?.result,
-    reviewThumbnailQuery.data?.result,
+    reviewImagesQuery.data?.result,
   ]);
 
   const isReviewLoading = reviewQueryEnabled
@@ -146,10 +134,26 @@ export default function DesignerProfileView({
     : canFetchPublicReviews
       ? `/designer/${reviewDesignerId}/reviews`
       : '';
+  const reviewPhotoPath = isOwnerProfile
+    ? '/myProfile/reviews/photos'
+    : canFetchPublicReviews
+      ? `/designer/${reviewDesignerId}/reviews/photos`
+      : '';
+  const reviewPhotoDetailBase = reviewPhotoPath;
 
   const handleReviewViewAll = () => {
     if (!reviewDetailPath) return;
     router.push(reviewDetailPath);
+  };
+
+  const handleReviewPreviewMore = () => {
+    if (!reviewPhotoPath) return;
+    router.push(reviewPhotoPath);
+  };
+
+  const handleReviewPreviewImageClick = (reviewId: number, imageUrl: string) => {
+    if (!reviewPhotoDetailBase) return;
+    router.push(`${reviewPhotoDetailBase}/${reviewId}?imageUrl=${encodeURIComponent(imageUrl)}`);
   };
 
   const handleBack = () => {
@@ -269,6 +273,8 @@ export default function DesignerProfileView({
         onPortfolioViewAll={handlePortfolioViewAll}
         onPortfolioSelect={handlePortfolioSelect}
         onReviewViewAll={handleReviewViewAll}
+        onReviewPreviewMore={handleReviewPreviewMore}
+        onReviewPreviewImageClick={handleReviewPreviewImageClick}
       />
 
       {showActionBar && <DesignerProfileActionBar isLiked={isLiked} onLike={handleLikeToggle} onChat={handleChat} />}

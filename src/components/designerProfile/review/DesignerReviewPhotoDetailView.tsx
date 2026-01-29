@@ -59,11 +59,16 @@ export default function DesignerReviewPhotoDetailView({
   const reviewImages = reviewItem?.reviewImages ?? [];
   const displayDate = reviewItem?.createdDate ? reviewItem.createdDate.replace(/-/g, '.') : '';
   const initialIndex = useMemo(() => {
+    const imageUrlParam = searchParams.get('imageUrl');
+    if (imageUrlParam) {
+      const matchedIndex = reviewImages.findIndex((url) => url === imageUrlParam);
+      if (matchedIndex >= 0) return matchedIndex;
+    }
     const rawIndex = Number(searchParams.get('imageIndex'));
     if (!Number.isFinite(rawIndex)) return 0;
     const clamped = Math.max(0, Math.min(rawIndex, reviewImages.length - 1));
     return Number.isNaN(clamped) ? 0 : clamped;
-  }, [reviewImages.length, searchParams]);
+  }, [reviewImages, searchParams]);
 
   if (!canFetchReviews) {
     return (

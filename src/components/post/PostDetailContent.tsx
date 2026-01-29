@@ -23,8 +23,8 @@ import { getAccessToken } from '@/src/stores';
 import { useMyDesignerProfile } from '@/src/hooks/queries/profile';
 import {
   useDesignerReviews,
+  usePublicDesignerReviewImages,
   usePublicDesignerReviewList,
-  usePublicDesignerReviewThumbnails,
 } from '@/src/hooks/queries/review';
 import CheckIcon from '@/public/icons/post/check.svg';
 import CloseIcon from '@/public/icons/common/close.svg';
@@ -76,9 +76,9 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     enabled: reviewQueryEnabled && !isOwnerView,
   });
 
-  const reviewThumbnailQuery = usePublicDesignerReviewThumbnails({
+  const reviewImagesQuery = usePublicDesignerReviewImages({
     designerId: reviewDesignerId,
-    params: { size: 10 },
+    params: { size: 3 },
     enabled: reviewQueryEnabled && canFetchReviews,
   });
 
@@ -109,30 +109,18 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       : publicResult?.totalCount ?? data?.result?.reviewCount ?? listItems.length;
     const totalRating = listItems.reduce((sum, item) => sum + item.rating, 0);
     const rating = listItems.length > 0 ? totalRating / listItems.length : (data?.result?.averageRating ?? 0);
-    const thumbnailResult = reviewThumbnailQuery.data?.result;
-    const thumbnailItems = thumbnailResult?.items ?? [];
-    const fallbackPreviewItems = listItems
-      .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImages?.[0] }))
-      .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl));
-    const previewSourceItems =
-      thumbnailItems.length > 0
-        ? thumbnailItems
-            .map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewThumbnail }))
-            .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl))
-        : fallbackPreviewItems;
-    const previewImages = previewSourceItems.slice(0, 3).map((item) => item.imageUrl);
-    const totalPreviewCount =
-      thumbnailItems.length > 0
-        ? thumbnailResult?.hasNext
-          ? thumbnailResult?.totalCount ?? previewSourceItems.length ?? totalCount
-          : previewSourceItems.length
-        : previewSourceItems.length ?? totalCount;
-    const moreCount = Math.max(totalPreviewCount - previewImages.length, 0);
+    const previewItems =
+      reviewImagesQuery.data?.result?.items
+        ?.map((item) => ({ reviewId: item.reviewId, imageUrl: item.reviewImage }))
+        .filter((item): item is { reviewId: number; imageUrl: string } => Boolean(item.imageUrl)) ?? [];
+    const previewItemsTrimmed = previewItems.slice(0, 3);
+    const totalPreviewCount = reviewImagesQuery.data?.result?.totalCount ?? previewItemsTrimmed.length;
+    const moreCount = Math.max(totalPreviewCount - previewItemsTrimmed.length, 0);
 
     return {
       rating,
       count: totalCount,
-      previewImages,
+      previewItems: previewItemsTrimmed,
       moreCount,
     };
   }, [
@@ -141,7 +129,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
     isOwnerView,
     ownerReviewListQuery.data?.pages,
     reviewListQuery.data?.result,
-    reviewThumbnailQuery.data?.result,
+    reviewImagesQuery.data?.result,
   ]);
 
   const isReviewLoading = reviewQueryEnabled
@@ -179,6 +167,12 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const reviewDetailPath = isOwnerView
     ? '/myProfile/reviews'
     : `/designer/${detail.designerProfile.designerId}/reviews`;
+  const reviewPhotoPath = isOwnerView
+    ? '/myProfile/reviews/photos'
+    : canFetchReviews
+      ? `/designer/${reviewDesignerId}/reviews/photos`
+      : '';
+  const reviewPhotoDetailBase = reviewPhotoPath;
 
   // 서버 상태 + 로컬 토글 카운트로 현재 상태 계산
   const isLiked = toggleCount % 2 === 0 ? detail.isLiked : !detail.isLiked;
@@ -363,6 +357,14 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
                 summary={reviewSummary}
                 reviews={reviewItems}
                 onViewAll={() => router.push(reviewDetailPath)}
+                onPreviewMore={reviewPhotoPath ? () => router.push(reviewPhotoPath) : undefined}
+                onPreviewImageClick={
+                  reviewPhotoDetailBase
+                    ? (reviewId, imageUrl) =>
+                        router.push(`${reviewPhotoDetailBase}/${reviewId}?imageUrl=${encodeURIComponent(imageUrl)}`)
+                    : undefined
+                }
+                showPreviewMoreLabel
               />
             </div>
           )}
