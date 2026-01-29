@@ -3,12 +3,14 @@ import {
   getPublicDesignerReviews,
   getPublicDesignerReviewThumbnails,
   getPublicDesignerReviewImages,
+  getReviewDetail,
 } from '@/src/apis';
 import type {
   ApiResponse,
   DesignerReviewsResponse,
   DesignerReviewThumbnailsResponse,
   DesignerReviewImagesResponse,
+  DesignerReviewDetailResponse,
   ReviewListParams,
 } from '@/src/types';
 
@@ -26,6 +28,8 @@ export const publicDesignerReviewKeys = {
     [...publicDesignerReviewKeys.all, 'images', designerId, params] as const,
   imagesInfinite: (designerId: number, params?: ReviewListParams) =>
     [...publicDesignerReviewKeys.all, 'imagesInfinite', designerId, params] as const,
+  detail: (reviewId: number) =>
+    [...publicDesignerReviewKeys.all, 'detail', reviewId] as const,
 };
 
 interface UsePublicDesignerReviewListParams {
@@ -70,6 +74,11 @@ interface UsePublicDesignerReviewImagesParams {
 interface UsePublicDesignerReviewImagesInfiniteParams {
   designerId: number;
   params?: Omit<ReviewListParams, 'cursorId' | 'cursorIsFixed'>;
+  enabled?: boolean;
+}
+
+interface UsePublicDesignerReviewDetailParams {
+  reviewId: number;
   enabled?: boolean;
 }
 
@@ -225,6 +234,21 @@ export function usePublicDesignerReviewImagesInfinite({
         cursorIsFixed: lastPage.result.nextCursorFixed ?? undefined,
       };
     },
+    enabled,
+    staleTime: 1000 * 60 * 2, // 2분
+  });
+}
+
+/**
+ * 리뷰 단건 조회 Hook
+ */
+export function usePublicDesignerReviewDetail({
+  reviewId,
+  enabled = true,
+}: UsePublicDesignerReviewDetailParams) {
+  return useQuery<ApiResponse<DesignerReviewDetailResponse>, Error>({
+    queryKey: publicDesignerReviewKeys.detail(reviewId),
+    queryFn: () => getReviewDetail(reviewId),
     enabled,
     staleTime: 1000 * 60 * 2, // 2분
   });
