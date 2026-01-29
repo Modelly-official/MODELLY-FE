@@ -217,7 +217,7 @@ export default function MypagePage() {
               type="button"
               onClick={handleWithdraw}
               disabled={!isWithdrawAgreed || isWithdrawing}
-              className="flex h-12 flex-1 items-center justify-center rounded-full bg-gray-900 text-body-2-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full bg-gray-900 text-body-2-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isWithdrawing ? <Spinner /> : WITHDRAW_MODAL.confirmButton}
             </button>
