@@ -51,6 +51,46 @@ export interface SaveFcmTokenRequest {
   fcmToken: string;
 }
 
+/**
+ * 알림 카테고리 (4종류)
+ * 백엔드 NotificationType enum의 description 값
+ */
+export type NotificationCategory =
+  | '예약 알림'
+  | '채팅 알림'
+  | '리뷰 알림'
+  | '일정 알림';
+
+/**
+ * 알림 세부 타입 (typeDescription)
+ * 백엔드에서 역할/내용에 따라 변환된 값
+ */
+export type NotificationTypeDescription =
+  // RESERVATION
+  | '예약 신청 알림' // 디자이너가 받음
+  | '예약 확정' // 모델이 받음
+  | '예약 취소' // 모델이 받음 (RESERVATION) 또는 일정 취소 (SCHEDULE)
+  // SCHEDULE
+  | '예약 변경' // 일정 변경 관련
+  | '예약 알림' // 리마인더 (SCHEDULE의 경우)
+  // CHATTING
+  | '채팅 알림'
+  // REVIEW
+  | '리뷰 알림' // 디자이너가 받음
+  | '리뷰 답글 알림'; // 모델이 받음
+
+/**
+ * FCM 푸시 알림 data 페이로드 타입
+ * 백엔드 FCMService.java에서 전송하는 구조
+ */
+export interface FCMPayloadData {
+  title: string;
+  body: string;
+  targetId: string;
+  notificationType: NotificationCategory;
+  typeDescription: NotificationTypeDescription;
+}
+
 /** 유효 권한 상태 (브라우저 권한 + 앱 상태 + 플랫폼 통합) */
 export type EffectivePermissionState =
   | 'not_supported' // iOS Safari (PWA 미설치) 또는 Notification API 미지원
