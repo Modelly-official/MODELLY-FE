@@ -3,8 +3,16 @@
 /** 설정 메뉴 항목 */
 export const SETTING_LINKS = [
   { label: '알림설정', href: '/mypage/notification-settings' },
-  { label: '고객센터/FAQ' },
-] as const;
+  {
+    label: '고객센터/FAQ',
+    onClick: () =>
+      window.open(
+        'https://docs.google.com/forms/d/e/1FAIpQLSe3FEUwr9RgbMR8uhBXNklICUJ9089BRAuIDfkPAOxL-cYALQ/viewform',
+        '_blank',
+        'noopener,noreferrer',
+      ),
+  },
+];
 
 /** 계정 메뉴 항목 */
 export const ACCOUNT_LINKS = ['계정 추가하기', '로그아웃', '탈퇴하기'] as const;
