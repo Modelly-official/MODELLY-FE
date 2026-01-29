@@ -20,7 +20,6 @@ import { useToggleDesignerLike, useToggleRecruitmentLike } from '@/src/hooks/que
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
 import LocationIcon from '@/public/icons/common/location-current.svg';
-import ProfileIcon from '@/public/icons/chat/profile.svg';
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
 import type { HomeCategory } from '@/src/types/modelHome';
@@ -138,14 +137,10 @@ export function ModelHomeContent() {
                       )}
                     </p>
                   </div>
-                  <div className="relative size-16 shrink-0 overflow-hidden rounded-full bg-gray-300">
+                  <div className="relative size-16 shrink-0 overflow-hidden rounded-full" aria-hidden={!profileImageUrl}>
                     {profileImageUrl ? (
                       <Image src={profileImageUrl} alt="프로필" fill sizes="64px" className="object-cover" />
-                    ) : (
-                      <div className="flex size-full items-center justify-center bg-gray-100">
-                        <ProfileIcon className="size-10 text-gray-500" />
-                      </div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
 
