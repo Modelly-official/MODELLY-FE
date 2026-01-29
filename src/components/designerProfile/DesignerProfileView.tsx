@@ -41,7 +41,6 @@ export default function DesignerProfileView({
   portfolioTotalCount,
   actionType = 'none',
   showActionBar = false,
-  onBack,
   onAction,
 }: DesignerProfileViewProps) {
   const router = useRouter();
@@ -240,7 +239,9 @@ export default function DesignerProfileView({
   };
 
   return (
-    <div className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[76px]' : ''}`}>
+    <div
+      className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[calc(70px+env(safe-area-inset-bottom))]' : ''}`}
+    >
       <DesignerProfileHero
         profileImageUrl={profile.profileImageUrl}
         nickname={profile.nickname}

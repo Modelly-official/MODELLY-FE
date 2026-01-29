@@ -8,7 +8,9 @@ interface DesignerProfileSkeletonProps {
 
 export default function DesignerProfileSkeleton({ showActionBar = false }: DesignerProfileSkeletonProps) {
   return (
-    <div className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[76px]' : ''}`}>
+    <div
+      className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[calc(70px+env(safe-area-inset-bottom))]' : ''}`}
+    >
       {/* Hero */}
       <div className="relative h-[374px] w-full overflow-hidden rounded-b-[20px]">
         <Skeleton className="h-full w-full rounded-none" />
