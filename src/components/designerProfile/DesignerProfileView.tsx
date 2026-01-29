@@ -29,7 +29,6 @@ interface DesignerProfileViewProps {
   portfolioTotalCount?: number;
   actionType?: 'edit' | 'share' | 'none';
   showActionBar?: boolean;
-  onBack?: () => void;
   onAction?: () => void;
 }
 
