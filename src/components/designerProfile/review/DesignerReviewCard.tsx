@@ -83,7 +83,7 @@ export default function DesignerReviewCard({ review, onImageClick }: DesignerRev
 
       {review.replyDto?.content && (
         <div className="flex flex-col gap-3 rounded-xl bg-gray-100 px-4 py-4">
-          <span className="text-caption-1-medium text-gray-500">디자이너가 남긴 답글</span>
+          <span className="text-caption-1-medium text-gray-600">디자이너가 남긴 답글</span>
           <p className="text-body-2-regular whitespace-pre-line text-gray-900">{review.replyDto.content}</p>
         </div>
       )}

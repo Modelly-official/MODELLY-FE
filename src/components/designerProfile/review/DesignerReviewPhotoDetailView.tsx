@@ -50,11 +50,7 @@ export default function DesignerReviewPhotoDetailView({
   useEffect(() => {
     if (!canFetchReviews || reviewItem || !reviewListQuery.hasNextPage || reviewListQuery.isFetchingNextPage) return;
     reviewListQuery.fetchNextPage();
-  }, [
-    canFetchReviews,
-    reviewItem,
-    reviewListQuery,
-  ]);
+  }, [canFetchReviews, reviewItem, reviewListQuery]);
 
   const reviewImages = reviewItem?.reviewImages ?? [];
   const displayDate = reviewItem?.createdDate ? reviewItem.createdDate.replace(/-/g, '.') : '';
@@ -194,6 +190,13 @@ export default function DesignerReviewPhotoDetailView({
             {reviewItem.summary.split(', ').map((category) => (
               <CategoryBadge key={category} label={category} />
             ))}
+          </div>
+        )}
+
+        {reviewItem.replyDto?.content && (
+          <div className="mt-1 flex flex-col gap-3 rounded-xl bg-gray-100 px-4 py-4">
+            <span className="text-caption-1-medium text-gray-600">디자이너가 남긴 답글</span>
+            <p className="text-body-2-regular whitespace-pre-line text-gray-900">{reviewItem.replyDto.content}</p>
           </div>
         )}
       </div>
