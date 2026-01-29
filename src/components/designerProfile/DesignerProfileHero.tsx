@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import ProfileIcon from '@/public/icons/chat/profile.svg';
 import DesignerProfileHeader from '@/src/components/designerProfile/DesignerProfileHeader';
 
 interface DesignerProfileHeroProps {
@@ -24,14 +25,20 @@ export default function DesignerProfileHero({
 }: DesignerProfileHeroProps) {
   return (
     <section className="relative h-[374px] w-full overflow-hidden rounded-b-[20px]">
-      <Image
-        src={profileImageUrl}
-        alt={`${nickname} 디자이너 프로필`}
-        fill
-        sizes="100vw"
-        priority
-        className="object-cover"
-      />
+      {profileImageUrl ? (
+        <Image
+          src={profileImageUrl}
+          alt={`${nickname} 디자이너 프로필`}
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-300">
+          <ProfileIcon className="size-60 text-gray-500" />
+        </div>
+      )}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_32%,var(--color-black)_100%)]" />
 
       <DesignerProfileHeader actionType={actionType} onBack={onBack} onAction={onAction} />

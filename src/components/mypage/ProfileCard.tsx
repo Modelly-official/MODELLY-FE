@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import { Skeleton } from '@/src/components/common';
+import ProfileIcon from '@/public/icons/chat/profile.svg';
 
 type ProfileCardProps = {
   name: string;
@@ -56,7 +57,9 @@ export const ProfileCard = ({
             {isLoading ? (
               <Skeleton variant="circular" className="h-full w-full" />
             ) : !hasProfileImage ? (
-              <div className="h-full w-full bg-gray-300" />
+              <div className="flex h-full w-full items-center justify-center bg-gray-300">
+                <ProfileIcon className="size-11 text-gray-500" />
+              </div>
             ) : (
               <Image src={profileImageSrc} alt="프로필 이미지" fill className="object-cover" sizes="64px" priority />
             )}

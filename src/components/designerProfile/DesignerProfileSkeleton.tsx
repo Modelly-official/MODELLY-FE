@@ -1,6 +1,7 @@
 'use client';
 
 import { Skeleton } from '@/src/components/common';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 
 interface DesignerProfileSkeletonProps {
   showActionBar?: boolean;
@@ -8,7 +9,9 @@ interface DesignerProfileSkeletonProps {
 
 export default function DesignerProfileSkeleton({ showActionBar = false }: DesignerProfileSkeletonProps) {
   return (
-    <div className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[76px]' : ''}`}>
+    <div
+      className={`flex min-h-screen flex-col bg-white ${showActionBar ? 'pb-[calc(70px+env(safe-area-inset-bottom))]' : ''}`}
+    >
       {/* Hero */}
       <div className="relative h-[374px] w-full overflow-hidden rounded-b-[20px]">
         <Skeleton className="h-full w-full rounded-none" />
@@ -77,12 +80,12 @@ export default function DesignerProfileSkeleton({ showActionBar = false }: Desig
       </section>
 
       {showActionBar && (
-        <div className="fixed bottom-0 left-1/2 z-50 h-[76px] w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
-          <div className="flex h-[52px] items-center gap-3">
-            <Skeleton variant="circular" className="h-[52px] w-[52px]" />
-            <Skeleton className="h-[52px] flex-1 rounded-full" />
+        <FixedBottomContainer>
+          <div className="flex h-[56px] items-center gap-3">
+            <Skeleton variant="circular" className="h-[56px] w-[56px]" />
+            <Skeleton className="h-[56px] flex-1 rounded-full" />
           </div>
-        </div>
+        </FixedBottomContainer>
       )}
     </div>
   );
