@@ -66,13 +66,13 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
   const isOwnerView = isOwner || isOwnerFromAuth || isOwnerFromProfile;
 
   const ownerReviewListQuery = useDesignerReviews(
-    { size: 10 },
+    { size: 5 },
     { enabled: reviewQueryEnabled && isOwnerView },
   );
 
   const reviewListQuery = usePublicDesignerReviewList({
     designerId: reviewDesignerId,
-    params: { size: 10 },
+    params: { size: 5 },
     enabled: reviewQueryEnabled && !isOwnerView,
   });
 
