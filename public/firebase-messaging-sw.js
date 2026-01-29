@@ -65,54 +65,81 @@ async function getUserRoleFromIDB() {
 }
 
 /**
- * 알림 타입별 이동 경로 결정
+ * 알림 타입별 이동 경로 결정 (v2: typeDescription 활용)
  *
- * 백엔드 반환 값 (notificationType):
- * - CHATTING: "채팅 알림"
- * - RESERVATION: "예약 확정", "예약 취소", "예약 신청 알림", "예약 알림"
- * - REVIEW: "리뷰 알림", "리뷰 답글 알림"
- * - SCHEDULE: "예약 변경", "예약 취소", "일정 알림"
+ * FCM data 구조:
+ * - title: 알림 제목
+ * - body: 알림 내용
+ * - targetId: 이동할 대상 ID (reservationId, roomId, reviewId)
+ * - notificationType: 카테고리 ("예약 알림", "채팅 알림", "리뷰 알림", "일정 알림")
+ * - typeDescription: 세부 타입 ("예약 신청 알림", "예약 확정", "예약 변경" 등)
  *
  * 라우팅 규칙:
  * - 채팅 알림: /chat/{targetId}
  * - 리뷰 알림: /mypage/reviews
- * - 일정 알림 (SCHEDULE): 리마인더 → /, 변경/취소 → /chat/{targetId}
- * - 예약 알림 (RESERVATION): 디자이너 → /reservations/{targetId}, 모델 → /mypage/reservations
+ * - 일정 알림: 리마인더 → /, 변경/취소 → /chat/{targetId}
+ * - 예약 알림: typeDescription으로 분기 (예약 신청 알림 → 디자이너, 그 외 → 모델)
  */
-async function getNotificationTargetUrl(data, title) {
+async function getNotificationTargetUrl(data) {
   const type = data?.notificationType || '';
+  const typeDesc = data?.typeDescription || '';
+  const title = data?.title || '';
   const targetId = data?.targetId;
 
   // 1. 채팅 알림
-  if (type.includes('채팅')) {
+  if (type === '채팅 알림') {
     return targetId ? `/chat/${targetId}` : '/chat';
   }
 
-  // 2. 리뷰 알림 ("리뷰 알림", "리뷰 답글 알림")
-  if (type.includes('리뷰')) {
+  // 2. 리뷰 알림
+  if (type === '리뷰 알림') {
     return '/mypage/reviews';
   }
 
-  // 3. 일정 알림 (SCHEDULE 타입: "예약 변경", "예약 취소", "일정 알림")
-  //    ⚠️ "예약 변경/취소"가 "예약" 키워드를 포함하므로 예약 체크보다 먼저!
-  if (type.includes('일정') || type === '예약 변경' || type === '예약 취소') {
-    // 리마인더 알림 → 홈으로 이동
-    if (title && (title.includes('리마인더') || title.includes('예정'))) {
+  // 3. 일정 알림 (SCHEDULE 타입)
+  if (type === '일정 알림') {
+    // 리마인더: typeDescription이 "예약 알림"이고 title에 "예정" 포함
+    if (typeDesc === '예약 알림' && title.includes('예정')) {
       return '/';
     }
-    // 일정 변경/취소 알림 → 채팅방으로 이동
+    // 일정 변경/취소 알림 → 채팅방
     if (targetId) {
       return `/chat/${targetId}`;
     }
     return '/';
   }
 
-  // 4. 예약 알림 (RESERVATION 타입: "예약 확정", "예약 신청 알림", "예약 알림")
-  if (type.includes('예약')) {
+  // 4. 예약 알림 (RESERVATION 타입)
+  if (type === '예약 알림') {
+    // typeDescription으로 직접 분기
+    if (typeDesc === '예약 신청 알림' && targetId) {
+      // 디자이너만 받는 알림 → 예약 상세
+      return `/reservations/${targetId}`;
+    }
+
+    // 모델이 받는 알림 (예약 확정, 예약 취소) → 예약 목록
+    if (typeDesc === '예약 확정' || typeDesc === '예약 취소') {
+      return '/mypage/reservations';
+    }
+
+    // fallback: IndexedDB에서 userRole 확인
     const userRole = await getUserRoleFromIDB();
     if (userRole === 'designer' && targetId) {
       return `/reservations/${targetId}`;
     }
+    return '/mypage/reservations';
+  }
+
+  // 이전 버전 호환 (includes 기반) - 백엔드 알림 api 수정 전까지 유지
+  if (type.includes('채팅')) return targetId ? `/chat/${targetId}` : '/chat';
+  if (type.includes('리뷰')) return '/mypage/reviews';
+  if (type.includes('일정') || type === '예약 변경' || type === '예약 취소') {
+    if (title.includes('예정')) return '/';
+    return targetId ? `/chat/${targetId}` : '/';
+  }
+  if (type.includes('예약')) {
+    const userRole = await getUserRoleFromIDB();
+    if (userRole === 'designer' && targetId) return `/reservations/${targetId}`;
     return '/mypage/reservations';
   }
 
@@ -122,15 +149,19 @@ async function getNotificationTargetUrl(data, title) {
 /**
  * 백그라운드 메시지 수신 핸들러
  * 앱이 포커스되지 않은 상태에서 푸시를 받으면 실행
+ *
+ * v2: notification 필드가 없고 data만 있음 (백엔드 변경)
  */
 messaging.onBackgroundMessage((payload) => {
-  const notificationTitle = payload.notification?.title || '새 알림';
+  // notification 필드가 없고 data에 title/body 포함
+  const data = payload.data || {};
+  const notificationTitle = data.title || '새 알림';
   const notificationOptions = {
-    body: payload.notification?.body || '',
+    body: data.body || '',
     icon: '/icons/app/icon-192x192.png',
     badge: '/icons/app/icon-72x72.png',
-    data: payload.data,
-    tag: payload.data?.notificationId || 'default',
+    data: data, // title, body, targetId, notificationType, typeDescription 포함
+    tag: `notification-${data.targetId || Date.now()}`,
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
@@ -139,15 +170,16 @@ messaging.onBackgroundMessage((payload) => {
 /**
  * 알림 클릭 핸들러
  * 알림 타입에 따라 적절한 페이지로 이동
+ *
+ * v2: data에 title 포함되어 있으므로 data만 전달
  */
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const data = event.notification.data;
-  const title = event.notification.title;
 
   event.waitUntil(
-    getNotificationTargetUrl(data, title).then((targetUrl) => {
+    getNotificationTargetUrl(data).then((targetUrl) => {
       return clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
         for (const client of clientList) {
           if (client.url.includes(self.location.origin) && 'focus' in client) {

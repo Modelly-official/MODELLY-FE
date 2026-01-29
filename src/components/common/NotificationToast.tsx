@@ -11,6 +11,7 @@ interface NotificationToastProps {
   body: string;
   targetId?: string;
   notificationType?: string;
+  typeDescription?: string;
 }
 
 /**
@@ -25,12 +26,18 @@ export default function NotificationToast({
   body,
   targetId,
   notificationType,
+  typeDescription,
 }: NotificationToastProps) {
   const router = useRouter();
 
   /** 알림 클릭 시 페이지 이동 */
   const handleClick = () => {
-    const targetUrl = getNotificationTargetUrl({ notificationType, targetId, title });
+    const targetUrl = getNotificationTargetUrl({
+      notificationType,
+      typeDescription,
+      targetId,
+      title,
+    });
     toast.dismiss(toastId);
     router.push(targetUrl);
   };

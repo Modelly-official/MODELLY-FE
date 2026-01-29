@@ -46,15 +46,25 @@ export function FCMProvider({ children }: FCMProviderProps) {
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
-  /** 포그라운드 메시지 수신 핸들러 */
+  /** 포그라운드 메시지 수신 핸들러 (v2: data-only 구조 대응) */
   const handleMessage = useCallback(
     (payload: MessagePayload) => {
-      const title = payload.notification?.title || '새 알림';
-      const body = payload.notification?.body || '';
-      const data = payload.data as { targetId?: string; notificationType?: string } | undefined;
+      // v2: notification 필드가 없고 data에 title/body 포함
+      const data = payload.data as
+        | {
+            title?: string;
+            body?: string;
+            targetId?: string;
+            notificationType?: string;
+            typeDescription?: string;
+          }
+        | undefined;
+
+      const title = data?.title || '새 알림';
+      const body = data?.body || '';
 
       // 현재 해당 채팅방에 있으면 배너 표시 안 함
-      const isChatNotification = data?.notificationType?.includes('채팅');
+      const isChatNotification = data?.notificationType === '채팅 알림';
       const isInSameChatRoom = pathname === `/chat/${data?.targetId}`;
 
       if (isChatNotification && isInSameChatRoom) {
@@ -69,6 +79,7 @@ export function FCMProvider({ children }: FCMProviderProps) {
         body,
         targetId: data?.targetId,
         notificationType: data?.notificationType,
+        typeDescription: data?.typeDescription,
       });
 
       // 알림 쿼리 갱신 (unread + list)
