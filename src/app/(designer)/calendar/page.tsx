@@ -6,8 +6,29 @@ import { DesignerCalendar, CalendarReservationCard } from '@/src/components/cale
 import { useMonthNavigation } from '@/src/hooks/custom/myRecruitment';
 import { useReservationDots, useCalendarReservations } from '@/src/hooks/queries/calendar';
 import { useToast } from '@/src/hooks/common';
+import { formatTimeWithPeriod } from '@/src/utils/common';
+import type { CalendarReservationItem } from '@/src/types/calendar';
 
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'] as const;
+
+/**
+ * 예약 목록을 시간별로 그룹핑
+ */
+function groupReservationsByTime(
+  reservations: CalendarReservationItem[],
+): Map<string, CalendarReservationItem[]> {
+  const grouped = new Map<string, CalendarReservationItem[]>();
+
+  reservations.forEach((reservation) => {
+    const time = reservation.startTime;
+    if (!grouped.has(time)) {
+      grouped.set(time, []);
+    }
+    grouped.get(time)!.push(reservation);
+  });
+
+  return grouped;
+}
 
 /**
  * 날짜를 "DD(요일)" 형식으로 포맷
@@ -69,6 +90,12 @@ export default function CalendarPage() {
   const reservations = reservationsData?.result?.items ?? [];
   const totalCount = reservationsData?.result?.totalCount ?? 0;
 
+  // 시간별로 그룹핑된 예약 목록
+  const groupedReservations = useMemo(
+    () => groupReservationsByTime(reservations),
+    [reservations],
+  );
+
   // 날짜 선택 핸들러
   const handleDateSelect = (date: string | null) => {
     setSelectedDate(date);
@@ -100,7 +127,7 @@ export default function CalendarPage() {
         </div>
 
         {/* 타이틀 영역 */}
-        <div className="mb-4 flex items-center gap-2">
+        <div className="mb-4 flex items-baseline gap-2">
           <h2 className="text-head-2-semibold text-gray-950">
             {selectedDate ? formatSelectedDateTitle(selectedDate) : '전체'}
           </h2>
@@ -108,7 +135,7 @@ export default function CalendarPage() {
         </div>
 
         {/* 예약 카드 리스트 */}
-        <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
+        <div className="flex flex-1 flex-col gap-7 overflow-y-auto">
           {isReservationsLoading ? (
             <div className="flex flex-1 items-center justify-center py-10">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
@@ -118,8 +145,26 @@ export default function CalendarPage() {
               <p className="text-body-1-medium text-gray-500">예약 목록을 불러오지 못했습니다</p>
             </div>
           ) : reservations.length > 0 ? (
-            reservations.map((reservation) => (
-              <CalendarReservationCard key={reservation.reservationId} reservation={reservation} />
+            Array.from(groupedReservations.entries()).map(([time, items]) => (
+              <div key={time} className="flex flex-col gap-2">
+                {/* 시간 헤더 + 구분선 */}
+                <div className="flex items-center gap-2">
+                  <span className="text-body-2-semibold shrink-0 text-gray-900">
+                    {formatTimeWithPeriod(time)}
+                  </span>
+                  <div className="h-px flex-1 bg-gray-400" />
+                </div>
+
+                {/* 해당 시간대 예약 카드들 */}
+                <div className="flex flex-col gap-2">
+                  {items.map((reservation) => (
+                    <CalendarReservationCard
+                      key={reservation.reservationId}
+                      reservation={reservation}
+                    />
+                  ))}
+                </div>
+              </div>
             ))
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center py-10">

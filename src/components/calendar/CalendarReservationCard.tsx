@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import CalendarIcon from '@/public/icons/myRecruitment/calendar.svg';
 import TimeCircleIcon from '@/public/icons/calendar/time-circle.svg';
 import ChatIcon from '@/public/icons/calendar/chat.svg';
+import ChevronRightIcon from '@/public/icons/calendar/chevron-right.svg';
 import { subCategoryCodeToName } from '@/src/utils/myRecruitment/category';
 import { formatDateToShort, formatTimeWithPeriod } from '@/src/utils/common';
 import { ReservationChangeModal, ReservationCancelModal, ReservationSuccessModal } from '@/src/components/reservation';
@@ -56,6 +57,17 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // 예약 상태 확인
+  const isUpcoming = reservation.reservationStatus === 'UPCOMING';
+  const isCompleted = reservation.reservationStatus === 'COMPLETED';
+
+  // 예약 공고 페이지로 이동
+  const handleRecruitmentClick = () => {
+    if (reservation.recruitmentId) {
+      router.push(`/myRecruitment/${reservation.recruitmentId}`);
+    }
+  };
 
   // 예약 정보를 모달에 전달할 형식으로 변환
   const reservationInfo: ReservationInfo = {
@@ -143,7 +155,29 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
     <div className="flex w-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4">
       {/* 고객 정보 */}
       <div className="flex flex-col gap-2">
-        <p className="text-head-4-semibold text-gray-900">{reservation.modelName}님</p>
+        {/* 이름 + 상태별 버튼/뱃지 */}
+        <div className="flex items-start gap-2">
+          <p className="text-head-4-semibold text-gray-900">{reservation.modelName}님</p>
+
+          {/* UPCOMING: 예약 공고 버튼 */}
+          {isUpcoming && reservation.recruitmentId && (
+            <button
+              type="button"
+              onClick={handleRecruitmentClick}
+              className="flex h-7 cursor-pointer items-center gap-0.5 rounded-xl bg-gray-200 py-[3px] pl-2.5 pr-1.5"
+            >
+              <span className="text-body-2-medium text-gray-800">예약 공고</span>
+              <ChevronRightIcon className="size-4 text-gray-800" />
+            </button>
+          )}
+
+          {/* COMPLETED: 완료된 일정 뱃지 */}
+          {isCompleted && (
+            <span className="text-caption-1-medium rounded-lg border border-gray-400 px-2 py-1 text-gray-800">
+              완료된 일정
+            </span>
+          )}
+        </div>
 
         {/* 예약 정보 */}
         <div className="flex items-center gap-2">
@@ -165,40 +199,42 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         </div>
       </div>
 
-      {/* 액션 버튼 */}
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={handleChatClick}
-          disabled={createChatRoom.isPending}
-          className={`flex h-[42px] items-center gap-1 rounded-full px-3 py-2.5 whitespace-nowrap ${
-            createChatRoom.isPending ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-gray-900'
-          }`}
-        >
-          {createChatRoom.isPending ? (
-            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          ) : (
-            <ChatIcon className="size-5 text-white" />
-          )}
-          <span className="text-body-2-medium text-white">채팅 보내기</span>
-        </button>
+      {/* 액션 버튼 - UPCOMING인 경우에만 표시 */}
+      {isUpcoming && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleChatClick}
+            disabled={createChatRoom.isPending}
+            className={`flex h-[42px] items-center gap-1 rounded-full px-4 py-2.5 whitespace-nowrap ${
+              createChatRoom.isPending ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-gray-900'
+            }`}
+          >
+            {createChatRoom.isPending ? (
+              <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <ChatIcon className="size-5 text-white" />
+            )}
+            <span className="text-body-2-medium text-white">채팅 보내기</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={handleChangeClick}
-          className="flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-3 py-2.5 whitespace-nowrap"
-        >
-          <span className="text-body-2-medium text-gray-900">예약 변경</span>
-        </button>
+          <button
+            type="button"
+            onClick={handleChangeClick}
+            className="flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-4 py-2.5 whitespace-nowrap"
+          >
+            <span className="text-body-2-medium text-gray-900">예약 변경</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={handleCancelClick}
-          className="flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-3 py-2.5 whitespace-nowrap"
-        >
-          <span className="text-body-2-medium text-gray-900">예약 취소</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={handleCancelClick}
+            className="flex h-[42px] cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white px-4 py-2.5 whitespace-nowrap"
+          >
+            <span className="text-body-2-medium text-gray-900">예약 취소</span>
+          </button>
+        </div>
+      )}
 
       {/* 예약 변경 모달 */}
       {isChangeModalOpen && (
