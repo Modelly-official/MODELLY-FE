@@ -20,7 +20,7 @@ import { useToggleDesignerLike, useToggleRecruitmentLike } from '@/src/hooks/que
 import BellIcon from '@/public/icons/designer-home/bell.svg';
 import MoandiLogo from '@/public/icons/model-home/moandiLogo.svg';
 import LocationIcon from '@/public/icons/common/location-current.svg';
-import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder.svg';
+import ProfileIcon from '@/public/icons/chat/profile.svg';
 import { ReservationCard } from './ReservationCard';
 import { TopRecruitmentCard } from './TopRecruitmentCard';
 import type { HomeCategory } from '@/src/types/modelHome';
@@ -142,8 +142,8 @@ export function ModelHomeContent() {
                     {profileImageUrl ? (
                       <Image src={profileImageUrl} alt="프로필" fill sizes="64px" className="object-cover" />
                     ) : (
-                      <div className="flex size-full items-center justify-center text-gray-500">
-                        <ProfilePlaceholderIcon className="size-6" />
+                      <div className="flex size-full items-center justify-center bg-gray-100">
+                        <ProfileIcon className="size-10 text-gray-500" />
                       </div>
                     )}
                   </div>
@@ -197,7 +197,7 @@ export function ModelHomeContent() {
               <div className="mt-2">
                 <div className="flex gap-2">
                   {[0, 1].map((index) => (
-                    <div key={`nearby-skeleton-${index}`} className="flex-1 min-w-0">
+                    <div key={`nearby-skeleton-${index}`} className="min-w-0 flex-1">
                       <RecruitmentCardSkeleton isLeftColumn={index % 2 === 0} />
                     </div>
                   ))}
@@ -219,7 +219,7 @@ export function ModelHomeContent() {
                     <SwiperSlide key={`nearby-slide-${slideIndex}`} className="w-full!">
                       <div className="flex gap-2">
                         {pair.map((item, index) => (
-                          <div key={item.recruitmentId} className="flex-1 min-w-0">
+                          <div key={item.recruitmentId} className="min-w-0 flex-1">
                             <RecruitmentCard
                               recruitment={item}
                               isLeftColumn={index === 0}
@@ -227,7 +227,7 @@ export function ModelHomeContent() {
                             />
                           </div>
                         ))}
-                        {pair.length === 1 && <div className="flex-1 min-w-0" aria-hidden />}
+                        {pair.length === 1 && <div className="min-w-0 flex-1" aria-hidden />}
                       </div>
                     </SwiperSlide>
                   ))}
@@ -239,7 +239,7 @@ export function ModelHomeContent() {
                   <SwiperSlide className="w-full!">
                     <div className="invisible flex w-full gap-2">
                       {[0, 1].map((index) => (
-                        <div key={`nearby-empty-${index}`} className="flex-1 min-w-0">
+                        <div key={`nearby-empty-${index}`} className="min-w-0 flex-1">
                           <RecruitmentCardSkeleton isLeftColumn={index % 2 === 0} />
                         </div>
                       ))}

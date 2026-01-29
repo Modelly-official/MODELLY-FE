@@ -36,7 +36,7 @@ export default function DesignerCard({ designer, onLikeToggle }: DesignerCardPro
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <ProfileIcon className="h-10 w-8 text-gray-600" />
+              <ProfileIcon className="w-8 text-gray-500" />
             </div>
           )}
         </div>
