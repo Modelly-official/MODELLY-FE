@@ -74,5 +74,6 @@ export function useSocialLoginCallback() {
 export function useWithdraw() {
   return useMutation<ApiResponse<WithdrawResponse>, Error, void>({
     mutationFn: withdraw,
+    retry: 0, // 탈퇴는 재시도하지 않음
   });
 }

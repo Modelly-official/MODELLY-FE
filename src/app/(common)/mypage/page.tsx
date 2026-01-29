@@ -115,6 +115,7 @@ export default function MypagePage() {
       },
       onError: () => {
         showToast('탈퇴 처리 중 오류가 발생했습니다.');
+        router.replace('/login');
       },
       onSettled: () => {
         setIsWithdrawModalOpen(false);
@@ -191,13 +192,16 @@ export default function MypagePage() {
           </div>
 
           {/* 체크박스 */}
-          <div
-            className="flex cursor-pointer items-center gap-3 px-2"
-            onClick={() => setIsWithdrawAgreed(!isWithdrawAgreed)}
-          >
-            {isWithdrawAgreed ? <SelectedIcon /> : <SelectIcon />}
+          <label className="flex cursor-pointer items-center gap-3 px-2">
+            <input
+              type="checkbox"
+              checked={isWithdrawAgreed}
+              onChange={(e) => setIsWithdrawAgreed(e.target.checked)}
+              className="sr-only"
+            />
+            {isWithdrawAgreed ? <SelectedIcon aria-hidden /> : <SelectIcon aria-hidden />}
             <span className="text-body-2-medium text-gray-900">{WITHDRAW_MODAL.checkboxLabel}</span>
-          </div>
+          </label>
 
           {/* 버튼 */}
           <div className="flex gap-2">
