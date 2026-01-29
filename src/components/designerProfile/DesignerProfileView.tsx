@@ -56,11 +56,11 @@ export default function DesignerProfileView({
   const reviewDesignerId = Number(profile.designerId ?? profile.designerUserId);
   const canFetchPublicReviews = Number.isFinite(reviewDesignerId) && reviewDesignerId > 0;
 
-  const designerReviewsQuery = useDesignerReviews({ size: 5 }, { enabled: reviewQueryEnabled && isOwnerProfile });
+  const designerReviewsQuery = useDesignerReviews({ size: 3 }, { enabled: reviewQueryEnabled && isOwnerProfile });
 
   const reviewListQuery = usePublicDesignerReviewList({
     designerId: reviewDesignerId,
-    params: { size: 5 },
+    params: { size: 3 },
     enabled: reviewQueryEnabled && !isOwnerProfile && canFetchPublicReviews,
   });
 
