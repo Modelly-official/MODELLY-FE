@@ -10,6 +10,8 @@ import {
   subCategoryCodeToName,
 } from '@/src/utils/myRecruitment/category/categoryMapping';
 import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
+import { isPhotoRequired } from '@/src/utils/reservation/photoRequirement';
+import { Spinner } from '@/src/components/auth/common';
 
 interface StepConfirmProps {
   recruitmentId: number;
@@ -56,13 +58,17 @@ export default function StepConfirm({
   const { selectedDate, selectedTime, uploadedImageUrl, comment } = useReservationStore();
   const { mutate: createReservation, isPending } = useCreateReservation();
 
+  // 사진 필수 여부 확인 (컴포넌트 최상단에서 한 번만 계산)
+  const photoRequired = isPhotoRequired(category);
+
   // 카테고리 enum 변환 (한글/영문 모두 처리)
   const normalizedCategory = category.trim();
   const categoryEnum = categoryNameToCode(normalizedCategory);
 
   // 예약하기 버튼 클릭
   const handleReservation = () => {
-    if (!selectedDate || !selectedTime || !uploadedImageUrl || !categoryEnum) return;
+    if (!selectedDate || !selectedTime || !categoryEnum) return;
+    if (photoRequired && !uploadedImageUrl) return;
 
     // 서브카테고리 한글 → enum 변환
     const subCategoriesEnum = subCategories.map((sub) => subCategoryNameToCode(categoryEnum, sub));
@@ -77,7 +83,7 @@ export default function StepConfirm({
         comment,
         designerName,
         shop: shopName,
-        imageUrls: uploadedImageUrl,
+        ...(uploadedImageUrl && { imageUrls: uploadedImageUrl }),
       },
       {
         onSuccess: () => {
@@ -107,7 +113,7 @@ export default function StepConfirm({
   ];
 
   // 데이터 유효성 검사 (handleReservation과 동일한 조건)
-  const isValid = selectedDate && selectedTime && uploadedImageUrl && categoryEnum;
+  const isValid = selectedDate && selectedTime && categoryEnum && (photoRequired ? uploadedImageUrl : true);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -153,13 +159,20 @@ export default function StepConfirm({
           type="button"
           onClick={handleReservation}
           disabled={!isValid || isPending}
-          className={`text-body-1-semibold h-14 w-full rounded-full transition-colors ${
+          className={`text-body-1-semibold h-14 w-full rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 ${
             isValid && !isPending
               ? 'cursor-pointer bg-gray-900 text-white'
               : 'cursor-not-allowed bg-gray-200 text-gray-600'
           }`}
         >
-          {isPending ? '예약 중...' : '완료'}
+          {isPending ? (
+            <span className="flex items-center justify-center gap-2">
+              <Spinner color="white" size="sm" />
+              예약 중…
+            </span>
+          ) : (
+            '완료'
+          )}
         </button>
       </FixedBottomContainer>
     </div>
