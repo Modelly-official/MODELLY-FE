@@ -23,6 +23,7 @@ interface DesignerPortfolioReviewSectionProps {
   onPortfolioSelect?: (portfolioId: number) => void;
   onReviewViewAll?: () => void;
   onReviewPreviewMore?: () => void;
+  onReviewPreviewImageClick?: (reviewId: number, imageUrl: string) => void;
 }
 
 export default function DesignerPortfolioReviewSection({
@@ -39,6 +40,7 @@ export default function DesignerPortfolioReviewSection({
   onPortfolioSelect,
   onReviewViewAll,
   onReviewPreviewMore,
+  onReviewPreviewImageClick,
 }: DesignerPortfolioReviewSectionProps) {
   const portfolioCount = portfolioTotalCount ?? portfolioImages.length;
   const hasPortfolios = portfolioImages.length > 0;
@@ -141,6 +143,8 @@ export default function DesignerPortfolioReviewSection({
               reviews={reviewItems}
               onViewAll={onReviewViewAll}
               onPreviewMore={onReviewPreviewMore}
+              showPreviewMoreLabel
+              onPreviewImageClick={onReviewPreviewImageClick}
             />
           )}
         </>

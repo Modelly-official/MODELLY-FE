@@ -5,10 +5,15 @@ import DesignerReviewPreviewStrip from '@/src/components/designerProfile/review/
 import DesignerReviewSummary from '@/src/components/designerProfile/review/DesignerReviewSummary';
 import RightArrowIcon from '@/public/icons/common/arrow-right.svg';
 
+export interface DesignerReviewPreviewItem {
+  reviewId: number;
+  imageUrl: string;
+}
+
 export interface DesignerReviewSummaryData {
   rating: number;
   count: number;
-  previewImages: string[];
+  previewItems: DesignerReviewPreviewItem[];
   moreCount: number;
 }
 
@@ -18,6 +23,7 @@ interface DesignerReviewTabProps {
   onViewAll?: () => void;
   onPreviewMore?: () => void;
   showPreviewMoreLabel?: boolean;
+  onPreviewImageClick?: (reviewId: number, imageUrl: string) => void;
 }
 
 export default function DesignerReviewTab({
@@ -26,16 +32,18 @@ export default function DesignerReviewTab({
   onViewAll,
   onPreviewMore,
   showPreviewMoreLabel = false,
+  onPreviewImageClick,
 }: DesignerReviewTabProps) {
   return (
     <div className="bg-gray-100 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
       <DesignerReviewSummary rating={summary.rating} count={summary.count} onViewAll={onViewAll} />
-      {summary.previewImages.length > 0 && (
+      {summary.previewItems.length > 0 && (
         <DesignerReviewPreviewStrip
-          previewImages={summary.previewImages}
+          previewItems={summary.previewItems}
           moreCount={summary.moreCount}
           showMoreLabel={showPreviewMoreLabel}
           onMoreClick={onPreviewMore}
+          onImageClick={onPreviewImageClick}
         />
       )}
 
