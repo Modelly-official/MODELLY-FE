@@ -52,6 +52,7 @@ export default function DesignerReviewAllView({ designerId, mode = 'public' }: D
       images: item.reviewImages ?? [],
       summary: item.summary,
       isFixed: item.isFixed,
+      replyDto: item.replyDto ?? null,
     }));
   }, [reviewListQuery.data?.pages]);
 

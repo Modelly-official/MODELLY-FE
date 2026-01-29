@@ -95,6 +95,7 @@ export default function PostDetailContent({ recruitmentId, isOwner = false }: Po
       images: item.reviewImages ?? [],
       summary: item.summary,
       isFixed: item.isFixed,
+      replyDto: item.replyDto ?? null,
     }));
   }, [isOwnerView, ownerReviewListQuery.data?.pages, reviewListQuery.data?.result?.items]);
 

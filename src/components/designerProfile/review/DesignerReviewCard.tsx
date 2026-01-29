@@ -15,6 +15,12 @@ export interface DesignerReviewItem {
   images: string[];
   summary?: string;
   isFixed?: boolean;
+  replyDto?: {
+    replyId: number;
+    designerName?: string;
+    content: string;
+    createdAt?: string;
+  } | null;
 }
 
 interface DesignerReviewCardProps {
@@ -43,7 +49,7 @@ export default function DesignerReviewCard({ review, onImageClick }: DesignerRev
 
       {review.images.length > 0 && (
         <div className="flex gap-2">
-          {review.images.map((imageUrl, index) => (
+          {review.images.map((imageUrl, index) =>
             onImageClick ? (
               <button
                 key={`${imageUrl}-${index}`}
@@ -58,8 +64,8 @@ export default function DesignerReviewCard({ review, onImageClick }: DesignerRev
               <div key={`${imageUrl}-${index}`} className="relative h-[99px] w-[98px] overflow-hidden rounded-lg">
                 <Image src={imageUrl} alt="" fill sizes="92px" className="object-cover" />
               </div>
-            )
-          ))}
+            ),
+          )}
         </div>
       )}
 
@@ -72,6 +78,13 @@ export default function DesignerReviewCard({ review, onImageClick }: DesignerRev
             .map((category, index) => (
               <CategoryBadge key={`${category}-${index}`} label={category} />
             ))}
+        </div>
+      )}
+
+      {review.replyDto?.content && (
+        <div className="flex flex-col gap-3 rounded-xl bg-gray-100 px-4 py-4">
+          <span className="text-caption-1-medium text-gray-500">디자이너가 남긴 답글</span>
+          <p className="text-body-2-regular whitespace-pre-line text-gray-900">{review.replyDto.content}</p>
         </div>
       )}
     </div>

@@ -83,6 +83,7 @@ export default function DesignerProfileView({
       images: item.reviewImages ?? [],
       summary: item.summary,
       isFixed: item.isFixed,
+      replyDto: item.replyDto ?? null,
     }));
   }, [designerReviewsQuery.data?.pages, isOwnerProfile, reviewListQuery.data?.result?.items]);
 
