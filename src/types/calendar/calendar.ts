@@ -13,7 +13,7 @@ export interface ReservationDotsResult {
 }
 
 // 예약 상태 타입
-export type ReservationStatus = 'UPCOMING' | 'COMPLETED';
+export type CalendarReservationStatus = 'UPCOMING' | 'COMPLETED';
 
 // 캘린더 예약 아이템
 export interface CalendarReservationItem {
@@ -26,7 +26,7 @@ export interface CalendarReservationItem {
   date: string; // yyyy-MM-dd
   startTime: string; // HH:mm
   endTime: string; // HH:mm
-  reservationStatus: ReservationStatus; // 서버에서 현재 시간 기준으로 판단
+  reservationStatus: CalendarReservationStatus; // 서버에서 현재 시간 기준으로 판단
 }
 
 // 캘린더 예약 목록 조회 응답
