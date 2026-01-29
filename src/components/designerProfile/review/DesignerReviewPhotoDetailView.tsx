@@ -10,7 +10,7 @@ import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import PinIcon from '@/public/icons/common/pin.svg';
-import ProfilePlaceholderIcon from '@/public/icons/designer-home/profile-placeholder-sm.svg';
+import ProfileIcon from '@/public/icons/chat/profile.svg';
 import CategoryBadge from '@/src/components/common/CategoryBadge';
 import DesignerReviewStars from '@/src/components/designerProfile/review/DesignerReviewStars';
 import {
@@ -65,7 +65,7 @@ export default function DesignerReviewPhotoDetailView({
 
   const reviewImages = reviewDetail?.result?.imageUrls?.length
     ? reviewDetail.result.imageUrls
-    : reviewItem?.reviewImages ?? [];
+    : (reviewItem?.reviewImages ?? []);
   const displayDate = reviewItem?.createdDate ? reviewItem.createdDate.replace(/-/g, '.') : '';
   const displayName = reviewItem?.modelName ?? '고객';
   const displayRating = reviewDetail?.result?.rating ?? reviewItem?.rating ?? 0;
@@ -177,7 +177,7 @@ export default function DesignerReviewPhotoDetailView({
       <div className="mt-6 flex flex-col gap-2 px-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-300">
               {reviewItem?.modelImage ? (
                 <Image
                   src={reviewItem.modelImage}
@@ -187,7 +187,7 @@ export default function DesignerReviewPhotoDetailView({
                   className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <ProfilePlaceholderIcon className="h-5 w-5 text-gray-400" />
+                <ProfileIcon className="h-7 w-7 text-gray-500" />
               )}
             </div>
             <div className="flex flex-col gap-1">
