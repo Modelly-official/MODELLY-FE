@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { updateRecruitment } from '@/src/apis';
 import { useToast } from '@/src/hooks/common/useToast';
 import { myRecruitmentKeys } from './useDesignerRecruitments';
@@ -34,7 +35,12 @@ export function useUpdateRecruitment() {
       });
       showToast('공고가 수정되었습니다.');
     },
-    onError: () => {
+    onError: (error) => {
+      // RECRUITMENT4003: 예약이 있는 시간대 삭제 시도
+      if (axios.isAxiosError(error) && error.response?.data?.code === 'RECRUITMENT4003') {
+        showToast(error.response.data.message);
+        return;
+      }
       showToast('공고 수정에 실패했습니다.');
     },
   });
