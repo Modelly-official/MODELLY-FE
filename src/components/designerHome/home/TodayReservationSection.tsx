@@ -10,7 +10,7 @@ interface TodayReservationSectionProps {
 
 export function TodayReservationSection({ data, isLoading }: TodayReservationSectionProps) {
   return (
-    <section className="flex flex-col gap-[10px] px-4">
+    <section className="scrollbar-hide flex h-full flex-col gap-[10px] overflow-y-auto px-4 pb-4">
       {isLoading ? (
         <>
           <div className="h-[66px] animate-skeleton rounded-[12px] bg-gray-300" />
