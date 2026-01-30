@@ -66,7 +66,7 @@ export default function MypagePage() {
 
   // 비로그인 상태 UI
   const showLoginPrompt = authReady && !isLoggedIn;
-  const nameIcon = showLoginPrompt ? <ArrowRightIcon className="h-4 text-gray-400 ml-2" /> : undefined;
+  const nameIcon = showLoginPrompt ? <ArrowRightIcon className="h-6 text-gray-800" /> : undefined;
 
   // 읽지 않은 알림 개수
   const { data: unreadData } = useUnreadNotificationCount(authReady && isLoggedIn);
