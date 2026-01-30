@@ -58,7 +58,7 @@ export default function DesignerReservationCard({
 
   // 카드 클릭 시 공고 상세로 이동
   const handleCardClick = () => {
-    router.push(`/post/${reservation.recruitmentId}`);
+    router.push(`/myRecruitment/${reservation.recruitmentId}`);
   };
 
   // 채팅방 생성 및 이동
