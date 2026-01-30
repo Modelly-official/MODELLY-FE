@@ -54,6 +54,10 @@ export default function ModelReservationCard({
     router.push(`/post/${reservation.recruitmentId}`);
   };
 
+  const handleProfileClick = () => {
+    router.push(`/designer/${reservation.designerId}`);
+  };
+
   return (
     <div className="flex w-full flex-col gap-5 rounded-[20px] bg-white px-5 py-4">
       <div className="flex flex-col gap-2">
@@ -86,7 +90,7 @@ export default function ModelReservationCard({
         <div className="flex w-full items-center gap-2">
           <button
             type="button"
-            onClick={handleCardClick}
+            onClick={handleProfileClick}
             className="text-body-2-medium flex h-[41px] cursor-pointer items-center justify-center rounded-full bg-gray-900 px-5 py-2.5 text-white"
           >
             프로필 보기

@@ -105,6 +105,11 @@ export function DesignerHomeContent() {
         </div>
       </div>
 
+      {/* 퀵 액션 버튼 - 하단 고정 */}
+      <div className="fixed bottom-[calc(87px+env(safe-area-inset-bottom)+16px)] left-1/2 z-40 w-full -translate-x-1/2 sm:w-[375px]">
+        <QuickActionButtons />
+      </div>
+
       {/* 하단 네비게이션 */}
       <BottomNav />
     </>
