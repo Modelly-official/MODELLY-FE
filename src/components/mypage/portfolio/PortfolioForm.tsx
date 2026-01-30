@@ -128,7 +128,7 @@ export default function PortfolioForm({
             />
           </div>
 
-          <div className="focus-within:pb-24">
+          <div>
             <Dropdown
               label="세부 카테고리"
               options={subCategoryOptions}
