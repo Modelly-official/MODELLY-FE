@@ -100,13 +100,15 @@ export function DesignerHomeContent() {
         </div>
 
         {/* 하단 영역 - BottomNav(87px)와 16px 간격 유지 */}
-        <div className="mt-auto pb-[calc(87px+env(safe-area-inset-bottom)+16px)]">
+        <div className="mt-auto pb-[calc(87px+env(safe-area-inset-bottom)+88px)]">
           {/* 새로운 예약 신청 섹션 */}
           <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
-
-          {/* 퀵 액션 버튼 */}
-          <QuickActionButtons />
         </div>
+      </div>
+
+      {/* 퀵 액션 버튼 - 하단 고정 */}
+      <div className="fixed bottom-[calc(87px+env(safe-area-inset-bottom)+16px)] left-1/2 z-40 w-full -translate-x-1/2 sm:w-[375px]">
+        <QuickActionButtons />
       </div>
 
       {/* 하단 네비게이션 */}
