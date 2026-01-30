@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperInstance } from 'swiper/types';
@@ -151,13 +152,13 @@ export function ModelHomeContent() {
               </>
             )
           ) : (
-            <div className="px-4 pt-2">
+            <Link href="/login" className="block px-4 pt-2">
               <p className="text-head-3-semibold text-gray-900">
                 로그인 후 원하는 공고를
                 <br />
                 예약해보세요
               </p>
-            </div>
+            </Link>
           )}
         </div>
 
