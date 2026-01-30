@@ -63,7 +63,7 @@ const RootLayout = ({
           <ToastProvider>
             <AuthErrorHandler>
               <FCMProvider>
-                <div className="mx-auto min-h-screen w-full min-w-[375px] overflow-x-hidden sm:w-[375px] sm:shadow-2xl">{children}</div>
+                <div className="mx-auto min-h-screen w-full min-w-[380px] overflow-x-hidden sm:w-[380px] sm:shadow-2xl">{children}</div>
                 <Toaster
                   position="top-center"
                   expand={false}
