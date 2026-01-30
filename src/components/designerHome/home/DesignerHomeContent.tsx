@@ -98,7 +98,7 @@ export function DesignerHomeContent() {
       </div>
 
       {/* 하단 고정 영역 - BottomNav 위 고정 */}
-      <div className="fixed right-0 bottom-[calc(87px+env(safe-area-inset-bottom))] left-0 z-10 w-full min-w-[380px] sm:right-auto sm:left-1/2 sm:w-[380px] sm:-translate-x-1/2">
+      <div className="fixed right-0 bottom-[calc(87px+env(safe-area-inset-bottom))] left-0 z-10 w-full min-w-[375px] sm:right-auto sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2">
         <div className="bg-gray-200 pb-[40px]">
           <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
           <QuickActionButtons />
