@@ -124,7 +124,7 @@ export function DesignerHomeContent() {
       {/* 하단 고정 영역 */}
       <div className="shrink-0 pb-[calc(87px+env(safe-area-inset-bottom)+16px)]">
         <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
-        <QuickActionButtons className="mb-4" />
+        <QuickActionButtons />
       </div>
 
       {/* 하단 네비게이션 */}
