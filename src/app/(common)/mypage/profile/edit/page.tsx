@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ArrowLeftIcon from '@/public/icons/common/arrow-left.svg';
 import { AddressInput, FixedBottomButton, GenderSelect, ProfileImageUpload } from '@/src/components/signup';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { TextInput } from '@/src/components/common';
 import { useProfileEditForm } from '@/src/hooks/custom/mypage';
 
@@ -60,7 +61,7 @@ export default function ProfileEditPage() {
 
       {/* 폼 */}
       <form
-        className="mx-4 mt-4 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 pb-6 sm:w-[343px]"
+        className="mx-4 mt-4 flex w-[calc(100%-2rem)] flex-1 flex-col gap-6 pb-[calc(88px+env(safe-area-inset-bottom))] sm:w-[343px]"
         onSubmit={(e) => e.preventDefault()}
       >
         {/* 프로필 이미지 */}
@@ -108,7 +109,7 @@ export default function ProfileEditPage() {
                 <textarea
                   value={form.intro}
                   onChange={(e) => updateField('intro', e.target.value.slice(0, 100))}
-                  placeholder="디자이너 서비스를 소개해주세요"
+                  placeholder="본인의 강점을 소개해주세요"
                   maxLength={100}
                   className="text-body-2-medium h-[120px] w-full resize-none overflow-y-auto rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
                 />
@@ -137,20 +138,16 @@ export default function ProfileEditPage() {
           )}
         </div>
 
-        {/* 제출 버튼 */}
-        <div className="mt-auto mb-3">
-          <FixedBottomButton
-            disabled={!isFormValid || isLoading}
-            onClick={handleSubmit}
-          >
-            {isButtonLoading ? (
-              <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              '완료'
-            )}
-          </FixedBottomButton>
-        </div>
       </form>
+      <FixedBottomContainer>
+        <FixedBottomButton disabled={!isFormValid || isLoading} onClick={handleSubmit}>
+          {isButtonLoading ? (
+            <div className="size-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            '완료'
+          )}
+        </FixedBottomButton>
+      </FixedBottomContainer>
     </div>
   );
 }

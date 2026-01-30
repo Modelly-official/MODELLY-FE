@@ -84,11 +84,7 @@ export default function PortfolioCreatePage() {
       </header>
 
       <div className="flex flex-1 flex-col px-4 pt-1 pb-[calc(180px+env(safe-area-inset-bottom))]">
-        <PortfolioForm
-          submitLabel="등록하기"
-          subCategoryOptions={subCategoryOptions}
-          onSubmit={handleSubmit}
-        />
+        <PortfolioForm submitLabel="등록하기" subCategoryOptions={subCategoryOptions} onSubmit={handleSubmit} />
       </div>
     </div>
   );

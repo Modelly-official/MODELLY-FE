@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import PortfolioImageUploader from '@/src/components/mypage/portfolio/PortfolioImageUploader';
 import Dropdown from '@/src/components/common/Dropdown/Dropdown';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { useIMEInput } from '@/src/hooks/custom/useIMEInput';
 
 const MAX_TITLE_LENGTH = 20;
@@ -127,7 +128,7 @@ export default function PortfolioForm({
             />
           </div>
 
-          <div className="focus-within:pb-24">
+          <div>
             <Dropdown
               label="세부 카테고리"
               options={subCategoryOptions}
@@ -140,18 +141,18 @@ export default function PortfolioForm({
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={handleSubmit}
           disabled={!isSubmitEnabled}
-          className={`text-body-1-semibold flex w-full items-center justify-center rounded-full py-4 ${
+          className={`text-body-1-semibold flex h-[56px] w-full items-center justify-center rounded-full ${
             isSubmitEnabled ? 'cursor-pointer bg-gray-900 text-white' : 'cursor-not-allowed bg-gray-200 text-gray-500'
           }`}
         >
           {submitLabel}
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

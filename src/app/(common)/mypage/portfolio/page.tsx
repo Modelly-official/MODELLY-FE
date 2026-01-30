@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import LeftArrowIcon from '@/public/icons/common/arrow-left.svg';
 import DesignerProfileEditPortfolio from '@/src/components/designerProfile/edit/DesignerProfileEditPortfolio';
+import { FixedBottomContainer } from '@/src/components/common/FixedBottomContainer';
 import { useInfiniteScroll } from '@/src/hooks/common/useInfiniteScroll';
 import { useDeletePortfolio, useDesignerPortfolios } from '@/src/hooks/queries';
 
@@ -90,15 +91,15 @@ export default function PortfolioManagePage() {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-50 w-full -translate-x-1/2 bg-white px-4 py-3 sm:w-[375px]">
+      <FixedBottomContainer>
         <button
           type="button"
           onClick={handleAddPortfolio}
-          className="text-body-1-semibold flex w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 py-4 text-white"
+          className="text-body-1-semibold flex h-[56px] w-full cursor-pointer items-center justify-center rounded-full bg-gray-900 text-white"
         >
           신규 포트폴리오 작성하기
         </button>
-      </div>
+      </FixedBottomContainer>
     </div>
   );
 }

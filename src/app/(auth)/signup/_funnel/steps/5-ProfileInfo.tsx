@@ -330,7 +330,7 @@ export const StepProfileInfo: React.FC<StepProfileInfoProps> = ({ goPrev, goNext
                 <textarea
                   value={intro}
                   onChange={(e) => setField('intro', e.target.value.slice(0, 100))}
-                  placeholder="디자이너 서비스를 소개해주세요"
+                  placeholder="본인의 강점을 소개해주세요"
                   maxLength={100}
                   className="text-body-2-medium h-[120px] w-full resize-none overflow-y-auto rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 placeholder:text-gray-600 focus:outline-none focus:placeholder:text-transparent"
                 />
