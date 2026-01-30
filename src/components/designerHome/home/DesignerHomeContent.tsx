@@ -41,40 +41,16 @@ export function DesignerHomeContent() {
   const { data: unreadData } = useUnreadNotificationCount();
   const unreadCount = unreadData?.result?.unreadCount ?? 0;
 
-  // TODO: 삭제 필요 - 디자이너 확인용 Mock 데이터 (API 연동 후 제거)
-  const mockTodayReservations = {
-    date: selectedDate,
-    totalCount: 7,
-    reservations: [
-      { reservationId: 101, modelName: '김서연', recruitmentId: 2, time: '09:00', imageUrl: null, subCategories: ['커트'] },
-      { reservationId: 102, modelName: '박민정', recruitmentId: 3, time: '10:30', imageUrl: null, subCategories: ['펌'] },
-      { reservationId: 103, modelName: '이하늘', recruitmentId: 4, time: '12:00', imageUrl: null, subCategories: ['염색'] },
-      { reservationId: 104, modelName: '최예진', recruitmentId: 5, time: '14:00', imageUrl: null, subCategories: ['커트', '펌'] },
-      { reservationId: 105, modelName: '정수아', recruitmentId: 6, time: '15:30', imageUrl: null, subCategories: ['염색'] },
-      { reservationId: 106, modelName: '한지민', recruitmentId: 7, time: '17:00', imageUrl: null, subCategories: ['커트'] },
-      { reservationId: 107, modelName: '송혜교', recruitmentId: 8, time: '18:30', imageUrl: null, subCategories: ['펌', '염색'] },
-    ],
-  };
-
-  const mockPendingReservations = {
-    reservations: [
-      { reservationId: 999, modelName: '김민지', recruitmentTitle: '테스트', date: '2025-02-01', time: '14:00', subCategories: ['커트'] },
-      { reservationId: 998, modelName: '이수진', recruitmentTitle: '테스트', date: '2025-02-02', time: '10:30', subCategories: ['펌'] },
-      { reservationId: 997, modelName: '박지연', recruitmentTitle: '테스트', date: '2025-02-03', time: '15:00', subCategories: ['염색'] },
-      { reservationId: 996, modelName: '최유나', recruitmentTitle: '테스트', date: '2025-02-04', time: '11:00', subCategories: ['커트'] },
-      { reservationId: 995, modelName: '정하은', recruitmentTitle: '테스트', date: '2025-02-05', time: '16:30', subCategories: ['펌'] },
-      { reservationId: 994, modelName: '한소희', recruitmentTitle: '테스트', date: '2025-02-06', time: '09:00', subCategories: ['염색'] },
-    ],
-    totalCount: 6,
+  // API 데이터
+  const todayReservations = todayData?.result ?? { date: selectedDate, totalCount: 0, reservations: [] };
+  const pendingReservations = pendingData?.result ?? {
+    reservations: [],
+    totalCount: 0,
     cursorId: null,
     cursorDate: null,
     cursorTime: null,
     hasNext: false,
   };
-
-  // TODO: 삭제 필요 - API 연동 후 아래 주석 해제
-  const todayReservations = mockTodayReservations; // todayData?.result ?? { date: selectedDate, totalCount: 0, reservations: [] };
-  const pendingReservations = mockPendingReservations; // pendingData?.result ?? {...};
 
   return (
     <div className="flex h-[100dvh] flex-col bg-gray-200">
