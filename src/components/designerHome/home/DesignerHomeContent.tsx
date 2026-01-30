@@ -41,6 +41,7 @@ export function DesignerHomeContent() {
   const { data: unreadData } = useUnreadNotificationCount();
   const unreadCount = unreadData?.result?.unreadCount ?? 0;
 
+  // API 데이터
   const todayReservations = todayData?.result ?? { date: selectedDate, totalCount: 0, reservations: [] };
   const pendingReservations = pendingData?.result ?? {
     reservations: [],
@@ -52,8 +53,9 @@ export function DesignerHomeContent() {
   };
 
   return (
-    <>
-      <div className="flex min-h-screen flex-col bg-gray-200 pb-[calc(87px+env(safe-area-inset-bottom)+16px+72px)]">
+    <div className="flex h-[100dvh] flex-col bg-gray-200">
+      {/* 상단 고정 영역 */}
+      <div className="shrink-0">
         {/* 헤더 */}
         <header className="flex h-14 items-center justify-between px-5">
           <MoandiLogo />
@@ -88,25 +90,21 @@ export function DesignerHomeContent() {
         <div className="mt-4">
           <DateSelectorBar selectedDate={selectedDate} onDateSelect={setSelectedDate} />
         </div>
-
-        {/* 오늘의 예약 섹션 */}
-        <div className="mt-5">
-          <TodayReservationSection data={todayReservations} isLoading={isTodayLoading} />
-        </div>
-
-        <div className="mt-auto h-[40px]" />
       </div>
 
-      {/* 하단 고정 영역 - BottomNav 위 고정 */}
-      <div className="fixed right-0 bottom-[calc(87px+env(safe-area-inset-bottom))] left-0 z-10 w-full min-w-[375px] sm:right-auto sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2">
-        <div className="bg-gray-200 pb-[40px]">
-          <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
-          <QuickActionButtons />
-        </div>
+      {/* 오늘의 예약 섹션 - 내부 스크롤 */}
+      <div className="mt-5 min-h-0 flex-1">
+        <TodayReservationSection data={todayReservations} isLoading={isTodayLoading} />
+      </div>
+
+      {/* 하단 고정 영역 */}
+      <div className="shrink-0 pb-[calc(87px+env(safe-area-inset-bottom)+16px)]">
+        <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
+        <QuickActionButtons />
       </div>
 
       {/* 하단 네비게이션 */}
       <BottomNav />
-    </>
+    </div>
   );
 }

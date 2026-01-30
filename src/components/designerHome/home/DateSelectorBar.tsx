@@ -44,7 +44,7 @@ function DateButton({ date, isSelected, onClick }: DateButtonProps) {
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer flex w-[63px] shrink-0 flex-col items-center justify-center rounded-[12px] px-4 py-3 shadow-[0px_0px_4px_0px_rgba(34,34,34,0.09)] ${
+      className={`flex flex-1 cursor-pointer flex-col items-center justify-center rounded-[12px] py-3 shadow-[0px_0px_4px_0px_rgba(34,34,34,0.09)] ${
         isSelected ? 'bg-gray-900' : 'bg-white'
       }`}
     >
@@ -77,7 +77,7 @@ export function DateSelectorBar({ selectedDate, onDateSelect }: DateSelectorBarP
   const dates = generateDateRange(today, 5); // 오늘 + 4일
 
   return (
-    <div className="flex justify-between gap-2 overflow-x-auto px-4 scrollbar-hide">
+    <div className="flex gap-2 px-4">
       {dates.map((date) => {
         const dateStr = formatDateString(date);
         return (

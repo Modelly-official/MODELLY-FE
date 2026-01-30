@@ -180,7 +180,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
         </div>
 
         {/* 예약 정보 */}
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <CalendarIcon className="size-4 text-gray-800" />
             <span className="text-body-2-medium text-gray-800">{formatDateToShort(reservation.date)}</span>
@@ -196,7 +196,7 @@ export default function CalendarReservationCard({ reservation }: CalendarReserva
           <span className="text-body-2-medium text-gray-800">·</span>
 
           <span className="text-body-2-medium text-gray-800">{formatSubCategories(reservation.subCategories)}</span>
-        </div>
+        </div> */}
       </div>
 
       {/* 액션 버튼 - UPCOMING인 경우에만 표시 */}
