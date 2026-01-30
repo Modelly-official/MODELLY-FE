@@ -53,16 +53,11 @@ export function DesignerHomeContent() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-gray-200">
+      <div className="flex min-h-screen flex-col bg-gray-200 pb-[calc(87px+env(safe-area-inset-bottom)+16px+72px)]">
         {/* 헤더 */}
         <header className="flex h-14 items-center justify-between px-5">
           <MoandiLogo />
-          <button
-            type="button"
-            aria-label="알림"
-            onClick={() => router.push('/notification')}
-            className="relative"
-          >
+          <button type="button" aria-label="알림" onClick={() => router.push('/notification')} className="relative">
             <BellIcon className="size-6 cursor-pointer" />
             {unreadCount > 0 && (
               <span className="text-caption-1-medium absolute -top-3 -right-3 flex h-6 min-w-6 items-center justify-center rounded-full bg-purple-500 px-1 text-white">
@@ -99,16 +94,15 @@ export function DesignerHomeContent() {
           <TodayReservationSection data={todayReservations} isLoading={isTodayLoading} />
         </div>
 
-        {/* 하단 영역 - BottomNav(87px)와 16px 간격 유지 */}
-        <div className="mt-auto pb-[calc(87px+env(safe-area-inset-bottom)+88px)]">
-          {/* 새로운 예약 신청 섹션 */}
-          <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
-        </div>
+        <div className="mt-auto h-[40px]" />
       </div>
 
-      {/* 퀵 액션 버튼 - 하단 고정 */}
-      <div className="fixed bottom-[calc(87px+env(safe-area-inset-bottom)+16px)] left-1/2 z-40 w-full -translate-x-1/2 sm:w-[375px]">
-        <QuickActionButtons />
+      {/* 하단 고정 영역 - BottomNav 위 고정 */}
+      <div className="fixed right-0 bottom-[calc(87px+env(safe-area-inset-bottom))] left-0 z-10 w-full min-w-[375px] sm:right-auto sm:left-1/2 sm:w-[375px] sm:-translate-x-1/2">
+        <div className="bg-gray-200 pb-[40px]">
+          <PendingReservationSection data={pendingReservations} isLoading={isPendingLoading} />
+          <QuickActionButtons />
+        </div>
       </div>
 
       {/* 하단 네비게이션 */}
