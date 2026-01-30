@@ -120,11 +120,8 @@ export default function CalendarPage() {
       />
 
       {/* 하단 예약 리스트 영역 */}
-      <div className="mt-4 flex flex-1 flex-col rounded-t-[40px] bg-gray-100 px-5 pt-3 pb-16">
-        {/* 상단 화살표 */}
-        <div className="mb-4 flex justify-center">
-          <ArrowUpIcon className="size-6 text-gray-400" />
-        </div>
+      <div className="mt-4 flex flex-1 flex-col bg-gray-100 px-5 pt-5 pb-16">
+
 
         {/* 타이틀 영역 */}
         <div className="mb-4 flex items-baseline gap-2">
