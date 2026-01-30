@@ -8,7 +8,7 @@ interface QuickActionButtonsProps {
 
 export function QuickActionButtons({ className }: QuickActionButtonsProps) {
   return (
-    <section className={`mt-4 flex gap-2 px-4 ${className ?? ''}`}>
+    <section className={`mt-5 flex gap-2 px-4 ${className ?? ''}`}>
       <Link
         href="/mypage"
         className="flex flex-1 items-center justify-center rounded-[12px] bg-white py-3 shadow-[0px_0px_11px_0px_rgba(34,34,34,0.04)]"
