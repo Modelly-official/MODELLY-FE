@@ -195,6 +195,7 @@ export default function DesignerProfileEditView({
                 <textarea
                   value={form.intro}
                   onChange={handleChange('intro')}
+                  placeholder="본인의 강점을 소개해주세요"
                   className="text-body-2-medium min-h-[120px] resize-none rounded-xl bg-gray-100 px-4 py-3.5 text-gray-900 focus:outline-none"
                 />
               </div>
