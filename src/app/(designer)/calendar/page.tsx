@@ -31,6 +31,25 @@ function groupReservationsByTime(
 }
 
 /**
+ * 예약 목록을 날짜+시간별로 그룹핑 (전체 모드용)
+ */
+function groupReservationsByDateTime(
+  reservations: CalendarReservationItem[],
+): Map<string, CalendarReservationItem[]> {
+  const grouped = new Map<string, CalendarReservationItem[]>();
+
+  reservations.forEach((reservation) => {
+    const key = `${reservation.date}_${reservation.startTime}`;
+    if (!grouped.has(key)) {
+      grouped.set(key, []);
+    }
+    grouped.get(key)!.push(reservation);
+  });
+
+  return grouped;
+}
+
+/**
  * 날짜를 "DD(요일)" 형식으로 포맷
  */
 function formatSelectedDateTitle(dateStr: string): string {
@@ -38,6 +57,16 @@ function formatSelectedDateTitle(dateStr: string): string {
   const date = new Date(dateStr);
   const weekday = WEEKDAY_NAMES[date.getDay()];
   return `${parseInt(day, 10)}(${weekday})`;
+}
+
+/**
+ * 날짜를 "M.DD(요일)" 형식으로 포맷 (전체 모드 헤더용)
+ */
+function formatDateHeader(dateStr: string): string {
+  const [, month, day] = dateStr.split('-');
+  const date = new Date(dateStr);
+  const weekday = WEEKDAY_NAMES[date.getDay()];
+  return `${parseInt(month, 10)}.${parseInt(day, 10)}(${weekday})`;
 }
 
 export default function CalendarPage() {
@@ -90,10 +119,13 @@ export default function CalendarPage() {
   const reservations = reservationsData?.result?.items ?? [];
   const totalCount = reservationsData?.result?.totalCount ?? 0;
 
-  // 시간별로 그룹핑된 예약 목록
+  // 전체 모드: 날짜+시간별 그룹핑, 특정 날짜: 시간별 그룹핑
   const groupedReservations = useMemo(
-    () => groupReservationsByTime(reservations),
-    [reservations],
+    () =>
+      selectedDate === null
+        ? groupReservationsByDateTime(reservations)
+        : groupReservationsByTime(reservations),
+    [reservations, selectedDate],
   );
 
   // 날짜 선택 핸들러
@@ -144,10 +176,12 @@ export default function CalendarPage() {
           ) : reservations.length > 0 ? (
             Array.from(groupedReservations.entries()).map(([time, items]) => (
               <div key={time} className="flex flex-col gap-2">
-                {/* 시간 헤더 + 구분선 */}
+                {/* 시간 헤더 + 구분선 (전체: 날짜+시간, 특정 날짜: 시간만) */}
                 <div className="flex items-center gap-2">
                   <span className="text-body-2-semibold shrink-0 text-gray-900">
-                    {formatTimeWithPeriod(time)}
+                    {selectedDate === null
+                      ? formatDateHeader(items[0].date)
+                      : formatTimeWithPeriod(time)}
                   </span>
                   <div className="h-px flex-1 bg-gray-400" />
                 </div>
