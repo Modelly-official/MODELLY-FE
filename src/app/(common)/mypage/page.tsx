@@ -1,13 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ArrowRightIcon from '@/public/icons/common/arrow-right.svg';
-import { BottomNav } from '@/src/components/common';
+import SelectIcon from '@/public/icons/signup/select.svg';
+import SelectedIcon from '@/public/icons/signup/selected.svg';
+import { BottomNav, BaseModal } from '@/src/components/common';
+import { Spinner } from '@/src/components/auth/common/Spinner';
 import { MenuList, MyMenuCard, ProfileCard } from '@/src/components/mypage';
 import { useAuthReady, useSimpleProfile } from '@/src/hooks/custom/mypage';
-import { useLogout } from '@/src/hooks/queries/auth';
+import { useLogout, useWithdraw } from '@/src/hooks/queries/auth';
 import { useUnreadNotificationCount } from '@/src/hooks/queries';
 import { useToast } from '@/src/hooks/common/useToast';
 import {
@@ -16,13 +19,19 @@ import {
   MODEL_QUICK_ACTIONS,
   DESIGNER_QUICK_ACTIONS,
   ROLE_FALLBACK_NAMES,
+  WITHDRAW_MODAL,
 } from '@/src/constants/mypage';
 
 export default function MypagePage() {
   const router = useRouter();
   const { user, role, isLoggedIn, authReady } = useAuthReady();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { mutate: withdraw, isPending: isWithdrawing } = useWithdraw();
   const { showToast } = useToast();
+
+  // 탈퇴 모달 상태
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isWithdrawAgreed, setIsWithdrawAgreed] = useState(false);
 
   // 프로필 조회
   const {
@@ -83,10 +92,42 @@ export default function MypagePage() {
     });
   };
 
+  // 탈퇴 모달 열기
+  const handleOpenWithdrawModal = () => {
+    setIsWithdrawAgreed(false);
+    setIsWithdrawModalOpen(true);
+  };
+
+  // 탈퇴 모달 닫기
+  const handleCloseWithdrawModal = () => {
+    if (isWithdrawing) return;
+    setIsWithdrawModalOpen(false);
+    setIsWithdrawAgreed(false);
+  };
+
+  // 탈퇴 처리
+  const handleWithdraw = () => {
+    if (isWithdrawing || !isWithdrawAgreed) return;
+    withdraw(undefined, {
+      onSuccess: () => {
+        showToast('탈퇴가 완료되었습니다.');
+        router.replace('/login');
+      },
+      onError: () => {
+        showToast('탈퇴 처리 중 오류가 발생했습니다.');
+        router.replace('/login');
+      },
+      onSettled: () => {
+        setIsWithdrawModalOpen(false);
+      },
+    });
+  };
+
   // 계정 메뉴 아이템 (onClick 연결, 비로그인 시 비활성화)
   const accountMenuItems = ACCOUNT_LINKS.map((label) => ({
     label,
-    onClick: label === '로그아웃' ? handleLogout : undefined,
+    onClick:
+      label === '로그아웃' ? handleLogout : label === '탈퇴하기' ? handleOpenWithdrawModal : undefined,
     disabled: !isLoggedIn,
   }));
 
@@ -130,6 +171,59 @@ export default function MypagePage() {
         </div>
       </div>
       <BottomNav />
+
+      {/* 탈퇴 확인 모달 */}
+      <BaseModal
+        isOpen={isWithdrawModalOpen}
+        onClose={handleCloseWithdrawModal}
+        disableClose={isWithdrawing}
+      >
+        <div className="flex flex-col gap-6">
+          {/* 제목 + 유의사항 */}
+          <div className="flex flex-col items-center gap-6 text-gray-900">
+            <p className="text-head-4-semibold text-center">{WITHDRAW_MODAL.title}</p>
+            <ul className="flex flex-col gap-4 text-body-2-medium list-disc pl-5">
+              {WITHDRAW_MODAL.notices.map((notice, index) => (
+                <li key={index} className="whitespace-pre-wrap">
+                  {notice}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 체크박스 */}
+          <label className="flex cursor-pointer items-center gap-3 px-2">
+            <input
+              type="checkbox"
+              checked={isWithdrawAgreed}
+              onChange={(e) => setIsWithdrawAgreed(e.target.checked)}
+              className="sr-only"
+            />
+            {isWithdrawAgreed ? <SelectedIcon aria-hidden /> : <SelectIcon aria-hidden />}
+            <span className="text-body-2-medium text-gray-900">{WITHDRAW_MODAL.checkboxLabel}</span>
+          </label>
+
+          {/* 버튼 */}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleCloseWithdrawModal}
+              disabled={isWithdrawing}
+              className="flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full border border-gray-400 bg-white text-body-2-medium text-gray-900 disabled:cursor-not-allowed"
+            >
+              {WITHDRAW_MODAL.cancelButton}
+            </button>
+            <button
+              type="button"
+              onClick={handleWithdraw}
+              disabled={!isWithdrawAgreed || isWithdrawing}
+              className="flex h-12 flex-1 cursor-pointer items-center justify-center rounded-full bg-gray-900 text-body-2-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isWithdrawing ? <Spinner /> : WITHDRAW_MODAL.confirmButton}
+            </button>
+          </div>
+        </div>
+      </BaseModal>
     </div>
   );
 }

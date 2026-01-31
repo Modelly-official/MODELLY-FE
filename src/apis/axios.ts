@@ -51,7 +51,7 @@ export const axiosInstance = axios.create({
 });
 
 // /auth/ 엔드포인트 중 인증이 필요한 것만 명시 (나머지는 토큰 주입 제외)
-const AUTH_REQUIRED_ENDPOINTS = ['/auth/logout', '/auth/validate', '/auth/social/signup'];
+const AUTH_REQUIRED_ENDPOINTS = ['/auth/logout', '/auth/validate', '/auth/social/signup', '/auth/withdraw'];
 
 // Request Interceptor: 쿠키에서 accessToken 읽어서 헤더에 추가 + 로깅
 axiosInstance.interceptors.request.use(

@@ -11,6 +11,7 @@ import type {
   SocialSignupResponse,
   SocialLoginCallbackRequest,
   SocialLoginCallbackResponse,
+  WithdrawResponse,
 } from '@/src/types';
 
 /**
@@ -110,4 +111,18 @@ export const processSocialLoginCallback = async (
     payload, // request body로 전달
   );
   return response.data;
+};
+
+/**
+ * 회원 탈퇴
+ * - 백엔드에 탈퇴 요청
+ * - 성공/실패 여부와 관계없이 프론트엔드에서 인증 정보 삭제
+ */
+export const withdraw = async (): Promise<ApiResponse<WithdrawResponse>> => {
+  try {
+    const response = await axiosInstance.delete<ApiResponse<WithdrawResponse>>('/auth/withdraw');
+    return response.data;
+  } finally {
+    useAuthStore.getState().clearAuth();
+  }
 };
